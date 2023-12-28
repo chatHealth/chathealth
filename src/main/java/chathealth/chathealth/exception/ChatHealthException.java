@@ -1,4 +1,12 @@
 package chathealth.chathealth.exception;
 
-public class ChatHealthException {
+import lombok.Getter;
+
+@Getter
+public abstract class ChatHealthException extends RuntimeException {
+
+    public ChatHealthException(String message) {
+        super(message);
+    }
+
 }
