@@ -1,1 +1,28 @@
+spring:
+  profiles:
+    active: prod
+  output:
+    ansi:
+      enabled: always
 
+  devtools:
+    livereload:
+      enabled: true
+    restart:
+      enabled: true
+
+  jpa:
+    open-in-view: true
+    hibernate:
+      ddl-auto: create
+
+
+    properties:
+      hibernate:
+        format_sql: true
+        use_sql_comments: true
+
+logging:
+  level:
+    org.hibernate.SQL: debug
+    org.hibernate.type: trace
