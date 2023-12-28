@@ -1,6 +1,8 @@
 package chathealth.chathealth.service;
 
+import chathealth.chathealth.dto.response.EntInfoDto;
 import chathealth.chathealth.dto.response.UserInfoDto;
+import chathealth.chathealth.entity.member.Ent;
 import chathealth.chathealth.entity.member.Users;
 import chathealth.chathealth.exception.UserNotFound;
 import chathealth.chathealth.repository.MemberRepository;
@@ -29,6 +31,26 @@ public class MemberService {
                 .deletedDate(findUser.getDeletedDate())
                 .grade(findUser.getGrade())
                 .address(findUser.getAddress())
+                .build();
+    }
+
+    public EntInfoDto getEntInfo(Long id) {
+        Ent findEnt = (Ent) memberRepository.findById(id).orElseThrow(
+                UserNotFound::new
+
+        );
+
+        return EntInfoDto.builder()
+                .id(findEnt.getId())
+                .email(findEnt.getEmail())
+                .address(findEnt.getAddress())
+                .birth(findEnt.getBirth())
+                .profile(findEnt.getProfile())
+                .deletedDate(findEnt.getDeletedDate())
+                .role(findEnt.getRole())
+                .ceo(findEnt.getCeo())
+                .company(findEnt.getCompany())
+                .entNo(findEnt.getEntNo())
                 .build();
     }
 }
