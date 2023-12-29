@@ -40,7 +40,6 @@ class MemberControllerTest {
     public void test1() throws Exception{
         //given
         Users user = Users.builder()
-                .id(1L)
                 .name("장성호")
                 .nickname("짱공오일")
                 .email("jjang051.hanmail.net")
@@ -54,7 +53,7 @@ class MemberControllerTest {
         mockMvc.perform(get("/member/user/{id}", user.getId())
                         .contentType(APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(1L))
+                .andExpect(jsonPath("$.id").value(user.getId()))
                 .andExpect(jsonPath("$.name").value("장성호"))
                 .andExpect(jsonPath("$.nickname").value("짱공오일"))
                 .andExpect(jsonPath("$.email").value("jjang051.hanmail.net"))
@@ -65,7 +64,6 @@ class MemberControllerTest {
     @Test
     public void test2() throws Exception{
         Ent ent = Ent.builder()
-                .id(2L)
                 .email("jjang051@google.com")
                 .address(new Address("서울시 강남구", "123-123", 12345))
                 .birth(LocalDate.of(1995, 3, 21))
@@ -81,7 +79,7 @@ class MemberControllerTest {
         mockMvc.perform(get("/member/ent/{id}", ent.getId())
                         .contentType(APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(2L))
+                .andExpect(jsonPath("$.id").value(ent.getId()))
                 .andExpect(jsonPath("$.email").value("jjang051@google.com"))
                 .andExpect(jsonPath("$.address.address").value("서울시 강남구"))
                 .andExpect(jsonPath("$.address.addressDetail").value("123-123"))
@@ -101,7 +99,6 @@ class MemberControllerTest {
     public void test3() throws Exception{
         //given
         Users user = Users.builder()
-                .id(3L)
                 .name("장성호")
                 .nickname("짱공오일")
                 .email("jjang051.hanmail.net")

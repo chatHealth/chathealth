@@ -33,7 +33,6 @@ class MemberServiceTest {
         Address address = new Address("서울시 강남구", "123-123", 12345);
 
         Users user1 = Users.builder()
-                .id(1L)
                 .name("장성호")
                 .nickname("짱공오일")
                 .email("jjang051.hanmail.net")
@@ -45,11 +44,11 @@ class MemberServiceTest {
 
         memberRepository.save(user1);
         //when
-        UserInfoDto userInfo = memberService.getUserInfo(1L);
+        UserInfoDto userInfo = memberService.getUserInfo(user1.getId());
 
         //then
 
-        assertThat(userInfo.getId()).isEqualTo(1L);
+        assertThat(userInfo.getId()).isEqualTo(user1.getId());
         assertThat(userInfo.getName()).isEqualTo("장성호");
         assertThat(userInfo.getNickname()).isEqualTo("짱공오일");
         assertThat(userInfo.getEmail()).isEqualTo("jjang051.hanmail.net");
@@ -65,7 +64,6 @@ class MemberServiceTest {
     public void test2() throws Exception{
         //given
         Users user = Users.builder()
-                .id(2L)
                 .name("장성호")
                 .nickname("짱공오일")
                 .email("jjang051.hanmail.net")
@@ -76,7 +74,7 @@ class MemberServiceTest {
 
         memberRepository.save(user);
         //expected
-        assertThrows(UserNotFound.class, () -> memberService.getUserInfo(3L));
+        assertThrows(UserNotFound.class, () -> memberService.getUserInfo(100L));
     }
 
     @Test
@@ -84,7 +82,6 @@ class MemberServiceTest {
     public void test3() throws Exception{
         //given
         Ent ent = Ent.builder()
-                .id(3L)
                 .email("jjang051@google.com")
                 .address(new Address("서울시 강남구", "123-123", 12345))
                 .birth(LocalDate.of(1995, 3, 21))
@@ -97,10 +94,10 @@ class MemberServiceTest {
 
         memberRepository.save(ent);
         //when
-        EntInfoDto entInfo = memberService.getEntInfo(3L);
+        EntInfoDto entInfo = memberService.getEntInfo(ent.getId());
 
         //then
-        assertThat(entInfo.getId()).isEqualTo(3L);
+        assertThat(entInfo.getId()).isEqualTo(ent.getId());
         assertThat(entInfo.getEmail()).isEqualTo("jjang051@google.com");
         assertThat(entInfo.getAddress().getAddress()).isEqualTo("서울시 강남구");
         assertThat(entInfo.getAddress().getAddressDetail()).isEqualTo("123-123");
@@ -118,7 +115,6 @@ class MemberServiceTest {
     public void test4() throws Exception{
         //given
         Ent ent = Ent.builder()
-                .id(4L)
                 .email("jjang051@google.com")
                 .address(new Address("서울시 강남구", "123-123", 12345))
                 .birth(LocalDate.of(1995, 3, 21))
@@ -131,6 +127,6 @@ class MemberServiceTest {
 
         memberRepository.save(ent);
         //expected
-        assertThrows(UserNotFound.class, () -> memberService.getEntInfo(5L));
+        assertThrows(UserNotFound.class, () -> memberService.getEntInfo(100L));
     }
 }
