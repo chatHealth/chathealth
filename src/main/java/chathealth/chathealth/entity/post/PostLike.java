@@ -1,14 +1,12 @@
-package chathealth.chathealth.entity.entity.post;
+package chathealth.chathealth.entity.post;
 
 import chathealth.chathealth.entity.member.Member;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "PostHit")
-public class PostHit {
+public class PostLike {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    @Column(name = "hit_id")
     private Long id;
 
     @ManyToOne()

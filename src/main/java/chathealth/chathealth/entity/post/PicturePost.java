@@ -1,4 +1,4 @@
-package chathealth.chathealth.entity.entity.post;
+package chathealth.chathealth.entity.post;
 
 import jakarta.persistence.*;
 
