@@ -32,4 +32,6 @@ public abstract class Member extends BaseEntity {
     private Role role;
     private int report;
     private LocalDateTime deletedDate;
+
+
 }
