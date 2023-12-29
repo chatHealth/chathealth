@@ -1,8 +1,10 @@
 package chathealth.chathealth.controller;
 
+import chathealth.chathealth.dto.request.UserEditDto;
 import chathealth.chathealth.dto.response.EntInfoDto;
 import chathealth.chathealth.dto.response.UserInfoDto;
 import chathealth.chathealth.service.MemberService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -24,5 +26,11 @@ public class MemberController {
     @GetMapping("/ent/{id}")
     public EntInfoDto getEntInfo(@PathVariable Long id) {
         return memberService.getEntInfo(id);
+    }
+
+    @ResponseBody
+    @PatchMapping("/user/{id}")
+    public void updateUser(@PathVariable Long id, @RequestBody @Valid UserEditDto userEditDto) {
+        memberService.updateUserInfo(id, userEditDto);
     }
 }

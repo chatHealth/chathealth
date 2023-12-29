@@ -17,5 +17,8 @@ public class Users extends Member{
     private String nickname;
     private Grade grade;
 
-
+    public void update(String nickname, Address address, String password) {
+        this.nickname = nickname;
+        super.update(address, password);
+    }
 }

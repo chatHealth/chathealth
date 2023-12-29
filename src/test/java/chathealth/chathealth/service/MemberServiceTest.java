@@ -1,8 +1,10 @@
 package chathealth.chathealth.service;
 
+import chathealth.chathealth.dto.request.UserEditDto;
 import chathealth.chathealth.dto.response.EntInfoDto;
 import chathealth.chathealth.dto.response.UserInfoDto;
 import chathealth.chathealth.entity.member.*;
+import chathealth.chathealth.exception.PasswordNotEqualException;
 import chathealth.chathealth.exception.UserNotFound;
 import chathealth.chathealth.repository.MemberRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -128,5 +130,112 @@ class MemberServiceTest {
         memberRepository.save(ent);
         //expected
         assertThrows(UserNotFound.class, () -> memberService.getEntInfo(100L));
+    }
+
+    @Test
+    @DisplayName("유저 정보 수정")
+    public void test5() throws Exception{
+        //given
+        Address address = new Address("서울시 강남구", "123-123", 12345);
+
+        Users user = Users.builder()
+                .name("장성호")
+                .nickname("짱공오일")
+                .email("jjang051.hanmail.net")
+                .pw("1234")
+                .grade(Grade.valueOf("BRONZE"))
+                .profile("profile0321984u32895")
+                .address(address)
+                .build();
+
+        memberRepository.save(user);
+        //when
+        UserEditDto updateUser = UserEditDto.builder()
+                .nickname("공짱오일")
+                .address(new Address("대전시 유성구 가마로00길 11", "22-33", 98776))
+                .pw("1234")
+                .newPw("jjang0512")
+                .newPwCheck("jjang0512")
+                .build();
+
+        memberService.updateUserInfo(user.getId(), updateUser);
+
+        Users userInfo = (Users)memberRepository.findById(user.getId()).orElseThrow(
+                UserNotFound::new
+        );
+
+        //then
+        assertThat(userInfo.getId()).isEqualTo(user.getId());
+        assertThat(userInfo.getName()).isEqualTo("장성호");
+        assertThat(userInfo.getNickname()).isEqualTo("공짱오일");
+        assertThat(userInfo.getEmail()).isEqualTo("jjang051.hanmail.net");
+        assertThat(userInfo.getGrade()).isEqualTo(Grade.valueOf("BRONZE"));
+        assertThat(userInfo.getProfile()).isEqualTo("profile0321984u32895");
+        assertThat(userInfo.getAddress().getAddress()).isEqualTo("대전시 유성구 가마로00길 11");
+        assertThat(userInfo.getAddress().getAddressDetail()).isEqualTo("22-33");
+        assertThat(userInfo.getAddress().getPostcode()).isEqualTo(98776);
+        assertThat(userInfo.getPw()).isEqualTo("jjang0512");
+    }
+    @Test
+    @DisplayName("유저 정보 수정 실패 - 새로운 비밀번호 불일치")
+    public void test6() throws Exception{
+        //given
+        Address address = new Address("서울시 강남구", "123-123", 12345);
+
+        Users user = Users.builder()
+                .name("장성호")
+                .nickname("짱공오일")
+                .email("jjang051.hanmail.net")
+                .pw("1234")
+                .grade(Grade.valueOf("BRONZE"))
+                .profile("profile0321984u32895")
+                .address(address)
+                .build();
+
+        memberRepository.save(user);
+        //when
+        UserEditDto updateUser = UserEditDto.builder()
+                .nickname("")
+                .address(new Address("대전시 유성구 가마로00길 11", "22-33", 98776))
+                .pw("1234")
+                .newPw("jjang0512")
+                .newPwCheck("jjang05132")
+                .build();
+
+        //then
+        assertThatThrownBy(() -> memberService.updateUserInfo(user.getId(), updateUser))
+                .isInstanceOf(PasswordNotEqualException.class)
+                .hasMessageContaining("새로운 비밀번호가 일치하지 않습니다.");
+    }
+    @Test
+    @DisplayName("유저 정보 수정 실패 - 기존 비밀번호 불일치")
+    public void test7() throws Exception{
+        //given
+        Address address = new Address("서울시 강남구", "123-123", 12345);
+
+        Users user = Users.builder()
+                .name("장성호")
+                .nickname("짱공오일")
+                .email("jjang051.hanmail.net")
+                .pw("1234")
+                .grade(Grade.valueOf("BRONZE"))
+                .profile("profile0321984u32895")
+                .address(address)
+                .build();
+
+        memberRepository.save(user);
+        //when
+        UserEditDto updateUser = UserEditDto.builder()
+                .nickname("")
+                .address(new Address("대전시 유성구 가마로00길 11", "22-33", 98776))
+                .pw("12345")
+                .newPw("jjang0512")
+                .newPwCheck("jjang0512")
+                .build();
+
+        //then
+        assertThatThrownBy(() -> memberService.updateUserInfo(user.getId(), updateUser))
+                .isInstanceOf(PasswordNotEqualException.class)
+                .hasMessageContaining("비밀번호가 일치하지 않습니다.");
     }
 }
