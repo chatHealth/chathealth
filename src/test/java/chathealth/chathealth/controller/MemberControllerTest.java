@@ -1,5 +1,6 @@
 package chathealth.chathealth.controller;
 
+import chathealth.chathealth.dto.request.EntEditDto;
 import chathealth.chathealth.dto.request.UserEditDto;
 import chathealth.chathealth.entity.member.*;
 import chathealth.chathealth.repository.MemberRepository;
@@ -173,6 +174,7 @@ class MemberControllerTest {
                 .nickname("짱공오일")
                 .email("jjang051.hanmail.net")
                 .pw("1234")
+                .address(address)
                 .grade(Grade.valueOf("BRONZE"))
                 .profile("profile0321984u32895")
                 .build();
@@ -208,6 +210,7 @@ class MemberControllerTest {
                 .nickname("짱공오일")
                 .email("jjang051.hanmail.net")
                 .pw("1234")
+                .address(address)
                 .grade(Grade.valueOf("BRONZE"))
                 .profile("profile0321984u32895")
                 .build();
@@ -266,6 +269,45 @@ class MemberControllerTest {
                         .contentType(APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(userEditDto)))
                 .andExpect(status().isBadRequest())
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("사업자 정보 수정")
+    public void test9() throws Exception {
+        //given
+        Address address = new Address("서울시 강남구", "123-123", 12345);
+
+        Ent ent = Ent.builder()
+                .ceo("장성호")
+                .company("짱공오일")
+                .email("jjang051.hanmail.net")
+                .pw("1234")
+                .address(address)
+                .profile("profile0321984u32895")
+                .role(Role.valueOf("WAITING_ENT"))
+                .entNo("1234-1234-1234")
+                .build();
+
+        memberRepository.save(ent);
+
+        Address newAddress = new Address("대전시 유성구 가마로00길 11", "22-33", 98776);
+
+        EntEditDto entEditDto = EntEditDto.builder()
+                .id(ent.getId())
+                .ceo("조원우")
+                .address(newAddress)
+                .company("조원우컴퍼니")
+                .pw("1234")
+                .newPw("jjang0512@")
+                .newPwCheck("jjang0512@")
+                .build();
+
+        //expected
+        mockMvc.perform(patch("/member/ent/{id}", ent.getId())
+                        .contentType(APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(entEditDto)))
+                .andExpect(status().isOk())
                 .andDo(print());
     }
 }

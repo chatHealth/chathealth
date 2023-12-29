@@ -1,5 +1,6 @@
 package chathealth.chathealth.service;
 
+import chathealth.chathealth.dto.request.EntEditDto;
 import chathealth.chathealth.dto.request.UserEditDto;
 import chathealth.chathealth.dto.response.EntInfoDto;
 import chathealth.chathealth.dto.response.UserInfoDto;
@@ -237,5 +238,47 @@ class MemberServiceTest {
         assertThatThrownBy(() -> memberService.updateUserInfo(user.getId(), updateUser))
                 .isInstanceOf(PasswordNotEqual.class)
                 .hasMessageContaining("비밀번호가 일치하지 않습니다.");
+    }
+
+    @Test
+    @DisplayName("사업자 정보 수정")
+    public void test8() throws Exception{
+        //given
+        Ent ent = Ent.builder()
+                .email("jjang051@google.com")
+                .address(new Address("서울시 강남구", "123-123", 12345))
+                .birth(LocalDate.of(1995, 3, 21))
+                .profile("profile0321984u32895")
+                .role(Role.valueOf("WAITING_ENT"))
+                .ceo("장공오일")
+                .pw("1234")
+                .entNo("1234-1234-1234")
+                .company("중앙HTA")
+                .build();
+
+        memberRepository.save(ent);
+
+        Address newAddress = new Address("대전시 유성구 가마로00길 11", "22-33", 98776);
+
+        EntEditDto updateEnt = EntEditDto.builder()
+                .ceo("장공오일")
+                .company("중앙HTA")
+                .address(newAddress)
+                .pw("1234")
+                .newPw("jjang0512@")
+                .newPwCheck("jjang0512@")
+                .build();
+        //when
+        memberService.updateEntInfo(ent.getId(), updateEnt);
+
+        //then
+        Ent ent1 = (Ent) memberRepository.findById(ent.getId()).orElseThrow(
+                UserNotFound::new
+        );
+        assertThat(ent.getCeo()).isEqualTo(ent1.getCeo());
+        assertThat(ent.getCompany()).isEqualTo(ent1.getCompany());
+        assertThat(ent.getAddress().getAddress()).isEqualTo(ent1.getAddress().getAddress());
+        assertThat(ent.getAddress().getAddressDetail()).isEqualTo(ent1.getAddress().getAddressDetail());
+        assertThat(ent.getAddress().getPostcode()).isEqualTo(ent1.getAddress().getPostcode());
     }
 }

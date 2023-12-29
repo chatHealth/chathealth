@@ -1,5 +1,6 @@
 package chathealth.chathealth.service;
 
+import chathealth.chathealth.dto.request.EntEditDto;
 import chathealth.chathealth.dto.request.UserEditDto;
 import chathealth.chathealth.dto.response.EntInfoDto;
 import chathealth.chathealth.dto.response.UserInfoDto;
@@ -19,9 +20,7 @@ public class MemberService {
     private final MemberRepository memberRepository;
 
     public UserInfoDto getUserInfo(Long id) {
-        Users findUser = (Users) memberRepository.findById(id).orElseThrow(
-                UserNotFound::new
-        );
+        Users findUser = getUsers(id);
 
         return UserInfoDto.builder()
                 .id(findUser.getId())
@@ -37,10 +36,7 @@ public class MemberService {
     }
 
     public EntInfoDto getEntInfo(Long id) {
-        Ent findEnt = (Ent) memberRepository.findById(id).orElseThrow(
-                UserNotFound::new
-
-        );
+        Ent findEnt = getEnt(id);
 
         return EntInfoDto.builder()
                 .id(findEnt.getId())
@@ -57,9 +53,8 @@ public class MemberService {
     }
 
     public void updateUserInfo(Long id, UserEditDto userEditDto) {
-        Users findUser = (Users) memberRepository.findById(id).orElseThrow(
-                UserNotFound::new
-        );
+        Users findUser = getUsers(id);
+
         if (!findUser.getPw().equals(userEditDto.getPw())) {
             throw new PasswordNotEqual();
         } else if (!userEditDto.getNewPw().equals(userEditDto.getNewPwCheck())) {
@@ -69,5 +64,33 @@ public class MemberService {
         findUser.update(userEditDto.getNickname() != null ? userEditDto.getNickname() : findUser.getNickname(),
                 userEditDto.getAddress() != null? userEditDto.getAddress() : findUser.getAddress(),
                 userEditDto.getNewPw());
+    }
+
+    public void updateEntInfo(Long id, EntEditDto entEditDto) {
+        Ent findEnt = getEnt(id);
+
+        if (!findEnt.getPw().equals(entEditDto.getPw())) {
+            throw new PasswordNotEqual();
+        } else if (!entEditDto.getNewPw().equals(entEditDto.getNewPwCheck())) {
+            throw new PasswordNotEqual("새로운 비밀번호가 일치하지 않습니다.");
+        }
+
+        findEnt.update(entEditDto.getCeo() != null ? entEditDto.getCeo() : findEnt.getCeo(),
+                entEditDto.getCompany() != null ? entEditDto.getCompany() : findEnt.getCompany(),
+                entEditDto.getAddress() != null ? entEditDto.getAddress() : findEnt.getAddress(),
+                entEditDto.getNewPw());
+
+    }
+
+    private Users getUsers(Long id) {
+        return (Users) memberRepository.findById(id).orElseThrow(
+                UserNotFound::new
+        );
+    }
+
+    private Ent getEnt(Long id) {
+        return (Ent) memberRepository.findById(id).orElseThrow(
+                UserNotFound::new
+        );
     }
 }
