@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <title>Chat Health</title>
+    <script src="/js/jquery-3.7.1.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="/js/bootstrap.bundle.min.js"></script>
+
+</head>
+<body>
+<div class="container scroll-container" style="width: 760px;">
+    <h1>회원가입</h1>
+    <form method="post">
+        <!-- 이메일 -->
+        <div class="mb-3">
+            <div class="d-flex flex-row">
+                <label for="inputEmail" class="form-label">이메일</label>
+                <button class="btn btn-outline-primary btn-sm">이메일 중복확인</button>
+            </div>
+            <input type="email" id="inputEmail" class="form-control">
+            <span id="confirmEmail"></span>
+        </div>
+
+        <!-- 비밀번호 -->
+        <div class="mb-5">
+            <div class="d-flex flex-row">
+                <label for="inputPw" class="form-label">비밀번호</label></div>
+            <input type="password" id="inputPw" class="form-control" aria-describedby="passwordHelp">
+            <div id="passwordHelp" class="form-text">
+            비밀번호는 8~15자리이고 영문, 숫자, 특수문자([!@#$%^*+=-)를 포함해야 합니다.
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <div class="d-flex flex-row">
+                <label for="checkPw" class="form-label">비밀번호 확인</label></div>
+            <input type="password" id="checkPw" class="form-control">
+            <span id="confirmPw"></span>
+        </div>
+
+        <!-- 이름 -->
+        <div class="mb-3">
+            <div class="d-flex flex-row">
+                <label for="inputName" class="form-label">이름</label></div>
+            <input type="text" id="inputName" class="form-control">
+        </div>
+
+        <!-- 닉네임 -->
+        <div class="mb-3">
+            <div class="d-flex flex-row">
+                <label for="inputNickname" class="form-label">별명</label>
+                <button class="btn btn-outline-primary btn-sm">별명 중복확인</button>
+            </div>
+            <input type="text" id="inputNickname" class="form-control">
+            <span id="confirmNickname"></span>
+        </div>
+
+        <!-- 생년월일 -->
+        <div class="mb-5">
+            <div class="d-flex flex-row">
+                <label for="inputBirth" class="form-label">생년월일</label></div>
+            <input type="text" id="inputBirth" name="inputBirth" class="form-control" value="12/30/2023">
+        </div>
+
+        <div class="mb-3">
+            <div class="d-flex flex-row">
+                <input type="text" id="sample6_postcode" placeholder="우편번호">
+                <button class="btn btn-outline-primary btn-sm">별명 중복확인" onclick="sample6_execDaumPostcode()">우편번호 찾기</button><br>
+            </div>
+            <div class="mb-3">
+                <input type="text" class="form-control" id="sample6_address" placeholder="주소">
+                <input type="text" class="form-control" id="sample6_detailAddress" placeholder="상세주소">
+            </div>
+    </div>
+
+        <div class="mb-3">
+            <label for="formFile" class="form-label">프로필 사진</label>
+            <input class="form-control" type="file" id="formFile">
+        </div>
+        <div class="preview-box">
+            <img src="/images/500.png" id="preview">
+        </div>
+    </form>
+
+</div>
+</body>
+
+
+<!-- 비밀번호 영문 숫자 특수문자 검증 정규식
+<script>
+    let reg = /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,15}$/
+</script>
+-->
+
+<!-- 우편번호 스크립트 -->
+<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+<script>
+    function sample6_execDaumPostcode() {
+        new daum.Postcode({
+            oncomplete: function(data) {
+                var addr = '';
+                var extraAddr = '';
+
+                if (data.userSelectedType === 'R') {
+                    addr = data.roadAddress;
+                } else {
+                    addr = data.jibunAddress;
+                }
+
+                if(data.userSelectedType === 'R'){
+                    if(data.bname !== '' && /[동|로|가]$/g.test(data.bname)){
+                        extraAddr += data.bname;
+                    }
+                    if(data.buildingName !== '' && data.apartment === 'Y'){
+                        extraAddr += (extraAddr !== '' ? ', ' + data.buildingName : data.buildingName);
+                    }
+                    if(extraAddr !== ''){
+                        extraAddr = ' (' + extraAddr + ')';
+                    }
+                    document.getElementById("sample6_extraAddress").value = extraAddr;
+
+                } else {
+                    document.getElementById("sample6_extraAddress").value = '';
+                }
+
+                document.getElementById('sample6_postcode').value = data.zonecode;
+                document.getElementById("sample6_address").value = addr;
+                document.getElementById("sample6_detailAddress").focus();
+            }
+        }).open();
+    }
+</script>
+
+<!-- Date Picker 스크립트 -->
+<script>
+    $(function() {
+      $('input[name="inputBirth"]').daterangepicker({
+        singleDatePicker: true,
+        showDropdowns: true,
+        minYear: 1907,
+        maxYear: parseInt(moment().format('YYYY'),10)
+      });
+    });
+</script>
+</html>
