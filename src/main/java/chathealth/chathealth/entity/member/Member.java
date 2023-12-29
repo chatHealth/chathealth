@@ -37,4 +37,5 @@ public abstract class Member extends BaseEntity {
         this.address = address;
         this.pw = pw;
     }
+
 }

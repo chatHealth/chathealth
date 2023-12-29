@@ -1,16 +1,15 @@
 package chathealth.chathealth.entity.post;
 
+import chathealth.chathealth.entity.BaseEntity;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.DynamicUpdate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
-import java.util.List;
 
 import static lombok.AccessLevel.PROTECTED;
-
-
 @Entity
 @ToString
 @Setter
@@ -20,22 +19,22 @@ import static lombok.AccessLevel.PROTECTED;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @NoArgsConstructor(access = PROTECTED)
 @DynamicUpdate
+@Table(name = "MaterialPost")
 
-@Table(name = "PicturePost")
-public class PicturePost {
+public abstract class MaterialPost extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    @Column(name = "picture_id")
+    @Column(name = "mp_id")
     private Long id;
 
-    @ManyToOne()
+    @ManyToMany()
+    @JoinColumn(name = "material_id")
+    private Material MaterialId;
+
+    @ManyToMany()
     @JoinColumn(name = "post_id")
     private Post postId;
 
-    @Column(name = "picture_url")
-    private String pictureUrl;
-
-    private Integer orders;
 
 }
