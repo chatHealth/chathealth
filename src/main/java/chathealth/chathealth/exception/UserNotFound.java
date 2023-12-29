@@ -8,4 +8,8 @@ public class UserNotFound extends ChatHealthException {
         super(MESSAGE);
     }
 
+    @Override
+    public int getStatusCode() {
+        return 404;
+    }
 }

@@ -4,7 +4,7 @@ import chathealth.chathealth.dto.request.UserEditDto;
 import chathealth.chathealth.dto.response.EntInfoDto;
 import chathealth.chathealth.dto.response.UserInfoDto;
 import chathealth.chathealth.entity.member.*;
-import chathealth.chathealth.exception.PasswordNotEqualException;
+import chathealth.chathealth.exception.PasswordNotEqual;
 import chathealth.chathealth.exception.UserNotFound;
 import chathealth.chathealth.repository.MemberRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -204,7 +204,7 @@ class MemberServiceTest {
 
         //then
         assertThatThrownBy(() -> memberService.updateUserInfo(user.getId(), updateUser))
-                .isInstanceOf(PasswordNotEqualException.class)
+                .isInstanceOf(PasswordNotEqual.class)
                 .hasMessageContaining("새로운 비밀번호가 일치하지 않습니다.");
     }
     @Test
@@ -235,7 +235,7 @@ class MemberServiceTest {
 
         //then
         assertThatThrownBy(() -> memberService.updateUserInfo(user.getId(), updateUser))
-                .isInstanceOf(PasswordNotEqualException.class)
+                .isInstanceOf(PasswordNotEqual.class)
                 .hasMessageContaining("비밀번호가 일치하지 않습니다.");
     }
 }
