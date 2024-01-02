@@ -1,6 +1,9 @@
 package chathealth.chathealth.entity.member;
 
 import chathealth.chathealth.entity.BaseEntity;
+import chathealth.chathealth.entity.BoardComment;
+import chathealth.chathealth.entity.BoardReply;
+import chathealth.chathealth.entity.borad.Board;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -8,6 +11,8 @@ import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import static lombok.AccessLevel.PROTECTED;
 
@@ -32,6 +37,15 @@ public abstract class Member extends BaseEntity {
     private Role role;
     private int report;
     private LocalDateTime deletedDate;
+
+    @OneToMany(mappedBy = "user")
+    private final List<Board> boardList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member")
+    private final List<BoardComment> boardCommentList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member")
+    private final List<BoardReply> boardReplyList = new ArrayList<>();
 
     protected void update(Address address, String pw) {
         this.address = address;
