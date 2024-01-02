@@ -33,5 +33,9 @@ public abstract class Member extends BaseEntity {
     private int report;
     private LocalDateTime deletedDate;
 
+    protected void update(Address address, String pw) {
+        this.address = address;
+        this.pw = pw;
+    }
 
 }
