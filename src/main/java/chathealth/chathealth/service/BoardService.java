@@ -3,7 +3,7 @@ package chathealth.chathealth.service;
 import chathealth.chathealth.dto.response.BoardResponse;
 import chathealth.chathealth.entity.borad.Board;
 import chathealth.chathealth.exception.BoardNotFoundException;
-import chathealth.chathealth.repository.BoardRepository;
+import chathealth.chathealth.repository.board.BoardRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

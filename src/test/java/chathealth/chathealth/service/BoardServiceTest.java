@@ -3,7 +3,7 @@ package chathealth.chathealth.service;
 import chathealth.chathealth.dto.response.BoardResponse;
 import chathealth.chathealth.entity.borad.Board;
 import chathealth.chathealth.entity.member.Users;
-import chathealth.chathealth.repository.BoardRepository;
+import chathealth.chathealth.repository.board.BoardRepository;
 import chathealth.chathealth.repository.MemberRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -48,9 +48,9 @@ class BoardServiceTest {
         BoardResponse findBoard = boardService.getBoard(board.getId());
 //        then
         assertThat(findBoard.getBoardId()).isEqualTo(board.getId());
-        assertThat(findBoard.getTitle()).isEqualTo(board.getTitle());
-        assertThat(findBoard.getContent()).isEqualTo(board.getContent());
-        assertThat(findBoard.getCategory()).isEqualTo(board.getCategory());
+        assertThat(findBoard.getTitle()).isEqualTo("제목입니다.");
+        assertThat(findBoard.getContent()).isEqualTo("내용입니다.");
+        assertThat(findBoard.getCategory()).isEqualTo(FREE);
         assertThat(findBoard.getCreatedDate()).isEqualTo(board.getCreatedDate());
         assertThat(findBoard.getModifiedDate()).isEqualTo(board.getModifiedDate());
         assertThat(findBoard.getMemberId()).isEqualTo(board.getUser().getId());
