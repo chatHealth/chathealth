@@ -13,11 +13,9 @@ import static lombok.AccessLevel.PROTECTED;
 
 @Entity
 @ToString
-@Setter
 @Getter
 @SuperBuilder
 
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @NoArgsConstructor(access = PROTECTED)
 @DynamicUpdate
 
@@ -31,7 +29,7 @@ public class PicturePost {
 
     @ManyToOne()
     @JoinColumn(name = "post_id")
-    private Post postId;
+    private Post post;
 
     @Column(name = "picture_url")
     private String pictureUrl;

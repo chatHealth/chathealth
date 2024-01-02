@@ -9,19 +9,19 @@ import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.DynamicUpdate;
 
+import java.util.List;
+
 import static lombok.AccessLevel.PROTECTED;
 
 @Entity
 @ToString
-@Setter
 @Getter
 @SuperBuilder
 
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @NoArgsConstructor(access = PROTECTED)
 @DynamicUpdate
 @Table(name = "Material")
-public abstract class Material extends BaseEntity {
+public class Material extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "material_id")
@@ -39,4 +39,7 @@ public abstract class Material extends BaseEntity {
     private String caution;
     private String fuctions;
 
+    // N:M conenct
+    @OneToMany(mappedBy = "material")
+    private List<MaterialPost> materialList;
 }

@@ -23,7 +23,7 @@ spring:
 
 logging:
   level:
-    org.hibernate.SQL: debug # debug info warn error fatal
+    org.hibernate.SQL: info # debug info warn error fatal
     org.hibernate.type: trace
 
 decorator:
@@ -47,4 +47,4 @@ file:
   path: C:/upload/
 
 pagination:
-    size: 10
+  size: 10
