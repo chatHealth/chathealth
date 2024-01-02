@@ -18,16 +18,14 @@ import static lombok.AccessLevel.PROTECTED;
 
 @Entity
 @ToString
-@Setter
 @Getter
 @SuperBuilder
 
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @NoArgsConstructor(access = PROTECTED)
 @DynamicUpdate
 
 @Table(name = "Post")
-public abstract class Post extends BaseEntity {
+public class Post extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
@@ -51,8 +49,8 @@ public abstract class Post extends BaseEntity {
 
 
     // connect
-    @OneToMany(mappedBy = "postId")
-    private List<PicturePost> postImg;
+    @OneToMany(mappedBy = "post")
+    private List<PicturePost> postImgList;
 
     @OneToMany(mappedBy = "post")
     private List<PostHit> postHitList;
@@ -60,8 +58,19 @@ public abstract class Post extends BaseEntity {
     @OneToMany(mappedBy = "post")
     private List<PostLike> postLikeList;
 
-    @OneToMany(mappedBy = "post")
-    private List<PicturePost> picturePostList;
 
+    // N:M conenct
+    @OneToMany(mappedBy = "post")
+    private List<SymptomPost> symptomList;
+
+    @OneToMany(mappedBy = "post")
+    private List<MaterialPost> materialList;
+
+
+
+    // provide setter method
+//    public void update(String content) {
+//        this.content = content;
+//    }
 
 }

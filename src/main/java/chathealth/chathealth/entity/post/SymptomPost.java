@@ -12,26 +12,24 @@ import org.hibernate.annotations.DynamicUpdate;
 import static lombok.AccessLevel.PROTECTED;
 @Entity
 @ToString
-@Setter
 @Getter
 @SuperBuilder
 
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @NoArgsConstructor(access = PROTECTED)
 @DynamicUpdate
 @Table(name = "SymptomPost")
-public abstract class SymptomPost extends BaseEntity {
+public class SymptomPost extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "sp_id")
     private Long id;
 
-    @ManyToMany()
-    //@JoinColumn(name = "symptom_id")
-    private Post SymptomId;
+    @ManyToOne
+    @JoinColumn(name = "symptom_id")
+    private Symptom symptom;
 
-    @ManyToMany()
-    //@JoinColumn(name = "post_id")
-    private Post postId;
+    @ManyToOne
+    @JoinColumn(name = "post_id")
+    private Post post;
 }

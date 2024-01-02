@@ -9,19 +9,19 @@ import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.DynamicUpdate;
 
+import java.util.List;
+
 import static lombok.AccessLevel.PROTECTED;
 
 @Entity
 @ToString
-@Setter
 @Getter
 @SuperBuilder
 
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @NoArgsConstructor(access = PROTECTED)
 @DynamicUpdate
 @Table(name = "Symptom")
-public abstract class Symptom extends BaseEntity {
+public class Symptom extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "symptom_id")
@@ -30,5 +30,9 @@ public abstract class Symptom extends BaseEntity {
     private String symptomName;
 
     private Integer orders;
+
+    // N:M conenct
+    @OneToMany(mappedBy = "symptom")
+    private List<SymptomPost> symptomList;
 
 }
