@@ -1,4 +1,4 @@
-package chathealth.chathealth.repository;
+package chathealth.chathealth.repository.board;
 
 import chathealth.chathealth.entity.borad.Board;
 import org.springframework.data.jpa.repository.JpaRepository;

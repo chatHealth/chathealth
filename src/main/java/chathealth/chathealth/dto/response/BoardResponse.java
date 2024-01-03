@@ -4,13 +4,11 @@ import chathealth.chathealth.entity.borad.Category;
 import chathealth.chathealth.entity.member.Grade;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.ToString;
 
 import java.time.LocalDateTime;
 
 @Getter
 @Builder
-@ToString
 public class BoardResponse {
 
     //게시글
