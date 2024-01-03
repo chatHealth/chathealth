@@ -67,6 +67,6 @@ public class AuthController {
 
     @PostMapping("/login")
     public String loginProcess(){
-        return "auth/join";
+        return "redirect:/";
     }
 }

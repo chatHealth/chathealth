@@ -29,7 +29,7 @@ public class SecurityConfig {
                         .usernameParameter("email")
                         .passwordParameter("pw")
                         .loginProcessingUrl("/auth/login")  //post
-                        .defaultSuccessUrl("/image/story",true)
+                        .defaultSuccessUrl("/",true)
                         .permitAll()
                 )
                 /*.oauth2Login((ouath2Login) -> ouath2Login
