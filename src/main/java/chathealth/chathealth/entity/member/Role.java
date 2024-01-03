@@ -1,4 +1,16 @@
 package chathealth.chathealth.entity.member;
 
-public enum Role {USER, WAITING_ENT, PERMITTED_ENT, REJECTED_ENT, ADMIN, ANONYMOUS
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
+@Getter
+@RequiredArgsConstructor
+public enum Role {
+    USER("role_user"),
+    WAITING_ENT("role_waiting_ent"),
+    PERMITTED_ENT("role_permitted_ent"),
+    REJECTED_ENT("role_rejected_ent"),
+    ADMIN("role_admin"),
+    ANONYMOUS("role_anonymous");
+    private final String role;
 }

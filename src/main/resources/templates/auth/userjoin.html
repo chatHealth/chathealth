@@ -4,27 +4,30 @@
     <meta charset="UTF-8">
     <title>Chat Health</title>
     <script src="/js/jquery-3.7.1.min.js"></script>
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 
-    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="/js/bootstrap.bundle.min.js"></script>
+
+
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
 
 </head>
 <body>
 <div class="container scroll-container" style="width: 760px;">
     <h1>회원가입</h1>
-    <form method="post">
+    <form method="post" action="/auth/join">
         <!-- 이메일 -->
         <div class="mb-3">
             <div class="d-flex flex-row">
                 <label for="inputEmail" class="form-label">이메일</label>
                 <button class="btn btn-outline-primary btn-sm">이메일 중복확인</button>
             </div>
-            <input type="email" id="inputEmail" class="form-control">
+            <input type="email" id="inputEmail" class="form-control" name="email">
             <span id="confirmEmail"></span>
         </div>
 
@@ -32,9 +35,9 @@
         <div class="mb-5">
             <div class="d-flex flex-row">
                 <label for="inputPw" class="form-label">비밀번호</label></div>
-            <input type="password" id="inputPw" class="form-control" aria-describedby="passwordHelp">
+            <input type="password" id="inputPw" class="form-control" aria-describedby="passwordHelp" name="pw">
             <div id="passwordHelp" class="form-text">
-            비밀번호는 8~15자리이고 영문, 숫자, 특수문자([!@#$%^*+=-)를 포함해야 합니다.
+                비밀번호는 8~15자리이고 영문, 숫자, 특수문자([!@#$%^*+=-)를 포함해야 합니다.
             </div>
         </div>
 
@@ -49,7 +52,7 @@
         <div class="mb-3">
             <div class="d-flex flex-row">
                 <label for="inputName" class="form-label">이름</label></div>
-            <input type="text" id="inputName" class="form-control">
+            <input type="text" id="inputName" class="form-control" name="name">
         </div>
 
         <!-- 닉네임 -->
@@ -58,28 +61,28 @@
                 <label for="inputNickname" class="form-label">별명</label>
                 <button class="btn btn-outline-primary btn-sm">별명 중복확인</button>
             </div>
-            <input type="text" id="inputNickname" class="form-control">
+            <input type="text" id="inputNickname" class="form-control" name="nickname">
             <span id="confirmNickname"></span>
         </div>
 
         <!-- 생년월일 -->
         <div class="mb-5">
             <div class="d-flex flex-row">
-                <label for="inputBirth" class="form-label">생년월일</label></div>
-            <input type="text" id="inputBirth" name="inputBirth" class="form-control" value="12/30/2023">
+                <label for="birth" class="form-label">생년월일</label></div>
+            <input type="text" id="birth" class="form-control" placeholder="1997-03-05" name="birth">
         </div>
 
         <div class="mb-3">
             <div class="d-flex flex-row">
-                <input type="text" id="sample6_postcode" placeholder="우편번호">
-                <button class="btn btn-outline-primary btn-sm">별명 중복확인" onclick="sample6_execDaumPostcode()">우편번호 찾기</button><br>
+                <input type="text" id="sample6_postcode" placeholder="우편번호" name="postcode">
+                <button class="btn btn-outline-primary btn-sm" onclick="sample6_execDaumPostcode()">우편번호 찾기</button><br>
             </div>
             <div class="mb-3">
-                <input type="text" class="form-control" id="sample6_address" placeholder="주소">
-                <input type="text" class="form-control" id="sample6_detailAddress" placeholder="상세주소">
+                <input type="text" class="form-control" id="sample6_address" placeholder="주소" name="frontAddress">
+                <input type="text" class="form-control" id="sample6_detailAddress" placeholder="상세주소" name="addressDetail">
             </div>
-    </div>
-
+        </div>
+        <input type="hidden" class="form-control" value="0" name="report">
         <div class="mb-3">
             <label for="formFile" class="form-label">프로필 사진</label>
             <input class="form-control" type="file" id="formFile">
@@ -87,6 +90,8 @@
         <div class="preview-box">
             <img src="/images/500.png" id="preview">
         </div>
+
+        <button>join</button>
     </form>
 
 </div>
@@ -100,7 +105,6 @@
 -->
 
 <!-- 우편번호 스크립트 -->
-<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 <script>
     function sample6_execDaumPostcode() {
         new daum.Postcode({
@@ -141,12 +145,28 @@
 <!-- Date Picker 스크립트 -->
 <script>
     $(function() {
-      $('input[name="inputBirth"]').daterangepicker({
-        singleDatePicker: true,
-        showDropdowns: true,
-        minYear: 1907,
-        maxYear: parseInt(moment().format('YYYY'),10)
-      });
+        //input을 datepicker로 선언
+        $("#birth").datepicker({
+            dateFormat: 'yy-mm-dd' //달력 날짜 형태
+            ,showOtherMonths: true //빈 공간에 현재월의 앞뒤월의 날짜를 표시
+            ,showMonthAfterYear:true // 월- 년 순서가아닌 년도 - 월 순서
+            ,changeYear: true //option값 년 선택 가능
+            ,changeMonth: true //option값  월 선택 가능
+            ,showOn: "both" //button:버튼을 표시하고,버튼을 눌러야만 달력 표시 ^ both:버튼을 표시하고,버튼을 누르거나 input을 클릭하면 달력 표시
+            ,buttonImage: "http://jqueryui.com/resources/demos/datepicker/images/calendar.gif" //버튼 이미지 경로
+            ,buttonImageOnly: true //버튼 이미지만 깔끔하게 보이게함
+            ,buttonText: "선택" //버튼 호버 텍스트
+            ,yearSuffix: "년" //달력의 년도 부분 뒤 텍스트
+            ,monthNamesShort: ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'] //달력의 월 부분 텍스트
+            ,monthNames: ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'] //달력의 월 부분 Tooltip
+            ,dayNamesMin: ['일','월','화','수','목','금','토'] //달력의 요일 텍스트
+            ,dayNames: ['일요일','월요일','화요일','수요일','목요일','금요일','토요일'] //달력의 요일 Tooltip
+            ,minDate: "-100Y" //최소 선택일자(-1D:하루전, -1M:한달전, -1Y:일년전)
+            ,maxDate: "+0D" //최대 선택일자(+1D:하루후, -1M:한달후, -1Y:일년후)
+        });
+
+        //초기값을 오늘 날짜로 설정해줘야 합니다.
+        $('#datepicker').datepicker('setDate', 'today'); //(-1D:하루전, -1M:한달전, -1Y:일년전), (+1D:하루후, -1M:한달후, -1Y:일년후)
     });
 </script>
 </html>
