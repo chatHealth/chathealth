@@ -1,11 +1,12 @@
 package chathealth.chathealth.exception;
 
+import static chathealth.chathealth.constants.Constants.PASSWORD_NOT_EQUAL;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+
 public class PasswordNotEqual extends ChatHealthException {
 
-    private static final String MESSAGE = "비밀번호가 일치하지 않습니다.";
-
     public PasswordNotEqual() {
-        super(MESSAGE);
+        super(PASSWORD_NOT_EQUAL.getMessage());
     }
 
     public PasswordNotEqual(String message) {
@@ -14,6 +15,6 @@ public class PasswordNotEqual extends ChatHealthException {
 
     @Override
     public int getStatusCode() {
-        return 400;
+        return BAD_REQUEST.value();
     }
 }

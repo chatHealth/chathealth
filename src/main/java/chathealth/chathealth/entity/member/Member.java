@@ -47,9 +47,7 @@ public abstract class Member extends BaseEntity {
     @OneToMany(mappedBy = "member")
     private final List<BoardReply> boardReplyList = new ArrayList<>();
 
-    protected void update(Address address, String pw) {
-        this.address = address;
-        this.pw = pw;
+    protected void update(Address address) {
+        if(address != null) this.address = address;
     }
-
 }

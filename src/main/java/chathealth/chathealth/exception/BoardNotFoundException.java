@@ -1,15 +1,16 @@
 package chathealth.chathealth.exception;
 
+import static chathealth.chathealth.constants.Constants.BOARD_NOT_FOUND;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
+
 public class BoardNotFoundException extends ChatHealthException {
 
-    private static final String MESSAGE = "존재하지 않는 게시글 입니다.";
-
     public BoardNotFoundException() {
-        super(MESSAGE);
+        super(BOARD_NOT_FOUND.getMessage());
     }
 
     @Override
     public int getStatusCode() {
-        return 404;
+        return NOT_FOUND.value();
     }
 }

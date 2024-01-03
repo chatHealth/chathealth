@@ -1,15 +1,17 @@
 package chathealth.chathealth.exception;
 
+import chathealth.chathealth.constants.Constants;
+
+import static org.springframework.http.HttpStatus.NOT_FOUND;
+
 public class UserNotFound extends ChatHealthException {
 
-    private static final String MESSAGE = "존재하지 않는 유저입니다.";
-
     public UserNotFound() {
-        super(MESSAGE);
+        super(Constants.USER_NOT_FOUND.getMessage());
     }
 
     @Override
     public int getStatusCode() {
-        return 404;
+        return NOT_FOUND.value();
     }
 }

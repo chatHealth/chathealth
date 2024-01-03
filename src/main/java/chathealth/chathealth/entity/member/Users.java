@@ -1,5 +1,6 @@
 package chathealth.chathealth.entity.member;
 
+import chathealth.chathealth.dto.request.UserEditDto;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import lombok.*;
@@ -17,8 +18,8 @@ public class Users extends Member{
     private String nickname;
     private Grade grade;
 
-    public void update(String nickname, Address address, String password) {
-        this.nickname = nickname;
-        super.update(address, password);
+    public void update(UserEditDto userEditDto) {
+        if(userEditDto.getNickname() != null) this.nickname = userEditDto.getNickname();
+        super.update(userEditDto.getAddress());
     }
 }

@@ -5,12 +5,17 @@ import chathealth.chathealth.dto.request.UserEditDto;
 import chathealth.chathealth.dto.response.EntInfoDto;
 import chathealth.chathealth.dto.response.UserInfoDto;
 import chathealth.chathealth.entity.member.Ent;
+import chathealth.chathealth.entity.member.Member;
+import chathealth.chathealth.entity.member.Role;
 import chathealth.chathealth.entity.member.Users;
-import chathealth.chathealth.exception.PasswordNotEqual;
 import chathealth.chathealth.exception.UserNotFound;
 import chathealth.chathealth.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+import static chathealth.chathealth.entity.member.Role.*;
 
 
 @Service
@@ -19,8 +24,14 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
 
+
     public UserInfoDto getUserInfo(Long id) {
-        Users findUser = getUsers(id);
+
+        Member member = memberRepository.findById(id).orElseThrow(
+                UserNotFound::new
+        );
+
+        Users findUser = toUser(member);
 
         return UserInfoDto.builder()
                 .id(findUser.getId())
@@ -36,7 +47,11 @@ public class MemberService {
     }
 
     public EntInfoDto getEntInfo(Long id) {
-        Ent findEnt = getEnt(id);
+        Member member = memberRepository.findById(id).orElseThrow(
+                UserNotFound::new
+        );
+
+        Ent findEnt = toEnt(member);
 
         return EntInfoDto.builder()
                 .id(findEnt.getId())
@@ -53,44 +68,36 @@ public class MemberService {
     }
 
     public void updateUserInfo(Long id, UserEditDto userEditDto) {
-        Users findUser = getUsers(id);
+        Member member = memberRepository.findById(id).orElseThrow(
+                UserNotFound::new
+        );
+        Users findUser = toUser(member);
 
-        if (!findUser.getPw().equals(userEditDto.getPw())) {
-            throw new PasswordNotEqual();
-        } else if (!userEditDto.getNewPw().equals(userEditDto.getNewPwCheck())) {
-            throw new PasswordNotEqual("새로운 비밀번호가 일치하지 않습니다.");
-        }
-
-        findUser.update(userEditDto.getNickname() != null ? userEditDto.getNickname() : findUser.getNickname(),
-                userEditDto.getAddress() != null? userEditDto.getAddress() : findUser.getAddress(),
-                userEditDto.getNewPw());
+        findUser.update(userEditDto);
     }
 
     public void updateEntInfo(Long id, EntEditDto entEditDto) {
-        Ent findEnt = getEnt(id);
+        Member member = memberRepository.findById(id).orElseThrow(
+                UserNotFound::new
+        );
+        Ent findEnt = toEnt(member);
 
-        if (!findEnt.getPw().equals(entEditDto.getPw())) {
-            throw new PasswordNotEqual();
-        } else if (!entEditDto.getNewPw().equals(entEditDto.getNewPwCheck())) {
-            throw new PasswordNotEqual("새로운 비밀번호가 일치하지 않습니다.");
+        findEnt.update(entEditDto);
+    }
+
+    private static Users toUser(Member member) {
+        if (member.getRole() != USER) {
+            throw new UserNotFound();
         }
-
-        findEnt.update(entEditDto.getCeo() != null ? entEditDto.getCeo() : findEnt.getCeo(),
-                entEditDto.getCompany() != null ? entEditDto.getCompany() : findEnt.getCompany(),
-                entEditDto.getAddress() != null ? entEditDto.getAddress() : findEnt.getAddress(),
-                entEditDto.getNewPw());
-
+        return (Users) member;
     }
 
-    private Users getUsers(Long id) {
-        return (Users) memberRepository.findById(id).orElseThrow(
-                UserNotFound::new
-        );
-    }
+    private static Ent toEnt(Member member) {
+        List<Role> entRole = List.of(PERMITTED_ENT, REJECTED_ENT, WAITING_ENT);
 
-    private Ent getEnt(Long id) {
-        return (Ent) memberRepository.findById(id).orElseThrow(
-                UserNotFound::new
-        );
+        if (!entRole.contains(member.getRole())) {
+            throw new UserNotFound();
+        }
+        return (Ent) member;
     }
 }
