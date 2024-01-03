@@ -1,5 +1,6 @@
 package chathealth.chathealth.entity.member;
 
+import chathealth.chathealth.dto.request.EntEditDto;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import lombok.Getter;
@@ -18,9 +19,9 @@ public class Ent extends Member{
     private String ceo;
     private String entNo;
 
-    public void update(String ceo, String company,Address address, String password) {
-        this.ceo = ceo;
-        this.company = company;
-        super.update(address, password);
+    public void update(EntEditDto entEditDto) {
+        if(entEditDto.getCeo() != null) this.ceo = entEditDto.getCeo();
+        if(entEditDto.getCompany()!=null) this.company = entEditDto.getCompany();
+        super.update(entEditDto.getAddress());
     }
 }
