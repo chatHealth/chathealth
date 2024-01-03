@@ -17,4 +17,10 @@ public class Ent extends Member{
     private String company;
     private String ceo;
     private String entNo;
+
+    public void update(String ceo, String company,Address address, String password) {
+        this.ceo = ceo;
+        this.company = company;
+        super.update(address, password);
+    }
 }
