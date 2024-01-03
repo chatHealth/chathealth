@@ -1,11 +1,15 @@
 package chathealth.chathealth.service;
 
+import chathealth.chathealth.dto.request.BoardSearchDto;
 import chathealth.chathealth.dto.response.BoardResponse;
 import chathealth.chathealth.entity.borad.Board;
 import chathealth.chathealth.exception.BoardNotFoundException;
 import chathealth.chathealth.repository.board.BoardRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -20,6 +24,20 @@ public class BoardService {
     //게시글 삭제 soft delete
 
     //게시글 목록 조회
+    public List<BoardResponse> getBoards(BoardSearchDto boardSearchDto){
+
+        return boardRepository.getBoards(boardSearchDto).stream().map(board -> BoardResponse.builder()
+                .boardId(board.getId())
+                .title(board.getTitle())
+                .createdDate(board.getCreatedDate())
+                .memberId(board.getUser().getId())
+                .nickname(board.getUser().getNickname())
+                .grade(board.getUser().getGrade())
+                .commentCount(board.getBoardCommentList().size())
+                .hit(board.getBoardHitList().size())
+                .build())
+                .collect(Collectors.toList());
+    }
 
     //게시글 조회
     public BoardResponse getBoard(long id) {

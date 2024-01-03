@@ -34,6 +34,7 @@ public abstract class Member extends BaseEntity {
     private Address address;
     @Column(length = 1000)
     private String profile;
+    @Enumerated(EnumType.STRING)
     private Role role;
     private int report;
     private LocalDateTime deletedDate;
