@@ -26,8 +26,9 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom {
                         contentContains(boardSearchDto.getContent()),
                         writerContains(boardSearchDto.getWriter()))
                 .join(board.user, users)
-                .limit(10)
-                .offset(20)
+                .fetchJoin()
+                .limit(boardSearchDto.getSize())
+                .offset(boardSearchDto.getOffset())
                 .orderBy(board.createdDate.desc())
                 .fetch();
     }

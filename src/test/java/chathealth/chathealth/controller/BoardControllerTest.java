@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,6 +35,7 @@ class BoardControllerTest {
     MockMvc mockMvc;
 
     @Test
+    @WithMockUser
     @DisplayName("게시물 1개 조회")
     public void getBoard() throws Exception{
         //given
@@ -67,5 +69,33 @@ class BoardControllerTest {
                 .andExpect(jsonPath("$.grade").value(BLACK.toString()))
                 .andExpect(jsonPath("$.commentCount").value(board.getBoardCommentList().size()))
                 .andExpect(jsonPath("$.hit").value(board.getBoardHitList().size()));
+    }
+
+    @Test
+    @WithMockUser
+    @DisplayName("게시물 목록 조회")
+    public void getBoards() throws Exception{
+        //given
+        Users user = Users.builder()
+                .nickname("장공오일")
+                .grade(BLACK)
+                .profile("profilePicture")
+                .build();
+        memberRepository.save(user);
+//
+        for (int i = 0; i < 100; i++) {
+            Board board = Board.builder()
+                    .title("제목입니다.")
+                    .content("내용입니다.")
+                    .user(user)
+                    .category(FREE)
+                    .build();
+            boardRepository.save(board);
+        }
+
+        //expected
+        mockMvc.perform(get("/board")
+                        .contentType(APPLICATION_JSON))
+                .andExpect(status().isOk());
     }
 }

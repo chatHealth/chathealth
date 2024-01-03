@@ -1,20 +1,14 @@
 spring:
   profiles:
-    active: prod # application-prod
+    active: dev # application-prod
   output:
     ansi:
       enabled: always
 
-  devtools:
-    livereload:
-      enabled: true
-    restart:
-      enabled: true
-
   jpa:
     open-in-view: true
     hibernate:
-      ddl-auto: create  # create # update
+      ddl-auto: none  # create # update
 
     properties:
       hibernate:
@@ -29,7 +23,7 @@ logging:
 decorator:
   datasource:
     p6spy:
-      enable-logging: true
+      enable-logging: false
 
 
   ## high quality img  ##

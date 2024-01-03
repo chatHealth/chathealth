@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static chathealth.chathealth.entity.borad.Category.FREE;
@@ -75,6 +76,7 @@ class BoardServiceTest {
                 .build();
         memberRepository.save(user);
 //
+        List<Board> boardList = new ArrayList<>();
         for (int i = 0; i < 100; i++) {
             Board board = Board.builder()
                     .title("제목입니다.")
@@ -82,17 +84,17 @@ class BoardServiceTest {
                     .user(user)
                     .category(FREE)
                     .build();
-            boardRepository.save(board);
+            boardList.add(board);
         }
+            boardRepository.saveAll(boardList);
 
         BoardSearchDto boardSearchDto = BoardSearchDto.builder()
                 .category(FREE)
-                .writer("제목")
                 .build();
 
         //when
         List<BoardResponse> boards = boardService.getBoards(boardSearchDto);
         //then
-        assertThat(boards.size()).isEqualTo(10);
+        assertThat(boards.size()).isEqualTo(20);
     }
 }
