@@ -17,7 +17,7 @@ public class SecurityConfig {
     }
 
 
- @Bean
+    @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.authorizeHttpRequests((auth)->auth
                         .requestMatchers("/","/auth/join","/auth/login","/css/**","/js/**")

@@ -1,16 +1,26 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org"
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout/layout}">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Chat Health</title>
 </head>
 <body>
 <div>
     <h1>로그인</h1>
-    <form>
+    <form method="post" action="/auth/login">
+        <div class="mb-3">
+                <label for="loginId" class="form-label">이메일</label>
+            <input type="email" id="loginId" class="form-control" name="username">
+        </div>
 
+        <div class="mb-3">
+            <label for="loginPw" class="form-label">비밀번호</label>
+            <input type="password" id="loginPw" class="form-control" name="pw">
+        </div>
+
+        <button>log in</button>
     </form>
 </div>
 </body>

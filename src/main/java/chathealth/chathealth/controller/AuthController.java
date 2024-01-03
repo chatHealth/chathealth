@@ -26,7 +26,6 @@ import java.time.format.DateTimeFormatter;
 public class AuthController {
 
  private final AuthService authService;
- //private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @GetMapping("/join")
     public String join(Model model) {
@@ -54,10 +53,20 @@ public class AuthController {
                 .grade(Grade.BRONZE)
                 .report(0)
                 .build();
-
+        log.info(String.valueOf(insertUserDto));
         authService.join(insertUserDto);
 
 
         return "auth/userjoin";
+    }
+
+    @GetMapping("/login")
+    public String login() {
+        return "auth/login";
+    }
+
+    @PostMapping("/login")
+    public String loginProcess(){
+        return "auth/join";
     }
 }
