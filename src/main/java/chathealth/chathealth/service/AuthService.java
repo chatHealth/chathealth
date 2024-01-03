@@ -27,7 +27,7 @@ public class AuthService implements UserDetailsService {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Transactional
-    public  Member join(UserJoinDto userJoinDto) {
+    public void join(UserJoinDto userJoinDto) {
         Member dbJoinUser = Users.builder()
                 .id(userJoinDto.getId())
                 .pw(bCryptPasswordEncoder.encode(userJoinDto.getPw()))
@@ -39,7 +39,7 @@ public class AuthService implements UserDetailsService {
                 .grade(Grade.BRONZE)
                 .report(0)
                 .build();
-        return memberRepository.save(dbJoinUser);
+        memberRepository.save(dbJoinUser);
     }
 
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException{

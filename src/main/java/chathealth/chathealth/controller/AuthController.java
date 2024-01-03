@@ -55,8 +55,6 @@ public class AuthController {
                 .build();
         log.info(String.valueOf(insertUserDto));
         authService.join(insertUserDto);
-
-
         return "redirect:/auth/join";
     }
 
