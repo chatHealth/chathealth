@@ -1,10 +1,13 @@
 package chathealth.chathealth.controller;
 
 import chathealth.chathealth.dto.request.BoardCreateDto;
-import chathealth.chathealth.entity.borad.Board;
+import chathealth.chathealth.dto.request.BoardEditDto;
+import chathealth.chathealth.entity.board.Board;
 import chathealth.chathealth.entity.member.Users;
+import chathealth.chathealth.exception.UserNotFound;
 import chathealth.chathealth.repository.MemberRepository;
 import chathealth.chathealth.repository.board.BoardRepository;
+import chathealth.chathealth.service.BoardService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,17 +16,17 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.context.support.WithUserDetails;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.transaction.BeforeTransaction;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
-import static chathealth.chathealth.entity.borad.Category.FREE;
+import static chathealth.chathealth.entity.board.Category.FREE;
 import static chathealth.chathealth.entity.member.Grade.BLACK;
 import static chathealth.chathealth.entity.member.Grade.SILVER;
+import static chathealth.chathealth.entity.member.Role.USER;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -36,6 +39,8 @@ class BoardControllerTest {
     BoardController boardController;
     @Autowired
     BoardRepository boardRepository;
+    @Autowired
+    BoardService boardService;
     @Autowired
     MemberRepository memberRepository;
     @Autowired
@@ -109,13 +114,16 @@ class BoardControllerTest {
     }
 
     @BeforeTransaction
-    @Rollback(value = false)
     public void init() {
+        boardRepository.deleteAll();
+        memberRepository.deleteAll();
+
         Users user = Users.builder()
                 .nickname("짱공오")
                 .grade(SILVER)
                 .email("jjang051@hanmail.net")
                 .profile("프사입니당")
+                .role(USER)
                 .build();
         memberRepository.save(user);
         Users user2 = Users.builder()
@@ -123,26 +131,55 @@ class BoardControllerTest {
                 .grade(SILVER)
                 .email("jjang051@hanmail.com")
                 .profile("프사입니당")
+                .role(USER)
                 .build();
         memberRepository.save(user2);
     }
     @Test
     @DisplayName("게시물 생성")
-    @Rollback(value = false)
+//    @Rollback(value = false)
     @WithUserDetails(value = "jjang051@hanmail.com")
     public void createBoard() throws Exception{
-        //given
+//        given
         BoardCreateDto boardCreateDto = BoardCreateDto.builder()
                 .title("제목ㅋㅋㅋ")
                 .content("내용ㅋㅋㅋ")
                 .category(FREE)
                 .build();
 
-        //expected
+//        expected
         mockMvc.perform(post("/board")
                         .contentType(APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(boardCreateDto)))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andDo(print());
+    }
 
+    @Test
+    @DisplayName("게시물 수정")
+//    @Rollback(value = false)
+    @WithUserDetails(value = "jjang051@hanmail.com")
+    public void updateBoard() throws Exception{
+        //given
+        Users user = (Users) memberRepository.findByEmail("jjang051@hanmail.com").orElseThrow(UserNotFound::new);
+        Board board = Board.builder()
+                .title("제목ㅋㅋㅋ")
+                .content("내용ㅋㅋㅋ")
+                .category(FREE)
+                .user(user)
+                .build();
+        Board saveBoard = boardRepository.save(board);
+
+        BoardEditDto boardEditDto = BoardEditDto.builder()
+                .title("제목수정")
+                .content("내용수정")
+                .build();
+
+        //expected
+        mockMvc.perform(patch("/board/{id}", saveBoard.getId())
+                        .contentType(APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(boardEditDto)))
+                .andExpect(status().isOk())
+                .andDo(print());
     }
 }
