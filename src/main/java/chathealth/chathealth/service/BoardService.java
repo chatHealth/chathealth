@@ -1,11 +1,16 @@
 package chathealth.chathealth.service;
 
 import chathealth.chathealth.dto.request.BoardCreateDto;
+import chathealth.chathealth.dto.request.BoardEditDto;
 import chathealth.chathealth.dto.request.BoardSearchDto;
 import chathealth.chathealth.dto.response.BoardResponse;
-import chathealth.chathealth.entity.borad.Board;
+import chathealth.chathealth.entity.board.Board;
+import chathealth.chathealth.entity.board.Category;
+import chathealth.chathealth.entity.member.Member;
+import chathealth.chathealth.entity.member.Role;
 import chathealth.chathealth.entity.member.Users;
 import chathealth.chathealth.exception.BoardNotFoundException;
+import chathealth.chathealth.exception.NotPermitted;
 import chathealth.chathealth.exception.UserNotFound;
 import chathealth.chathealth.repository.MemberRepository;
 import chathealth.chathealth.repository.board.BoardRepository;
@@ -27,37 +32,57 @@ public class BoardService {
     //게시글 생성
     public Board createBoard(BoardCreateDto boardCreateDto, Long id) {
 
+        Member member = memberRepository.findById(id).orElseThrow(UserNotFound::new);
+
+        List<Role> entRoles = List.of(Role.WAITING_ENT, Role.WAITING_ENT, Role.REJECTED_ENT);
+        if (entRoles.contains(member.getRole())) {
+            throw new NotPermitted("사업자는 게시글을 작성할 수 없습니다.");
+        }
+
+        if (member.getRole().equals(Role.USER) && boardCreateDto.getCategory().equals(Category.NOTICE)) {
+            throw new NotPermitted();
+        }
+
         Board board = Board.builder()
                 .title(boardCreateDto.getTitle())
                 .content(boardCreateDto.getContent())
                 .category(boardCreateDto.getCategory())
-                .user((Users) memberRepository.findById(id).orElseThrow(UserNotFound::new))
+                .user((Users) member)
                 .build();
 
         return boardRepository.save(board);
     }
 
     //게시글 수정
+    public void updateBoard(BoardEditDto boardEditDto, Long memberId, Long boardId) {
+
+        Board findBoard = boardRepository.findById(boardId).orElseThrow(BoardNotFoundException::new);
+        if (!findBoard.getUser().getId().equals(memberId)) {
+            throw new NotPermitted();
+        }
+
+        findBoard.update(boardEditDto);
+    }
 
     //게시글 삭제 soft delete
 
     //게시글 목록 조회
-    public List<BoardResponse> getBoards(BoardSearchDto boardSearchDto){
+    public List<BoardResponse> getBoards(BoardSearchDto boardSearchDto) {
 
         log.info("page==={}", boardSearchDto.getPage());
         log.info("size==={}", boardSearchDto.getSize());
         log.info("offset==={}", boardSearchDto.getOffset());
 
         return boardRepository.getBoards(boardSearchDto).stream().map(board -> BoardResponse.builder()
-                .boardId(board.getId())
-                .title(board.getTitle())
-                .createdDate(board.getCreatedDate())
-                .memberId(board.getUser().getId())
-                .nickname(board.getUser().getNickname())
-                .grade(board.getUser().getGrade())
-                .commentCount(board.getBoardCommentList().size())
-                .hit(board.getBoardHitList().size())
-                .build())
+                        .boardId(board.getId())
+                        .title(board.getTitle())
+                        .createdDate(board.getCreatedDate())
+                        .memberId(board.getUser().getId())
+                        .nickname(board.getUser().getNickname())
+                        .grade(board.getUser().getGrade())
+                        .commentCount(board.getBoardCommentList().size())
+                        .hit(board.getBoardHitList().size())
+                        .build())
                 .collect(Collectors.toList());
     }
 
@@ -66,7 +91,7 @@ public class BoardService {
         Board board = boardRepository.findById(id).orElseThrow(BoardNotFoundException::new);
 
         // 삭제된 게시물은 조회 불가
-        if(board.getDeletedDate() != null){
+        if (board.getDeletedDate() != null) {
             throw new BoardNotFoundException();
         }
 

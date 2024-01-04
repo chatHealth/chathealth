@@ -7,17 +7,17 @@ import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-public class BoardCreateDto {
+public class BoardEditDto {
 
     @NotBlank(message = "제목을 입력해주세요.")
-    private String title;
+    public String title;
     @NotBlank(message = "내용을 입력해주세요.")
-    private String content;
+    public String content;
     @NotNull(message = "카테고리를 선택해주세요.")
-    private Category category;
+    public Category category;
 
     @Builder
-    public BoardCreateDto(String title, String content, Category category) {
+    public BoardEditDto(String title, String content, Category category) {
         this.title = title;
         this.content = content;
         this.category = category;

@@ -1,5 +1,6 @@
-package chathealth.chathealth.entity.borad;
+package chathealth.chathealth.entity.board;
 
+import chathealth.chathealth.dto.request.BoardEditDto;
 import chathealth.chathealth.entity.BaseEntity;
 import chathealth.chathealth.entity.BoardComment;
 import chathealth.chathealth.entity.BoardHit;
@@ -53,4 +54,9 @@ public class Board extends BaseEntity {
     @OneToMany(mappedBy = "board")
     private final List<BoardComment> boardCommentList = new ArrayList<>();
 
+    public void update(BoardEditDto boardEditDto) {
+        if (boardEditDto.getTitle() != null) this.title = boardEditDto.getTitle();
+        if (boardEditDto.getContent() != null) this.content = boardEditDto.getContent();
+        if (boardEditDto.getCategory() != null) this.category = boardEditDto.getCategory();
+    }
 }
