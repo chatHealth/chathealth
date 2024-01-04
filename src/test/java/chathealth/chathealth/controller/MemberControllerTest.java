@@ -2,7 +2,10 @@ package chathealth.chathealth.controller;
 
 import chathealth.chathealth.dto.request.EntEditDto;
 import chathealth.chathealth.dto.request.UserEditDto;
-import chathealth.chathealth.entity.member.*;
+import chathealth.chathealth.entity.member.Address;
+import chathealth.chathealth.entity.member.Ent;
+import chathealth.chathealth.entity.member.Grade;
+import chathealth.chathealth.entity.member.Users;
 import chathealth.chathealth.repository.MemberRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,12 +14,15 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 
-import static chathealth.chathealth.entity.member.Role.*;
+import static chathealth.chathealth.entity.member.Grade.*;
+import static chathealth.chathealth.entity.member.Role.USER;
+import static chathealth.chathealth.entity.member.Role.valueOf;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
@@ -47,6 +53,7 @@ class MemberControllerTest {
     }
 
     @Test
+    @WithMockUser
     @DisplayName("유저 정보 조회")
     public void test1() throws Exception {
         //given
@@ -55,7 +62,7 @@ class MemberControllerTest {
                 .nickname("짱공오일")
                 .email("jjang051.hanmail.net")
                 .pw("1234")
-                .grade(Grade.valueOf("BRONZE"))
+                .grade(BRONZE)
                 .role(USER)
                 .profile("profile0321984u32895")
                 .build();
@@ -75,6 +82,7 @@ class MemberControllerTest {
     }
 
     @Test
+    @WithMockUser
     public void test2() throws Exception {
         Ent ent = Ent.builder()
                 .email("jjang051@google.com")
@@ -108,6 +116,7 @@ class MemberControllerTest {
     }
 
     @Test
+    @WithMockUser
     @DisplayName("유저 정보 조회 실패")
     public void test3() throws Exception {
 //        given
@@ -130,6 +139,7 @@ class MemberControllerTest {
     }
 
     @Test
+    @WithMockUser
     @DisplayName("유저 정보 수정")
     public void test5() throws Exception {
         //given
@@ -165,6 +175,7 @@ class MemberControllerTest {
     }
 
     @Test
+    @WithMockUser
     @DisplayName("사업자 정보 수정")
     public void test9() throws Exception {
         //given

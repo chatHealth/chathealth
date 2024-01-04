@@ -1,5 +1,6 @@
 package chathealth.chathealth.service;
 
+import chathealth.chathealth.dto.request.BoardCreateDto;
 import chathealth.chathealth.dto.request.BoardSearchDto;
 import chathealth.chathealth.dto.response.BoardResponse;
 import chathealth.chathealth.entity.borad.Board;
@@ -10,8 +11,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static chathealth.chathealth.entity.borad.Category.FREE;
@@ -75,6 +78,7 @@ class BoardServiceTest {
                 .build();
         memberRepository.save(user);
 //
+        List<Board> boardList = new ArrayList<>();
         for (int i = 0; i < 100; i++) {
             Board board = Board.builder()
                     .title("제목입니다.")
@@ -82,17 +86,48 @@ class BoardServiceTest {
                     .user(user)
                     .category(FREE)
                     .build();
-            boardRepository.save(board);
+            boardList.add(board);
         }
+            boardRepository.saveAll(boardList);
 
         BoardSearchDto boardSearchDto = BoardSearchDto.builder()
                 .category(FREE)
-                .writer("제목")
                 .build();
 
         //when
         List<BoardResponse> boards = boardService.getBoards(boardSearchDto);
         //then
-        assertThat(boards.size()).isEqualTo(10);
+        assertThat(boards.size()).isEqualTo(20);
+    }
+    @Test
+    @DisplayName("게시글 생성")
+    @Rollback(value = false)
+    public void createBoard() throws Exception{
+        //given
+        Users user = Users.builder()
+                .nickname("장공오일")
+                .grade(BLACK)
+                .profile("profilePicture")
+                .build();
+        memberRepository.save(user);
+
+        BoardCreateDto board = BoardCreateDto.builder()
+                .title("제목입니다.")
+                .content("내용입니다.")
+                .category(FREE)
+                .build();
+        //when
+        Board savedBoard = boardService.createBoard(board, user.getId());
+
+        //then
+        BoardResponse findBoard = boardService.getBoard(savedBoard.getId());
+        assertThat(findBoard.getBoardId()).isEqualTo(savedBoard.getId());
+        assertThat(findBoard.getTitle()).isEqualTo("제목입니다.");
+        assertThat(findBoard.getContent()).isEqualTo("내용입니다.");
+        assertThat(findBoard.getCategory()).isEqualTo(FREE);
+        assertThat(findBoard.getCreatedDate()).isEqualTo(savedBoard.getCreatedDate());
+        assertThat(findBoard.getModifiedDate()).isEqualTo(savedBoard.getModifiedDate());
+        assertThat(findBoard.getMemberId()).isEqualTo(user.getId());
+        assertThat(findBoard.getNickname()).isEqualTo("장공오일");
     }
 }

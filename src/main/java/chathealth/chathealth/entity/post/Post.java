@@ -1,12 +1,11 @@
 package chathealth.chathealth.entity.post;
 
 import chathealth.chathealth.entity.BaseEntity;
+import chathealth.chathealth.entity.Review;
 import chathealth.chathealth.entity.member.Member;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.DynamicUpdate;
@@ -42,9 +41,6 @@ public class Post extends BaseEntity {
     @Column(length = 3000)
     private String content;
 
-
-    private Integer report;
-
     private LocalDateTime deletedDate;
 
 
@@ -66,11 +62,6 @@ public class Post extends BaseEntity {
     @OneToMany(mappedBy = "post")
     private List<MaterialPost> materialList;
 
-
-
-    // provide setter method
-//    public void update(String content) {
-//        this.content = content;
-//    }
-
+    @OneToMany(mappedBy = "post")
+    private List<Review> reviewList;
 }

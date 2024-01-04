@@ -37,7 +37,6 @@ public class AuthService implements UserDetailsService {
                 .email(userJoinDto.getEmail())
                 .name(userJoinDto.getName())
                 .grade(Grade.BRONZE)
-                .report(0)
                 .build();
         memberRepository.save(dbJoinUser);
     }

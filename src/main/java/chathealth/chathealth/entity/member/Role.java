@@ -10,7 +10,6 @@ public enum Role {
     WAITING_ENT("role_waiting_ent"),
     PERMITTED_ENT("role_permitted_ent"),
     REJECTED_ENT("role_rejected_ent"),
-    ADMIN("role_admin"),
-    ANONYMOUS("role_anonymous");
+    ADMIN("role_admin");
     private final String role;
 }
