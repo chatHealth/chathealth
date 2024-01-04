@@ -20,22 +20,22 @@
 <body>
 <div class="container scroll-container" style="width: 760px;">
     <h1>회원가입</h1>
-    <form method="post" action="/auth/join">
+    <form method="post" action="/auth/join" th:action="@{/auth/join}" id="registrationForm">
         <!-- 이메일 -->
         <div class="mb-3">
             <div class="d-flex flex-row">
-                <label for="inputEmail" class="form-label">이메일</label>
-                <button class="btn btn-outline-primary btn-sm">이메일 중복확인</button>
+                <label for="inputEmail" class="form-label">이메일</label><p style="color: red;">*</p>
+                <button type="button" id="confirmEmail" class="btn btn-outline-primary btn-sm">이메일 중복확인</button>
             </div>
-            <input type="email" id="inputEmail" class="form-control" name="email">
-            <span id="confirmEmail"></span>
+            <input type="email" id="inputEmail" class="form-control" name="email" required>
+            <span id="isConfirmed"></span>
         </div>
 
         <!-- 비밀번호 -->
         <div class="mb-5">
             <div class="d-flex flex-row">
-                <label for="inputPw" class="form-label">비밀번호</label></div>
-            <input type="password" id="inputPw" class="form-control" aria-describedby="passwordHelp" name="pw">
+                <label for="inputPw" class="form-label">비밀번호</label><p style="color: red;">*</p></div>
+            <input type="password" id="inputPw" class="form-control" aria-describedby="passwordHelp" name="pw" required>
             <div id="passwordHelp" class="form-text">
                 비밀번호는 8~15자리이고 영문, 숫자, 특수문자([!@#$%^*+=-)를 포함해야 합니다.
             </div>
@@ -43,44 +43,46 @@
 
         <div class="mb-3">
             <div class="d-flex flex-row">
-                <label for="checkPw" class="form-label">비밀번호 확인</label></div>
-            <input type="password" id="checkPw" class="form-control">
+                <label for="checkPw" class="form-label">비밀번호 확인</label><p style="color: red;">*</p></div>
+            <input type="password" id="checkPw" class="form-control" required>
             <span id="confirmPw"></span>
         </div>
 
         <!-- 이름 -->
         <div class="mb-3">
             <div class="d-flex flex-row">
-                <label for="inputName" class="form-label">이름</label></div>
-            <input type="text" id="inputName" class="form-control" name="name">
+                <label for="inputName" class="form-label">이름</label><p style="color: red;">*</p></div>
+            <input type="text" id="inputName" class="form-control" name="name" required>
         </div>
 
         <!-- 닉네임 -->
         <div class="mb-3">
             <div class="d-flex flex-row">
-                <label for="inputNickname" class="form-label">별명</label>
-                <button class="btn btn-outline-primary btn-sm">별명 중복확인</button>
+                <label for="inputNickname" class="form-label">별명</label><p style="color: red;">*</p>
             </div>
-            <input type="text" id="inputNickname" class="form-control" name="nickname">
+            <input type="text" id="inputNickname" class="form-control" name="nickname" required>
             <span id="confirmNickname"></span>
         </div>
 
         <!-- 생년월일 -->
         <div class="mb-5">
             <div class="d-flex flex-row">
-                <label for="birth" class="form-label">생년월일</label></div>
-            <input type="text" id="birth" class="form-control" placeholder="1997-03-05" name="birth">
+                <label for="birth" class="form-label">생년월일</label><p style="color: red;">*</p></div>
+            <input type="text" id="birth" class="form-control" placeholder="1997-03-05" name="birth" required>
         </div>
 
+        <!-- 주소 -->
         <div class="mb-3">
             <div class="d-flex flex-row">
-                <input type="text" id="sample6_postcode" placeholder="우편번호" name="postcode">
-                <button class="btn btn-outline-primary btn-sm" onclick="sample6_execDaumPostcode()">우편번호 찾기</button><br>
-            </div>
-            <div class="mb-3">
-                <input type="text" class="form-control" id="sample6_address" placeholder="주소" name="frontAddress">
-                <input type="text" class="form-control" id="sample6_detailAddress" placeholder="상세주소" name="addressDetail">
-            </div>
+                <label class="form-label">주소</label></br><p style="color: red;">*</p></div>
+            <input type="text" id="sample4_postcode" placeholder="우편번호" name="postcode">
+            <input type="button" class=" btn btn-sm btn-outline-primary" onclick="sample4_execDaumPostcode()"
+                   value="우편번호 찾기"><br>
+            <input type="text" id="sample4_roadAddress" placeholder="도로명주소" name="address" required>
+            <input type="text" id="sample4_jibunAddress" placeholder="지번주소">
+            <span id="guide" style="color: #999; display: none" type="hidden"></span></br>
+            <input type="text" id="sample4_detailAddress" placeholder="상세주소" name="addressDetail">
+            <input type="text" class="hidden" id="sample4_extraAddress" placeholder="참고항목">
         </div>
         <input type="hidden" class="form-control" value="0" name="report">
         <div class="mb-3">
@@ -91,57 +93,149 @@
             <img src="/images/500.png" id="preview">
         </div>
 
-        <button>join</button>
+        <button class="btn btn-outline-primary" id="submitBtn">join</button>
     </form>
 
 </div>
 </body>
 
-
-<!-- 비밀번호 영문 숫자 특수문자 검증 정규식
+<!-- email 중복확인 -->
 <script>
-    let reg = /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,15}$/
+    $('#confirmEmail').on('click', function(e) {
+        e.preventDefault();
+      if ($("#inputEmail").val().trim() === "") {
+         alert("이메일은 반드시 입력해야합니다.");
+         $("#inputEmail").val('');
+         $("#inputEmail").focus();
+         return false;
+      }
+        $.ajax({
+            url:'/auth/confirmEmail', //Controller에서 요청 받을 주소
+            method:"POST", //POST 방식으로 전달
+            data:{"email" : $("#inputEmail").val()},
+            success:function(response){ //컨트롤러에서 넘어온 cnt값을 받는다
+                console.log(response);
+                if(response.isCount == 0){ //count가 0이면 -> 사용 가능한 아이디
+                    $("#isConfirmed").text("사용 가능한 이메일입니다.").css('color', 'green')
+                    $("#isConfirmed").addClass("yes");
+                } else { // count가 0이 아닌 경우 -> 이미 존재하는 아이디
+                    $("#isConfirmed").text("이미 사용중인 이메일입니다. 다시 입력해주세요.").css('color', 'red')
+                    $('#inputEmail').val('');
+                    $('#inputEmail').focus;
+                }
+            },
+            error:function(){
+                alert("알수 없는 오류가 발생했습니다. 관리자에게 문의해주시기 바랍니다.");
+            }
+        });
+        });
 </script>
--->
-
-<!-- 우편번호 스크립트 -->
+<!-- 비밀번호 영문 숫자 특수문자 검증-->
 <script>
-    function sample6_execDaumPostcode() {
+    $(document).ready(function () {
+        var passwordInput = $('#inputPw');
+        var passwordHelp = $('#passwordHelp');
+        var validationInterval;
+
+        passwordInput.on('keyup', function () {
+            clearInterval(validationInterval); // 키 입력이 있을 때마다 기존 타이머 해제
+            validationInterval = setInterval(validatePassword, 1000); // 2초마다 검증 실행
+        });
+
+        function validatePassword() {
+            var password = passwordInput.val();
+            var regex = /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,15}$/;
+
+            if (regex.test(password)) {
+                passwordHelp.text('사용가능한 비밀번호입니다.').removeClass('text-danger').addClass('text-success');
+                passwordHelp.addClass("yes");
+            } else {
+                passwordHelp.text('비밀번호는 8~15자리이고 영문, 숫자, 특수문자를 포함해야 합니다.').removeClass('text-success').addClass('text-danger');
+            }
+        }
+    });
+</script>
+<!-- 비밀번호 확인 스크립트 -->
+<script>
+$(document).ready(function () {
+    var inputPw = $('#inputPw');
+    var checkPw = $('#checkPw');
+    var confirmPw = $('#confirmPw');
+
+    inputPw.on('keyup', checkPasswordMatch);
+    checkPw.on('keyup', checkPasswordMatch);
+
+    function checkPasswordMatch() {
+        if (inputPw.val() === checkPw.val()) {
+            // 비밀번호 일치
+            confirmPw.text("비밀번호가 일치합니다.").css('color', 'green');
+            confirmPw.addClass("yes");
+        } else {
+            // 비밀번호 불일치 시 사용자 정의 유효성 메시지 설정
+            confirmPw.text("비밀번호가 일치하지 않습니다.").css('color', 'red');
+            confirmPw.removeClass("yes")
+        }
+    }
+});
+</script>
+<!-- 우편번호 및 주소 스크립트 -->
+<script>
+    //본 예제에서는 도로명 주소 표기 방식에 대한 법령에 따라, 내려오는 데이터를 조합하여 올바른 주소를 구성하는 방법을 설명합니다.
+    function sample4_execDaumPostcode() {
         new daum.Postcode({
             oncomplete: function(data) {
-                var addr = '';
-                var extraAddr = '';
+                // 팝업에서 검색결과 항목을 클릭했을때 실행할 코드를 작성하는 부분.
 
-                if (data.userSelectedType === 'R') {
-                    addr = data.roadAddress;
-                } else {
-                    addr = data.jibunAddress;
+                // 도로명 주소의 노출 규칙에 따라 주소를 표시한다.
+                // 내려오는 변수가 값이 없는 경우엔 공백('')값을 가지므로, 이를 참고하여 분기 한다.
+                var roadAddr = data.roadAddress; // 도로명 주소 변수
+                var extraRoadAddr = ''; // 참고 항목 변수
+
+                // 법정동명이 있을 경우 추가한다. (법정리는 제외)
+                // 법정동의 경우 마지막 문자가 "동/로/가"로 끝난다.
+                if(data.bname !== '' && /[동|로|가]$/g.test(data.bname)){
+                    extraRoadAddr += data.bname;
+                }
+                // 건물명이 있고, 공동주택일 경우 추가한다.
+                if(data.buildingName !== '' && data.apartment === 'Y'){
+                   extraRoadAddr += (extraRoadAddr !== '' ? ', ' + data.buildingName : data.buildingName);
+                }
+                // 표시할 참고항목이 있을 경우, 괄호까지 추가한 최종 문자열을 만든다.
+                if(extraRoadAddr !== ''){
+                    extraRoadAddr = ' (' + extraRoadAddr + ')';
                 }
 
-                if(data.userSelectedType === 'R'){
-                    if(data.bname !== '' && /[동|로|가]$/g.test(data.bname)){
-                        extraAddr += data.bname;
-                    }
-                    if(data.buildingName !== '' && data.apartment === 'Y'){
-                        extraAddr += (extraAddr !== '' ? ', ' + data.buildingName : data.buildingName);
-                    }
-                    if(extraAddr !== ''){
-                        extraAddr = ' (' + extraAddr + ')';
-                    }
-                    document.getElementById("sample6_extraAddress").value = extraAddr;
+                // 우편번호와 주소 정보를 해당 필드에 넣는다.
+                document.getElementById('sample4_postcode').value = data.zonecode;
+                document.getElementById("sample4_roadAddress").value = roadAddr;
+                document.getElementById("sample4_jibunAddress").value = data.jibunAddress;
 
+                // 참고항목 문자열이 있을 경우 해당 필드에 넣는다.
+                if(roadAddr !== ''){
+                    document.getElementById("sample4_extraAddress").value = extraRoadAddr;
                 } else {
-                    document.getElementById("sample6_extraAddress").value = '';
+                    document.getElementById("sample4_extraAddress").value = '';
                 }
 
-                document.getElementById('sample6_postcode').value = data.zonecode;
-                document.getElementById("sample6_address").value = addr;
-                document.getElementById("sample6_detailAddress").focus();
+                var guideTextBox = document.getElementById("guide");
+                // 사용자가 '선택 안함'을 클릭한 경우, 예상 주소라는 표시를 해준다.
+                if(data.autoRoadAddress) {
+                    var expRoadAddr = data.autoRoadAddress + extraRoadAddr;
+                    guideTextBox.innerHTML = '(예상 도로명 주소 : ' + expRoadAddr + ')';
+                    guideTextBox.style.display = 'block';
+
+                } else if(data.autoJibunAddress) {
+                    var expJibunAddr = data.autoJibunAddress;
+                    guideTextBox.innerHTML = '(예상 지번 주소 : ' + expJibunAddr + ')';
+                    guideTextBox.style.display = 'block';
+                } else {
+                    guideTextBox.innerHTML = '';
+                    guideTextBox.style.display = 'none';
+                }
             }
         }).open();
     }
 </script>
-
 <!-- Date Picker 스크립트 -->
 <script>
     $(function() {
@@ -167,6 +261,38 @@
 
         //초기값을 오늘 날짜로 설정해줘야 합니다.
         $('#datepicker').datepicker('setDate', 'today'); //(-1D:하루전, -1M:한달전, -1Y:일년전), (+1D:하루후, -1M:한달후, -1Y:일년후)
+    });
+</script>
+<!-- 메일 중복 미확인 및 비번 불일치 시 폼 전송 막기-->
+<script>
+    $(document).ready(function () {
+        // submit 버튼 클릭 이벤트
+        $("#submitBtn").on('click', function (event) {
+            if($("#isConfirmed").hasClass("yes") && !$("#confirmPw").hasClass("yes")){
+                // 폼 전송을 막음
+                event.preventDefault();
+                alert("비밀번호가 일치하지 않습니다.");
+                return false;
+            }
+            if(!$("#isConfirmed").hasClass("yes") && $("#confirmPw").hasClass("yes")){
+                // 폼 전송을 막음
+                event.preventDefault();
+                alert("이메일 중복확인을 진행해주세요");
+                return false;
+            }
+            if(!$("#isConfirmed").hasClass("yes") && !$("#confirmPw").hasClass("yes")){
+                // 폼 전송을 막음
+                event.preventDefault();
+                alert("이메일 중복확인및 비밀번호 확인을 진행해주세요");
+                return false;
+            }
+            if ($("#isConfirmed").hasClass("yes") && $("#confirmPw").hasClass("yes")) {
+                // 폼을 전송
+                $("#registrationForm").submit();
+            } else  {
+                 event.preventDefault();
+            }
+        });
     });
 </script>
 </html>

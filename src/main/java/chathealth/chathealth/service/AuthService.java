@@ -50,4 +50,10 @@ public class AuthService implements UserDetailsService {
         }
         throw new UsernameNotFoundException("아이디 혹은 비밀번호를 확인해주세요.");
     }
+
+    public int confirmEmail(String email) {
+        int count = memberRepository.countByEmail(email).intValue();
+        System.out.println(count);
+        return count;
+    }
 }

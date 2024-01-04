@@ -8,16 +8,16 @@ import chathealth.chathealth.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.datetime.DateFormatter;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 //import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/auth")
@@ -27,14 +27,14 @@ public class AuthController {
 
  private final AuthService authService;
 
-    @GetMapping("/join")
-    public String join(Model model) {
+    @GetMapping("/userjoin") //개인회원가입창 진입
+    public String userJoin(Model model) {
         //model.addAttribute("UserJoinDto", new UserJoinDto());
         return "auth/userjoin";
     }
 
-    @PostMapping("/join")
-    public String join(@ModelAttribute UserJoinDto userJoinDto) {
+    @PostMapping("/userjoin") //개인회원가입 처리
+    public String userJoin(@ModelAttribute UserJoinDto userJoinDto) {
         Address addressEntity = Address.builder()
                 .postcode(userJoinDto.getPostcode())
                 .address(userJoinDto.getFrontAddress())
@@ -58,6 +58,16 @@ public class AuthController {
         return "redirect:/auth/join";
     }
 
+
+    @PostMapping("/confirmEmail") //아이디 중복체크
+    @ResponseBody
+    public Map<String,Integer> idCheck(@RequestParam("email") String email) {
+        int count = authService.confirmEmail(email);
+        Map<String,Integer> resultMap = new HashMap<>();
+        resultMap.put("isCount",count);
+        return resultMap;
+
+    }
     @GetMapping("/login")
     public String login() {
         return "auth/login";
