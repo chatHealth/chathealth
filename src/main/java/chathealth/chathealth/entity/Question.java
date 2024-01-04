@@ -1,31 +1,38 @@
 package chathealth.chathealth.entity;
 
 import chathealth.chathealth.entity.member.Member;
+import chathealth.chathealth.entity.post.Post;
 import jakarta.persistence.*;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
 
 import java.time.LocalDateTime;
 
-import static jakarta.persistence.FetchType.LAZY;
-import static lombok.AccessLevel.*;
+import static jakarta.persistence.FetchType.*;
 
 @Entity
-@NoArgsConstructor(access = PROTECTED)
-public class BoardReply extends BaseEntity {
+@Getter
+public class Question extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @Column(name = "question_id")
     private Long id;
 
-    @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "boardcomment_id")
-    private BoardComment boardComment;
+    private String title;
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
 
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "post_id")
+    private Post post;
+
     @Lob
     private String content;
+
     private LocalDateTime deletedDate;
+
+    @OneToOne(mappedBy = "question", fetch = LAZY)
+    private Answer answer;
 }

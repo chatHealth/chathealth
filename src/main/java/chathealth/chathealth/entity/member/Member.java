@@ -1,8 +1,6 @@
 package chathealth.chathealth.entity.member;
 
-import chathealth.chathealth.entity.BaseEntity;
-import chathealth.chathealth.entity.BoardComment;
-import chathealth.chathealth.entity.BoardReply;
+import chathealth.chathealth.entity.*;
 import chathealth.chathealth.entity.borad.Board;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -36,7 +34,6 @@ public abstract class Member extends BaseEntity {
     private String profile;
     @Enumerated(EnumType.STRING)
     private Role role;
-    private int report;
     private LocalDateTime deletedDate;
 
     @OneToMany(mappedBy = "user")
@@ -45,8 +42,23 @@ public abstract class Member extends BaseEntity {
     @OneToMany(mappedBy = "member")
     private final List<BoardComment> boardCommentList = new ArrayList<>();
 
+    @OneToMany(mappedBy = "sender")
+    private final List<Message> senderMessages = new ArrayList<>();
+
+    @OneToMany(mappedBy = "receiver")
+    private final List<Message> receiverMessages = new ArrayList<>();
+
+    @OneToMany(mappedBy = "follower")
+    private final List<Subscription> followers = new ArrayList<>();
+
+    @OneToMany(mappedBy = "following")
+    private final List<Subscription> followings = new ArrayList<>();
+
     @OneToMany(mappedBy = "member")
-    private final List<BoardReply> boardReplyList = new ArrayList<>();
+    private final List<Review> reviews = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member")
+    private final List<Question> questions = new ArrayList<>();
 
     protected void update(Address address) {
         if(address != null) this.address = address;

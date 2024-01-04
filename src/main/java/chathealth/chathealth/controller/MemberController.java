@@ -3,11 +3,14 @@ package chathealth.chathealth.controller;
 import chathealth.chathealth.dto.request.EntEditDto;
 import chathealth.chathealth.dto.request.UserEditDto;
 import chathealth.chathealth.dto.response.EntInfoDto;
-import chathealth.chathealth.dto.response.UserInfoDto;
+import chathealth.chathealth.entity.member.Role;
+import chathealth.chathealth.exception.UserNotFound;
+import chathealth.chathealth.repository.MemberRepository;
 import chathealth.chathealth.service.MemberService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
@@ -16,14 +19,20 @@ import org.springframework.web.bind.annotation.*;
 public class MemberController {
 
     private final MemberService memberService;
+    private final MemberRepository memberRepository;
 
-    @ResponseBody
+    //    @ResponseBody
     @GetMapping("/user/{id}")
-    public UserInfoDto getUserInfo(@PathVariable Long id) {
-        return memberService.getUserInfo(id);
+    public String getUserInfo(@PathVariable Long id, Model model) {
+
+        if (!memberRepository.findById(id).orElseThrow(UserNotFound::new).getRole().equals(Role.USER)) {
+            return "redirect:/member/ent/id";
+        }
+        model.addAttribute("userInfo", memberService.getUserInfo(id));
+        return "member/user-info";
     }
 
-    @ResponseBody
+    //    @ResponseBody
     @GetMapping("/ent/{id}")
     public EntInfoDto getEntInfo(@PathVariable Long id) {
         return memberService.getEntInfo(id);

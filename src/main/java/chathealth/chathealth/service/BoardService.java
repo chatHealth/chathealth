@@ -1,9 +1,13 @@
 package chathealth.chathealth.service;
 
+import chathealth.chathealth.dto.request.BoardCreateDto;
 import chathealth.chathealth.dto.request.BoardSearchDto;
 import chathealth.chathealth.dto.response.BoardResponse;
 import chathealth.chathealth.entity.borad.Board;
+import chathealth.chathealth.entity.member.Users;
 import chathealth.chathealth.exception.BoardNotFoundException;
+import chathealth.chathealth.exception.UserNotFound;
+import chathealth.chathealth.repository.MemberRepository;
 import chathealth.chathealth.repository.board.BoardRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,8 +22,20 @@ import java.util.stream.Collectors;
 public class BoardService {
 
     private final BoardRepository boardRepository;
+    private final MemberRepository memberRepository;
 
     //게시글 생성
+    public Board createBoard(BoardCreateDto boardCreateDto, Long id) {
+
+        Board board = Board.builder()
+                .title(boardCreateDto.getTitle())
+                .content(boardCreateDto.getContent())
+                .category(boardCreateDto.getCategory())
+                .user((Users) memberRepository.findById(id).orElseThrow(UserNotFound::new))
+                .build();
+
+        return boardRepository.save(board);
+    }
 
     //게시글 수정
 
