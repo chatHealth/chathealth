@@ -24,6 +24,7 @@ import static chathealth.chathealth.entity.board.Category.FREE;
 import static chathealth.chathealth.entity.member.Grade.BLACK;
 import static chathealth.chathealth.entity.member.Role.USER;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
 @Transactional
@@ -176,5 +177,31 @@ class BoardServiceTest {
         //then
         assertThat(board.getTitle()).isEqualTo("제목ㅋㅋㅋㅋㅋㅋㅋㅋ");
         assertThat(board.getContent()).isEqualTo("내용ㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋ");
+    }
+
+    @Test
+    @DisplayName("게시글 삭제")
+    @Rollback(value = false)
+    public void deleteBoard() throws Exception {
+        //given
+        Users user = Users.builder()
+                .nickname("장공오일")
+                .grade(BLACK)
+                .profile("profilePicture")
+                .role(USER)
+                .build();
+        memberRepository.save(user);
+
+        BoardCreateDto board = BoardCreateDto.builder()
+                .title("제목입니다.")
+                .content("내용입니다.")
+                .category(FREE)
+                .build();
+        Board savedBoard = boardService.createBoard(board, user.getId());
+        //when
+        boardService.deleteBoard(user.getId(), savedBoard.getId());
+
+        //then
+        assertThrows(BoardNotFoundException.class, () -> boardService.getBoard(savedBoard.getId()));
     }
 }

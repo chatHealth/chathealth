@@ -43,4 +43,10 @@ public class BoardController {
     public void updateBoard(@PathVariable Long id, BoardEditDto boardEditDto, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
         boardService.updateBoard(boardEditDto, customUserDetails.getLoggedMember().getId(), id);
     }
+
+    @DeleteMapping("/board/{id}")
+    @ResponseBody
+    public void deleteBoard(@PathVariable Long id, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        boardService.deleteBoard(id, customUserDetails.getLoggedMember().getId());
+    }
 }

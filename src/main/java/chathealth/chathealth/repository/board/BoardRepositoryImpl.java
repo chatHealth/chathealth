@@ -24,7 +24,8 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom {
                 .where(categoryEq(boardSearchDto.getCategory()),
                         titleContains(boardSearchDto.getTitle()),
                         contentContains(boardSearchDto.getContent()),
-                        writerContains(boardSearchDto.getWriter()))
+                        writerContains(boardSearchDto.getWriter()),
+                        board.deletedDate.isNull())
                 .join(board.user, users)
                 .fetchJoin()
                 .limit(boardSearchDto.getSize())

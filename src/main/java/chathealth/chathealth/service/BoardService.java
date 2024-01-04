@@ -21,6 +21,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static chathealth.chathealth.entity.member.Role.*;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -34,12 +36,12 @@ public class BoardService {
 
         Member member = memberRepository.findById(id).orElseThrow(UserNotFound::new);
 
-        List<Role> entRoles = List.of(Role.WAITING_ENT, Role.WAITING_ENT, Role.REJECTED_ENT);
+        List<Role> entRoles = List.of(WAITING_ENT, WAITING_ENT, REJECTED_ENT);
         if (entRoles.contains(member.getRole())) {
             throw new NotPermitted("사업자는 게시글을 작성할 수 없습니다.");
         }
 
-        if (member.getRole().equals(Role.USER) && boardCreateDto.getCategory().equals(Category.NOTICE)) {
+        if (member.getRole().equals(USER) && boardCreateDto.getCategory().equals(Category.NOTICE)) {
             throw new NotPermitted();
         }
 
@@ -57,7 +59,7 @@ public class BoardService {
     public void updateBoard(BoardEditDto boardEditDto, Long memberId, Long boardId) {
 
         Board findBoard = boardRepository.findById(boardId).orElseThrow(BoardNotFoundException::new);
-        if (!findBoard.getUser().getId().equals(memberId)) {
+        if (!findBoard.getUser().getId().equals(memberId) && !findBoard.getUser().getRole().equals(ADMIN)) {
             throw new NotPermitted();
         }
 
@@ -66,12 +68,17 @@ public class BoardService {
 
     //게시글 삭제 soft delete
 
+    public void deleteBoard(Long memberId, Long boardId) {
+        Board findBoard = boardRepository.findById(boardId).orElseThrow(BoardNotFoundException::new);
+        if (!findBoard.getUser().getId().equals(memberId) && !findBoard.getUser().getRole().equals(ADMIN)) {
+            throw new NotPermitted();
+        }
+
+        boardRepository.delete(findBoard);
+    }
+
     //게시글 목록 조회
     public List<BoardResponse> getBoards(BoardSearchDto boardSearchDto) {
-
-        log.info("page==={}", boardSearchDto.getPage());
-        log.info("size==={}", boardSearchDto.getSize());
-        log.info("offset==={}", boardSearchDto.getOffset());
 
         return boardRepository.getBoards(boardSearchDto).stream().map(board -> BoardResponse.builder()
                         .boardId(board.getId())
