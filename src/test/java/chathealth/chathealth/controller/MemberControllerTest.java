@@ -16,9 +16,11 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 
+import static chathealth.chathealth.entity.member.Grade.*;
 import static chathealth.chathealth.entity.member.Role.USER;
 import static chathealth.chathealth.entity.member.Role.valueOf;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -30,7 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-//@Transactional
+@Transactional
 class MemberControllerTest {
 
     @Autowired
@@ -60,7 +62,7 @@ class MemberControllerTest {
                 .nickname("짱공오일")
                 .email("jjang051.hanmail.net")
                 .pw("1234")
-                .grade(Grade.valueOf("BRONZE"))
+                .grade(BRONZE)
                 .role(USER)
                 .profile("profile0321984u32895")
                 .build();

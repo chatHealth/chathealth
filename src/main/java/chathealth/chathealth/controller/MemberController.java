@@ -3,8 +3,7 @@ package chathealth.chathealth.controller;
 import chathealth.chathealth.dto.request.EntEditDto;
 import chathealth.chathealth.dto.request.UserEditDto;
 import chathealth.chathealth.dto.response.EntInfoDto;
-import chathealth.chathealth.entity.member.Role;
-import chathealth.chathealth.exception.UserNotFound;
+import chathealth.chathealth.dto.response.UserInfoDto;
 import chathealth.chathealth.repository.MemberRepository;
 import chathealth.chathealth.service.MemberService;
 import jakarta.validation.Valid;
@@ -21,18 +20,20 @@ public class MemberController {
     private final MemberService memberService;
     private final MemberRepository memberRepository;
 
-    //    @ResponseBody
+    @ResponseBody
     @GetMapping("/user/{id}")
-    public String getUserInfo(@PathVariable Long id, Model model) {
+    public UserInfoDto getUserInfo(@PathVariable Long id, Model model) {
 
-        if (!memberRepository.findById(id).orElseThrow(UserNotFound::new).getRole().equals(Role.USER)) {
-            return "redirect:/member/ent/id";
-        }
-        model.addAttribute("userInfo", memberService.getUserInfo(id));
-        return "member/user-info";
+//        if (!memberRepository.findById(id).orElseThrow(UserNotFound::new).getRole().equals(Role.USER)) {
+//            return "redirect:/member/ent/id";
+//        }
+//        model.addAttribute("userInfo", memberService.getUserInfo(id));
+//        return "member/user-info";
+        return memberService.getUserInfo(id);
+
     }
 
-    //    @ResponseBody
+    @ResponseBody
     @GetMapping("/ent/{id}")
     public EntInfoDto getEntInfo(@PathVariable Long id) {
         return memberService.getEntInfo(id);
