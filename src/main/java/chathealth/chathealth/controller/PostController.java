@@ -16,6 +16,5 @@ public class PostController {
 
     @GetMapping("/write")
     public String write() { return "post/write"; }
-
     // 1. insert
 }

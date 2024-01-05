@@ -3,7 +3,7 @@ package chathealth.chathealth.service;
 import chathealth.chathealth.dto.request.BoardCreateDto;
 import chathealth.chathealth.dto.request.BoardSearchDto;
 import chathealth.chathealth.dto.response.BoardResponse;
-import chathealth.chathealth.entity.borad.Board;
+import chathealth.chathealth.entity.board.Board;
 import chathealth.chathealth.entity.member.Users;
 import chathealth.chathealth.exception.BoardNotFoundException;
 import chathealth.chathealth.exception.UserNotFound;

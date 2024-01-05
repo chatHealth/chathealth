@@ -1,11 +1,57 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layout/layout}">
-
-<div layout:fragment="content" class="main">
-    <div class="container justify-content-center d-flex">
-        <h2> post write</h2>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="/css/layout.css">
+    <script src="https://cdn.ckeditor.com/ckeditor5/40.2.0/classic/ckeditor.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
+</head>
+<body>
+    <div>
+        <div>
+            <input type="text" placeholder="제목" class="inpTitle">
+        </div>
+        <div style="height: 500px">
+            <textarea class="postWriteContent" id="editor"></textarea>
+        </div>
     </div>
-</div>
+    <div>
+        <select class="form-select" multiple aria-label="Multiple select example">
+            <option selected>Open this select menu</option>
+            <option value="1">One</option>
+            <option value="2">Two</option>
+            <option value="3">Three</option>
+        </select>
+        <select class="form-select" multiple aria-label="Multiple select example">
+            <option selected>Open this select menu</option>
+            <option value="1">One</option>
+            <option value="2">Two</option>
+            <option value="3">Three</option>
+        </select>
+    </div>
+</body>
+<script>
+    ClassicEditor
+        .create( document.querySelector( '#editor' ),
+            {
+                language: "ko",
+                ckfinder:
+                    {
+                        uploadUrl: "../post/img-upload",
+                        withCredentials: true,
+                    }
+            })
+        .then(newEditor => {
+            ckEditor = newEditor;
+        })
+        .catch( error => {
+            console.error( error );
+        } );
+
+
+
+
+</script>
+
 </html>

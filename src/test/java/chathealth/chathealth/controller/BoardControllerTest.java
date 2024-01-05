@@ -1,7 +1,7 @@
 package chathealth.chathealth.controller;
 
 import chathealth.chathealth.dto.request.BoardCreateDto;
-import chathealth.chathealth.entity.borad.Board;
+import chathealth.chathealth.entity.board.Board;
 import chathealth.chathealth.entity.member.Users;
 import chathealth.chathealth.repository.MemberRepository;
 import chathealth.chathealth.repository.board.BoardRepository;
@@ -18,7 +18,7 @@ import org.springframework.test.context.transaction.BeforeTransaction;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
-import static chathealth.chathealth.entity.borad.Category.FREE;
+import static chathealth.chathealth.entity.board.Category.FREE;
 import static chathealth.chathealth.entity.member.Grade.BLACK;
 import static chathealth.chathealth.entity.member.Grade.SILVER;
 import static org.springframework.http.MediaType.APPLICATION_JSON;

@@ -1,6 +1,6 @@
 package chathealth.chathealth.dto.request;
 
-import chathealth.chathealth.entity.borad.Category;
+import chathealth.chathealth.entity.board.Category;
 import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;

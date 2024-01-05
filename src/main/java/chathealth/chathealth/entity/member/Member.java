@@ -1,7 +1,7 @@
 package chathealth.chathealth.entity.member;
 
 import chathealth.chathealth.entity.*;
-import chathealth.chathealth.entity.borad.Board;
+import chathealth.chathealth.entity.board.Board;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

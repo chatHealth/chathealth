@@ -1,6 +1,6 @@
 package chathealth.chathealth.dto.request;
 
-import chathealth.chathealth.entity.borad.Category;
+import chathealth.chathealth.entity.board.Category;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;

@@ -3,7 +3,7 @@ package chathealth.chathealth.service;
 import chathealth.chathealth.dto.request.BoardCreateDto;
 import chathealth.chathealth.dto.request.BoardSearchDto;
 import chathealth.chathealth.dto.response.BoardResponse;
-import chathealth.chathealth.entity.borad.Board;
+import chathealth.chathealth.entity.board.Board;
 import chathealth.chathealth.entity.member.Users;
 import chathealth.chathealth.repository.MemberRepository;
 import chathealth.chathealth.repository.board.BoardRepository;
@@ -17,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
-import static chathealth.chathealth.entity.borad.Category.FREE;
+import static chathealth.chathealth.entity.board.Category.FREE;
 import static chathealth.chathealth.entity.member.Grade.BLACK;
 import static org.assertj.core.api.Assertions.assertThat;
 
