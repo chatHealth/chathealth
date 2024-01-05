@@ -19,10 +19,10 @@
 </head>
 
 <body>
-<div th:replace="fragment/header :: headerFragment"></div>
+<div th:replace="~{fragment/header :: headerFragment}"></div>
 
 <div layout:fragment="content"> </div>
 
-<div th:replace="fragment/footer :: footerFragment"></div>
+<div th:replace="~{fragment/footer :: footerFragment}"></div>
 </body>
 
