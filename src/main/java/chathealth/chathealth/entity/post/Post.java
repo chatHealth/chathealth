@@ -56,8 +56,9 @@ public class Post extends BaseEntity {
 
 
     // N:M conenct
-    @OneToMany(mappedBy = "post")
-    private List<SymptomPost> symptomList;
+    @OneToOne
+    @JoinColumn(name = "sysmptom_id")
+    private Symptom symptom;
 
     @OneToMany(mappedBy = "post")
     private List<MaterialPost> materialList;
