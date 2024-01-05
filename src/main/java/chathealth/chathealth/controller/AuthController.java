@@ -6,18 +6,29 @@ import chathealth.chathealth.entity.member.Grade;
 import chathealth.chathealth.entity.member.Member;
 import chathealth.chathealth.service.AuthService;
 import lombok.RequiredArgsConstructor;
+import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
+import net.coobird.thumbnailator.Thumbnailator;
 import org.springframework.format.datetime.DateFormatter;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 //import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 @Controller
 @RequestMapping("/auth")
@@ -34,13 +45,16 @@ public class AuthController {
     }
 
     @PostMapping("/userjoin") //개인회원가입 처리
-    public String userJoin(@ModelAttribute UserJoinDto userJoinDto) {
+    public String userJoin(@ModelAttribute UserJoinDto userJoinDto, MultipartFile profile) {
+        //주소 객체화
         Address addressEntity = Address.builder()
                 .postcode(userJoinDto.getPostcode())
                 .address(userJoinDto.getFrontAddress())
                 .addressDetail(userJoinDto.getAddressDetail())
         .build();
 
+
+        //service에 던질 DTO 빌드
         UserJoinDto insertUserDto = UserJoinDto.builder()
                 .email(userJoinDto.getEmail())
                 .address(addressEntity)
@@ -50,10 +64,9 @@ public class AuthController {
                 .birth(userJoinDto.getBirth())
                 .profile(userJoinDto.getProfile())
                 .role(userJoinDto.getRole())
+                .createDate(LocalDateTime.now())
                 .grade(Grade.BRONZE)
-                .report(0)
                 .build();
-        log.info(String.valueOf(insertUserDto));
         authService.join(insertUserDto);
         return "redirect:/auth/join";
     }
