@@ -6,6 +6,7 @@ import chathealth.chathealth.entity.member.Role;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -24,9 +25,10 @@ public class UserJoinDto {
     private String name;
     private String nickname;
     private LocalDate birth;
-    private String profile;
+    private MultipartFile profile;
     private Role role;
     private Grade grade;
+    private LocalDateTime createDate;
     private LocalDateTime deletedDate;
     private int report;
 }
