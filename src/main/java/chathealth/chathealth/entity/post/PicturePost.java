@@ -1,24 +1,17 @@
 package chathealth.chathealth.entity.post;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-import org.hibernate.annotations.DynamicUpdate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
-import java.util.List;
 
 import static lombok.AccessLevel.PROTECTED;
 
 
 @Entity
-@ToString
 @Getter
 @SuperBuilder
-
 @NoArgsConstructor(access = PROTECTED)
-@DynamicUpdate
-
 @Table(name = "PicturePost")
 public class PicturePost {
 
