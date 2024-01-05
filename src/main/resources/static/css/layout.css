@@ -1,0 +1,12 @@
+.postWriteContent{
+    width: 500px;
+    height: 600px;
+}
+
+.inpTitle{
+    height: 40px;
+    width: 100%;
+}
+.transition-collapse{
+    height:30s ease;
+}
