@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
+import static chathealth.chathealth.dto.request.OrderCondition.RECENT;
 import static chathealth.chathealth.entity.post.SymptomType.INTESTINE;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -44,10 +45,11 @@ class PostServiceTest {
     public void getPosts() throws Exception{
         //given
         PostSearch postSearch = PostSearch.builder()
-                .title("제목입니다")
-                .company("회사입니다")
+                .title("입니다")
+                .company("중앙컴퍼니")
                 .symptomType(INTESTINE)
                 .materialName(List.of("아스피린", "타이레놀"))
+                .ordercondition(RECENT)
                 .build();
 
         Ent ent = Ent.builder()
@@ -136,6 +138,7 @@ class PostServiceTest {
         //then
         assertThat(posts.size()).isEqualTo(20);
         assertThat(posts.get(0).getRepresentativeImg()).isEqualTo("이미지유알엘3");
+        assertThat(posts.get(0).getCount()).isEqualTo(90);
 
     }
 

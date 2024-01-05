@@ -23,7 +23,7 @@ public class PostSearch {
 
     //정렬
     private String sort;
-    private String order;
+    private OrderCondition ordercondition;
 
     private static final int MAX_SIZE = 200;
 
@@ -40,6 +40,13 @@ public class PostSearch {
         return page == null ? 0 : this.page;
     }
 
+    public OrderCondition getOrdercondition() {
+        return ordercondition == null ? OrderCondition.RECENT : this.ordercondition;
+    }
+
+    public void setPage(Integer page){
+        this.page = page;
+    }
 
     public long getOffset() {
         size = this.size == null ? 20 : this.size;

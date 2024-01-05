@@ -27,4 +27,6 @@ public class PostResponse {
     private List<Material> material;
 
     private LocalDateTime createdDate;
+
+    private long count;
 }

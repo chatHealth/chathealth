@@ -24,6 +24,13 @@ public class PostService {
     // 포스트 목록 조회
     public List<PostResponse> getPosts(PostSearch postSearch) {
 
+        Long count = postRepository.getPostsCount(postSearch);
+
+        // 페이지가 존재하지 않을 경우 마지막 페이지로 이동
+        if (count / postSearch.getSize() < postSearch.getPage()) {
+            postSearch.setPage((int) (count / postSearch.getSize()));
+        }
+
         return postRepository.getPosts(postSearch).stream()
                 .map(post ->
                         PostResponse.builder()
@@ -32,6 +39,7 @@ public class PostService {
                                 .createdDate(post.getCreatedDate())
                                 .company(post.getMember().getCompany())
                                 .representativeImg(getRepresentativeImg(post))
+                                .count(count)
                                 .build())
                 .toList();
     }

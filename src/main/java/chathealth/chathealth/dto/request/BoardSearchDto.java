@@ -21,7 +21,7 @@ public class BoardSearchDto {
     private static final int MAX_SIZE = 2000;
 
     @Builder.Default
-    private Integer page = 1;
+    private Integer page = 0;
     @Builder.Default
     private Integer size = 20;
 
@@ -30,13 +30,13 @@ public class BoardSearchDto {
     }
 
     public Integer getPage() {
-        return page == null ? 1 : this.page;
+        return page == null ? 0 : this.page;
     }
 
 
     public long getOffset() {
         size = this.size == null ? 20 : this.size;
-        page = this.page == null ? 1 : this.page;
+        page = this.page == null ? 0 : this.page;
         return (long) max(0, page) * min(MAX_SIZE, size);
     }
 }
