@@ -24,8 +24,8 @@ public class Symptom extends BaseEntity {
     private String symptomName;
 
     // N:M conenct
-    @OneToOne(mappedBy = "symptom")
-    private Post post;
+    @OneToMany(mappedBy = "symptom")
+    private List<Post> postList;
 
 
 }

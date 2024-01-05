@@ -56,7 +56,7 @@ public class Post extends BaseEntity {
 
 
     // N:M conenct
-    @OneToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sysmptom_id")
     private Symptom symptom;
 
