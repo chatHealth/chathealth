@@ -5,6 +5,7 @@ import chathealth.chathealth.dto.response.PostResponse;
 import chathealth.chathealth.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -16,7 +17,7 @@ public class PostRestController {
     private final PostService postService;
 
     @GetMapping("/post")
-    public List<PostResponse> getPosts(PostSearch postSearch) {
+    public List<PostResponse> getPosts(@RequestBody PostSearch postSearch) {
         return postService.getPosts(postSearch);
     }
 }

@@ -15,7 +15,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -42,7 +41,7 @@ class PostRepositoryImplTest {
 
     @Test
     @DisplayName("포스트 조회 조건이 없으면 싹 다 조회함")
-    @Rollback(value = false)
+//    @Rollback(value = false)
     void searchPosts() {
         //given
         PostSearch postSearch = PostSearch.builder()
