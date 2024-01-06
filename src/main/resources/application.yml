@@ -1,6 +1,9 @@
+server:
+  port: 8090
 spring:
   profiles:
     active: dev # application-prod
+
   output:
     ansi:
       enabled: always

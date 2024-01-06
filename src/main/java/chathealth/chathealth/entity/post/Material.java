@@ -24,13 +24,6 @@ public class Material extends BaseEntity {
     private Long id;
 
     private String materialName;
-
-    // api
-    private Integer highLimit;
-    private Integer lowLimit;
-    private String unit;
-    private String recognition;
-    private String caution;
     private String functions;
 
     // N:M conenct

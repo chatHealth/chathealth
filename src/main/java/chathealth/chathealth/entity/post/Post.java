@@ -60,7 +60,6 @@ public class Post extends BaseEntity {
 
 
     // N:M conenct
-
     @OneToMany(mappedBy = "post")
     private List<MaterialPost> materialList;
 
