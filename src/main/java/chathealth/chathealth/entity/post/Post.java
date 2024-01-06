@@ -66,4 +66,20 @@ public class Post extends BaseEntity {
 
     @OneToMany(mappedBy = "post")
     private List<Review> reviewList;
+
+
+    public Long getPostHitCount() {
+        if (postHitList == null) return 0L;
+        return (long) postHitList.size();
+    }
+
+    public Long getPostLikeCount() {
+        if(postLikeList == null) return 0L;
+        return (long) postLikeList.size();
+    }
+
+    public Long getReviewCount() {
+        if(reviewList == null) return 0L;
+        return (long) reviewList.size();
+    }
 }

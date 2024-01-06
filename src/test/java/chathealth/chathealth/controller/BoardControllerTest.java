@@ -16,7 +16,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.context.support.WithUserDetails;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.transaction.BeforeTransaction;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
@@ -89,7 +88,7 @@ class BoardControllerTest {
     @Test
     @WithMockUser
     @DisplayName("게시물 목록 조회")
-    @Rollback(value = false)
+//    @Rollback(value = false)
     public void getBoards() throws Exception{
         //given
         Users user = Users.builder()

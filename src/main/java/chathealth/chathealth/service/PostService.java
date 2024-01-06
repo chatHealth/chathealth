@@ -4,11 +4,13 @@ package chathealth.chathealth.service;
 import chathealth.chathealth.dto.request.PostSearch;
 import chathealth.chathealth.dto.response.PostResponse;
 import chathealth.chathealth.entity.post.Post;
+import chathealth.chathealth.repository.MaterialPostRepository;
 import chathealth.chathealth.repository.PicturePostRepository;
 import chathealth.chathealth.repository.post.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 
@@ -18,6 +20,7 @@ public class PostService {
 
     private final PostRepository postRepository;
     private final PicturePostRepository picturePostRepository;
+    private final MaterialPostRepository materialPostRepository;
 
     // public Post insertPost(){}
 
@@ -36,10 +39,14 @@ public class PostService {
                         PostResponse.builder()
                                 .id(post.getId())
                                 .title(post.getTitle())
-                                .createdDate(post.getCreatedDate())
                                 .company(post.getMember().getCompany())
                                 .representativeImg(getRepresentativeImg(post))
                                 .count(count)
+                                .createdDate(post.getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
+                                .hitCount(post.getPostHitCount())
+                                .likeCount(post.getPostLikeCount())
+                                .reviewCount(post.getReviewCount())
+                                .symptom(post.getSymptom().getSymptomName())
                                 .build())
                 .toList();
     }

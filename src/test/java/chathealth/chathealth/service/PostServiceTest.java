@@ -10,7 +10,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
@@ -38,10 +37,12 @@ class PostServiceTest {
     PostService postService;
     @Autowired
     PicturePostRepository picturePostRepository;
+    @Autowired
+    PostHitRepository postHitRepository;
 
     @Test
     @DisplayName("포스트 목록 조회")
-    @Rollback(value = false)
+//    @Rollback(value = false)
     public void getPosts() throws Exception{
         //given
         PostSearch postSearch = PostSearch.builder()
@@ -50,6 +51,7 @@ class PostServiceTest {
                 .symptomType(INTESTINE)
                 .materialName(List.of("아스피린", "타이레놀"))
                 .ordercondition(RECENT)
+                .size(20)
                 .build();
 
         Ent ent = Ent.builder()
@@ -130,6 +132,13 @@ class PostServiceTest {
             pictures1.add(picture3);
             pictures1.add(picture4);
             picturePostRepository.saveAll(pictures1);
+
+            postHitRepository.save(PostHit.builder()
+                    .post(post1)
+                    .build());
+            postHitRepository.save(PostHit.builder()
+                    .post(post1)
+                    .build());
         }
 
         //when

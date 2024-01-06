@@ -2,11 +2,11 @@ package chathealth.chathealth.dto.response;
 
 import chathealth.chathealth.entity.post.Material;
 import chathealth.chathealth.entity.post.PicturePost;
+import chathealth.chathealth.entity.post.SymptomType;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -23,10 +23,16 @@ public class PostResponse {
 
     private String company;
 
-    private String symptom;
+    private SymptomType symptom;
     private List<Material> material;
 
-    private LocalDateTime createdDate;
+    // yyyy-MM-dd HH:mm:ss 변환
+    private String createdDate;
 
-    private long count;
+    private Long count;
+
+    private Long hitCount;
+    private Long likeCount;
+    private Long reviewCount;
+
 }

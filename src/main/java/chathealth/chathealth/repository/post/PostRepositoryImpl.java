@@ -8,13 +8,15 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
+import static chathealth.chathealth.entity.QReview.review;
 import static chathealth.chathealth.entity.member.QEnt.ent;
 import static chathealth.chathealth.entity.post.QMaterial.material;
 import static chathealth.chathealth.entity.post.QMaterialPost.materialPost;
 import static chathealth.chathealth.entity.post.QPost.post;
+import static chathealth.chathealth.entity.post.QPostHit.postHit;
+import static chathealth.chathealth.entity.post.QPostLike.postLike;
 import static chathealth.chathealth.entity.post.QSymptom.symptom;
 
 @RequiredArgsConstructor
@@ -24,7 +26,8 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
 
     @Override
     public List<Post> getPosts(PostSearch postSearch) {
-        return queryFactory.selectFrom(post)
+        return queryFactory.select(post)
+                .from(post)
                 .where(post.deletedDate.isNull(),
                         titleContains(postSearch.getTitle()),
                         companyEq(postSearch.getCompany()),
@@ -39,6 +42,10 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
                 .fetchJoin()
                 .leftJoin(materialPost).on(materialPost.material.eq(material))
                 .fetchJoin()
+                .leftJoin(postHit).on(postHit.post.eq(post))
+                .leftJoin(postLike).on(postLike.post.eq(post))
+                .leftJoin(review).on(review.post.eq(post))
+                .groupBy(post.id)
                 .orderBy(getOrderSpecifier(postSearch))
                 .limit(postSearch.getSize())
                 .offset(postSearch.getOffset())
@@ -89,13 +96,22 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
         return ent.company.eq(company);
     }
 
-    private static OrderSpecifier<LocalDateTime> getOrderSpecifier(PostSearch postSearch) {
+    private static OrderSpecifier<?> getOrderSpecifier(PostSearch postSearch) {
         switch (postSearch.getOrdercondition()){
             case RECENT -> {
                 return post.createdDate.desc();
             }
             case OLD -> {
                 return post.createdDate.asc();
+            }
+            case HIT -> {
+                return post.postHitList.size().desc();
+            }
+            case LIKE -> {
+                return post.postLikeList.size().desc();
+            }
+            case REVIEW -> {
+                return post.reviewList.size().desc();
             }
         }
         return post.createdDate.desc();
