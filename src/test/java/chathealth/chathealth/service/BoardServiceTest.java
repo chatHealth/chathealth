@@ -14,7 +14,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
@@ -109,7 +108,7 @@ class BoardServiceTest {
 
     @Test
     @DisplayName("게시글 생성")
-    @Rollback(value = false)
+//    @Rollback(value = false)
     public void createBoard() throws Exception {
         //given
         Users user = Users.builder()
@@ -181,7 +180,7 @@ class BoardServiceTest {
 
     @Test
     @DisplayName("게시글 삭제")
-    @Rollback(value = false)
+//    @Rollback(value = false)
     public void deleteBoard() throws Exception {
         //given
         Users user = Users.builder()

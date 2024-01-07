@@ -2,7 +2,7 @@ package chathealth.chathealth.entity.post;
 
 import chathealth.chathealth.entity.BaseEntity;
 import chathealth.chathealth.entity.Review;
-import chathealth.chathealth.entity.member.Member;
+import chathealth.chathealth.entity.member.Ent;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -33,7 +33,7 @@ public class Post extends BaseEntity {
 
     @ManyToOne()
     @JoinColumn(name = "member_id")
-    private Member member;
+    private Ent member;
 
     @Column(length = 400)
     private String title;
@@ -42,6 +42,10 @@ public class Post extends BaseEntity {
     private String content;
 
     private LocalDateTime deletedDate;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "symptom_id")
+    private Symptom symptom;
 
 
     // connect
@@ -56,13 +60,25 @@ public class Post extends BaseEntity {
 
 
     // N:M conenct
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "sysmptom_id")
-    private Symptom symptom;
-
     @OneToMany(mappedBy = "post")
     private List<MaterialPost> materialList;
 
     @OneToMany(mappedBy = "post")
     private List<Review> reviewList;
+
+
+    public Long getPostHitCount() {
+        if (postHitList == null) return 0L;
+        return (long) postHitList.size();
+    }
+
+    public Long getPostLikeCount() {
+        if(postLikeList == null) return 0L;
+        return (long) postLikeList.size();
+    }
+
+    public Long getReviewCount() {
+        if(reviewList == null) return 0L;
+        return (long) reviewList.size();
+    }
 }
