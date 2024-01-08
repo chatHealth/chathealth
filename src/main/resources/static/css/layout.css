@@ -7,3 +7,9 @@
     height: 40px;
     width: 100%;
 }
+.underBox{
+    display: flex;
+}
+.btnBox{
+    justify-content: right;
+}

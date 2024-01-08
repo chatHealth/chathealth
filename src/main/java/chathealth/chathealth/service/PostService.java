@@ -2,10 +2,19 @@ package chathealth.chathealth.service;
 
 
 import chathealth.chathealth.dto.request.PostSearch;
+import chathealth.chathealth.dto.request.PostWriteDto;
+import chathealth.chathealth.dto.response.CustomUserDetails;
+import chathealth.chathealth.dto.response.MaterialDto;
 import chathealth.chathealth.dto.response.PostResponse;
+import chathealth.chathealth.dto.response.SymptomDto;
+import chathealth.chathealth.entity.member.Ent;
+import chathealth.chathealth.entity.member.Member;
+import chathealth.chathealth.entity.post.Material;
+import chathealth.chathealth.entity.post.MaterialPost;
 import chathealth.chathealth.entity.post.Post;
-import chathealth.chathealth.repository.MaterialPostRepository;
-import chathealth.chathealth.repository.PicturePostRepository;
+import chathealth.chathealth.entity.post.Symptom;
+import chathealth.chathealth.exception.UserNotFound;
+import chathealth.chathealth.repository.*;
 import chathealth.chathealth.repository.post.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,7 +29,10 @@ public class PostService {
 
     private final PostRepository postRepository;
     private final PicturePostRepository picturePostRepository;
-    private final MaterialPostRepository materialPostRepository;
+    private final SymptomRepository symptomRepository;
+    private final MaterialRepository materialRepository;
+    private final MemberRepository memberRepository;
+
 
     // public Post insertPost(){}
 
@@ -53,6 +65,39 @@ public class PostService {
 
     private String getRepresentativeImg(Post post) {
         return picturePostRepository.findAllByPostIdOrderByOrders(post.getId()).get(0).getPictureUrl();
+    }
+
+
+    public List<SymptomDto> getSymptomList(){
+        List<Symptom> symptoms= symptomRepository.findAll();
+        return symptoms.stream().map(symptom -> SymptomDto.builder()
+                .id(symptom.getId())
+                .symptomName(symptom.getSymptomName())
+                .build()).toList();
+
+    }
+
+    public List<MaterialDto> getMaterialList(){
+        List<Material> materials= materialRepository.findAll();
+        return materials.stream().map(material -> MaterialDto.builder()
+                .id(material.getId())
+                .materialName(material.getMaterialName())
+                .functions(material.getFunctions())
+                .build()).toList();
+    }
+
+    public void createPost(PostWriteDto postWriteDto, CustomUserDetails ent, List<MaterialPost> materialPost){
+        Ent findEnt = (Ent)memberRepository.findByEmail(ent.getEmail()).orElseThrow(UserNotFound::new);
+
+        Post postInfo = Post.builder()
+                .member(findEnt)
+                .title(postWriteDto.getTitle())
+                .content(postWriteDto.getContent())
+//                .symptom(postWriteDto.getSymptom())
+//                .materialList(materialPost)
+//                .postImgList(postWriteDto.getPostImgList())
+                .build();
+        postRepository.save(postInfo);
     }
 
 }

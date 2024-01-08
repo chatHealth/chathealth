@@ -2,9 +2,12 @@ package chathealth.chathealth.controller;
 
 import chathealth.chathealth.dto.request.PostSearch;
 import chathealth.chathealth.dto.response.PostResponse;
+import chathealth.chathealth.dto.response.SymptomDto;
+import chathealth.chathealth.entity.post.Symptom;
 import chathealth.chathealth.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -20,4 +23,5 @@ public class PostRestController {
     public List<PostResponse> getPosts(@RequestBody PostSearch postSearch) {
         return postService.getPosts(postSearch);
     }
+
 }
