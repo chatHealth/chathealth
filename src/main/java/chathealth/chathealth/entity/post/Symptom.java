@@ -21,10 +21,9 @@ public class Symptom extends BaseEntity {
     @Column(name = "symptom_id")
     private Long id;
 
-    private String symptomName;
+    @Enumerated(EnumType.STRING)
+    private SymptomType symptomName;
 
-    // N:M conenct
     @OneToMany(mappedBy = "symptom")
-    private List<SymptomPost> symptomList;
-
+    private List<Post> postList;
 }
