@@ -6,6 +6,7 @@ import chathealth.chathealth.entity.member.Role;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -18,11 +19,15 @@ public class EntJoinDto {
     private String pw;
     private String email;
     private Address address;
+    private Integer postcode;
+    private String frontAddress;
+    private String addressDetail;
     private String company;
     private String ceo;
-    private LocalDate entNo;
-    private String profile;
+    private String entNo;
+    private MultipartFile profile;
     private Role role;
-    private LocalDateTime deletedDate;
-    private int report;
+    private LocalDateTime createdDate;
+    private LocalDate birth;
+
 }
