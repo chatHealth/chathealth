@@ -1,5 +1,6 @@
 package chathealth.chathealth.entity.board;
 
+import chathealth.chathealth.dto.request.BoardEditDto;
 import chathealth.chathealth.entity.BaseEntity;
 import chathealth.chathealth.entity.BoardComment;
 import chathealth.chathealth.entity.BoardHit;
@@ -9,6 +10,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.SQLDelete;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -22,6 +24,7 @@ import static lombok.AccessLevel.PROTECTED;
 @NoArgsConstructor(access = PROTECTED)
 @Getter
 @SuperBuilder
+@SQLDelete(sql = "UPDATE board SET deleted_date = CURRENT_TIMESTAMP where board_id = ?")
 public class Board extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
@@ -53,4 +56,9 @@ public class Board extends BaseEntity {
     @OneToMany(mappedBy = "board")
     private final List<BoardComment> boardCommentList = new ArrayList<>();
 
+    public void update(BoardEditDto boardEditDto) {
+        if (boardEditDto.getTitle() != null) this.title = boardEditDto.getTitle();
+        if (boardEditDto.getContent() != null) this.content = boardEditDto.getContent();
+        if (boardEditDto.getCategory() != null) this.category = boardEditDto.getCategory();
+    }
 }

@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
+import static jakarta.persistence.FetchType.*;
 import static lombok.AccessLevel.PROTECTED;
 @Entity
 @Getter
@@ -19,11 +20,11 @@ public class MaterialPost extends BaseEntity {
     @Column(name = "mp_id")
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "material_id")
     private Material material;
 
-    @ManyToOne
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "post_id")
     private Post post;
 
