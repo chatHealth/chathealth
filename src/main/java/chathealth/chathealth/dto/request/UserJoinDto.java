@@ -29,6 +29,4 @@ public class UserJoinDto {
     private Role role;
     private Grade grade;
     private LocalDateTime createDate;
-    private LocalDateTime deletedDate;
-    private int report;
 }

@@ -19,8 +19,8 @@
 </head>
 <body>
 <div class="container scroll-container" style="width: 760px;">
-    <h1>회원가입</h1>
-    <form method="post" action="/auth/userjoin" th:action="@{/auth/userjoin}" id="registrationForm" enctype="multipart/form-data">
+    <h1>사업자 회원가입</h1>
+    <form method="post" action="/auth/ent-join" th:action="@{/auth/entjoin}" id="registrationForm" enctype="multipart/form-data">
         <!-- 이메일 -->
         <div class="mb-3">
             <div class="d-flex flex-row">
@@ -48,27 +48,34 @@
             <span id="confirmPw"></span>
         </div>
 
-        <!-- 이름 -->
+        <!-- 상호명 -->
         <div class="mb-3">
             <div class="d-flex flex-row">
-                <label for="inputName" class="form-label">이름</label><p style="color: red;">*</p></div>
-            <input type="text" id="inputName" class="form-control" name="name" required>
+                <label for="inputCompany" class="form-label">상호명</label><p style="color: red;">*</p></div>
+            <input type="text" id="inputCompany" class="form-control" name="company" required>
         </div>
 
-        <!-- 닉네임 -->
+        <!-- 사업자등록번호 -->
         <div class="mb-3">
             <div class="d-flex flex-row">
-                <label for="inputNickname" class="form-label">별명</label><p style="color: red;">*</p>
+                <label for="inputEntNo" class="form-label">사업자등록번호</label><p style="color: red;">*</p></div>
+            <input type="text" id="inputEntNo" class="form-control" name="entNo" required>
+        </div>
+
+        <!-- 대표자명 -->
+        <div class="mb-3">
+            <div class="d-flex flex-row">
+                <label for="inputCeo" class="form-label">대표자명</label><p style="color: red;">*</p>
             </div>
-            <input type="text" id="inputNickname" class="form-control" name="nickname" required>
-            <span id="confirmNickname"></span>
+            <input type="text" id="inputCeo" class="form-control" name="ceo" required>
+            <span id="confirmCeo"></span>
         </div>
 
-        <!-- 생년월일 -->
+        <!-- 사업자 등록일 -->
         <div class="mb-5">
             <div class="d-flex flex-row">
-                <label for="birth" class="form-label">생년월일</label><p style="color: red;">*</p></div>
-            <input type="text" id="birth" class="form-control" placeholder="1997-03-05" name="birth" required>
+                <label for="birth" class="form-label">개업 연월일</label><p style="color: red;">*</p></div>
+            <input type="text" id="birth" class="form-control" placeholder="2010-06-17" name="birth" required>
         </div>
 
         <!-- 주소 -->
@@ -80,11 +87,10 @@
                    value="우편번호 찾기"><br>
             <input type="text" id="sample4_roadAddress" placeholder="도로명주소" name="frontAddress" required>
             <input type="text" id="sample4_jibunAddress" placeholder="지번주소">
-            <span id="guide" style="color: #999; display: none" type="hidden"></span></br>
+            <span id="guide" style="color: #999;" type="hidden"></span></br>
             <input type="text" id="sample4_detailAddress" placeholder="상세주소" name="addressDetail">
             <input type="text" class="hidden" id="sample4_extraAddress" placeholder="참고항목">
         </div>
-        <input type="hidden" class="form-control" value="0" name="report">
         <div class="mb-3">
             <label for="formFile" class="form-label">프로필 사진</label>
             <input class="form-control" type="file" id="formFile" placeholder="png,jpg" accept="image/gif, image/jpeg, image/png" name="profile">
@@ -298,7 +304,6 @@
                 if(data.autoRoadAddress) {
                     var expRoadAddr = data.autoRoadAddress + extraRoadAddr;
                     guideTextBox.innerHTML = '(예상 도로명 주소 : ' + expRoadAddr + ')';
-                    guideTextBox.style.display = 'block';
 
                 } else if(data.autoJibunAddress) {
                     var expJibunAddr = data.autoJibunAddress;
