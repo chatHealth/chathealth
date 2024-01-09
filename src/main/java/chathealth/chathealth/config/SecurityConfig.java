@@ -1,5 +1,6 @@
 package chathealth.chathealth.config;
 
+import chathealth.chathealth.service.AuthService;
 import chathealth.chathealth.service.OAuth2DetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -13,6 +14,7 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
     private final OAuth2DetailsService oAuth2DetailsService;
+    private final AuthService authService;
 
 
     @Bean
@@ -30,6 +32,7 @@ public class SecurityConfig {
                         .defaultSuccessUrl("/",true)
                         .permitAll()
                 )
+
                 .oauth2Login((ouath2Login) -> ouath2Login
                         .loginPage("/auth/login")
                         .defaultSuccessUrl("/")
@@ -38,7 +41,6 @@ public class SecurityConfig {
                         )
                 )
                 .csrf((csrf)->  csrf.disable());
-
         return httpSecurity.build();
     }
 }
