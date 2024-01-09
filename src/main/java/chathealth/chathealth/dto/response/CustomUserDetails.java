@@ -6,14 +6,16 @@ import lombok.Setter;
 import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Map;
 
 @Getter
 @Setter
 @ToString
-public class CustomUserDetails implements UserDetails {
+public class CustomUserDetails implements UserDetails, OAuth2User {
     private String id;
     private String email;
     private String pw;
@@ -25,9 +27,15 @@ public class CustomUserDetails implements UserDetails {
 
 
     private Member loggedMember;
+    private Map<String, Object> attributes;
 
     public CustomUserDetails(Member loggedMember) {
         this.loggedMember = loggedMember;
+    }
+
+    public CustomUserDetails(Member loggedMember, Map<String,Object> attributes) {
+        this.loggedMember = loggedMember;
+        this.attributes = attributes;
     }
 
     @Override

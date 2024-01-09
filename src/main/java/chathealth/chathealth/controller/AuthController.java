@@ -3,7 +3,9 @@ package chathealth.chathealth.controller;
 import chathealth.chathealth.dto.request.EntJoinDto;
 import chathealth.chathealth.dto.request.UserJoinDto;
 import chathealth.chathealth.entity.member.Address;
-import chathealth.chathealth.entity.member.Grade;
+
+import chathealth.chathealth.constants.Grade;
+
 import chathealth.chathealth.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +24,7 @@ import java.util.Map;
 @Slf4j
 public class AuthController {
 
- private final AuthService authService;
+    private final AuthService authService;
 
     @GetMapping("/userjoin") //개인회원가입창 진입
     public String userJoin(Model model) {
@@ -37,7 +39,7 @@ public class AuthController {
                 .postcode(userJoinDto.getPostcode())
                 .address(userJoinDto.getFrontAddress())
                 .addressDetail(userJoinDto.getAddressDetail())
-        .build();
+                .build();
 
 
         //service에 던질 DTO 빌드

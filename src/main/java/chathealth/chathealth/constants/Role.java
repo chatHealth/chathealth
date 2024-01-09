@@ -1,4 +1,4 @@
-package chathealth.chathealth.entity.member;
+package chathealth.chathealth.constants;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

@@ -1,5 +1,9 @@
 package chathealth.chathealth.service;
 
+
+import chathealth.chathealth.constants.Grade;
+import chathealth.chathealth.constants.Role;
+
 import chathealth.chathealth.dto.request.EntJoinDto;
 import chathealth.chathealth.dto.request.UserJoinDto;
 import chathealth.chathealth.dto.response.CustomUserDetails;

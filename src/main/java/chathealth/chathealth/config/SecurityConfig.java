@@ -1,5 +1,7 @@
 package chathealth.chathealth.config;
 
+import chathealth.chathealth.service.AuthService;
+import chathealth.chathealth.service.OAuth2DetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,16 +12,15 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 @RequiredArgsConstructor
 public class SecurityConfig {
-    @Bean
-    public BCryptPasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+
+    private final OAuth2DetailsService oAuth2DetailsService;
+    private final AuthService authService;
 
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.authorizeHttpRequests((auth)->auth
-                        .requestMatchers("/","/auth/join","/auth/userjoin","/auth/entjoin","/auth/login","/auth/confirmEmail","/css/**","/js/**")
+                        .requestMatchers("/","/auth/join","/auth/userjoin","/auth/entjoin","/auth/login","/auth/confirmEmail","/css/**","/js/**","/error")
 
                         .permitAll()
                         .anyRequest()
@@ -32,15 +33,15 @@ public class SecurityConfig {
                         .defaultSuccessUrl("/",true)
                         .permitAll()
                 )
-                /*.oauth2Login((ouath2Login) -> ouath2Login
+
+                .oauth2Login((ouath2Login) -> ouath2Login
                         .loginPage("/auth/login")
-                        .defaultSuccessUrl("/")
+                        .defaultSuccessUrl("/",true)
                         .userInfoEndpoint((userInfo) -> userInfo
                                 .userService(oAuth2DetailsService)
                         )
-                )*/
+                )
                 .csrf((csrf)->  csrf.disable());
-
         return httpSecurity.build();
     }
 }

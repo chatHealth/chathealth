@@ -6,7 +6,7 @@ import chathealth.chathealth.dto.response.EntInfoDto;
 import chathealth.chathealth.dto.response.UserInfoDto;
 import chathealth.chathealth.entity.member.Ent;
 import chathealth.chathealth.entity.member.Member;
-import chathealth.chathealth.entity.member.Role;
+import chathealth.chathealth.constants.Role;
 import chathealth.chathealth.entity.member.Users;
 import chathealth.chathealth.exception.UserNotFound;
 import chathealth.chathealth.repository.MemberRepository;
@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static chathealth.chathealth.entity.member.Role.*;
+import static chathealth.chathealth.constants.Role.*;
 
 
 @Service

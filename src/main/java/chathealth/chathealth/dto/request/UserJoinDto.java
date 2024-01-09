@@ -1,8 +1,8 @@
 package chathealth.chathealth.dto.request;
 
 import chathealth.chathealth.entity.member.Address;
-import chathealth.chathealth.entity.member.Grade;
-import chathealth.chathealth.entity.member.Role;
+import chathealth.chathealth.constants.Grade;
+import chathealth.chathealth.constants.Role;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;

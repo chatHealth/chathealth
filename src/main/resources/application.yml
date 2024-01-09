@@ -1,7 +1,9 @@
 server:
   port: 8090
+
 spring:
   profiles:
+    include: oauth
     active: dev # application-prod
 
   output:
