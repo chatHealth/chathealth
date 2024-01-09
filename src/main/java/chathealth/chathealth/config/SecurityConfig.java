@@ -20,8 +20,11 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.authorizeHttpRequests((auth)->auth
-                        .requestMatchers("/","/auth/join","/auth/userjoin","/auth/entjoin","/auth/login","/auth/confirmEmail","/css/**","/js/**","/error")
-
+                        .requestMatchers("/","/auth/join","/auth/userjoin","/auth/entjoin","/auth/login","/auth/confirmEmail",
+                                         "/board","/board/{id}",
+                                         "/post","/api/post", "/api/post/best",
+                                         "/error"
+                                         "/css/**","/js/**","/img/**")
                         .permitAll()
                         .anyRequest()
                         .authenticated())

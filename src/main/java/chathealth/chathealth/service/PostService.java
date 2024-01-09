@@ -3,25 +3,26 @@ package chathealth.chathealth.service;
 
 import chathealth.chathealth.dto.request.PostSearch;
 import chathealth.chathealth.dto.response.PostResponse;
+import chathealth.chathealth.entity.member.Member;
+import chathealth.chathealth.entity.post.PicturePost;
 import chathealth.chathealth.entity.post.Post;
-import chathealth.chathealth.repository.MaterialPostRepository;
 import chathealth.chathealth.repository.PicturePostRepository;
 import chathealth.chathealth.repository.post.PostRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PostService {
 
     private final PostRepository postRepository;
     private final PicturePostRepository picturePostRepository;
-    private final MaterialPostRepository materialPostRepository;
-
     // public Post insertPost(){}
 
     // 포스트 목록 조회
@@ -43,6 +44,7 @@ public class PostService {
                                 .representativeImg(getRepresentativeImg(post))
                                 .count(count)
                                 .createdDate(post.getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
+                                .createdAt(post.getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
                                 .hitCount(post.getPostHitCount())
                                 .likeCount(post.getPostLikeCount())
                                 .reviewCount(post.getReviewCount())
@@ -51,8 +53,31 @@ public class PostService {
                 .toList();
     }
 
+    public List<PostResponse> getBestPostsPerDay(){
+        return postRepository.getBestPostsPerDay().stream()
+                .map(post -> PostResponse.builder()
+                        .id(post.getId())
+                        .title(post.getTitle())
+                        .hitCount(post.getPostHitCount())
+                        .build())
+                .toList();
+    }
+
+    public List<PostResponse> getRecentPosts(Member member) {
+        return postRepository.getRecentPosts(member).stream()
+                .map(post -> PostResponse.builder()
+                        .id(post.getId())
+                        .title(post.getTitle())
+                        .build())
+                .toList();
+    }
+
     private String getRepresentativeImg(Post post) {
-        return picturePostRepository.findAllByPostIdOrderByOrders(post.getId()).get(0).getPictureUrl();
+        List<PicturePost> pictures = picturePostRepository.findAllByPostIdOrderByOrders(post.getId());
+        if (pictures.isEmpty()) {
+            return null;
+        }
+        return pictures.get(0).getPictureUrl();
     }
 
 }

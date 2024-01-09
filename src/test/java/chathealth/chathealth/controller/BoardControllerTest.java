@@ -51,7 +51,7 @@ class BoardControllerTest {
     @Test
     @WithMockUser
     @DisplayName("게시물 1개 조회")
-    public void getBoard() throws Exception{
+    public void getBoard() throws Exception {
         //given
         Users user = Users.builder()
                 .nickname("장공오일")
@@ -69,7 +69,7 @@ class BoardControllerTest {
         boardRepository.save(board);
         //expected
         mockMvc.perform(get("/board/{id}", board.getId())
-                .contentType(APPLICATION_JSON))
+                        .contentType(APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.boardId").value(board.getId()))
                 .andExpect(jsonPath("$.title").value("제목입니다."))
@@ -89,7 +89,7 @@ class BoardControllerTest {
     @WithMockUser
     @DisplayName("게시물 목록 조회")
 //    @Rollback(value = false)
-    public void getBoards() throws Exception{
+    public void getBoards() throws Exception {
         //given
         Users user = Users.builder()
                 .nickname("장공오일")
@@ -114,33 +114,36 @@ class BoardControllerTest {
                 .andExpect(status().isOk());
     }
 
-    @BeforeTransaction
-    public void init() {
-        boardRepository.deleteAll();
-        memberRepository.deleteAll();
+    
 
-        Users user = Users.builder()
-                .nickname("짱공오")
-                .grade(SILVER)
-                .email("jjang051@hanmail.net")
-                .profile("프사입니당")
-                .role(USER)
-                .build();
-        memberRepository.save(user);
-        Users user2 = Users.builder()
-                .nickname("짱공오")
-                .grade(SILVER)
-                .email("jjang051@hanmail.com")
-                .profile("프사입니당")
-                .role(USER)
-                .build();
-        memberRepository.save(user2);
+    @BeforeTransaction
+//    @BeforeEach
+    public void init() {
+        memberRepository.findByEmail("jjang061@hanmail.net").ifPresent(memberRepository::delete);
+        memberRepository.findByEmail("jjang061@hanmail.com").ifPresent(memberRepository::delete);
+            Users user = Users.builder()
+                    .nickname("짱공오")
+                    .grade(SILVER)
+                    .email("jjang061@hanmail.net")
+                    .profile("프사입니당")
+                    .role(USER)
+                    .build();
+            memberRepository.save(user);
+            Users user2 = Users.builder()
+                    .nickname("짱공오")
+                    .grade(SILVER)
+                    .email("jjang061@hanmail.com")
+                    .profile("프사입니당")
+                    .role(USER)
+                    .build();
+            memberRepository.save(user2);
     }
+
     @Test
     @DisplayName("게시물 생성")
 //    @Rollback(value = false)
-    @WithUserDetails(value = "jjang051@hanmail.com")
-    public void createBoard() throws Exception{
+    @WithUserDetails(value = "jjang061@hanmail.com")
+    public void createBoard() throws Exception {
 //        given
         BoardCreateDto boardCreateDto = BoardCreateDto.builder()
                 .title("제목ㅋㅋㅋ")
@@ -159,10 +162,10 @@ class BoardControllerTest {
     @Test
     @DisplayName("게시물 수정")
 //    @Rollback(value = false)
-    @WithUserDetails(value = "jjang051@hanmail.com")
-    public void updateBoard() throws Exception{
+    @WithUserDetails(value = "jjang061@hanmail.com")
+    public void updateBoard() throws Exception {
         //given
-        Users user = (Users) memberRepository.findByEmail("jjang051@hanmail.com").orElseThrow(UserNotFound::new);
+        Users user = (Users) memberRepository.findByEmail("jjang061@hanmail.com").orElseThrow(UserNotFound::new);
         Board board = Board.builder()
                 .title("제목ㅋㅋㅋ")
                 .content("내용ㅋㅋㅋ")

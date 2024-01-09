@@ -1,5 +1,6 @@
 package chathealth.chathealth.entity.post;
 
+import chathealth.chathealth.entity.BaseEntity;
 import chathealth.chathealth.entity.member.Member;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -10,7 +11,7 @@ import lombok.experimental.SuperBuilder;
 @Table(name = "PostHit")
 @SuperBuilder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class PostHit {
+public class PostHit extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "hit_id")
