@@ -18,7 +18,8 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.authorizeHttpRequests((auth)->auth
-                        .requestMatchers("/","/auth/entjoin","/auth/userjoin","/auth/login","/auth/confirmEmail","/board","/board/{id}","/post","/css/**","/js/**","/error")
+                        .requestMatchers("/","/auth/join","/auth/userjoin","/auth/entjoin","/auth/login","/auth/confirmEmail","/css/**","/js/**","/error")
+
                         .permitAll()
                         .anyRequest()
                         .authenticated())
@@ -32,7 +33,7 @@ public class SecurityConfig {
                 )
                 .oauth2Login((ouath2Login) -> ouath2Login
                         .loginPage("/auth/login")
-                        .defaultSuccessUrl("/")
+                        .defaultSuccessUrl("/",true)
                         .userInfoEndpoint((userInfo) -> userInfo
                                 .userService(oAuth2DetailsService)
                         )
