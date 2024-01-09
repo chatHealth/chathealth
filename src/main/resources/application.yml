@@ -1,4 +1,7 @@
 server:
+  servlet:
+    session:
+      timeout: 86400
   port: 8090
 
 spring:

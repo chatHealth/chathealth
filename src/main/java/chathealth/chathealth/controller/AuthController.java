@@ -40,7 +40,7 @@ public class AuthController {
                 .address(userJoinDto.getFrontAddress())
                 .addressDetail(userJoinDto.getAddressDetail())
                 .build();
-
+            log.info(userJoinDto.getPostcode());
 
         //service에 던질 DTO 빌드
         UserJoinDto insertUserDto = UserJoinDto.builder()

@@ -19,7 +19,7 @@ public class UserJoinDto {
     private String pw;
     private String email;
     private Address address;
-    private Integer postcode;
+    private String postcode;
     private String frontAddress;
     private String addressDetail;
     private String name;
