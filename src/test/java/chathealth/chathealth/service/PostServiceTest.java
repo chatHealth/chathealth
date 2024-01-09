@@ -1,8 +1,10 @@
 package chathealth.chathealth.service;
 
+import chathealth.chathealth.controller.PostRestController;
 import chathealth.chathealth.dto.request.PostSearch;
 import chathealth.chathealth.dto.response.PostResponse;
 import chathealth.chathealth.entity.member.Ent;
+import chathealth.chathealth.entity.member.Users;
 import chathealth.chathealth.entity.post.*;
 import chathealth.chathealth.repository.*;
 import chathealth.chathealth.repository.post.PostRepository;
@@ -39,6 +41,8 @@ class PostServiceTest {
     PicturePostRepository picturePostRepository;
     @Autowired
     PostHitRepository postHitRepository;
+    @Autowired
+    PostRestController postHitService;
 
     @Test
     @DisplayName("포스트 목록 조회")
@@ -199,5 +203,57 @@ class PostServiceTest {
         //then
         assertThat(posts.size()).isEqualTo(0);
 
+    }
+
+    @Test
+    @DisplayName("일간 베스트 포스트 조회")
+    public void getBestPostPerDay() {
+        //given
+
+
+        Ent ent = Ent.builder()
+                .company("회사이름")
+                .build();
+        Ent savedEnt = memberRepository.save(ent);
+
+        for(int i = 0; i < 10; i++){
+            Users user = Users.builder()
+                    .name("이름" + i)
+                    .build();
+            Users savedUser = memberRepository.save(user);
+
+            Post post = Post.builder()
+                    .member(savedEnt)
+                    .title("제목" + i)
+                    .build();
+            Post savedPost = postRepository.save(post);
+
+            PostHit postHit = PostHit.builder()
+                    .post(savedPost)
+                    .member(savedUser)
+                    .build();
+            postHitRepository.save(postHit);
+        }
+        for(int i = 10; i < 14; i++){
+            Users user = Users.builder()
+                    .name("이름" + i)
+                    .build();
+            Users savedUser = memberRepository.save(user);
+
+            Post post = Post.builder()
+                    .member(savedEnt)
+                    .title("제목" + i)
+                    .build();
+            Post savedPost = postRepository.save(post);
+
+            for(int j =0; j<2;j++) {
+                PostHit postHit = PostHit.builder()
+                        .post(savedPost)
+                        .member(savedUser)
+                        .build();
+                postHitRepository.save(postHit);}
+        }
+        List<PostResponse> bestPostsPerDay = postHitService.getBestPostsPerDay();
+        assertThat(bestPostsPerDay.size()).isEqualTo(5);
     }
 }

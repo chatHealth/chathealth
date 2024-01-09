@@ -47,11 +47,22 @@
 
 body {
     overflow-y: scroll;
+    position: relative;
 }
 
-#container {
-    max-width: 1200px; /* 최대 너비 설정 */
+#postContainer {
+    max-width: 1100px; /* 최대 너비 설정 */
     margin: 0 auto; /* 중앙 정렬 */
+    /*margin-left: 200px;*/
+    flex-grow: 1;
+}
+
+#ca{
+    /*세로로 가운데 배치*/
+    margin: 0 auto;
+    width: 1300px;
+    position: relative;
+    display: flex;
 }
 
 /* 연두색 및 초록색에 해당하는 색상 코드 사용 */
@@ -62,3 +73,59 @@ body {
 .nav-item .nav-link:hover {
     color: #008000; /* 초록색 */
 }
+
+.right-box {
+    position: absolute; /* 고정 위치 */
+    top: 180px; /* 상단에서 50px 아래에 위치 */
+    right: 50px; /* 우측에서 10px 떨어진 곳에 위치 */
+    width: 200px; /* 너비 */
+    border: 1px solid #dee2e6; /* 경계선 */
+    /*box-shadow: 0 4px 8px rgba(0,0,0,0.1); !* 그림자 효과 *!*/
+    padding: 10px; /* 내부 여백 */
+}
+@media screen and (max-width: 768px) {
+    #ca{
+        position: inherit;
+    }
+
+}
+@media screen and (max-width: 1200px) {
+    .left-box {
+        display: none;
+    }
+    .right-box {
+        display: none;
+    }
+    #ca{
+        left: 0;
+        position: inherit;
+    }
+    #container{
+        z-index: 1;
+        left: 0;
+        position: fixed;
+    }
+    /*.toggle-button {*/
+    /*    display: none;*/
+    /*}*/
+}
+
+/*.left-box {*/
+/*    position: absolute; !* 고정 위치 *!*/
+/*    top: 200px; !* 상단에서의 위치 *!*/
+/*    left: -250px; !* 기본적으로 화면 왼쪽 바깥에 숨겨져 있음 *!*/
+/*    width: 200px; !* 너비 *!*/
+/*    background-color: #f8f9fa; !* 배경 색상 *!*/
+/*    border: 1px solid #dee2e6; !* 경계선 *!*/
+/*    padding: 10px; !* 내부 여백 *!*/
+/*    transition: left 0.3s ease-in; !* 왼쪽 마진에 대한 전환 효과 *!*/
+/*    display: none;*/
+/*}*/
+/**/
+/*.toggle-button {*/
+/*    position: absolute;*/
+/*    top: 200px;*/
+/*    left: 10px; !* 버튼 위치 *!*/
+/*    cursor: pointer; !* 포인터 커서 스타일 *!*/
+/*    z-index: 1001; !* left-box 위에 표시되도록 z-index 설정 *!*/
+/*}*/

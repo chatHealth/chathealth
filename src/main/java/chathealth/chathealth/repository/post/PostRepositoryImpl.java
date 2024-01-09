@@ -8,6 +8,7 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static chathealth.chathealth.entity.QReview.review;
@@ -66,6 +67,18 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
                 .rightJoin(materialPost).on(materialPost.post.eq(post))
                 .leftJoin(materialPost).on(materialPost.material.eq(material))
                 .fetchOne();
+    }
+
+    @Override
+    public List<Post> getBestPostsPerDay(){
+        return queryFactory.selectFrom(post)
+                .where(post.deletedDate.isNull(),
+                        postHit.createdDate.between(LocalDateTime.now().minusDays(1), LocalDateTime.now()))
+                .leftJoin(postHit).on(postHit.post.eq(post))
+                .orderBy(postHit.createdDate.max().desc())
+                .groupBy(post.id)
+                .limit(5)
+                .fetch();
     }
 
     private static BooleanExpression materialIn(List<String> materialName) {

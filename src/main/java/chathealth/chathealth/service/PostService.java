@@ -55,6 +55,16 @@ public class PostService {
                 .toList();
     }
 
+    public List<PostResponse> getBestPostsPerDay(){
+        return postRepository.getBestPostsPerDay().stream()
+                .map(post -> PostResponse.builder()
+                        .id(post.getId())
+                        .title(post.getTitle())
+                        .hitCount(post.getPostHitCount())
+                        .build())
+                .toList();
+    }
+
     private String getRepresentativeImg(Post post) {
         List<PicturePost> pictures = picturePostRepository.findAllByPostIdOrderByOrders(post.getId());
         if (pictures.isEmpty()) {

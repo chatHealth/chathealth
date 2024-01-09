@@ -19,4 +19,9 @@ public class PostRestController {
     public List<PostResponse> getPosts(PostSearch postSearch) {
         return postService.getPosts(postSearch);
     }
+
+    @GetMapping("/api/post/best")
+    public List<PostResponse> getBestPostsPerDay(){
+        return postService.getBestPostsPerDay();
+    }
 }
