@@ -1,34 +1,22 @@
 package chathealth.chathealth.controller;
 
+import chathealth.chathealth.dto.request.EntJoinDto;
 import chathealth.chathealth.dto.request.UserJoinDto;
 import chathealth.chathealth.entity.member.Address;
-import chathealth.chathealth.entity.member.Grade;
-import chathealth.chathealth.entity.member.Member;
+
+import chathealth.chathealth.constants.Grade;
+
 import chathealth.chathealth.service.AuthService;
 import lombok.RequiredArgsConstructor;
-import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
-import net.coobird.thumbnailator.Thumbnailator;
-import org.springframework.format.datetime.DateFormatter;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-//import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 @Controller
 @RequestMapping("/auth")
@@ -36,12 +24,12 @@ import java.util.UUID;
 @Slf4j
 public class AuthController {
 
- private final AuthService authService;
+    private final AuthService authService;
 
     @GetMapping("/userjoin") //개인회원가입창 진입
     public String userJoin(Model model) {
         //model.addAttribute("UserJoinDto", new UserJoinDto());
-        return "auth/userjoin";
+        return "auth/user-join";
     }
 
     @PostMapping("/userjoin") //개인회원가입 처리
@@ -51,7 +39,7 @@ public class AuthController {
                 .postcode(userJoinDto.getPostcode())
                 .address(userJoinDto.getFrontAddress())
                 .addressDetail(userJoinDto.getAddressDetail())
-        .build();
+                .build();
 
 
         //service에 던질 DTO 빌드
@@ -67,8 +55,43 @@ public class AuthController {
                 .createDate(LocalDateTime.now())
                 .grade(Grade.BRONZE)
                 .build();
-        authService.join(insertUserDto);
-        return "redirect:/auth/join";
+        authService.userJoin(insertUserDto);
+        return "redirect:/auth/user-join";
+    }
+
+    @GetMapping("/entjoin") //사업자회원가입창 진입
+    public String entJoin(Model model) {
+        //model.addAttribute("UserJoinDto", new UserJoinDto());
+        return "auth/ent-join";
+    }
+
+    @PostMapping("/entjoin") //사업자회원가입 처리
+    public String entJoin(@ModelAttribute EntJoinDto entJoinDto, MultipartFile profile) {
+        //주소 객체화
+        Address addressEntity = Address.builder()
+                .postcode(entJoinDto.getPostcode())
+                .address(entJoinDto.getFrontAddress())
+                .addressDetail(entJoinDto.getAddressDetail())
+                .build();
+        log.info(String.valueOf(addressEntity));
+
+
+        //service에 던질 DTO 빌드
+        EntJoinDto insertEntDto = EntJoinDto.builder()
+                .email(entJoinDto.getEmail())
+                .address(addressEntity)
+                .pw(entJoinDto.getPw())
+                .company(entJoinDto.getCompany())
+                .entNo(entJoinDto.getEntNo())
+                .ceo(entJoinDto.getCeo())
+                .birth(entJoinDto.getBirth())
+                .profile(entJoinDto.getProfile())
+                .role(entJoinDto.getRole())
+                .createdDate(LocalDateTime.now())
+                .build();
+        log.info("컨트롤러 insertDto = "+String.valueOf(insertEntDto));
+        authService.entJoin(insertEntDto);
+        return "redirect:/auth/ent-join";
     }
 
 

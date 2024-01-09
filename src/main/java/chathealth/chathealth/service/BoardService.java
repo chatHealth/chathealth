@@ -7,7 +7,7 @@ import chathealth.chathealth.dto.response.BoardResponse;
 import chathealth.chathealth.entity.board.Board;
 import chathealth.chathealth.entity.board.Category;
 import chathealth.chathealth.entity.member.Member;
-import chathealth.chathealth.entity.member.Role;
+import chathealth.chathealth.constants.Role;
 import chathealth.chathealth.entity.member.Users;
 import chathealth.chathealth.exception.BoardNotFoundException;
 import chathealth.chathealth.exception.NotPermitted;
@@ -21,7 +21,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static chathealth.chathealth.entity.member.Role.*;
+import static chathealth.chathealth.constants.Role.*;
 
 @Service
 @RequiredArgsConstructor

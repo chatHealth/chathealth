@@ -1,5 +1,6 @@
 package chathealth.chathealth.entity.member;
 
+import chathealth.chathealth.constants.Role;
 import chathealth.chathealth.entity.*;
 import chathealth.chathealth.entity.board.Board;
 import jakarta.persistence.*;

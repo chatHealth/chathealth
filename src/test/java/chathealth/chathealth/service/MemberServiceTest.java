@@ -6,7 +6,7 @@ import chathealth.chathealth.dto.response.EntInfoDto;
 import chathealth.chathealth.dto.response.UserInfoDto;
 import chathealth.chathealth.entity.member.Address;
 import chathealth.chathealth.entity.member.Ent;
-import chathealth.chathealth.entity.member.Grade;
+import chathealth.chathealth.constants.Grade;
 import chathealth.chathealth.entity.member.Users;
 import chathealth.chathealth.exception.UserNotFound;
 import chathealth.chathealth.repository.MemberRepository;
@@ -18,8 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 
-import static chathealth.chathealth.entity.member.Role.USER;
-import static chathealth.chathealth.entity.member.Role.valueOf;
+import static chathealth.chathealth.constants.Role.USER;
+import static chathealth.chathealth.constants.Role.valueOf;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 

@@ -13,25 +13,33 @@
 </head>
 <body>
 <div class="container">
-<div layout:fragment="content" >
-    <div class="container bodyContainer w-50 ">
-    <h1>로그인</h1>
-    <form method="post" action="/auth/login">
-        <div class="mb-3">
-                <label for="loginId" class="form-label">이메일</label>
-            <input type="email" id="loginId" class="form-control" name="email">
-        </div>
+    <div layout:fragment="content">
+        <div class="container bodyContainer w-50 ">
+            <h1>로그인</h1>
+            <form method="post" action="/auth/login">
+                <div class="mb-3">
+                    <label for="loginId" class="form-label">이메일</label>
+                    <input type="email" id="loginId" class="form-control" name="email">
+                </div>
 
-        <div class="mb-3">
-            <label for="loginPw" class="form-label">비밀번호</label>
-            <input type="password" id="loginPw" class="form-control" name="pw">
-        </div>
+                <div class="mb-3">
+                    <label for="loginPw" class="form-label">비밀번호</label>
+                    <input type="password" id="loginPw" class="form-control" name="pw">
+                </div>
+                <input class="form-check-input" type="checkbox" value="rememberMe" id="rememberMe" name="rememberMe">
+                <label class="form-check-label1" for="rememberMe">
+                    로그인 유지하기(24시간)
+                </label> </br>
 
-        <button class="btn btn-sm btn-outline-primary">log in</button>
-    </form>
+                <button class="btn btn-sm btn-outline-primary" type="submit">log in</button>
+            </form>
+        </div>
+        <div style="text-align: center;">
+            <p class="mt-4" >아직 회원이 아니신가요?</br> <a href="/auth/userjoin">여기를 눌러 회원가입 하기</a></p></br>
+            <a href="/oauth2/authorization/kakao">카카오 로그인</a>
+        </div>
+    </div>
 </div>
-<p class="mt-4" style="text-align: center;">아직 회원이 아니신가요?</br> <a href="/auth/userjoin">여기를 눌러 회원가입 하기</a></p>
-</div>
-</div>
+
 </body>
 </html>
