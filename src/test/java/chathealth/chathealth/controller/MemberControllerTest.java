@@ -4,7 +4,7 @@ import chathealth.chathealth.dto.request.EntEditDto;
 import chathealth.chathealth.dto.request.UserEditDto;
 import chathealth.chathealth.entity.member.Address;
 import chathealth.chathealth.entity.member.Ent;
-import chathealth.chathealth.entity.member.Grade;
+import chathealth.chathealth.constants.Grade;
 import chathealth.chathealth.entity.member.Users;
 import chathealth.chathealth.repository.MemberRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -20,9 +20,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 
-import static chathealth.chathealth.entity.member.Grade.*;
-import static chathealth.chathealth.entity.member.Role.USER;
-import static chathealth.chathealth.entity.member.Role.valueOf;
+import static chathealth.chathealth.constants.Grade.*;
+import static chathealth.chathealth.constants.Role.USER;
+import static chathealth.chathealth.constants.Role.valueOf;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;

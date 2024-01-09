@@ -1,5 +1,6 @@
 package chathealth.chathealth.entity.member;
 
+import chathealth.chathealth.constants.Grade;
 import chathealth.chathealth.dto.request.UserEditDto;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
@@ -8,6 +9,7 @@ import jakarta.persistence.Enumerated;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.DynamicInsert;
 
 import static lombok.AccessLevel.PROTECTED;
 

@@ -21,9 +21,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 import static chathealth.chathealth.entity.board.Category.FREE;
-import static chathealth.chathealth.entity.member.Grade.BLACK;
-import static chathealth.chathealth.entity.member.Grade.SILVER;
-import static chathealth.chathealth.entity.member.Role.USER;
+import static chathealth.chathealth.constants.Grade.BLACK;
+import static chathealth.chathealth.constants.Grade.SILVER;
+import static chathealth.chathealth.constants.Role.USER;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
