@@ -1,0 +1,578 @@
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}">
+
+<div layout:fragment="content" class="main">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-9 mx-auto">
+                <div id="searchCondition">
+                    <div class="d-flex symptomDiv">
+                        <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+                            <input type="radio" class="btn-check" name="symptomType" id="symptomType1"
+                                   autocomplete="off" checked>
+                            <label class="btn btn-symptom" for="symptomType1">전체</label>
+                            <input type="radio" class="btn-check" name="symptomType" id="symptomType2"
+                                   autocomplete="off" value="INTESTINE">
+                            <label class="btn btn-symptom" for="symptomType2">장건강</label>
+                            <input type="radio" class="btn-check" name="symptomType" id="symptomType3"
+                                   autocomplete="off" value="LIVER">
+                            <label class="btn btn-symptom" for="symptomType3">간건강</label>
+                            <input type="radio" class="btn-check" name="symptomType" id="symptomType4"
+                                   autocomplete="off" value="SKIN">
+                            <label class="btn btn-symptom" for="symptomType4">피부건강</label>
+                            <input type="radio" class="btn-check" name="symptomType" id="symptomType5"
+                                   autocomplete="off" value="IMMUNE">
+                            <label class="btn btn-symptom" for="symptomType5">면역건강</label>
+                            <input type="radio" class="btn-check" name="symptomType" id="symptomType6"
+                                   autocomplete="off" value="BONE">
+                            <label class="btn btn-symptom" for="symptomType6">뼈건강</label>
+                            <input type="radio" class="btn-check" name="symptomType" id="symptomType7"
+                                   autocomplete="off" value="EYE">
+                            <label class="btn btn-symptom" for="symptomType7">눈건강</label>
+                            <input type="radio" class="btn-check" name="symptomType" id="symptomType8"
+                                   autocomplete="off" value="ANTIOXIDANT">
+                            <label class="btn btn-symptom" for="symptomType8">항산화건강</label>
+                            <input type="radio" class="btn-check" name="symptomType" id="symptomType9"
+                                   autocomplete="off" value="BLOOD">
+                            <label class="btn btn-symptom" for="symptomType9">혈행건강</label>
+                            <input type="radio" class="btn-check" name="symptomType" id="symptomType10"
+                                   autocomplete="off" value="VITALITY">
+                            <label class="btn btn-symptom" for="symptomType10">활력건강</label>
+                            <input type="radio" class="btn-check" name="symptomType" id="symptomType11"
+                                   autocomplete="off" value="DIET">
+                            <label class="btn btn-symptom" for="symptomType11">다이어트</label>
+                        </div>
+                    </div>
+                    <!-- 선택 가능한 요소들 (초기에 숨김) -->
+                    <div id="additional-options1" class="row mt-2 materials" style="display: none;">
+                        <div class="col">
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" value="프로바이오틱스"
+                                       id="intestine1">
+                                <label class="form-check-label" for="intestine1">프로바이오틱스</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" value="식이섬유"
+                                       id="intestine2">
+                                <label class="form-check-label" for="intestine2">식이섬유</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="additional-options2" class="row mt-2 materials" style="display: none;">
+                        <div class="col">
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" value="우루소데옥시콜린산"
+                                       id="liver1">
+                                <label class="form-check-label" for="liver1">우루소데옥시콜린산(UDCA)</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" value="비타민B군"
+                                       id="liver2">
+                                <label class="form-check-label" for="liver2">비타민B군</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" value="실리마린"
+                                       id="liver3">
+                                <label class="form-check-label" for="liver3">실리마린</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" value="아미노산"
+                                       id="liver4">
+                                <label class="form-check-label" for="liver4">아미노산(타우린,베타인,아르기닌)</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="additional-options3" class="row mt-2 materials" style="display: none;">
+                        <div class="col">
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" value="콜라겐"
+                                       id="skin1">
+                                <label class="form-check-label" for="skin1">콜라겐</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" value="히알루론산"
+                                       id="skin2">
+                                <label class="form-check-label" for="skin2">히알루론산</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" value="글루타치온"
+                                       id="skin3">
+                                <label class="form-check-label" for="skin3">글루타치온</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" value="로즈마리추출물등복합물(SunMax)"
+                                       id="skin4">
+                                <label class="form-check-label" for="skin4">로즈마리추출물등복합물(SunMax)</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="additional-options4" class="row mt-2 materials" style="display: none;">
+                        <div class="col">
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" value="아연"
+                                       id="immune1">
+                                <label class="form-check-label" for="immune1">아연</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" value="비타민D"
+                                       id="immune2">
+                                <label class="form-check-label" for="immune2">비타민D</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" value="프로바이오틱스"
+                                       id="immune3">
+                                <label class="form-check-label" for="immune3">프로바이오틱스</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" value="알콕시글리세"
+                                       id="immune4">
+                                <label class="form-check-label" for="immune4">알콕시글리세</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="additional-options5" class="row mt-2 materials" style="display: none;">
+                        <div class="col">
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" value="칼슘"
+                                       id="bone1">
+                                <label class="form-check-label" for="bone1">칼슘</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" value="비타민K"
+                                       id="bone2">
+                                <label class="form-check-label" for="bone2">비타민K</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" value="비타민C"
+                                       id="bone3">
+                                <label class="form-check-label" for="bone3">비타민C</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" value="비타민B12"
+                                       id="bone4">
+                                <label class="form-check-label" for="bone4">비타민B12</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="additional-options6" class="row mt-2 materials" style="display: none;">
+                        <div class="col">
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" value="오메가3"
+                                       id="eye1">
+                                <label class="form-check-label" for="eye1">오메가3</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" value="루테인"
+                                       id="eye2">
+                                <label class="form-check-label" for="eye2">루테인</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" value="비타민A"
+                                       id="eye3">
+                                <label class="form-check-label" for="eye3">비타민A</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" value="라이코펜"
+                                       id="eye4">
+                                <label class="form-check-label" for="eye4">라이코펜</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="additional-options7" class="row mt-2 materials" style="display: none;">
+                        <div class="col">
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" value="토코페롤"
+                                       id="antioxidant1">
+                                <label class="form-check-label" for="antioxidant1">토코페롤</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" value="폴리페놀"
+                                       id="antioxidant2">
+                                <label class="form-check-label" for="antioxidant2">폴리페놀</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" value="유비퀴놀"
+                                       id="antioxidant3">
+                                <label class="form-check-label" for="antioxidant3">유비퀴놀</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" value="알파리포산"
+                                       id="antioxidant4">
+                                <label class="form-check-label" for="antioxidant4">알파리포산</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="additional-options8" class="row mt-2 materials" style="display: none;">
+                        <div class="col">
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" value="비타민E"
+                                       id="blood1">
+                                <label class="form-check-label" for="blood1">비타민E</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" value="코엔자임Q10"
+                                       id="blood2">
+                                <label class="form-check-label" for="blood2">코엔자임Q10</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" value="징코라이드"
+                                       id="blood3">
+                                <label class="form-check-label" for="blood3">징코라이드</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" value="모나콜린K"
+                                       id="blood4">
+                                <label class="form-check-label" for="blood4">모나콜린K</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="additional-options9" class="row mt-2 materials" style="display: none;">
+                        <div class="col">
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" value="아르기닌"
+                                       id="vitality1">
+                                <label class="form-check-label" for="vitality1">아르기닌</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" value="타우린"
+                                       id="vitality2">
+                                <label class="form-check-label" for="vitality2">타우린</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" value="마그네슘"
+                                       id="vitality3">
+                                <label class="form-check-label" for="vitality3">마그네슌</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" value="테아닌"
+                                       id="vitality4">
+                                <label class="form-check-label" for="vitality4">테아닌</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="additional-options10" class="row mt-2 materials" style="display: none;">
+                        <div class="col">
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" value="카테킨"
+                                       id="diet1">
+                                <label class="form-check-label" for="diet1">카테킨</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" value="가르시니아"
+                                       id="diet2">
+                                <label class="form-check-label" for="diet2">가르시니아</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" value="공액리놀렌"
+                                       id="diet3">
+                                <label class="form-check-label" for="diet3">공액리놀렌</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" value="키토산"
+                                       id="diet4">
+                                <label class="form-check-label" for="diet4">키토산</label>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div>
+                        <label for="title">상품명</label><input type="text" id="title" name="title" placeholder="상품명">
+                        <label for="company">회사</label><input type="text" id="company" name="company"
+                                                              placeholder="상호명">
+                        <!--                        <button id="searchBtn">검색</button>-->
+                    </div>
+                    <hr>
+                    <div class="btn-group" role="group" aria-label="Basic radio toggle button group"
+                         id="target-element">
+                        <input type="radio" class="btn-check" name="orderCondition" id="orderCondition1"
+                               autocomplete="off" value="RECENT" checked>
+                        <label class="btn btn-orderCondition" for="orderCondition1"><i class="fas fa-check"
+                                                                                       style="display: none;"></i>최신순</label>
+                        <input type="radio" class="btn-check" name="orderCondition" id="orderCondition2"
+                               autocomplete="off" value="OLD">
+                        <label class="btn btn-orderCondition" for="orderCondition2"><i class="fas fa-check"
+                                                                                       style="display: none;"></i>오래된순</label>
+                        <input type="radio" class="btn-check" name="orderCondition" id="orderCondition3"
+                               autocomplete="off" value="REVIEW">
+                        <label class="btn btn-orderCondition" for="orderCondition3"><i class="fas fa-check"
+                                                                                       style="display: none;"></i>리뷰순</label>
+                        <input type="radio" class="btn-check" name="orderCondition" id="orderCondition4"
+                               autocomplete="off" value="HIT">
+                        <label class="btn btn-orderCondition" for="orderCondition4"><i class="fas fa-check"
+                                                                                       style="display: none;"></i>조회순</label>
+                        <input type="radio" class="btn-check" name="orderCondition" id="orderCondition5"
+                               autocomplete="off" value="LIKE">
+                        <label class="btn btn-orderCondition" for="orderCondition5"><i class="fas fa-check"
+                                                                                       style="display: none;"></i>관심순</label>
+                    </div>
+                </div>
+
+                <div id="card-container" class="container">
+                    <div id="loadingOverlay" class="loading-overlay"></div>
+                    <div class="row">
+                        <!-- 이미지 카드가 여기에 들어갑니다 -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script th:inline="javascript">
+        let materialList = [];
+
+        $(document).ready(function () {
+            // 초기 데이터 로드
+            loadData(null, null, null, null, null, null, null);
+        });
+
+        document.querySelectorAll('.btn-symptom').forEach(function (button) {
+            button.addEventListener('click', function () {
+                // 모든 버튼에서 'active' 클래스 제거
+                document.querySelectorAll('.btn-symptom').forEach(function (btn) {
+                    btn.classList.remove('active');
+                });
+
+                // 클릭된 버튼에 'active' 클래스 추가
+                this.classList.add('active');
+            });
+        });
+
+        document.querySelectorAll('.btn-orderCondition').forEach(function (button) {
+            button.addEventListener('click', function () {
+                // 모든 버튼에서 'active' 클래스 제거
+                document.querySelectorAll('.btn-orderCondition').forEach(function (btn) {
+                    btn.classList.remove('active');
+                    btn.querySelector('.fa-check').style.display = 'none';
+                });
+
+                // 클릭된 버튼에 'active' 클래스 추가
+                this.classList.add('active');
+                this.querySelector('.fa-check').style.display = 'inline';
+            });
+        });
+
+        function loadData(title, company, symptomType, orderCondition, page, size, materialList) {
+
+            if (page === null) {
+                page = 0;
+            }
+            if (size === null) {
+                size = 20;
+            }
+
+            if (materialList === []) {
+                materialList = null;
+            }
+
+            $('#card-container #loadingOverlay').show(); // 로딩 오버레이 표시
+            $.ajax({
+                url: "/api/post",
+                type: "GET",
+                data: {
+                    "title": title,
+                    "company": company,
+                    "symptomType": symptomType,
+                    "materialName": materialList,
+                    "ordercondition": orderCondition,
+                    "page": page,
+                    "size": size
+                },
+                traditional: true,
+                success: function (response) {
+                    let totalPage = 0;
+                    let html = "";
+                    if (response.length === 0) {
+                        html += "<h2>검색 결과가 없습니다.</h2>";
+                    } else {
+                        html += "<h2>검색 결과 : " + response[0].count + "건</h2>";
+                        totalPage = Math.floor(response[0].count / size + 1);
+                    }
+                    $.each(response, function (index, item) {
+                        if (item.representativeImg === null) {
+                            item.representativeImg = "/img/basic_post.svg";
+                        }
+                        if (index % 4 === 0) {
+                            html += "<div class='row'>";
+                        }
+                        // 카드 생성
+
+                        html += '<div class="col-lg-3 col-sm-6 mb-4">';
+                        html += '    <div class="card h-100 shadow-sm bg-light"> <!-- Original background color -->';
+                        html += '        <a href="' + item.link + '" style="text-decoration: none; color: inherit;">';
+                        html += '            <img src="' + item.representativeImg + '" class="card-img-top rounded" alt="Image of ' + item.title + '" onError="this.onerror=null; this.src=\'/img/basic_post.svg\'">';
+                        html += '            <h5 class="card-title font-weight-bold text-center" style="margin-top: 10px;">' + item.title + '</h5>';
+                        html += '        </a>';
+                        html += '        <div class="card-body">';
+                        html += '            <div class="d-flex justify-content-between align-items-center mb-2">';
+                        html += '                <span><i class="fa fa-eye text-secondary"></i> ' + item.hitCount + '</span>';
+                        html += '                <span><i class="fa fa-heart text-danger"></i> ' + item.likeCount + '</span>';
+                        html += '            </div>';
+                        html += '            <p class="card-text"><span class="text-secondary">' + item.company + '</span></p>';
+                        html += '        </div>';
+                        html += '        <div class="card-footer bg-white">';
+                        html += '           <span><i class="fas fa-pen"></i> ' + item.reviewCount + '</span>';
+                        html += '            <span class="card-text text-muted small text-right">' + item.createdAt + '</span>';
+                        html += '        </div>';
+                        html += '    </div>';
+                        html += '</div>';
+
+
+                        // 행 종료: 현재 인덱스가 4의 배수이고 마지막 요소가 아닐 때
+                        if (index % 4 === 3 && index !== response.length - 1) {
+                            html += '</div>'; // 행 종료
+                        }
+                    });
+                    if (response.length % 4 !== 0) {
+                        html += '</div>'; // 마지막 행 종료
+                    }
+
+                    // 페이지네이션 생성
+                    if (response.length !== 0) {
+                        html += createPagination(page, totalPage);
+                    }
+                    // $('#card-container').html(html);
+                    $('#card-container').html(html).hide().fadeIn(1000, function () {
+                        $('#loadingOverlay').hide(); // fadeIn 완료 후 로딩 오버레이 숨김
+                    });
+                },
+                error: function (error) {
+                    alert(JSON.stringify(error));
+                    $('#loadingOverlay').hide(); // 에러 발생 시 오버레이 숨기기
+                },
+                complete: function () {
+                    $('#loadingOverlay').hide(); // complete에서는 숨기기
+                }
+            });
+        }
+
+        $(document).on('click', '.pagination .page-link', function (e) {
+            e.preventDefault();
+            let page = $(this).attr('value'); // 페이지 번호 추출
+
+            document.getElementById('target-element').scrollIntoView({
+                behavior: 'smooth'
+            });
+
+            // 현재 검색 조건 가져오기
+            let symptomType = $("input[name='symptomType']:checked").val();
+            if (symptomType === "on") {
+                symptomType = null;
+            }
+            let orderCondition = $("input[name='orderCondition']:checked").val();
+            let title = $('#title').val();
+            let company = $('#company').val();
+
+            // 페이지 데이터 로드
+            loadData(title, company, symptomType, orderCondition, page, null, materialList);
+        });
+
+        $('#searchCondition').on('change', function () {
+            search();
+        });
+
+        //검색어 입력 후 1초 동안 입력 없으면 검색
+        let typingTimer;
+        $('#title').on('keyup', function () {
+            clearTimeout(typingTimer);
+            typingTimer = setTimeout(search, 500);
+        });
+        $('#company').on('keyup', function () {
+            clearTimeout(typingTimer);
+            typingTimer = setTimeout(search, 500);
+        });
+        function search() {
+            let symptomType = $("input[name='symptomType']:checked").val();
+            if (symptomType === "on") {
+                symptomType = null;
+            }
+            let orderCondition = $("input[name='orderCondition']:checked").val();
+            let title = $('#title').val();
+            let company = $('#company').val();
+
+            //체크 표시된 재료들을 materialList에 추가
+            let materials = document.getElementsByClassName('materials');
+            Array.from(materials).forEach(function (element) {
+                let materialCheckboxes = element.querySelectorAll('input[type="checkbox"]:checked');
+                Array.from(materialCheckboxes).forEach(function (checkbox) {
+                    materialList.push(checkbox.value);
+                });
+            });
+            console.log(materialList);
+            // 초기 데이터 로드
+            loadData(title, company, symptomType, orderCondition, null, null, materialList);
+        }
+
+        function createPagination(currentPage, totalPages) {
+            currentPage = parseInt(currentPage);
+            let lastPage = parseInt(totalPages) - 1;
+            let html = '<nav aria-label="Page navigation example">';
+            html += '<ul class="pagination justify-content-center">';
+
+            // 페이지 번호 생성 (10페이지 단위)
+            let startPage = Math.floor(currentPage / 10) * 10;
+            let endPage = Math.min(startPage + 9, lastPage);
+
+            // Previous 버튼 활성화/비활성화
+            let isPreviousDisabled = currentPage < 10 ? 'disabled' : '';
+            let previousPage = startPage - 1;
+            html += '<li class="page-item ' + isPreviousDisabled + '">';
+            html += '<button class="page-link" name="page" value="' + previousPage + '">Previous</button></li>';
+
+
+            for (let i = startPage; i <= endPage; i++) {
+                let isActive = i === currentPage ? 'active' : '';
+                html += '<li class="page-item ' + isActive + '">';
+                html += '<button class="page-link" name="page" value="' + i + '">' + (i + 1) + '</button></li>';
+            }
+
+            // Next 버튼 활성화/비활성화
+            let lastPageGroupStart = Math.floor((lastPage - 1) / 10) * 10;
+            let isNextDisabled = currentPage >= lastPageGroupStart ? 'disabled' : '';
+            let nextPage = endPage + 1;
+            html += '<li class="page-item ' + isNextDisabled + '">';
+            html += '<button class="page-link" name="page" value="' + nextPage + '">Next</button></li>';
+
+            html += '</ul></nav>';
+            return html;
+        }
+
+        document.getElementById('symptomType1').addEventListener('click', function () {
+            let materials = document.getElementsByClassName('materials');
+            // 체크 박스에 있는 요소들 unchecked, materialList 초기화
+            materialList = [];
+            $('.materials input[type="checkbox"]').prop('checked', false);
+
+            Array.from(materials).forEach(function (element) {
+                element.style.display = 'none'; // 모든 materials 요소를 숨김
+            });
+        });
+
+        for (let i = 2; i <= 11; i++) { // i의 범위는 필요한 만큼 조정
+            document.getElementById('symptomType' + i).addEventListener('click', function () {
+                let materials = document.getElementsByClassName('materials');
+                //체크 박스에 있는 요소들 unchecked, materialList 초기화
+                materialList = [];
+                $('.materials input[type="checkbox"]').prop('checked', false);
+
+                Array.from(materials).forEach(function (element) {
+                    element.style.display = 'none'; // 모든 materials 요소를 숨김
+                });
+
+                let additionalOptions = document.getElementById('additional-options' + (i - 1));
+                if (this.checked) {
+                    additionalOptions.style.display = 'flex'; // Flexbox를 사용하여 가로로 표시
+                } else {
+                    additionalOptions.style.display = 'none';
+                }
+            });
+        }
+        // checkbox check 해제 시 materialList 초기화
+        $('.materials input[type="checkbox"]').on('change', function () {
+            materialList = [];
+        });
+    </script>
+</div>
+</html>

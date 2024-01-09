@@ -3,17 +3,20 @@ package chathealth.chathealth.service;
 
 import chathealth.chathealth.dto.request.PostSearch;
 import chathealth.chathealth.dto.response.PostResponse;
+import chathealth.chathealth.entity.post.PicturePost;
 import chathealth.chathealth.entity.post.Post;
 import chathealth.chathealth.repository.MaterialPostRepository;
 import chathealth.chathealth.repository.PicturePostRepository;
 import chathealth.chathealth.repository.post.PostRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PostService {
@@ -43,6 +46,7 @@ public class PostService {
                                 .representativeImg(getRepresentativeImg(post))
                                 .count(count)
                                 .createdDate(post.getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
+                                .createdAt(post.getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
                                 .hitCount(post.getPostHitCount())
                                 .likeCount(post.getPostLikeCount())
                                 .reviewCount(post.getReviewCount())
@@ -52,7 +56,11 @@ public class PostService {
     }
 
     private String getRepresentativeImg(Post post) {
-        return picturePostRepository.findAllByPostIdOrderByOrders(post.getId()).get(0).getPictureUrl();
+        List<PicturePost> pictures = picturePostRepository.findAllByPostIdOrderByOrders(post.getId());
+        if (pictures.isEmpty()) {
+            return null;
+        }
+        return pictures.get(0).getPictureUrl();
     }
 
 }

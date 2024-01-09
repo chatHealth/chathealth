@@ -14,6 +14,9 @@ public class PostController {
 
     private final PostService postService;
 
+    @GetMapping
+    public String post() { return "post/post"; }
+
     @GetMapping("/write")
     public String write() { return "post/write"; }
 

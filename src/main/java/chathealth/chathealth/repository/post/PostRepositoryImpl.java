@@ -30,7 +30,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
                 .from(post)
                 .where(post.deletedDate.isNull(),
                         titleContains(postSearch.getTitle()),
-                        companyEq(postSearch.getCompany()),
+                        companyContains(postSearch.getCompany()),
                         symptomTypeEq(postSearch.getSymptomType()),
                         materialIn(postSearch.getMaterialName())
                         )
@@ -83,17 +83,17 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
     }
 
     private static BooleanExpression titleContains(String title) {
-        if (title == null) {
+        if (title == null || title.isEmpty()) {
             return null;
         }
         return post.title.contains(title);
     }
 
-    private static BooleanExpression companyEq(String company) {
-        if(company == null){
+    private static BooleanExpression companyContains(String company) {
+        if(company == null || company.isEmpty()){
             return null;
         }
-        return ent.company.eq(company);
+        return ent.company.contains(company);
     }
 
     private static OrderSpecifier<?> getOrderSpecifier(PostSearch postSearch) {

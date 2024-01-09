@@ -29,6 +29,9 @@ public class PostResponse {
     // yyyy-MM-dd HH:mm:ss 변환
     private String createdDate;
 
+    // yyyy-MM-dd 변환
+    private String createdAt;
+
     private Long count;
 
     private Long hitCount;
