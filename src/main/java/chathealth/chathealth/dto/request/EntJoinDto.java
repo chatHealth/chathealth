@@ -28,5 +28,5 @@ public class EntJoinDto {
     private Role role;
     private LocalDateTime createdDate;
     private LocalDate birth;
-
 }
+
