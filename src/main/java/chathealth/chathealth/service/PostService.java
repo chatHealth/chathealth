@@ -3,9 +3,9 @@ package chathealth.chathealth.service;
 
 import chathealth.chathealth.dto.request.PostSearch;
 import chathealth.chathealth.dto.response.PostResponse;
+import chathealth.chathealth.entity.member.Member;
 import chathealth.chathealth.entity.post.PicturePost;
 import chathealth.chathealth.entity.post.Post;
-import chathealth.chathealth.repository.MaterialPostRepository;
 import chathealth.chathealth.repository.PicturePostRepository;
 import chathealth.chathealth.repository.post.PostRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,8 +23,6 @@ public class PostService {
 
     private final PostRepository postRepository;
     private final PicturePostRepository picturePostRepository;
-    private final MaterialPostRepository materialPostRepository;
-
     // public Post insertPost(){}
 
     // 포스트 목록 조회
@@ -61,6 +59,15 @@ public class PostService {
                         .id(post.getId())
                         .title(post.getTitle())
                         .hitCount(post.getPostHitCount())
+                        .build())
+                .toList();
+    }
+
+    public List<PostResponse> getRecentPosts(Member member) {
+        return postRepository.getRecentPosts(member).stream()
+                .map(post -> PostResponse.builder()
+                        .id(post.getId())
+                        .title(post.getTitle())
                         .build())
                 .toList();
     }

@@ -1,6 +1,7 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layout/layout}">
+      layout:decorate="~{layout/layout}"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <div layout:fragment="content" class="main">
     <div id="ca">
@@ -332,11 +333,20 @@
             </div>
         </div>
 
-        <div class="right-box">
-            <h4>일간 최다 조회</h4>
+        <div>
+            <div class="right-box" id="best-per-day">
+                <h4>일간 최다 조회</h4>
                 <!--                게시물 리스트-->
-            <div>
+                <div>
 
+                </div>
+            </div>
+            <div sec:authorize="isAuthenticated()" class="right-box" style="top:500px">
+                <h4>최근 조회</h4>
+                <!--                게시물 리스트-->
+                <div>
+
+                </div>
             </div>
         </div>
     </div>
@@ -348,6 +358,7 @@
             // 초기 데이터 로드
             loadData(null, null, null, null, null, null, null);
 
+            // 일간 최다 조회
             $.ajax({
                 url: "/api/post/best",
                 type: "GET",
@@ -372,7 +383,7 @@
                         i++;
                     });
                     html += "</table>";
-                    $('.right-box div').html(html);
+                    $('#best-per-day div').html(html);
                 },
                 error: function (error) {
                     alert(JSON.stringify(error));
@@ -380,6 +391,37 @@
                 complete: function () {
                 }
             });
+
+            // 최근 조회 로그인 했을 때만 실행
+            const isAuth = [[${isAuth}]];
+            if(isAuth) {
+                $.ajax({
+                    url: "/api/post/recent",
+                    type: "GET",
+                    success: function (response) {
+                        let html = "";
+                        if (response.length === 0) {
+                            html += "<h2>아직 조회한 글이 없습니다.</h2>";
+                        }
+                        let i = 1;
+                        html += "<table class=\"table table-hover\">";
+                        $.each(response, function (index, item) {
+                            html += "<tr>";
+                            html += '<th>' + i + '</th>'; // "
+                            html += '<td>' + item.title + '</td>';
+                            html += "</tr>";
+                            i++;
+                        });
+                        html += "</table>";
+                        $('#best-per-day div').html(html);
+                    },
+                    error: function (error) {
+                        alert(JSON.stringify(error));
+                    },
+                    complete: function () {
+                    }
+                });
+            }
         });
 
         document.querySelectorAll('.btn-symptom').forEach(function (button) {
@@ -528,15 +570,18 @@
         });
 
         //검색어 입력 후 1초 동안 입력 없으면 검색
-        let typingTimer;
-        $('#title').on('keyup', function () {
-            clearTimeout(typingTimer);
-            typingTimer = setTimeout(search, 500);
-        });
-        $('#company').on('keyup', function () {
-            clearTimeout(typingTimer);
-            typingTimer = setTimeout(search, 500);
-        });
+        function setupTypingTimer(selector, callback, delay) {
+            let typingTimer;
+
+            $(selector).on('keyup', function () {
+                clearTimeout(typingTimer);
+                typingTimer = setTimeout(callback, delay);
+            });
+        }
+
+        setupTypingTimer('#title', search, 500);
+        setupTypingTimer('#company', search, 500);
+
 
         function search() {
             let symptomType = $("input[name='symptomType']:checked").val();
@@ -555,7 +600,6 @@
                     materialList.push(checkbox.value);
                 });
             });
-            console.log(materialList);
             // 초기 데이터 로드
             loadData(title, company, symptomType, orderCondition, null, null, materialList);
         }

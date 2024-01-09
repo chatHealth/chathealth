@@ -1,9 +1,10 @@
 package chathealth.chathealth.controller;
 
 
-import chathealth.chathealth.service.PostService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -12,10 +13,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/post")
 public class PostController {
 
-    private final PostService postService;
-
     @GetMapping
-    public String post() { return "post/post"; }
+    public String post(Model model, Authentication authentication) {
+        boolean isAuth = authentication != null && authentication.isAuthenticated();
+        model.addAttribute("isAuth", isAuth);
+        return "post/post";
+    }
 
     @GetMapping("/write")
     public String write() { return "post/write"; }
