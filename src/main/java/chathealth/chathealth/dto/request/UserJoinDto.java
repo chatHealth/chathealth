@@ -5,6 +5,7 @@ import chathealth.chathealth.constants.Grade;
 import chathealth.chathealth.constants.Role;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -12,6 +13,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Getter
+@Setter
 @Builder
 @ToString
 public class UserJoinDto {
@@ -19,7 +21,7 @@ public class UserJoinDto {
     private String pw;
     private String email;
     private Address address;
-    private Integer postcode;
+    private String postcode;
     private String frontAddress;
     private String addressDetail;
     private String name;

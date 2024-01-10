@@ -1,10 +1,23 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
-</body>
+    <div layout:fragment="content" class="main">
+        <div class="container mp-container">
+            <div class="mp-sidebar">
+                <ul>
+                    <li>관리자 페이지</li>
+                    <li>어서오세요, admin님</li>
+                    <span style="border-top: 1px solid #ccc; display: block; margin: 10px 13px;"></span>
+                    <li><a >개인 회원 관리</a></li>
+                    <li><a>사업자 회원 관리</a></li>
+                    <li><a>사업자 회원 승인</a></li>
+                </ul>
+            </div>
+            <div class="mp-content">
+                <!-- 회원 리스트 -->
+            </div>
+        </div>
+    </div>
 </html>

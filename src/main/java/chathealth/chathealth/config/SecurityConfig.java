@@ -5,8 +5,8 @@ import chathealth.chathealth.service.OAuth2DetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.authentication.configuration.EnableGlobalAuthentication;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
@@ -26,9 +26,11 @@ public class SecurityConfig {
                                          "/error"
                                          "/css/**","/js/**","/img/**")
                         .permitAll()
+                        .requestMatchers("/admin/**").hasRole("ADMIN") // admin role 가지고 있는 사람만 허용
                         .anyRequest()
                         .authenticated())
-                .formLogin((form)->form
+          
+                .formLogin((form)->form  //login settings
                         .loginPage("/auth/login")   // get
                         .usernameParameter("email")
                         .passwordParameter("pw")
@@ -36,8 +38,21 @@ public class SecurityConfig {
                         .defaultSuccessUrl("/",true)
                         .permitAll()
                 )
+                .logout(logout-> //logout settings
+                            logout .deleteCookies("JSESSIONID")
+                                   .logoutUrl("/auth/logout")
+                                    .logoutSuccessHandler(
+                                            (((request, response, authentication) -> {
+                                                String redirectUrl = request.getHeader("Referer");
+                                                response.sendRedirect(redirectUrl ==null? "/" : redirectUrl);
+                                            }))
+                                    ))
 
-                .oauth2Login((ouath2Login) -> ouath2Login
+                .sessionManagement((auth)->auth
+                        .maximumSessions(1)  //한 아이디로 중복 로그인 방지
+                        .maxSessionsPreventsLogin(true)) //다중 로그인 허용치 초과시 새 로그인 차단. false는 기존 세션 삭제
+
+                .oauth2Login((oauth2Login) -> oauth2Login //소셜 로그인 허용
                         .loginPage("/auth/login")
                         .defaultSuccessUrl("/",true)
                         .userInfoEndpoint((userInfo) -> userInfo
@@ -45,6 +60,6 @@ public class SecurityConfig {
                         )
                 )
                 .csrf((csrf)->  csrf.disable());
-        return httpSecurity.build();
+        return http.build();
     }
 }

@@ -26,6 +26,7 @@ public abstract class Member extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "member_id")
     private Long id;
+    @Column(unique = true)
     private String email;
     private String pw;
     private LocalDate birth;

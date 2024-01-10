@@ -33,9 +33,6 @@ public class OAuth2DetailsService extends DefaultOAuth2UserService{
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         OAuth2User oAuth2User = super.loadUser(userRequest); //OAuth2 에서 넘겨준 정보들 가져오기
 
-        log.info("oAuth2User.getAttributes()==={}",oAuth2User.getAttributes());
-        log.info("userRequest======{}",userRequest.getClientRegistration().getRegistrationId());
-
         Map<String,Object> oAuth2UserInfo = (Map)oAuth2User.getAttributes(); //정보들 Map으로 담기
 
         SocialUserInfo socialUserInfo = null;
