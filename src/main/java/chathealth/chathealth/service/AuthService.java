@@ -55,6 +55,7 @@ public class AuthService implements UserDetailsService {
                 .address(userJoinDto.getAddress())
                 .email(userJoinDto.getEmail())
                 .name(userJoinDto.getName())
+                .nickname(userJoinDto.getNickname())
                 .grade(Grade.BRONZE)
                 .profile(String.valueOf(filePath))
                 .createdDate(userJoinDto.getCreateDate())
