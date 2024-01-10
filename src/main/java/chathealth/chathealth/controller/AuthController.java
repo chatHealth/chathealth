@@ -28,7 +28,6 @@ public class AuthController {
 
     @GetMapping("/userjoin") //개인회원가입창 진입
     public String userJoin(Model model) {
-        //model.addAttribute("UserJoinDto", new UserJoinDto());
         return "auth/user-join";
     }
 
@@ -40,28 +39,16 @@ public class AuthController {
                 .address(userJoinDto.getFrontAddress())
                 .addressDetail(userJoinDto.getAddressDetail())
                 .build();
-            log.info(userJoinDto.getPostcode());
+        log.info(userJoinDto.getPostcode());
 
         //service에 던질 DTO 빌드
-        UserJoinDto insertUserDto = UserJoinDto.builder()
-                .email(userJoinDto.getEmail())
-                .address(addressEntity)
-                .pw(userJoinDto.getPw())
-                .name(userJoinDto.getName())
-                .nickname(userJoinDto.getNickname())
-                .birth(userJoinDto.getBirth())
-                .profile(userJoinDto.getProfile())
-                .role(userJoinDto.getRole())
-                .createDate(LocalDateTime.now())
-                .grade(Grade.BRONZE)
-                .build();
-        authService.userJoin(insertUserDto);
+        userJoinDto.setAddress(addressEntity);
+        authService.userJoin(userJoinDto);
+
         return "redirect:/auth/user-join";
     }
-
     @GetMapping("/entjoin") //사업자회원가입창 진입
     public String entJoin(Model model) {
-        //model.addAttribute("UserJoinDto", new UserJoinDto());
         return "auth/ent-join";
     }
 
@@ -77,30 +64,19 @@ public class AuthController {
 
 
         //service에 던질 DTO 빌드
-        EntJoinDto insertEntDto = EntJoinDto.builder()
-                .email(entJoinDto.getEmail())
-                .address(addressEntity)
-                .pw(entJoinDto.getPw())
-                .company(entJoinDto.getCompany())
-                .entNo(entJoinDto.getEntNo())
-                .ceo(entJoinDto.getCeo())
-                .birth(entJoinDto.getBirth())
-                .profile(entJoinDto.getProfile())
-                .role(entJoinDto.getRole())
-                .createdDate(LocalDateTime.now())
-                .build();
-        log.info("컨트롤러 insertDto = "+String.valueOf(insertEntDto));
-        authService.entJoin(insertEntDto);
+        entJoinDto.setAddress(addressEntity);
+
+        authService.entJoin(entJoinDto);
         return "redirect:/auth/ent-join";
     }
 
 
     @PostMapping("/confirmEmail") //아이디 중복체크
     @ResponseBody
-    public Map<String,Integer> idCheck(@RequestParam("email") String email) {
-        int count = authService.confirmEmail(email);
-        Map<String,Integer> resultMap = new HashMap<>();
-        resultMap.put("isCount",count);
+    public Map<String,Boolean> idCheck(@RequestParam("email") String email) {
+        boolean isExist = authService.confirmEmail(email);
+        Map<String, Boolean> resultMap = new HashMap<>();
+        resultMap.put("isExist",isExist);
         return resultMap;
 
     }

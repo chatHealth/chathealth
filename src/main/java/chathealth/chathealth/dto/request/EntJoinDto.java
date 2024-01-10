@@ -4,6 +4,7 @@ import chathealth.chathealth.entity.member.Address;
 import chathealth.chathealth.constants.Role;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -11,6 +12,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Getter
+@Setter
 @Builder
 @ToString
 public class EntJoinDto {
