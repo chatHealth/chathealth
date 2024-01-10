@@ -11,8 +11,6 @@ import chathealth.chathealth.entity.member.*;
 import chathealth.chathealth.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.coobird.thumbnailator.Thumbnailator;
-import net.coobird.thumbnailator.Thumbnails;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -21,7 +19,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -40,22 +37,6 @@ public class AuthService implements UserDetailsService {
 
     @Transactional
     public void userJoin(UserJoinDto userJoinDto) { //개인 회원가입
-        /*String originalFileName = userJoinDto.getProfile().getOriginalFilename(); //폼에서 들어온 파일네임 받아오기
-        UUID uuid = UUID.randomUUID(); //난수 발생
-        String fileUrl = path+File.separator+uuid+"_"+originalFileName; //이미지 파일 저장경로 만들기
-        String fileName = uuid+"_"+originalFileName; //이미지 파일 이름
-
-        Path imageFilePath = Paths.get(fileUrl); //경로를 Path에 담기
-        File saveFile = new File(fileUrl);
-        try {
-            Files.write(imageFilePath,userJoinDto.getProfile().getBytes()); //이미지 서버에 저장하기
-            Thumbnailator.createThumbnail(saveFile,
-                    new File(path+File.separator+fileName),150,150); //썸네일 만들기
-            saveFile.delete();
-
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }*/
         String originalFileName = userJoinDto.getProfile().getOriginalFilename(); //원본 파일 네임
         UUID uuid = UUID.randomUUID(); //난수 발생
         String rename = uuid+"_"+originalFileName; //변경할 이름
