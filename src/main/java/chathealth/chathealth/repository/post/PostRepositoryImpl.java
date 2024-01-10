@@ -83,6 +83,18 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
     }
 
     @Override
+    public List<Post> getBestPostsPerWeek() {
+        return queryFactory.selectFrom(post)
+                .where(post.deletedDate.isNull(),
+                        postHit.createdDate.between(LocalDateTime.now().minusWeeks(1), LocalDateTime.now()))
+                .leftJoin(postHit).on(postHit.post.eq(post))
+                .orderBy(postHit.createdDate.max().desc())
+                .groupBy(post.id)
+                .limit(5)
+                .fetch();
+    }
+
+    @Override
     public List<Post> getRecentPosts(Member member) {
         return queryFactory.selectFrom(post)
                 .where(post.deletedDate.isNull(),

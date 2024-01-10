@@ -63,11 +63,22 @@ public class PostService {
                 .toList();
     }
 
+    public List<PostResponse> getBestPostsPerWeek(){
+        return postRepository.getBestPostsPerWeek().stream()
+                .map(post -> PostResponse.builder()
+                        .id(post.getId())
+                        .title(post.getTitle())
+                        .hitCount(post.getPostHitCount())
+                        .build())
+                .toList();
+    }
+
     public List<PostResponse> getRecentPosts(Member member) {
         return postRepository.getRecentPosts(member).stream()
                 .map(post -> PostResponse.builder()
                         .id(post.getId())
                         .title(post.getTitle())
+                        .representativeImg(getRepresentativeImg(post))
                         .build())
                 .toList();
     }

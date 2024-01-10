@@ -51,7 +51,7 @@ body {
 }
 
 #postContainer {
-    max-width: 1100px; /* 최대 너비 설정 */
+    max-width: 1200px; /* 최대 너비 설정 */
     margin: 0 auto; /* 중앙 정렬 */
     /*margin-left: 200px;*/
     flex-grow: 1;
@@ -77,7 +77,7 @@ body {
 .right-box {
     position: absolute; /* 고정 위치 */
     top: 180px; /* 상단에서 50px 아래에 위치 */
-    right: 50px; /* 우측에서 10px 떨어진 곳에 위치 */
+    right: 20px; /* 우측에서 10px 떨어진 곳에 위치 */
     width: 200px; /* 너비 */
     border: 1px solid #dee2e6; /* 경계선 */
     /*box-shadow: 0 4px 8px rgba(0,0,0,0.1); !* 그림자 효과 *!*/
@@ -123,4 +123,80 @@ footer {
 
 #main{
     min-height: 100vh;
+}
+
+.bg-ygr {
+    background-color: #e6f7e6; /* 연한 초록색 배경 */
+    /*border-radius: 10px;*/
+    padding: 20px;
+    text-align: center;
+    width: 100%;
+}
+
+.text-ygr {
+    font-size: 18px;
+    /*margin-bottom: 15px;*/
+    text-decoration: none; /* 밑줄 제거 */
+    color: #3cb371; /* 초기 색상 설정 */
+    transition: color 0.3s ease; /* 부드러운 색상 전환 효과 */
+}
+
+.btn-primary {
+    background-color: #32cd32; /* 진한 연두색 버튼 배경 */
+    color: white;
+    padding: 10px 20px;
+    text-decoration: none;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    transition: background-color 0.3s;
+}
+
+.btn-primary:hover {
+    background-color: #2e8b57; /* 버튼 호버 시 색상 변경 */
+}
+
+#login-status {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.text-ygr:hover, .text-ygr:focus {
+    color: #32cd32; /* 호버 시 색상 변경 */
+    text-decoration: none; /* 호버 시에도 밑줄 제거 유지 */
+}
+
+.text-bronze {
+    color: #cd7f32; /* 청동색 */
+}
+
+.text-black {
+    color: #000000; /* 검정색 */
+}
+
+.text-silver {
+    color: #c0c0c0; /* 은색 */
+}
+
+.text-gold {
+    color: #ffd700; /* 금색 */
+}
+
+.text-platinum {
+    color: #e5e4e2; /* 플래티넘색 */
+}
+
+.text-diamond {
+    color: #b9f2ff; /* 다이아몬드색, 밝은 하늘색으로 대체 */
+}
+
+.more-button-container {
+    text-align: right; /* 버튼을 우측 정렬 */
+}
+
+.more-button {
+    /* 여기에 버튼 스타일을 추가하세요 (예: 패딩, 배경색, 글꼴 등) */
 }

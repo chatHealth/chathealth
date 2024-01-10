@@ -5,18 +5,6 @@
 
 <div layout:fragment="content" class="main">
     <div id="ca">
-        <!-- 좌측 네비게이션 바 -->
-        <!--        <button class="toggle-button">☰</button>-->
-
-        <!--        <div class="left-box">-->
-        <!--            <ul>-->
-        <!--                <li><a href="#">Home</a></li>-->
-        <!--                <li><a href="#">About</a></li>-->
-        <!--                <li><a href="#">Services</a></li>-->
-        <!--                <li><a href="#">Contact</a></li>-->
-        <!--            </ul>-->
-        <!--        </div>-->
-
         <div id="postContainer" class="container">
             <div class="row">
                 <div class="col-md-9 mx-auto">
@@ -26,36 +14,12 @@
                                 <input type="radio" class="btn-check" name="symptomType" id="symptomType1"
                                        autocomplete="off" checked>
                                 <label class="btn btn-symptom" for="symptomType1">전체</label>
-                                <input type="radio" class="btn-check" name="symptomType" id="symptomType2"
-                                       autocomplete="off" value="INTESTINE">
-                                <label class="btn btn-symptom" for="symptomType2">장건강</label>
-                                <input type="radio" class="btn-check" name="symptomType" id="symptomType3"
-                                       autocomplete="off" value="LIVER">
-                                <label class="btn btn-symptom" for="symptomType3">간건강</label>
-                                <input type="radio" class="btn-check" name="symptomType" id="symptomType4"
-                                       autocomplete="off" value="SKIN">
-                                <label class="btn btn-symptom" for="symptomType4">피부건강</label>
-                                <input type="radio" class="btn-check" name="symptomType" id="symptomType5"
-                                       autocomplete="off" value="IMMUNE">
-                                <label class="btn btn-symptom" for="symptomType5">면역건강</label>
-                                <input type="radio" class="btn-check" name="symptomType" id="symptomType6"
-                                       autocomplete="off" value="BONE">
-                                <label class="btn btn-symptom" for="symptomType6">뼈건강</label>
-                                <input type="radio" class="btn-check" name="symptomType" id="symptomType7"
-                                       autocomplete="off" value="EYE">
-                                <label class="btn btn-symptom" for="symptomType7">눈건강</label>
-                                <input type="radio" class="btn-check" name="symptomType" id="symptomType8"
-                                       autocomplete="off" value="ANTIOXIDANT">
-                                <label class="btn btn-symptom" for="symptomType8">항산화건강</label>
-                                <input type="radio" class="btn-check" name="symptomType" id="symptomType9"
-                                       autocomplete="off" value="BLOOD">
-                                <label class="btn btn-symptom" for="symptomType9">혈행건강</label>
-                                <input type="radio" class="btn-check" name="symptomType" id="symptomType10"
-                                       autocomplete="off" value="VITALITY">
-                                <label class="btn btn-symptom" for="symptomType10">활력건강</label>
-                                <input type="radio" class="btn-check" name="symptomType" id="symptomType11"
-                                       autocomplete="off" value="DIET">
-                                <label class="btn btn-symptom" for="symptomType11">다이어트</label>
+                                <div th:each="type : ${T(chathealth.chathealth.entity.post.SymptomType).values()}">
+                                    <input type="radio" class="btn-check" th:name="'symptomType'" th:id="${'symptomType' + (type.ordinal() + 2)}"
+                                           autocomplete="off" th:value="${type.name()}" />
+                                    <label class="btn btn-symptom" th:for="${'symptomType' + (type.ordinal() + 2)}" th:text="${type.symptomName}">Label</label>
+                                </div>
+
                             </div>
                         </div>
                         <!-- 선택 가능한 요소들 (초기에 숨김) -->
@@ -290,7 +254,7 @@
                             </div>
                         </div>
 
-
+                        <!-- 검색 조건(제목, 회사) -->
                         <div>
                             <label for="title">상품명</label><input type="text" id="title" name="title" placeholder="상품명">
                             <label for="company">회사</label><input type="text" id="company" name="company"
@@ -298,6 +262,7 @@
                             <!--                        <button id="searchBtn">검색</button>-->
                         </div>
                         <hr>
+                        <!-- 정렬 조건 -->
                         <div class="btn-group" role="group" aria-label="Basic radio toggle button group"
                              id="target-element">
                             <input type="radio" class="btn-check" name="orderCondition" id="orderCondition1"
@@ -323,6 +288,7 @@
                         </div>
                     </div>
 
+                    <!-- 검색 결과 -->
                     <div id="card-container" class="container">
                         <div class="row">
                             <!-- 이미지 카드가 여기에 들어갑니다 -->
@@ -341,9 +307,9 @@
 
                 </div>
             </div>
-            <div sec:authorize="isAuthenticated()" class="right-box" style="top:500px">
+            <div sec:authorize="isAuthenticated()" class="right-box" style="top:500px" id="view-recent">
                 <h4>최근 조회</h4>
-                <!--                게시물 리스트-->
+                <!--    로그인 했을 때만 나타남           게시물 리스트-->
                 <div>
 
                 </div>
@@ -413,7 +379,7 @@
                             i++;
                         });
                         html += "</table>";
-                        $('#best-per-day div').html(html);
+                        $('#view-recent div').html(html);
                     },
                     error: function (error) {
                         alert(JSON.stringify(error));

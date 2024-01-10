@@ -14,5 +14,7 @@ public interface PostRepositoryCustom {
 
     List<Post> getBestPostsPerDay();
 
+    List<Post> getBestPostsPerWeek();
+
     List<Post> getRecentPosts(Member member);
 }

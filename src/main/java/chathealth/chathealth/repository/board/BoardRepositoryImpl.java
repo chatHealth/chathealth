@@ -34,6 +34,18 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom {
                 .fetch();
     }
 
+    @Override
+    public List<Board> getBoardsByCategoryRecent(Category category){
+        return queryFactory.selectFrom(board)
+                .where(categoryEq(category),
+                        board.deletedDate.isNull())
+//                .join(board.user, users)
+//                .fetchJoin()
+                .limit(5)
+                .orderBy(board.createdDate.desc())
+                .fetch();
+    }
+
     private BooleanExpression categoryEq(Category category) {
         return category == null ? null : board.category.eq(category);
     }

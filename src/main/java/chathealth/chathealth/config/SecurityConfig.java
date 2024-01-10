@@ -6,7 +6,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
@@ -21,9 +20,9 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.authorizeHttpRequests((auth)->auth
                         .requestMatchers("/","/auth/join","/auth/userjoin","/auth/entjoin","/auth/login","/auth/confirmEmail",
-                                         "/board","/board/{id}",
-                                         "/post","/api/post", "/api/post/best",
-                                         "/error"
+                                         "/board","/board/{id}", "/board/api", "/board/api/recent",
+                                         "/post","/api/post", "/api/post/best", "/api/post/best-week", "/api/post/recent",
+                                         "/error",
                                          "/css/**","/js/**","/img/**")
                         .permitAll()
                         .anyRequest()
