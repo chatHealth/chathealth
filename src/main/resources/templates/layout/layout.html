@@ -1,28 +1,33 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <head>
     <meta charset="UTF-8" >
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
     <title> Chat Health </title>
 
     <link rel="stylesheet" href="/css/bootstrap.min.css">
 
-    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="/css/layout.css"> -->
+    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"> -->
+    <link rel="stylesheet" href="/css/layout.css">
 
     <script src="/js/bootstrap.bundle.min.js"></script>
     <script src="/js/jquery-3.7.1.min.js"></script>
 
     <!--  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script> -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" rel="stylesheet">
 
 </head>
 
 <body>
 <div th:replace="~{fragment/header :: headerFragment}"></div>
 
-<div layout:fragment="content"> </div>
+<div layout:fragment="content" class="content-wrap" id="main"> </div>
 
 <div th:replace="~{fragment/footer :: footerFragment}"></div>
 </body>
 
+</html>

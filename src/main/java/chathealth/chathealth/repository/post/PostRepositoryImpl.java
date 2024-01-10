@@ -1,6 +1,7 @@
 package chathealth.chathealth.repository.post;
 
 import chathealth.chathealth.dto.request.PostSearch;
+import chathealth.chathealth.entity.member.Member;
 import chathealth.chathealth.entity.post.Post;
 import chathealth.chathealth.entity.post.SymptomType;
 import com.querydsl.core.types.OrderSpecifier;
@@ -8,6 +9,7 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static chathealth.chathealth.entity.QReview.review;
@@ -30,7 +32,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
                 .from(post)
                 .where(post.deletedDate.isNull(),
                         titleContains(postSearch.getTitle()),
-                        companyEq(postSearch.getCompany()),
+                        companyContains(postSearch.getCompany()),
                         symptomTypeEq(postSearch.getSymptomType()),
                         materialIn(postSearch.getMaterialName())
                         )
@@ -68,6 +70,29 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
                 .fetchOne();
     }
 
+    @Override
+    public List<Post> getBestPostsPerDay(){
+        return queryFactory.selectFrom(post)
+                .where(post.deletedDate.isNull(),
+                        postHit.createdDate.between(LocalDateTime.now().minusDays(1), LocalDateTime.now()))
+                .leftJoin(postHit).on(postHit.post.eq(post))
+                .orderBy(postHit.createdDate.max().desc())
+                .groupBy(post.id)
+                .limit(5)
+                .fetch();
+    }
+
+    @Override
+    public List<Post> getRecentPosts(Member member) {
+        return queryFactory.selectFrom(post)
+                .where(post.deletedDate.isNull(),
+                        postHit.member.eq(member))
+                .rightJoin(postHit).on(postHit.post.eq(post))
+                .orderBy(postHit.createdDate.desc())
+                .limit(5)
+                .fetch();
+    }
+
     private static BooleanExpression materialIn(List<String> materialName) {
         if (materialName == null || materialName.isEmpty()) {
             return null;
@@ -83,17 +108,17 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
     }
 
     private static BooleanExpression titleContains(String title) {
-        if (title == null) {
+        if (title == null || title.isEmpty()) {
             return null;
         }
         return post.title.contains(title);
     }
 
-    private static BooleanExpression companyEq(String company) {
-        if(company == null){
+    private static BooleanExpression companyContains(String company) {
+        if(company == null || company.isEmpty()){
             return null;
         }
-        return ent.company.eq(company);
+        return ent.company.contains(company);
     }
 
     private static OrderSpecifier<?> getOrderSpecifier(PostSearch postSearch) {

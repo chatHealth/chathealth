@@ -12,11 +12,11 @@ public enum SymptomType {
     EYE("눈건강"),
     IMMUNE("면역건강"),
     BONE("뼈건강"),
-    STOMACH("위건강"),
     INTESTINE("장건강"),
     ANTIOXIDANT("항산화건강"),
     BLOOD("혈행건강"),
-    VITALITY("활력건강");
+    VITALITY("활력건강"),
+    DIET("다이어트"),;
 
     private final String symptomName;
 }
