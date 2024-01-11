@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -93,12 +94,11 @@ public class AuthService implements UserDetailsService {
         memberRepository.save(dbJoinEnt);
     }
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        Optional<Member> loggedMember = memberRepository.findByEmail(email);
-        loggedMember.ifPresent(a -> {
-            new CustomUserDetails(loggedMember.get());
-        });
+        Member member = memberRepository.findByEmail(email).orElseThrow(
+                () -> new UsernameNotFoundException("사용자가 존재하지 않습니다.")
+        );
 
-        throw new UsernameNotFoundException("아이디 혹은 비밀번호를 확인해주세요.");
+        return new CustomUserDetails(member);
     }
 
     public boolean confirmEmail(String email) {

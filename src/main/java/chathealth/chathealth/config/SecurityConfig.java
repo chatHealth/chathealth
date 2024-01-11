@@ -1,20 +1,22 @@
 package chathealth.chathealth.config;
 
+import chathealth.chathealth.handler.UserLoginFailHandler;
 import chathealth.chathealth.service.AuthService;
 import chathealth.chathealth.service.OAuth2DetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.authentication.configuration.EnableGlobalAuthentication;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
+@EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
 
     private final OAuth2DetailsService oAuth2DetailsService;
-    private final AuthService authService;
+    private final UserLoginFailHandler userLoginFailHandler;
 
 
     @Bean
@@ -23,7 +25,7 @@ public class SecurityConfig {
                         .requestMatchers("/","/auth/join","/auth/userjoin","/auth/entjoin","/auth/login","/auth/confirmEmail",
                                          "/board","/board/{id}",
                                          "/post","/api/post", "/api/post/best",
-                                         "/error"
+                                         "/error",
                                          "/css/**","/js/**","/img/**")
                         .permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN") // admin role 가지고 있는 사람만 허용
@@ -36,6 +38,7 @@ public class SecurityConfig {
                         .passwordParameter("pw")
                         .loginProcessingUrl("/auth/login")  //post
                         .defaultSuccessUrl("/",true)
+                        .failureHandler(userLoginFailHandler)
                         .permitAll()
                 )
                 .logout(logout-> //logout settings
@@ -46,7 +49,9 @@ public class SecurityConfig {
                                                 String redirectUrl = request.getHeader("Referer");
                                                 response.sendRedirect(redirectUrl ==null? "/" : redirectUrl);
                                             }))
-                                    ))
+                                    )
+                                    .invalidateHttpSession(true)
+                )
 
                 .sessionManagement((auth)->auth
                         .maximumSessions(1)  //한 아이디로 중복 로그인 방지
@@ -60,6 +65,6 @@ public class SecurityConfig {
                         )
                 )
                 .csrf((csrf)->  csrf.disable());
-        return http.build();
+        return httpSecurity.build();
     }
 }

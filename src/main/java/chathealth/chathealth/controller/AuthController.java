@@ -27,13 +27,24 @@ public class AuthController {
 
     //로그인
     @GetMapping("/login")
-    public String login() {
+    public String login(@RequestParam(value = "error", required = false) String error,
+                        @RequestParam(value = "exception", required = false) String exception,
+                        Model model) {
+        model.addAttribute("error", error);
+        model.addAttribute("exception", exception);
+
         return "auth/login";
     }
 
     @PostMapping("/login")
     public String loginProcess(){
         return "redirect:/";
+    }
+
+    //로그아웃
+    @PostMapping("/logout")
+    public String logout(){
+        return "auth/logout";
     }
 
     //가입

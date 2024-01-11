@@ -1,23 +1,9 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
-<head>
-    <meta charset="UTF-8">
-    <title>Chat Health</title>
-    <script src="/js/jquery-3.7.1.min.js"></script>
-    <link rel="stylesheet" href="http://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}">
 
-    <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <script src="/js/bootstrap.bundle.min.js"></script>
-
-
-    <link rel="stylesheet" href="/css/bootstrap.min.css">
-
-
-</head>
-<body>
+<div layout:fragment="content" class="main">
 <div class="container scroll-container" style="width: 760px;">
     <h1>사업자 회원가입</h1>
     <form method="post" action="/auth/ent-join" th:action="@{/auth/entjoin}" id="registrationForm" enctype="multipart/form-data">
@@ -103,7 +89,8 @@
     </form>
 
 </div>
-</body>
+</div>
+
 
 <!-- email 중복확인 -->
 <script>
@@ -121,10 +108,10 @@
             data:{"email" : $("#inputEmail").val()},
             success:function(response){ //컨트롤러에서 넘어온 cnt값을 받는다
                 console.log(response);
-                if(response.isCount == 0){ //count가 0이면 -> 사용 가능한 아이디
+                if(response.isExist == false){ //false 이면 -> 사용 가능한 아이디
                     $("#isConfirmed").text("사용 가능한 이메일입니다.").css('color', 'green')
                     $("#isConfirmed").addClass("yes");
-                } else { // count가 0이 아닌 경우 -> 이미 존재하는 아이디
+                } else { /// true인 경우 -> 이미 존재하는 아이디
                     $("#isConfirmed").text("이미 사용중인 이메일입니다. 다시 입력해주세요.").css('color', 'red')
                     $('#inputEmail').val('');
                     $('#inputEmail').focus;

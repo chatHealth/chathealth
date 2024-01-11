@@ -6,10 +6,10 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum Role {
-    USER("role_user"),
-    WAITING_ENT("role_waiting_ent"),
-    PERMITTED_ENT("role_permitted_ent"),
-    REJECTED_ENT("role_rejected_ent"),
-    ADMIN("role_admin");
+    USER("ROLE_USER"),
+    WAITING_ENT("ROLE_WAITING_ENT"),
+    PERMITTED_ENT("ROLE_PERMITTED_ENT"),
+    REJECTED_ENT("ROLE_REJECTED_ENT"),
+    ADMIN("ROLE_ADMIN,ROLE_USER,ROLE_PERMITTED_ENT");
     private final String role;
 }
