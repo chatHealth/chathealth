@@ -48,6 +48,11 @@ public class AuthController {
     }
 
     //가입
+    @GetMapping("/selection") //개인회원가입창 진입
+    public String selection(Model model) {
+        return "auth/selection";
+    }
+
     @GetMapping("/userjoin") //개인회원가입창 진입
     public String userJoin(Model model) {
         return "auth/user-join";
