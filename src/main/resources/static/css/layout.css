@@ -200,3 +200,9 @@ footer {
 .more-button {
     /* 여기에 버튼 스타일을 추가하세요 (예: 패딩, 배경색, 글꼴 등) */
 }
+
+.profile-image {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+}
