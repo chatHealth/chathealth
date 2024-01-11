@@ -1,5 +1,6 @@
 package chathealth.chathealth.entity.member;
 
+import chathealth.chathealth.constants.Role;
 import chathealth.chathealth.entity.*;
 import chathealth.chathealth.entity.board.Board;
 import jakarta.persistence.*;
@@ -25,6 +26,7 @@ public abstract class Member extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "member_id")
     private Long id;
+    @Column(unique = true)
     private String email;
     private String pw;
     private LocalDate birth;

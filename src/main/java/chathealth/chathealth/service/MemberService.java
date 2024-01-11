@@ -6,7 +6,7 @@ import chathealth.chathealth.dto.response.EntInfoDto;
 import chathealth.chathealth.dto.response.UserInfoDto;
 import chathealth.chathealth.entity.member.Ent;
 import chathealth.chathealth.entity.member.Member;
-import chathealth.chathealth.entity.member.Role;
+import chathealth.chathealth.constants.Role;
 import chathealth.chathealth.entity.member.Users;
 import chathealth.chathealth.exception.UserNotFound;
 import chathealth.chathealth.repository.MemberRepository;
@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static chathealth.chathealth.entity.member.Role.*;
+import static chathealth.chathealth.constants.Role.*;
 
 
 @Service
@@ -45,9 +45,50 @@ public class MemberService {
                 .address(findUser.getAddress())
                 .build();
     }
+    public UserInfoDto getUserInfo(String email) {
+
+        Member member = memberRepository.findByEmail(email).orElseThrow(
+                UserNotFound::new
+        );
+
+        Users findUser = toUser(member);
+
+        return UserInfoDto.builder()
+                .id(findUser.getId())
+                .name(findUser.getName())
+                .nickname(findUser.getNickname())
+                .email(findUser.getEmail())
+                .profile(findUser.getProfile())
+                .birth(findUser.getBirth())
+                .deletedDate(findUser.getDeletedDate())
+                .grade(findUser.getGrade())
+                .address(findUser.getAddress())
+                .role(findUser.getRole())
+                .build();
+    }
 
     public EntInfoDto getEntInfo(Long id) {
         Member member = memberRepository.findById(id).orElseThrow(
+                UserNotFound::new
+        );
+
+        Ent findEnt = toEnt(member);
+
+        return EntInfoDto.builder()
+                .id(findEnt.getId())
+                .email(findEnt.getEmail())
+                .address(findEnt.getAddress())
+                .birth(findEnt.getBirth())
+                .profile(findEnt.getProfile())
+                .deletedDate(findEnt.getDeletedDate())
+                .role(findEnt.getRole())
+                .ceo(findEnt.getCeo())
+                .company(findEnt.getCompany())
+                .entNo(findEnt.getEntNo())
+                .build();
+    }
+    public EntInfoDto getEntInfo(String email) {
+        Member member = memberRepository.findByEmail(email).orElseThrow(
                 UserNotFound::new
         );
 

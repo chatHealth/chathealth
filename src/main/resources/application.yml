@@ -1,7 +1,12 @@
 server:
+  servlet:
+    session:
+      timeout: 86400
   port: 8090
+
 spring:
   profiles:
+    include: oauth
     active: dev # application-prod
 
   output:

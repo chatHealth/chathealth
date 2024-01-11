@@ -1,7 +1,7 @@
 package chathealth.chathealth.dto.response;
 
 import chathealth.chathealth.entity.member.Address;
-import chathealth.chathealth.entity.member.Role;
+import chathealth.chathealth.constants.Role;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;

@@ -3,6 +3,7 @@ package chathealth.chathealth.dto.request;
 import chathealth.chathealth.entity.post.SymptomType;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.ToString;
 
 import java.util.List;
 
@@ -11,6 +12,7 @@ import static java.lang.Math.min;
 
 @Getter
 @Builder
+@ToString
 public class PostSearch {
 
     //검색
@@ -22,7 +24,6 @@ public class PostSearch {
     private List<String> materialName;
 
     //정렬
-    private String sort;
     private OrderCondition ordercondition;
 
     private static final int MAX_SIZE = 200;

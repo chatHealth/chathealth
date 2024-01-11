@@ -1,5 +1,5 @@
 package chathealth.chathealth.entity.board;
 
 public enum Category {
-    FREE, NOTICE
+    FREE, NOTICE, NEWS
 }

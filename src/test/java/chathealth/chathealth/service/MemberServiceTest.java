@@ -6,7 +6,7 @@ import chathealth.chathealth.dto.response.EntInfoDto;
 import chathealth.chathealth.dto.response.UserInfoDto;
 import chathealth.chathealth.entity.member.Address;
 import chathealth.chathealth.entity.member.Ent;
-import chathealth.chathealth.entity.member.Grade;
+import chathealth.chathealth.constants.Grade;
 import chathealth.chathealth.entity.member.Users;
 import chathealth.chathealth.exception.UserNotFound;
 import chathealth.chathealth.repository.MemberRepository;
@@ -18,8 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 
-import static chathealth.chathealth.entity.member.Role.USER;
-import static chathealth.chathealth.entity.member.Role.valueOf;
+import static chathealth.chathealth.constants.Role.USER;
+import static chathealth.chathealth.constants.Role.valueOf;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -37,7 +37,7 @@ class MemberServiceTest {
     @DisplayName("유저 정보 조회")
     public void test1() throws Exception{
         //given
-        Address address = new Address("서울시 강남구", "123-123", 12345);
+        Address address = new Address("서울시 강남구", "123-123", "12345");
 
         Users user1 = Users.builder()
                 .name("장성호")
@@ -64,7 +64,7 @@ class MemberServiceTest {
         assertThat(userInfo.getProfile()).isEqualTo("profile0321984u32895");
         assertThat(userInfo.getAddress().getAddress()).isEqualTo("서울시 강남구");
         assertThat(userInfo.getAddress().getAddressDetail()).isEqualTo("123-123");
-        assertThat(userInfo.getAddress().getPostcode()).isEqualTo(12345);
+        assertThat(userInfo.getAddress().getPostcode()).isEqualTo("12345");
     }
 
     @Test
@@ -91,7 +91,7 @@ class MemberServiceTest {
         //given
         Ent ent = Ent.builder()
                 .email("jjang051@google.com")
-                .address(new Address("서울시 강남구", "123-123", 12345))
+                .address(new Address("서울시 강남구", "123-123", "12345"))
                 .birth(LocalDate.of(1995, 3, 21))
                 .profile("profile0321984u32895")
                 .role(valueOf("WAITING_ENT"))
@@ -109,7 +109,7 @@ class MemberServiceTest {
         assertThat(entInfo.getEmail()).isEqualTo("jjang051@google.com");
         assertThat(entInfo.getAddress().getAddress()).isEqualTo("서울시 강남구");
         assertThat(entInfo.getAddress().getAddressDetail()).isEqualTo("123-123");
-        assertThat(entInfo.getAddress().getPostcode()).isEqualTo(12345);
+        assertThat(entInfo.getAddress().getPostcode()).isEqualTo("12345");
         assertThat(entInfo.getBirth()).isEqualTo(LocalDate.of(1995, 3, 21));
         assertThat(entInfo.getProfile()).isEqualTo("profile0321984u32895");
         assertThat(entInfo.getRole()).isEqualTo(valueOf("WAITING_ENT"));
@@ -124,7 +124,7 @@ class MemberServiceTest {
         //given
         Ent ent = Ent.builder()
                 .email("jjang051@google.com")
-                .address(new Address("서울시 강남구", "123-123", 12345))
+                .address(new Address("서울시 강남구", "123-123", "12345"))
                 .birth(LocalDate.of(1995, 3, 21))
                 .profile("profile0321984u32895")
                 .role(valueOf("WAITING_ENT"))
@@ -142,7 +142,7 @@ class MemberServiceTest {
     @DisplayName("유저 정보 수정")
     public void test5() throws Exception{
         //given
-        Address address = new Address("서울시 강남구", "123-123", 12345);
+        Address address = new Address("서울시 강남구", "123-123", "12345");
 
         Users user = Users.builder()
                 .name("장성호")
@@ -159,7 +159,7 @@ class MemberServiceTest {
         //when
         UserEditDto updateUser = UserEditDto.builder()
                 .nickname("공짱오일")
-                .address(new Address("대전시 유성구 가마로00길 11", "22-33", 98776))
+                .address(new Address("대전시 유성구 가마로00길 11", "22-33", "98776"))
                 .build();
 
         memberService.updateUserInfo(user.getId(), updateUser);
@@ -177,7 +177,7 @@ class MemberServiceTest {
         assertThat(userInfo.getProfile()).isEqualTo("profile0321984u32895");
         assertThat(userInfo.getAddress().getAddress()).isEqualTo("대전시 유성구 가마로00길 11");
         assertThat(userInfo.getAddress().getAddressDetail()).isEqualTo("22-33");
-        assertThat(userInfo.getAddress().getPostcode()).isEqualTo(98776);
+        assertThat(userInfo.getAddress().getPostcode()).isEqualTo("98776");
     }
 
 
@@ -187,7 +187,7 @@ class MemberServiceTest {
         //given
         Ent ent = Ent.builder()
                 .email("jjang051@google.com")
-                .address(new Address("서울시 강남구", "123-123", 12345))
+                .address(new Address("서울시 강남구", "123-123", "12345"))
                 .birth(LocalDate.of(1995, 3, 21))
                 .profile("profile0321984u32895")
                 .role(valueOf("WAITING_ENT"))
@@ -199,7 +199,7 @@ class MemberServiceTest {
 
         memberRepository.save(ent);
 
-        Address newAddress = new Address("대전시 유성구 가마로00길 11", "22-33", 98776);
+        Address newAddress = new Address("대전시 유성구 가마로00길 11", "22-33", "98776");
 
         EntEditDto updateEnt = EntEditDto.builder()
                 .ceo("장공오일")

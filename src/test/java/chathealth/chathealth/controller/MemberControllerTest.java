@@ -4,7 +4,7 @@ import chathealth.chathealth.dto.request.EntEditDto;
 import chathealth.chathealth.dto.request.UserEditDto;
 import chathealth.chathealth.entity.member.Address;
 import chathealth.chathealth.entity.member.Ent;
-import chathealth.chathealth.entity.member.Grade;
+import chathealth.chathealth.constants.Grade;
 import chathealth.chathealth.entity.member.Users;
 import chathealth.chathealth.repository.MemberRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -20,9 +20,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 
-import static chathealth.chathealth.entity.member.Grade.*;
-import static chathealth.chathealth.entity.member.Role.USER;
-import static chathealth.chathealth.entity.member.Role.valueOf;
+import static chathealth.chathealth.constants.Grade.*;
+import static chathealth.chathealth.constants.Role.USER;
+import static chathealth.chathealth.constants.Role.valueOf;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
@@ -86,7 +86,7 @@ class MemberControllerTest {
     public void test2() throws Exception {
         Ent ent = Ent.builder()
                 .email("jjang051@google.com")
-                .address(new Address("서울시 강남구", "123-123", 12345))
+                .address(new Address("서울시 강남구", "123-123", "12345"))
                 .birth(LocalDate.of(1995, 3, 21))
                 .profile("profile0321984u32895")
                 .role(valueOf("WAITING_ENT"))
@@ -104,7 +104,7 @@ class MemberControllerTest {
                 .andExpect(jsonPath("$.email").value("jjang051@google.com"))
                 .andExpect(jsonPath("$.address.address").value("서울시 강남구"))
                 .andExpect(jsonPath("$.address.addressDetail").value("123-123"))
-                .andExpect(jsonPath("$.address.postcode").value(12345))
+                .andExpect(jsonPath("$.address.postcode").value("12345"))
                 .andExpect(jsonPath("$.birth").value("1995-03-21"))
                 .andExpect(jsonPath("$.profile").value("profile0321984u32895"))
                 .andExpect(jsonPath("$.role").value("WAITING_ENT"))
@@ -143,7 +143,7 @@ class MemberControllerTest {
     @DisplayName("유저 정보 수정")
     public void test5() throws Exception {
         //given
-        Address address = new Address("서울시 강남구", "123-123", 12345);
+        Address address = new Address("서울시 강남구", "123-123", "12345");
 
         Users user = Users.builder()
                 .name("장성호")
@@ -158,7 +158,7 @@ class MemberControllerTest {
 
         memberRepository.save(user);
 
-        Address newAddress = new Address("대전시 유성구 가마로00길 11", "22-33", 98776);
+        Address newAddress = new Address("대전시 유성구 가마로00길 11", "22-33", "98776");
 
         UserEditDto userEditDto = UserEditDto.builder()
                 .id(user.getId())
@@ -179,7 +179,7 @@ class MemberControllerTest {
     @DisplayName("사업자 정보 수정")
     public void test9() throws Exception {
         //given
-        Address address = new Address("서울시 강남구", "123-123", 12345);
+        Address address = new Address("서울시 강남구", "123-123", "12345");
 
         Ent ent = Ent.builder()
                 .ceo("장성호")
@@ -194,7 +194,7 @@ class MemberControllerTest {
 
         memberRepository.save(ent);
 
-        Address newAddress = new Address("대전시 유성구 가마로00길 11", "22-33", 98776);
+        Address newAddress = new Address("대전시 유성구 가마로00길 11", "22-33", "98776");
 
         EntEditDto entEditDto = EntEditDto.builder()
                 .id(ent.getId())

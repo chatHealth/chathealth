@@ -1,34 +1,21 @@
 package chathealth.chathealth.controller;
 
+import chathealth.chathealth.dto.request.EntJoinDto;
 import chathealth.chathealth.dto.request.UserJoinDto;
 import chathealth.chathealth.entity.member.Address;
-import chathealth.chathealth.entity.member.Grade;
-import chathealth.chathealth.entity.member.Member;
+
+
 import chathealth.chathealth.service.AuthService;
 import lombok.RequiredArgsConstructor;
-import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
-import net.coobird.thumbnailator.Thumbnailator;
-import org.springframework.format.datetime.DateFormatter;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-//import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 @Controller
 @RequestMapping("/auth")
@@ -36,12 +23,23 @@ import java.util.UUID;
 @Slf4j
 public class AuthController {
 
- private final AuthService authService;
+    private final AuthService authService;
 
+    //로그인
+    @GetMapping("/login")
+    public String login() {
+        return "auth/login";
+    }
+
+    @PostMapping("/login")
+    public String loginProcess(){
+        return "redirect:/";
+    }
+
+    //가입
     @GetMapping("/userjoin") //개인회원가입창 진입
     public String userJoin(Model model) {
-        //model.addAttribute("UserJoinDto", new UserJoinDto());
-        return "auth/userjoin";
+        return "auth/user-join";
     }
 
     @PostMapping("/userjoin") //개인회원가입 처리
@@ -51,43 +49,60 @@ public class AuthController {
                 .postcode(userJoinDto.getPostcode())
                 .address(userJoinDto.getFrontAddress())
                 .addressDetail(userJoinDto.getAddressDetail())
-        .build();
+                .build();
+        log.info(userJoinDto.getPostcode());
+
+        //service에 던질 DTO 빌드
+        userJoinDto.setAddress(addressEntity);
+        authService.userJoin(userJoinDto);
+
+        return "redirect:/auth/user-join";
+    }
+
+    @GetMapping("/entjoin") //사업자회원가입창 진입
+    public String entJoin(Model model) {
+        return "auth/ent-join";
+    }
+
+    @PostMapping("/entjoin") //사업자회원가입 처리
+    public String entJoin(@ModelAttribute EntJoinDto entJoinDto, MultipartFile profile) {
+        //주소 객체화
+        Address addressEntity = Address.builder()
+                .postcode(entJoinDto.getPostcode())
+                .address(entJoinDto.getFrontAddress())
+                .addressDetail(entJoinDto.getAddressDetail())
+                .build();
+        log.info(String.valueOf(addressEntity));
 
 
         //service에 던질 DTO 빌드
-        UserJoinDto insertUserDto = UserJoinDto.builder()
-                .email(userJoinDto.getEmail())
-                .address(addressEntity)
-                .pw(userJoinDto.getPw())
-                .name(userJoinDto.getName())
-                .nickname(userJoinDto.getNickname())
-                .birth(userJoinDto.getBirth())
-                .profile(userJoinDto.getProfile())
-                .role(userJoinDto.getRole())
-                .createDate(LocalDateTime.now())
-                .grade(Grade.BRONZE)
-                .build();
-        authService.join(insertUserDto);
-        return "redirect:/auth/join";
+        entJoinDto.setAddress(addressEntity);
+
+        authService.entJoin(entJoinDto);
+        return "redirect:/auth/ent-join";
     }
 
+
+    //관리자페이지
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/admin")
+    public String adminMain(Model model) {
+        return "auth/admin-manage-user";
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/admin")
+    public String admin(Model model) {
+        return "auth/admin-manage-user";
+    }
 
     @PostMapping("/confirmEmail") //아이디 중복체크
     @ResponseBody
-    public Map<String,Integer> idCheck(@RequestParam("email") String email) {
-        int count = authService.confirmEmail(email);
-        Map<String,Integer> resultMap = new HashMap<>();
-        resultMap.put("isCount",count);
+    public Map<String, Boolean> idCheck(@RequestParam("email") String email) {
+        boolean isExist = authService.confirmEmail(email);
+        Map<String, Boolean> resultMap = new HashMap<>();
+        resultMap.put("isExist", isExist);
         return resultMap;
 
-    }
-    @GetMapping("/login")
-    public String login() {
-        return "auth/login";
-    }
-
-    @PostMapping("/login")
-    public String loginProcess(){
-        return "redirect:/";
     }
 }

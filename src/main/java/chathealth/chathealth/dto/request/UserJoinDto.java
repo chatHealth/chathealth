@@ -1,10 +1,11 @@
 package chathealth.chathealth.dto.request;
 
 import chathealth.chathealth.entity.member.Address;
-import chathealth.chathealth.entity.member.Grade;
-import chathealth.chathealth.entity.member.Role;
+import chathealth.chathealth.constants.Grade;
+import chathealth.chathealth.constants.Role;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -12,6 +13,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Getter
+@Setter
 @Builder
 @ToString
 public class UserJoinDto {
@@ -19,7 +21,7 @@ public class UserJoinDto {
     private String pw;
     private String email;
     private Address address;
-    private Integer postcode;
+    private String postcode;
     private String frontAddress;
     private String addressDetail;
     private String name;
@@ -29,6 +31,4 @@ public class UserJoinDto {
     private Role role;
     private Grade grade;
     private LocalDateTime createDate;
-    private LocalDateTime deletedDate;
-    private int report;
 }

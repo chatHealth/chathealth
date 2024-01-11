@@ -20,8 +20,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static chathealth.chathealth.entity.board.Category.FREE;
-import static chathealth.chathealth.entity.member.Grade.BLACK;
-import static chathealth.chathealth.entity.member.Role.USER;
+import static chathealth.chathealth.constants.Grade.BLACK;
+import static chathealth.chathealth.constants.Role.USER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
