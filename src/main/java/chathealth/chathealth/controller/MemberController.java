@@ -8,6 +8,7 @@ import chathealth.chathealth.repository.MemberRepository;
 import chathealth.chathealth.service.MemberService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,7 +23,7 @@ public class MemberController {
     private final MemberRepository memberRepository;
 
     @ResponseBody
-    @PreAuthorize("hasRole('USER')") //USER 롤 가지고 있는 사람만 메서드 실행 가능
+    //@PreAuthorize("hasRole('USER')") //USER 롤 가지고 있는 사람만 메서드 실행 가능
     @GetMapping("/user/{id}")
     public UserInfoDto getUserInfo(@PathVariable Long id, Model model) {
 //        model.addAttribute("userInfo", memberService.getUserInfo(id));

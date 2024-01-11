@@ -24,6 +24,7 @@ public class SecurityConfig {
         httpSecurity.authorizeHttpRequests((auth)->auth
                         .requestMatchers("/","/auth/selection","/auth/userjoin","/auth/entjoin","/auth/login","/auth/confirmEmail",
                                          "/board","/board/{id}",
+                                         "/member/**",
                                          "/post","/api/post", "/api/post/best",
                                          "/error",
                                          "/css/**","/js/**","/img/**")
