@@ -18,8 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 
-import static chathealth.chathealth.constants.Role.USER;
-import static chathealth.chathealth.constants.Role.valueOf;
+import static chathealth.chathealth.constants.Role.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -46,7 +45,7 @@ class MemberServiceTest {
                 .pw("1234")
                 .grade(Grade.valueOf("BRONZE"))
                 .profile("profile0321984u32895")
-                .role(USER)
+                .role(ROLE_USER)
                 .address(address)
                 .build();
 
@@ -152,7 +151,7 @@ class MemberServiceTest {
                 .grade(Grade.valueOf("BRONZE"))
                 .profile("profile0321984u32895")
                 .address(address)
-                .role(USER)
+                .role(ROLE_USER)
                 .build();
 
         memberRepository.save(user);

@@ -21,7 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 
 import static chathealth.chathealth.constants.Grade.*;
-import static chathealth.chathealth.constants.Role.USER;
+import static chathealth.chathealth.constants.Role.ROLE_USER;
 import static chathealth.chathealth.constants.Role.valueOf;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -63,7 +63,7 @@ class MemberControllerTest {
                 .email("jjang051.hanmail.net")
                 .pw("1234")
                 .grade(BRONZE)
-                .role(USER)
+                .role(ROLE_USER)
                 .profile("profile0321984u32895")
                 .build();
 
@@ -152,7 +152,7 @@ class MemberControllerTest {
                 .pw("1234")
                 .address(address)
                 .grade(Grade.valueOf("BRONZE"))
-                .role(USER)
+                .role(ROLE_USER)
                 .profile("profile0321984u32895")
                 .build();
 

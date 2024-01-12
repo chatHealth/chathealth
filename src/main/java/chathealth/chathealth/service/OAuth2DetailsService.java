@@ -1,6 +1,6 @@
 package chathealth.chathealth.service;
 
-import chathealth.chathealth.constants.Grade;
+
 import chathealth.chathealth.dto.response.CustomUserDetails;
 import chathealth.chathealth.entity.member.Member;
 import chathealth.chathealth.constants.Role;
@@ -22,6 +22,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static chathealth.chathealth.constants.Grade.*;
+import static chathealth.chathealth.constants.Role.ROLE_USER;
 
 @Service
 @Slf4j
@@ -51,7 +52,7 @@ public class OAuth2DetailsService extends DefaultOAuth2UserService{
         String name = socialUserInfo.getName();
         String userId = socialUserInfo.getProviderId();
         log.info(userId);
-        Role role = Role.USER;
+        Role role = ROLE_USER;
         String password = bCryptPasswordEncoder.encode(UUID.randomUUID().toString());
         Users returnMember = null;
 
