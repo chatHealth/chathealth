@@ -2,7 +2,6 @@ package chathealth.chathealth.controller;
 
 import chathealth.chathealth.dto.request.BoardCreateDto;
 import chathealth.chathealth.dto.request.BoardEditDto;
-import chathealth.chathealth.dto.request.BoardSearchDto;
 import chathealth.chathealth.dto.response.BoardResponse;
 import chathealth.chathealth.dto.response.CustomUserDetails;
 import chathealth.chathealth.entity.board.Category;
@@ -20,17 +19,8 @@ public class BoardRestController {
 
     private final BoardService boardService;
 
-    @GetMapping("/board/{id}")
-    public BoardResponse getBoard(@PathVariable long id) {
-        return boardService.getBoard(id);
-    }
 
-    @GetMapping("/board")
-    public List<BoardResponse> getBoards(BoardSearchDto boardSearchDto) {
-        return boardService.getBoards(boardSearchDto);
-    }
-
-    @PostMapping("/board")
+    @PostMapping(value = "/board")
     public void createBoard(@RequestBody @Valid BoardCreateDto boardCreateDto, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
         boardService.createBoard(boardCreateDto, customUserDetails.getLoggedMember().getId());
     }

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}"
+>
+
+<div layout:fragment="content" class="main">
+    <div class="container">
+        <div style="border: solid #cdeacd;">
+            <div style="background-color: #ebefed;">
+                <div class="col-auto" style="display: flex; align-items: center; justify-content: space-between;">
+                    <div>
+                        <span th:switch="${board.category?.name()}">
+                            <span th:case="'INFO'">
+                                <span class="badge bg-info">정보</span>
+                            </span>
+                            <span th:case="'TIP'">
+                                <span class="badge bg-warning">팁</span>
+                            </span>
+                            <span th:case="'QNA'">
+                                <span class="badge bg-success">질문</span>
+                            </span>
+                            <span th:case="'FREE'">
+                                <span class="badge bg-black">잡담</span>
+                            </span>
+                            <span th:case="'NEWS'">
+                                <span class="badge bg-secondary">뉴스</span>
+                            </span>
+                            <span th:case="'NOTICE'">
+                                <span class="badge bg-primary">공지</span>
+                            </span>
+                            <span th:case="*">
+                                <span class="badge bg-black">기타</span>
+                            </span>
+                        </span>
+                        <span th:text="${board.title}">제목</span>
+                    </div>
+                    <div>
+                        <span th:text="|작성일: ${board.createdDate}|">작성일</span>
+                    </div>
+                </div>
+                <div class="col-auto" style="display: flex; align-items: center; justify-content: space-between;">
+                    <div>
+                        <span th:switch="${board.grade?.name()}">
+                            <i th:case="'BRONZE'" class="fa fa-medal text-bronze"></i>
+                            <i th:case="'BLACK'" class="fa fa-medal text-black"></i>
+                            <i th:case="'SILVER'" class="fa fa-medal text-silver"></i>
+                            <i th:case="'GOLD'" class="fa fa-medal text-gold"></i>
+                            <i th:case="'PLATINUM'" class="fa fa-medal text-platinum"></i>
+                            <i th:case="'DIAMOND'" class="fa fa-medal text-diamond"></i>
+                            <i th:case="null" class="fa fa-medal text-black"></i> <!-- null 처리 -->
+                        </span>
+                        <img th:src="@{|/profile${board.profile}|}" alt="프로필 이미지" class="profile-image-sm"
+                             onerror="this.src='/img/basic_user.png'">
+                        <span th:text="${board.nickname != null ? board.nickname : board.name}">작성자</span>
+                    </div>
+                    <div>
+                        <span th:if="${board.modifiedDate != null}" th:text="|수정일: ${board.modifiedDate}|">수정일</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-auto" style="display: flex; align-items: center; justify-content: space-between;">
+                <div>
+                </div>
+            <div>
+                <i class="far fa-eye"></i>
+                <span th:text="${board.hit}">조회수</span>
+            </div>
+            </div>
+            <div style="max-width: 800px; margin: auto;">
+                <span th:utext="${board.content}">내용</span>
+            </div>
+
+        </div>
+        <div>
+            <span th:text="|댓글:${board.commentCount}|">댓글</span>
+        </div>
+    </div>
+</div>
+</html>

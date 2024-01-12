@@ -1,13 +1,14 @@
 package chathealth.chathealth.service;
 
+import chathealth.chathealth.constants.Role;
 import chathealth.chathealth.dto.request.BoardCreateDto;
 import chathealth.chathealth.dto.request.BoardEditDto;
 import chathealth.chathealth.dto.request.BoardSearchDto;
+import chathealth.chathealth.dto.response.PageResponse;
 import chathealth.chathealth.dto.response.BoardResponse;
 import chathealth.chathealth.entity.board.Board;
 import chathealth.chathealth.entity.board.Category;
 import chathealth.chathealth.entity.member.Member;
-import chathealth.chathealth.constants.Role;
 import chathealth.chathealth.entity.member.Users;
 import chathealth.chathealth.exception.BoardNotFoundException;
 import chathealth.chathealth.exception.NotPermitted;
@@ -18,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -36,12 +38,12 @@ public class BoardService {
 
         Member member = memberRepository.findById(id).orElseThrow(UserNotFound::new);
 
-        List<Role> entRoles = List.of(WAITING_ENT, WAITING_ENT, REJECTED_ENT);
+        List<Role> entRoles = List.of(ROLE_WAITING_ENT, ROLE_WAITING_ENT, ROLE_REJECTED_ENT);
         if (entRoles.contains(member.getRole())) {
             throw new NotPermitted("사업자는 게시글을 작성할 수 없습니다.");
         }
 
-        if (member.getRole().equals(USER) && boardCreateDto.getCategory().equals(Category.NOTICE)) {
+        if (member.getRole().equals(ROLE_USER) && boardCreateDto.getCategory().equals(Category.NOTICE)) {
             throw new NotPermitted();
         }
 
@@ -59,7 +61,7 @@ public class BoardService {
     public void updateBoard(BoardEditDto boardEditDto, Long memberId, Long boardId) {
 
         Board findBoard = boardRepository.findById(boardId).orElseThrow(BoardNotFoundException::new);
-        if (!findBoard.getUser().getId().equals(memberId) && !findBoard.getUser().getRole().equals(ADMIN)) {
+        if (!findBoard.getUser().getId().equals(memberId) && !findBoard.getUser().getRole().equals(ROLE_ADMIN)) {
             throw new NotPermitted();
         }
 
@@ -70,7 +72,7 @@ public class BoardService {
 
     public void deleteBoard(Long memberId, Long boardId) {
         Board findBoard = boardRepository.findById(boardId).orElseThrow(BoardNotFoundException::new);
-        if (!findBoard.getUser().getId().equals(memberId) && !findBoard.getUser().getRole().equals(ADMIN)) {
+        if (!findBoard.getUser().getId().equals(memberId) && !findBoard.getUser().getRole().equals(ROLE_ADMIN)) {
             throw new NotPermitted();
         }
 
@@ -80,15 +82,22 @@ public class BoardService {
     //게시글 목록 조회
     public List<BoardResponse> getBoards(BoardSearchDto boardSearchDto) {
 
+        long totalPage = (long) Math.ceil(getBoardCount(boardSearchDto) / (double) boardSearchDto.getSize());
+        if(boardSearchDto.getPage() > totalPage-1){
+            boardSearchDto.setPage((int) totalPage -1);
+        }
+
         return boardRepository.getBoards(boardSearchDto).stream().map(board -> BoardResponse.builder()
                         .boardId(board.getId())
                         .title(board.getTitle())
-                        .createdDate(board.getCreatedDate())
+                        .createdDate(board.getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")))
                         .memberId(board.getUser().getId())
                         .nickname(board.getUser().getNickname())
                         .grade(board.getUser().getGrade())
                         .commentCount(board.getBoardCommentList().size())
                         .hit(board.getBoardHitList().size())
+                        .name(board.getUser().getName())
+                        .category(board.getCategory())
                         .build())
                 .collect(Collectors.toList());
     }
@@ -113,14 +122,29 @@ public class BoardService {
                 .title(board.getTitle())
                 .content(board.getContent())
                 .category(board.getCategory())
-                .createdDate(board.getCreatedDate())
-                .modifiedDate(board.getModifiedDate())
+                .createdDate(board.getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")))
+                .modifiedDate(board.getModifiedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")))
                 .memberId(board.getUser().getId())
                 .nickname(board.getUser().getNickname())
+                .name(board.getUser().getName())
                 .profile(board.getUser().getProfile())
                 .grade(board.getUser().getGrade())
                 .commentCount(board.getBoardCommentList().size())
                 .hit(board.getBoardHitList().size())
+                .build();
+    }
+
+    public Long getBoardCount(BoardSearchDto boardSearchDto) {
+        return boardRepository.getBoardCount(boardSearchDto);
+    }
+
+    public PageResponse getBoardPage(BoardSearchDto boardSearchDto) {
+        Long boardCount = getBoardCount(boardSearchDto);
+        return PageResponse.builder()
+                .totalPages((int) Math.ceil(boardCount / (double) boardSearchDto.getSize()))
+                .totalElements(boardCount)
+                .currentPage(boardSearchDto.getPage())
+                .size(boardSearchDto.getSize())
                 .build();
     }
 }

@@ -26,7 +26,7 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom {
                         contentContains(boardSearchDto.getContent()),
                         writerContains(boardSearchDto.getWriter()),
                         board.deletedDate.isNull())
-                .join(board.user, users)
+                .leftJoin(board.user, users)
                 .fetchJoin()
                 .limit(boardSearchDto.getSize())
                 .offset(boardSearchDto.getOffset())
@@ -35,12 +35,24 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom {
     }
 
     @Override
+    public Long getBoardCount(BoardSearchDto boardSearchDto) {
+        return queryFactory.select(board.count())
+                .from(board)
+                .where(categoryEq(boardSearchDto.getCategory()),
+                        titleContains(boardSearchDto.getTitle()),
+                        contentContains(boardSearchDto.getContent()),
+                        writerContains(boardSearchDto.getWriter()),
+                        board.deletedDate.isNull())
+                .fetchOne();
+    }
+
+    @Override
     public List<Board> getBoardsByCategoryRecent(Category category){
         return queryFactory.selectFrom(board)
                 .where(categoryEq(category),
                         board.deletedDate.isNull())
-//                .join(board.user, users)
-//                .fetchJoin()
+                .join(board.user, users)
+                .fetchJoin()
                 .limit(5)
                 .orderBy(board.createdDate.desc())
                 .fetch();

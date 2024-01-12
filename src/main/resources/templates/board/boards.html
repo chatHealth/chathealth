@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<div layout:fragment="content" class="main">
+    <div class="container">
+        <table class="table">
+            <th:block th:if="${boards.size() ne 0}">
+                <thead id="list">
+                <tr>
+                    <th scope="col">분류</th>
+                    <th scope="col">제목(댓글)</th>
+                    <th scope="col">작성일</th>
+                    <th scope="col">작성자</th>
+                    <th scope="col">조회수</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="item : ${boards}">
+                    <td>
+                        <a th:href="@{/board(category=${item.category?.name()},page=0)}">
+                        <span th:switch="${item.category?.name()}">
+                            <span th:case="'INFO'">
+                                <span class="badge bg-info">정보</span>
+                            </span>
+                            <span th:case="'TIP'">
+                                <span class="badge bg-warning">팁</span>
+                            </span>
+                            <span th:case="'QNA'">
+                                <span class="badge bg-success">질문</span>
+                            </span>
+                            <span th:case="'FREE'">
+                                <span class="badge bg-black">잡담</span>
+                            </span>
+                            <span th:case="'NEWS'">
+                                <span class="badge bg-secondary">뉴스</span>
+                            </span>
+                            <span th:case="'NOTICE'">
+                                <span class="badge bg-primary">공지</span>
+                            </span>
+                            <span th:case="*">
+                                <span class="badge bg-black">기타</span>
+                            </span>
+                        </span>
+                        </a>
+                    </td>
+                    <td><a th:href="@{/board/{id}(id=${item.boardId})}" th:text="|${item.title}(${item.commentCount})|" style="text-decoration: none; color: inherit">제목</a></td>
+                    <td th:text="${item.createdDate}">작성일</td>
+                    <td>
+                        <div class="user-name">
+                        <span th:switch="${item.grade?.name()}">
+                            <i th:case="'BRONZE'" class="fa fa-medal text-bronze"></i>
+                            <i th:case="'BLACK'" class="fa fa-medal text-black"></i>
+                            <i th:case="'SILVER'" class="fa fa-medal text-silver"></i>
+                            <i th:case="'GOLD'" class="fa fa-medal text-gold"></i>
+                            <i th:case="'PLATINUM'" class="fa fa-medal text-platinum"></i>
+                            <i th:case="'DIAMOND'" class="fa fa-medal text-diamond"></i>
+                            <i th:case="null" class="fa fa-medal text-black"></i> <!-- null 처리 -->
+                        </span>
+                            <span onclick="toggleContextMenu(event)" style="cursor: pointer" th:text="${item.nickname != null ? item.nickname : item.name}">사용자 이름</span>
+                            <div class="context-menu">
+                                <a th:href="@{/sendMessage(memberId=${item.memberId})}">쪽지 보내기</a>
+                                <a th:href="@{/userInfo(memberId=${item.memberId})}">유저 정보 보기</a>
+                            </div>
+                        </div>
+                    </td>
+                    <td th:text="${item.hit}"></td>
+                </tr>
+                </tbody>
+            </th:block>
+            <th:block th:if="${boards.size() eq 0}">
+                <div class="col-4">
+                    <p class="card-text">게시글이 없습니다.</p>
+                </div>
+            </th:block>
+        </table>
+        <nav th:if="${boards.size() ne 0}" aria-label="Page navigation example" class="justify-content-center">
+            <ul class="pagination">
+                <li class="page-item" th:class="${pageResponse.currentPage == 0} ? 'disabled' : ''">
+                    <a class="page-link" th:href="@{/board(page=0)}" aria-label="First">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+                <!-- 이전 페이지 버튼 -->
+                <li class="page-item" th:class="${pageResponse.currentPage < 10} ? 'disabled' : ''">
+                    <a class="page-link"
+                       th:href="${pageResponse.currentPage >= 10} ? @{/board(page=${(pageResponse.startPage - 1) - 10})} : '#'"
+                       aria-label="Previous">
+                        &lsaquo;
+                    </a>
+                </li>
+
+                <!-- 페이지 번호 -->
+                <li th:each="page : ${#numbers.sequence(pageResponse.startPage, pageResponse.endPage)}"
+                    th:class="${page - 1 == pageResponse.currentPage} ? 'page-item active' : 'page-item'">
+                    <a class="page-link" th:href="@{/board(page=${page - 1})}" th:text="${page}"></a>
+                </li>
+
+                <!-- 다음 페이지 버튼 -->
+                <li class="page-item" th:class="${pageResponse.endPage >= pageResponse.totalPages} ? 'disabled' : ''">
+                    <a class="page-link"
+                       th:href="${pageResponse.endPage < pageResponse.totalPages} ? @{/board(page=${pageResponse.endPage})} : '#'"
+                       aria-label="Next">
+                        &rsaquo;
+                    </a>
+                </li>
+
+                <li class="page-item"
+                    th:class="${pageResponse.currentPage == pageResponse.totalPages - 1} ? 'disabled' : ''">
+                    <a class="page-link" th:href="@{/board(page=${pageResponse.totalPages - 1})}" aria-label="Last">
+                        &raquo;
+                    </a>
+                </li>
+            </ul>
+        </nav>
+        <div class="d-grid gap-2 d-md-flex justify-content-md-end" sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_USER')">
+            <a href="/board/write" class="btn btn-primary me-md-2" type="button">글쓰기</a>
+        </div>
+    </div>
+    <script th:inline="javascript">
+        $(document).ready(function () {
+            $.ajax({
+                url: "/board/api/recent",
+                type: "GET",
+                data: {
+                    "category": "NOTICE"
+                },
+                success: function (response) {
+                    let html = "";
+                    $.each(response, function (idx, item) {
+                        // if(idx>0){
+                        html += '<tr class="notice">';
+                        // }
+                        html += '<td><a href="/board?category=NOTICE&page=0"><span class="badge bg-primary">공지</span></a> </td>';
+                        html += `<td>
+                        <a href="/board/${item.boardId}">
+
+                            <span>${item.title}</span>
+                        </a></td>`;
+                        html += '<td>' + item.createdDate + '</td>';
+                        html += '<td>관리자</td>';
+                        html += '<td>' + item.hit + '</td>';
+                        html += '</tr>'
+                    });
+                    $("#list").append(html);
+                },
+                error: function (response) {
+                    console.log(response);
+                }
+            });
+            $.ajax({
+                url: "/board/api/recent",
+                type: "GET",
+                data: {
+                    "category": "NEWS"
+                },
+                success: function (response) {
+                    let html = "";
+                    $.each(response, function (idx, item) {
+                        // if(idx>0){
+                        html += '<tr class="news-list">';
+                        // }
+                        html += '<td><a href="/board?category=NEWS&page=0"><span class="badge bg-secondary">뉴스</span></a> </td>';
+                        html += `<td>
+                        <a href="/board/${item.boardId}">
+
+                            <span>${item.title}</span>
+                        </a></td>`;
+                        html += '<td>' + item.createdDate + '</td>';
+                        html += '<td>관리자</td>';
+                        html += '<td>' + item.hit + '</td>';
+                        html += '</tr>'
+                    });
+                    $("#list").append(html);
+                },
+                error: function (response) {
+                    console.log(response);
+                }
+            });
+        })
+
+        function toggleContextMenu(event) {
+            contextClose();
+            event.stopPropagation();
+            let contextMenu = event.currentTarget.nextElementSibling;
+            contextMenu.style.display = contextMenu.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function contextClose() {
+            const contextMenus = document.querySelectorAll('.context-menu');
+            contextMenus.forEach(function (menu) {
+                menu.style.display = 'none';
+            });
+        }
+
+        // 페이지의 다른 곳을 클릭하면 메뉴 닫기
+        window.onclick = function(event) {
+            contextClose();
+        }
+    </script>
+</div>
+</html>

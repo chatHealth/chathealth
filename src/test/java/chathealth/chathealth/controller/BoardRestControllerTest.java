@@ -23,7 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import static chathealth.chathealth.entity.board.Category.FREE;
 import static chathealth.chathealth.constants.Grade.BLACK;
 import static chathealth.chathealth.constants.Grade.SILVER;
-import static chathealth.chathealth.constants.Role.USER;
+import static chathealth.chathealth.constants.Role.ROLE_USER;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -85,34 +85,34 @@ class BoardRestControllerTest {
                 .andExpect(jsonPath("$.hit").value(board.getBoardHitList().size()));
     }
 
-    @Test
-    @WithMockUser
-    @DisplayName("게시물 목록 조회")
-//    @Rollback(value = false)
-    public void getBoards() throws Exception {
-        //given
-        Users user = Users.builder()
-                .nickname("장공오일")
-                .grade(BLACK)
-                .profile("profilePicture")
-                .build();
-        memberRepository.save(user);
+//    @Test
+//    @WithMockUser
+//    @DisplayName("게시물 목록 조회")
+////    @Rollback(value = false)
+//    public void getBoards() throws Exception {
+//        //given
+//        Users user = Users.builder()
+//                .nickname("장공오일")
+//                .grade(BLACK)
+//                .profile("profilePicture")
+//                .build();
+//        memberRepository.save(user);
+////
+//        for (int i = 0; i < 100; i++) {
+//            Board board = Board.builder()
+//                    .title("제목입니다.")
+//                    .content("내용입니다.")
+//                    .user(user)
+//                    .category(FREE)
+//                    .build();
+//            boardRepository.save(board);
+//        }
 //
-        for (int i = 0; i < 100; i++) {
-            Board board = Board.builder()
-                    .title("제목입니다.")
-                    .content("내용입니다.")
-                    .user(user)
-                    .category(FREE)
-                    .build();
-            boardRepository.save(board);
-        }
-
-        //expected
-        mockMvc.perform(get("/board")
-                        .contentType(APPLICATION_JSON))
-                .andExpect(status().isOk());
-    }
+//        //expected
+//        mockMvc.perform(get("/board")
+//                        .contentType(APPLICATION_JSON))
+//                .andExpect(status().isOk());
+//    }
 
     
 
@@ -126,7 +126,7 @@ class BoardRestControllerTest {
                     .grade(SILVER)
                     .email("jjang061@hanmail.net")
                     .profile("프사입니당")
-                    .role(USER)
+                    .role(ROLE_USER)
                     .build();
             memberRepository.save(user);
             Users user2 = Users.builder()
@@ -134,7 +134,7 @@ class BoardRestControllerTest {
                     .grade(SILVER)
                     .email("jjang061@hanmail.com")
                     .profile("프사입니당")
-                    .role(USER)
+                    .role(ROLE_USER)
                     .build();
             memberRepository.save(user2);
     }

@@ -1,11 +1,9 @@
 package chathealth.chathealth.dto.response;
 
-import chathealth.chathealth.entity.board.Category;
 import chathealth.chathealth.constants.Grade;
+import chathealth.chathealth.entity.board.Category;
 import lombok.Builder;
 import lombok.Getter;
-
-import java.time.LocalDateTime;
 
 @Getter
 @Builder
@@ -16,10 +14,11 @@ public class BoardResponse {
     private String title;
     private String content;
     private Category category;
-    private LocalDateTime createdDate;
-    private LocalDateTime modifiedDate;
+    private String createdDate;
+    private String modifiedDate;
 
     //작성자
+    private String name;
     private String nickname;
     private Grade grade;
     private long memberId;
