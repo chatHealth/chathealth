@@ -59,7 +59,7 @@ public class AuthController {
     }
 
     @PostMapping("/userjoin") //개인회원가입 처리
-    public String userJoin(@ModelAttribute UserJoinDto userJoinDto, MultipartFile profile) {
+    public String userJoin(@ModelAttribute UserJoinDto userJoinDto) {
         //주소 객체화
         Address addressEntity = Address.builder()
                 .postcode(userJoinDto.getPostcode())
@@ -81,15 +81,13 @@ public class AuthController {
     }
 
     @PostMapping("/entjoin") //사업자회원가입 처리
-    public String entJoin(@ModelAttribute EntJoinDto entJoinDto, MultipartFile profile) {
+    public String entJoin(@ModelAttribute EntJoinDto entJoinDto) {
         //주소 객체화
         Address addressEntity = Address.builder()
                 .postcode(entJoinDto.getPostcode())
                 .address(entJoinDto.getFrontAddress())
                 .addressDetail(entJoinDto.getAddressDetail())
                 .build();
-        log.info(String.valueOf(addressEntity));
-
 
         //service에 던질 DTO 빌드
         entJoinDto.setAddress(addressEntity);
@@ -109,7 +107,7 @@ public class AuthController {
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/admin")
     public String admin(Model model) {
-        return "auth/admin-manage-user";
+        return "auth/";
     }
 
     @PostMapping("/confirmEmail") //아이디 중복체크
