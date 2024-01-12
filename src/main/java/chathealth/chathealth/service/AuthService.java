@@ -92,12 +92,15 @@ public class AuthService implements UserDetailsService {
         memberRepository.save(dbJoinEnt);
     }
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        Optional<Member> loggedMember = memberRepository.findByEmail(email);
-        loggedMember.ifPresent(a -> {
-            new CustomUserDetails(loggedMember.get());
-        });
+//        Optional<Member> loggedMember = memberRepository.findByEmail(email);
+//        loggedMember.ifPresent(a -> {
+//            new CustomUserDetails(loggedMember.get());
+//        });
 
-        throw new UsernameNotFoundException("아이디 혹은 비밀번호를 확인해주세요.");
+//        throw new UsernameNotFoundException("아이디 혹은 비밀번호를 확인해주세요.");
+        return memberRepository.findByEmail(email).map(CustomUserDetails::new).orElseThrow(
+                ()-> new UsernameNotFoundException("아이디확인좀")
+        );
     }
 
     public boolean confirmEmail(String email) {

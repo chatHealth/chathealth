@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <link rel="stylesheet" href="/css/layout.css">
     <script src="/js/jquery-3.7.1.min.js"></script>
-    <script src="https://cdn.ckeditor.com/ckeditor5/40.2.0/classic/ckeditor.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
@@ -15,6 +14,9 @@
     <link rel="stylesheet" href="/css/select2-bootstrap-5-theme.min.css"/>
     <link rel="stylesheet" href="/css/select2-bootstrap-5-theme.rtl.min.css"/>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.full.min.js"></script>
+<!--    toast-->
+    <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
+    <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css" />
 </header>
 <body>
 <form action="/post/write" method="post">
@@ -23,36 +25,37 @@
         <input type="text" placeholder="제목" class="inpTitle" name="title">
     </div>
     <div style="height: 500px">
-        <textarea class="postWriteContent" id="editor" name="content"></textarea>
+        <div class="WriteContent" id="editor"></div>
+<!--        <textarea class="postWriteContent" id="editor" name="content"></textarea>-->
     </div>
 </div>
 <div class="underBox">
     <div class="col-3 mt-3 ">
-        <input type="file" class="form-control" id="titleImg"
-               placeholder="png,jpg" name=""
-               accept="image/gif, image/jpeg, image/png" />
-        <!-- <label for="titleImg" class="form-label"> 제품대표 이미지  </label>  -->
+<!--        <input type="file" class="form-control" id="titleImg"-->
+<!--               placeholder="png,jpg" name=""-->
+<!--               accept="image/gif, image/jpeg, image/png" multiple="multiple"/>-->
+<!--         <label for="titleImg" class="form-label"> 제품대표 이미지  </label>-->
 
         <div class="preview"> </div>
     </div>
     <div class="col-3 mt-3">
-        <select id="symptomOptions" name="symptom"
+        <select id="symptomOptions" name="symptomOptions"
                 data-placeholder="증상"
                 class="form-select form-select-sm selectpicker"
                 aria-label="Small select example" data-style="btn-primary">
             <th:block th:each="item,status:${symptom}">
-                <option value="${item.symptomName}" th:text="${item.symptomName}"></option>
+                <option th:value="${item.id}" th:text="${item.symptomName}"></option>
             </th:block>
         </select>
     </div>
 
     <div class="col-3 mt-3">
-        <select id="materialOptions" name=""
+        <select id="materialOptions" name="materialOptions"
                 multiple="multiple" data-placeholder="원재료"
                 class="form-select form-select-sm selectpicker"
                 aria-label="Small select example" data-style="btn-primary">
             <th:block th:each="item,status:${material}">
-                <option value="${item.materialName}" th:text="${item.materialName}"></option>
+                <option th:value="${item.id}" th:text="${item.materialName}"></option>
             </th:block>
 
         </select>
@@ -66,23 +69,6 @@
 </form>
 </body>
 <script>
-    //ck editor
-    ClassicEditor
-        .create(document.querySelector('#editor'),
-            {
-                language: "ko",
-                ckfinder:
-                    {
-                        uploadUrl: "../post/img-upload",
-                        withCredentials: true,
-                    }
-            })
-        .then(newEditor => {
-            ckEditor = newEditor;
-        })
-        .catch(error => {
-            console.error(error);
-        });
 
     //multi
     $('#symptomOptions').select2({
@@ -111,9 +97,47 @@
             $(".preview").html(`<img src="\${e.target.result}">`);
         }
         reader.readAsDataURL(file);
-
-
     });
+
+    //toast
+
+        const editor = new toastui.Editor({
+        el: document.querySelector('#editor'), // 에디터를 적용할 요소 (컨테이너)
+        height: '500px',                        // 에디터 영역의 높이 값 (OOOpx || auto)
+        initialEditType: 'wysiwyg',            // 최초로 보여줄 에디터 타입 (markdown || wysiwyg)
+        previewStyle: 'vertical',
+            /* start of hooks */
+            hooks: {
+                async addImageBlobHook(blob, callback) { // 이미지 업로드 로직 커스텀
+                    try {
+                        /*
+                         * 1. 에디터에 업로드한 이미지를 FormData 객체에 저장
+                         *    (이때, 컨트롤러 uploadEditorImage 메서드의 파라미터인 'image'와 formData에 append 하는 key('image')값은 동일해야 함)
+                         */
+                        const formData = new FormData();
+                        formData.append('image', blob);
+
+                        // 2. FileApiController - uploadEditorImage 메서드 호출
+                        const response = await fetch('/tui-editor/image-upload', {
+                            method: 'POST',
+                            body: formData,
+                        });
+
+                        // 3. 컨트롤러에서 전달받은 디스크에 저장된 파일명
+                        const filename = await response.text();
+                        console.log('서버에 저장된 파일명 : ', filename);
+
+                        // 4. addImageBlobHook의 callback 함수를 통해, 디스크에 저장된 이미지를 에디터에 렌더링
+                        const imageUrl = `/tui-editor/image-print?filename=${filename}`;
+                        callback(imageUrl, 'image alt attribute');
+
+                    } catch (error) {
+                        console.error('업로드 실패 : ', error);
+                    }
+                }
+            }
+    });
+
 
 </script>
 

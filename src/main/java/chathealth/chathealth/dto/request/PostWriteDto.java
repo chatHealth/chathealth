@@ -2,10 +2,7 @@ package chathealth.chathealth.dto.request;
 
 
 import chathealth.chathealth.entity.member.Ent;
-import chathealth.chathealth.entity.post.Material;
-import chathealth.chathealth.entity.post.PicturePost;
-import chathealth.chathealth.entity.post.Symptom;
-import chathealth.chathealth.entity.post.SymptomType;
+import chathealth.chathealth.entity.post.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
@@ -19,13 +16,13 @@ import java.util.List;
 @AllArgsConstructor
 @ToString
 public class PostWriteDto {
-    private Ent member;
+    //private Ent member;
     @NotBlank(message = "title입력")
     private String title;
     @NotBlank(message = "content입력")
     private String content;
-    @NotBlank(message = "con입력")
+    //@NotBlank(message = "con입력")
     private SymptomType symptom;
-    private List<Material> materialList;
+    private List<MaterialPost> materialList;
     private List<PicturePost> postImgList;
 }

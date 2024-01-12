@@ -23,6 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -36,6 +37,7 @@ public class PostService {
     private final SymptomRepository symptomRepository;
     private final MaterialRepository materialRepository;
     private final MemberRepository memberRepository;
+    private final MaterialPostRepository materialPostRepository;
 
 
     // public Post insertPost(){}
@@ -68,7 +70,7 @@ public class PostService {
                 .toList();
     }
 
-    public List<PostResponse> getBestPostsPerDay(){
+    public List<PostResponse> getBestPostsPerDay() {
         return postRepository.getBestPostsPerDay().stream()
                 .map(post -> PostResponse.builder()
                         .id(post.getId())
@@ -78,7 +80,7 @@ public class PostService {
                 .toList();
     }
 
-    public List<PostResponse> getBestPostsPerWeek(){
+    public List<PostResponse> getBestPostsPerWeek() {
         return postRepository.getBestPostsPerWeek().stream()
                 .map(post -> PostResponse.builder()
                         .id(post.getId())
@@ -107,8 +109,8 @@ public class PostService {
     }
 
 
-    public List<SymptomDto> getSymptomList(){
-        List<Symptom> symptoms= symptomRepository.findAll();
+    public List<SymptomDto> getSymptomList() {
+        List<Symptom> symptoms = symptomRepository.findAll();
         return symptoms.stream().map(symptom -> SymptomDto.builder()
                 .id(symptom.getId())
                 .symptomName(symptom.getSymptomName())
@@ -116,8 +118,8 @@ public class PostService {
 
     }
 
-    public List<MaterialDto> getMaterialList(){
-        List<Material> materials= materialRepository.findAll();
+    public List<MaterialDto> getMaterialList() {
+        List<Material> materials = materialRepository.findAll();
         return materials.stream().map(material -> MaterialDto.builder()
                 .id(material.getId())
                 .materialName(material.getMaterialName())
@@ -125,18 +127,21 @@ public class PostService {
                 .build()).toList();
     }
 
-    public void createPost(PostWriteDto postWriteDto, CustomUserDetails ent, List<MaterialPost> materialPost){
-        Ent findEnt = (Ent)memberRepository.findByEmail(ent.getEmail()).orElseThrow(UserNotFound::new);
+    public void createPost(PostWriteDto postWriteDto, CustomUserDetails ent,Long symptomId, List<Long> selectPost) {
+        System.out.println("entㅋㅋㅋㅋ = {}" + ent);
+        Ent findEnt = (Ent) memberRepository.findByEmail(ent.getLoggedMember().getEmail()).orElseThrow(UserNotFound::new);
 
         Post postInfo = Post.builder()
                 .member(findEnt)
                 .title(postWriteDto.getTitle())
                 .content(postWriteDto.getContent())
-//                .symptom(postWriteDto.getSymptom())
-//                .materialList(materialPost)
-//                .postImgList(postWriteDto.getPostImgList())
+                .symptom(symptomRepository.findById(symptomId).orElseThrow())
                 .build();
-        postRepository.save(postInfo);
-    }
+        Post savedpost = postRepository.save(postInfo);
+        for (Long aLong : selectPost) {
+            MaterialPost materialPost = MaterialPost.builder().post(savedpost).material(materialRepository.findById(aLong).orElseThrow(RuntimeException::new)).build();
+            materialPostRepository.save(materialPost);
+        }
 
+}
 }

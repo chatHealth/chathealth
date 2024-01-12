@@ -22,7 +22,7 @@ public class SecurityConfig {
         httpSecurity.authorizeHttpRequests((auth)->auth
                         .requestMatchers("/","/auth/join","/auth/userjoin","/auth/entjoin","/auth/login","/auth/confirmEmail",
                                          "/board","/board/{id}", "/board/api", "/board/api/recent",
-                                         "/post","/api/post", "/api/post/best", "/api/post/best-week", "/api/post/recent",
+                                         "/post","/api/post", "/api/post/best", "/api/post/best-week", "/api/post/recent","/post/write",
                                          "/error",
                                          "/css/**","/js/**","/img/**")
                         .permitAll()

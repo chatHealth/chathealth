@@ -9,6 +9,9 @@ spring:
     include: oauth
     active: dev # application-prod
 
+
+
+
   output:
     ansi:
       enabled: always
