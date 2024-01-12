@@ -47,8 +47,7 @@ public class SecurityConfig {
                                    .logoutUrl("/auth/logout")
                                     .logoutSuccessHandler(
                                             (((request, response, authentication) -> {
-                                                String redirectUrl = request.getHeader("Referer");
-                                                response.sendRedirect(redirectUrl ==null? "/" : redirectUrl);
+                                                response.sendRedirect("/" );
                                             }))
                                     )
                                     .invalidateHttpSession(true)
