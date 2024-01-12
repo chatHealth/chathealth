@@ -37,7 +37,6 @@ public class BoardRestController {
 
     @GetMapping("/board/api/recent")
     public List<BoardResponse> getRecentBoards(Category category) {
-        System.out.println("category = " + category);
         return boardService.getRecentBoards(category);
     }
 }

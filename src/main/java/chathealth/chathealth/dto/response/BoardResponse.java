@@ -27,4 +27,6 @@ public class BoardResponse {
     //조회수, 댓글수
     private int commentCount;
     private int hit;
+
+    private Boolean isWriter;
 }

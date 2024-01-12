@@ -2,6 +2,7 @@
 <html lang="en"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout/layout}"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
 >
 
 <div layout:fragment="content" class="main">
@@ -41,6 +42,9 @@
                 </div>
                 <div class="col-auto" style="display: flex; align-items: center; justify-content: space-between;">
                     <div>
+                        <img th:src="@{|/profile${board.profile}|}" alt="프로필 이미지" class="profile-image-sm"
+                             onerror="this.src='/img/basic_user.png'">
+                        <span th:text="${board.nickname != null ? board.nickname : board.name}">작성자</span>
                         <span th:switch="${board.grade?.name()}">
                             <i th:case="'BRONZE'" class="fa fa-medal text-bronze"></i>
                             <i th:case="'BLACK'" class="fa fa-medal text-black"></i>
@@ -50,9 +54,6 @@
                             <i th:case="'DIAMOND'" class="fa fa-medal text-diamond"></i>
                             <i th:case="null" class="fa fa-medal text-black"></i> <!-- null 처리 -->
                         </span>
-                        <img th:src="@{|/profile${board.profile}|}" alt="프로필 이미지" class="profile-image-sm"
-                             onerror="this.src='/img/basic_user.png'">
-                        <span th:text="${board.nickname != null ? board.nickname : board.name}">작성자</span>
                     </div>
                     <div>
                         <span th:if="${board.modifiedDate != null}" th:text="|수정일: ${board.modifiedDate}|">수정일</span>
@@ -60,12 +61,22 @@
                 </div>
             </div>
             <div class="col-auto" style="display: flex; align-items: center; justify-content: space-between;">
-                <div>
+                <div th:if="${board.isWriter}">
+                    <div class="col-auto" style="display: flex; align-items: center; justify-content: space-between;">
+                        <div>
+                            <a th:href="@{/board/edit/{id}(id=${board.boardId})}"
+                               class="btn btn-sm btn-outline-secondary">수정</a>
+                            <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal"
+                                    data-bs-target="#deleteModal">삭제
+                            </button>
+                        </div>
+                    </div>
                 </div>
-            <div>
-                <i class="far fa-eye"></i>
-                <span th:text="${board.hit}">조회수</span>
-            </div>
+                <div th:if="${board.isWriter == false}"></div>
+                <div>
+                    <i class="far fa-eye"></i>
+                    <span th:text="${board.hit}">조회수</span>
+                </div>
             </div>
             <div style="max-width: 800px; margin: auto;">
                 <span th:utext="${board.content}">내용</span>
@@ -75,6 +86,65 @@
         <div>
             <span th:text="|댓글:${board.commentCount}|">댓글</span>
         </div>
+
+        <!--         삭제 모달 -->
+        <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="deleteModalLabel">삭제 확인</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        정말로 삭제하시겠습니까?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                        <button type="button" class="btn btn-danger" id="deleteConfirm">삭제</button>
+                    </div>
+                    <script th:inline="javascript">
+                        $(document).ready(function () {
+                            $('#deleteConfirm').click(function () {
+                                console.log('deleteConfirm');
+                                const boardId = [[${board.boardId}]]
+                                console.log(boardId);
+                                $.ajax({
+                                    url: '/board/' + boardId,
+                                    type: 'DELETE',
+                                    success: function (data) {
+                                        alert('삭제되었습니다.')
+                                        location.href = '/board'
+                                    },
+                                    error: function (error) {
+                                        alert(error.message);
+                                    }
+                                });
+                            });
+                        });
+                    </script>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
+<script th:inline="javascript">
+    $(document).ready(function () {
+        $('#deleteConfirm').click(function () {
+            console.log('deleteConfirm');
+            const boardId = [[${board.boardId}]]
+            console.log(boardId);
+            $.ajax({
+                url: '/board/' + boardId,
+                type: 'DELETE',
+                success: function (data) {
+                    alert('삭제되었습니다.')
+                    location.href = '/board'
+                },
+                error: function (error) {
+                    alert(error.message);
+                }
+            });
+        });
+    });
+</script>
 </html>

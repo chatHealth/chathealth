@@ -30,7 +30,7 @@
                                     </div>
                                     <div class="col-auto">
                                         <h2 th:text="${member.role}"></h2>
-                                        <th:block th:if="${member.role.name() == 'USER'}">
+                                        <th:block sec:authorize="hasAnyRole('ROLE_USER', 'ROLE_ADMIN')">
                                             <ul class="user-details">
                                                 <li><strong>권한:</strong> <span th:text="${member.role.role}"></span>
                                                 </li>
@@ -59,7 +59,7 @@
                                             </ul>
                                         </th:block>
                                         <th:block
-                                                th:if="${member.role.name() == 'WAITING_ENT' || member.role.name() == 'PERMITTED_ENT' || member.role.name() == 'REJECTED_ENT'}">
+                                                sec:authorize="hasAnyRole('ROLE_WATING_ENT', 'ROLE_REJECTED_ENT', 'ROLE_PERMITTED_ENT')">
                                             <ul class="user-details">
                                                 <li><strong>상태:</strong> <span th:text="${member.role.role}">사업자</span>
                                                 </li>

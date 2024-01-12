@@ -2,7 +2,9 @@ package chathealth.chathealth.controller;
 
 import chathealth.chathealth.dto.request.BoardCreateDto;
 import chathealth.chathealth.dto.request.BoardSearchDto;
+import chathealth.chathealth.dto.response.BoardResponse;
 import chathealth.chathealth.dto.response.CustomUserDetails;
+import chathealth.chathealth.exception.NotPermitted;
 import chathealth.chathealth.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -31,15 +33,26 @@ public class BoardController {
     @GetMapping("/board/write")
     public String writeForm(Model model, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
         if(customUserDetails == null || !List.of(ROLE_USER, ROLE_ADMIN).contains(customUserDetails.getLoggedMember().getRole())){
-            return "redirect:/login";
+            throw new NotPermitted();
         }
         model.addAttribute("boardCreateDto", new BoardCreateDto());
         return "board/write";
     }
 
     @GetMapping("/board/{id}")
-    public String getBoard(@PathVariable long id, Model model) {
-        model.addAttribute("board", boardService.getBoard(id));
+    public String getBoard(@PathVariable long id, Model model, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        model.addAttribute("board", boardService.getBoard(id, customUserDetails));
         return "board/board";
+    }
+
+    @GetMapping("/board/{id}/edit")
+    public String editForm(@PathVariable long id, Model model, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        // 자신이 작성한 글만 수정 가능
+        BoardResponse board = boardService.getBoard(id, customUserDetails);
+        if (!board.getIsWriter()) {
+            throw new NotPermitted("작성자만 수정할 수 있습니다.");
+        }
+        model.addAttribute("board", board);
+        return "board/edit";
     }
 }

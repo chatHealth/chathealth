@@ -4,6 +4,7 @@ import chathealth.chathealth.constants.Role;
 import chathealth.chathealth.dto.request.BoardCreateDto;
 import chathealth.chathealth.dto.request.BoardEditDto;
 import chathealth.chathealth.dto.request.BoardSearchDto;
+import chathealth.chathealth.dto.response.CustomUserDetails;
 import chathealth.chathealth.dto.response.PageResponse;
 import chathealth.chathealth.dto.response.BoardResponse;
 import chathealth.chathealth.entity.board.Board;
@@ -109,14 +110,18 @@ public class BoardService {
     }
 
     //게시글 조회
-    public BoardResponse getBoard(long id) {
+    public BoardResponse getBoard(long id, CustomUserDetails customUserDetails) {
         Board board = boardRepository.findById(id).orElseThrow(BoardNotFoundException::new);
 
         // 삭제된 게시물은 조회 불가
         if (board.getDeletedDate() != null) {
-            throw new BoardNotFoundException();
+            throw new BoardNotFoundException("삭제된 게시물입니다.");
         }
 
+        String email = (customUserDetails == null) ? null : customUserDetails.getLoggedMember().getEmail();
+        Role role = customUserDetails != null ? customUserDetails.getLoggedMember().getRole() : null;
+
+        Users user = board.getUser();
         return BoardResponse.builder()
                 .boardId(board.getId())
                 .title(board.getTitle())
@@ -124,13 +129,14 @@ public class BoardService {
                 .category(board.getCategory())
                 .createdDate(board.getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")))
                 .modifiedDate(board.getModifiedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")))
-                .memberId(board.getUser().getId())
-                .nickname(board.getUser().getNickname())
-                .name(board.getUser().getName())
-                .profile(board.getUser().getProfile())
-                .grade(board.getUser().getGrade())
+                .memberId(user.getId())
+                .nickname(user.getNickname())
+                .name(user.getName())
+                .profile(user.getProfile())
+                .grade(user.getGrade())
                 .commentCount(board.getBoardCommentList().size())
                 .hit(board.getBoardHitList().size())
+                .isWriter(user.getEmail().equals(email) || (role != null && role.equals(ROLE_ADMIN)))
                 .build();
     }
 
