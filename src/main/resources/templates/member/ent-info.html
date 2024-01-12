@@ -29,30 +29,51 @@
             <div class="col-9">
                 <h2 class="fw-weight-bold mb-5">업체
                     정보</h2>
-                <table class="table">
-                    <tr>
-                        <th>법인명</th>
-                        <td th:if="${entInfo.role==null}" th:text="${entInfo.company}"></td>
-                        <td th:text="${entInfo.company}"></td>
-                    </tr>
+                <table class="table" style="width:550px;">
+                    <th:block sec:authorize="hasRole('ROLE_WAITING_ENT')">
+                        <tr>
+                            <th>법인명</th>
+                            <td th:text="${entInfo.company}"></td>
+                            <td><span style="color:white; border-style: double; font-size: 11px;border-color: #137AE8;background: #137AE8">승인 대기중</span></td>
+                        </tr>
+                    </th:block>
+                    <th:block sec:authorize="hasRole('ROLE_PERMITTED_ENT')">
+                        <tr>
+                            <th>법인명</th>
+                            <td th:text="${entInfo.company}"></td>
+                            <td style="color: white; border-style: double; font-size: 11px;border-color: #65EA4A;background: #65EA4A">승인 완료</td>
+                        </tr>
+                    </th:block>
+                    <th:block sec:authorize="hasRole('ROLE_REJECTED_ENT')">
+                        <tr>
+                            <th>법인명</th>
+                            <td th:text="${entInfo.company}"></td>
+                            <td style="color: white; border-style: double; font-size: 11px;border-color: #EA564E;background: #EA564E">승인 거절</td>
+                        </tr>
+                    </th:block>
                     <tr>
                         <th>대표자</th>
                         <td th:text="${entInfo.ceo}"></td>
+                        <td></td>
                     </tr>
                     <tr>
                         <th>사업자 번호</th>
                         <td th:text="${entInfo.entNo}"></td>
+                        <td></td>
                     </tr>
                     <tr>
                         <th>주소</th>
                         <td th:if="${not #strings.isEmpty(entInfo.address.addressDetail)}" th:text="|${entInfo.address.address} ${entInfo.address.addressDetail}|"></td>
                         <td th:if="${#strings.isEmpty(entInfo.address.addressDetail)}" th:text="|${entInfo.address.address}|"></td>
+                        <td></td>
                     </tr>
                     <tr>
                         <th>이메일</th>
                         <td th:text="${entInfo.email}"></td>
+                        <td></td>
                     </tr>
                 </table>
+                <a href="#" class="link-underline-opacity-0"><p>정보 수정</p></a>
             </div>
         </div>
     </div>
