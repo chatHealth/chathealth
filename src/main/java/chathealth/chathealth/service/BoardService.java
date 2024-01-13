@@ -153,6 +153,9 @@ public class BoardService {
                 .totalElements(boardCount)
                 .currentPage(boardSearchDto.getPage())
                 .size(boardSearchDto.getSize())
+                .title(boardSearchDto.getTitle())
+                .content(boardSearchDto.getContent())
+                .category(boardSearchDto.getCategory())
                 .build();
     }
 }

@@ -25,7 +25,6 @@ public class BoardController {
 
     @GetMapping("/board")
     public String getBoards(BoardSearchDto boardSearchDto, Model model) {
-        model.addAttribute("currentCategory", boardSearchDto.getCategory());
         model.addAttribute("boards", boardService.getBoards(boardSearchDto));
         model.addAttribute("pageResponse", boardService.getBoardPage(boardSearchDto));
         return "board/boards";

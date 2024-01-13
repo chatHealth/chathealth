@@ -176,6 +176,7 @@ class BoardRestControllerTest {
         BoardEditDto boardEditDto = BoardEditDto.builder()
                 .title("제목수정")
                 .content("내용수정")
+                .category(FREE)
                 .build();
 
         //expected

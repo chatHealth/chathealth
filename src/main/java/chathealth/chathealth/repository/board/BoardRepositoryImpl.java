@@ -63,12 +63,12 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom {
     }
 
     private static BooleanExpression contentContains(String content) {
-        return hasText(content) ? board.title.contains(content) : null;
+        return hasText(content) ? board.content.contains(content) : null;
     }
     private static BooleanExpression writerContains(String writer) {
-        return hasText(writer) ? board.content.contains(writer) : null;
+        return hasText(writer) ? board.user.nickname.contains(writer) : null;
     }
     private static BooleanExpression titleContains(String title) {
-        return hasText(title) ? users.nickname.contains(title) : null;
+        return hasText(title) ? board.title.contains(title) : null;
     }
 }

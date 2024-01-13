@@ -18,17 +18,40 @@
                 margin-right: 10px; /* 오른쪽 여백 추가 */
                 text-align: center; /* 텍스트 중앙 정렬 */
             }
+            .checked {
+                transform: scale(1.2); /* 기본 크기를 20% 더 크게 */
+            }
+            .badge:hover {
+                transform: scale(1.2); /* 마우스를 올렸을 때 20% 더 크게 */
+                transition: transform 0.3s ease-in-out; /* 부드러운 전환 효과 */
+            }
+
         </style>
         <div>
             <ul class="category-list">
-                <li><a href="/board"><span class="badge bg-black">전체</span></a></li>
-                <li><a href="/board?category=NOTICE"><span class="badge bg-primary">공지</span></a></li>
-                <li><a href="/board?category=NEWS"><span class="badge bg-secondary">뉴스</span></a></li>
-                <li><a href="/board?category=INFO"><span class="badge bg-info">정보</span></a></li>
-                <li><a href="/board?category=TIP"><span class="badge bg-warning">팁</span></a></li>
-                <li><a href="/board?category=QNA"><span class="badge bg-success">질문</span></a></li>
-                <li><a href="/board?category=FREE"><span class="badge bg-danger">잡담</span></a></li>
+                <li><a href="/board"><span class="badge bg-black" th:classappend="${pageResponse.category == null ? 'checked' : ''}">전체</span></a></li>
+                <li><a href="/board?category=NOTICE"><span class="badge bg-primary" th:classappend="${pageResponse.category != null and pageResponse.category.name() == 'NOTICE' ? 'checked' : ''}">공지</span></a></li>
+                <li><a href="/board?category=NEWS"><span class="badge bg-secondary" th:classappend="${pageResponse.category != null and pageResponse.category.name() == 'NEWS' ? 'checked' : ''}">뉴스</span></a></li>
+                <li><a href="/board?category=INFO"><span class="badge bg-info" th:classappend="${pageResponse.category != null and pageResponse.category.name() == 'INFO' ? 'checked' : ''}">정보</span></a></li>
+                <li><a href="/board?category=TIP"><span class="badge bg-warning" th:classappend="${pageResponse.category != null and pageResponse.category.name() == 'TIP' ? 'checked' : ''}">팁</span></a></li>
+                <li><a href="/board?category=QNA"><span class="badge bg-success" th:classappend="${pageResponse.category != null and pageResponse.category.name() == 'QNA' ? 'checked' : ''}">질문</span></a></li>
+                <li><a href="/board?category=FREE"><span class="badge bg-danger" th:classappend="${pageResponse.category != null and pageResponse.category.name() == 'FREE' ? 'checked' : ''}">잡담</span></a></li>
             </ul>
+        </div>
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <form id="searchForm" class="input-group">
+                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">제목+내용</button>
+                    <input type="text" id="searchInput" class="form-control" placeholder="검색어를 입력하세요">
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <li><a class="dropdown-item" href="#" data-search-type="titleContent">제목+내용</a></li>
+                        <li><a class="dropdown-item" href="#" data-search-type="title">제목</a></li>
+                        <li><a class="dropdown-item" href="#" data-search-type="content">내용</a></li>
+                        <li><a class="dropdown-item" href="#" data-search-type="author">작성자</a></li>
+                    </ul>
+                    <button class="btn btn-outline-primary" type="submit">검색</button>
+                </form>
+            </div>
         </div>
         <table class="table">
             <th:block th:if="${boards.size() ne 0}">
@@ -36,9 +59,9 @@
                 <tr>
                     <th scope="col">분류</th>
                     <th scope="col">제목(댓글)</th>
-                    <th scope="col">작성일</th>
                     <th scope="col">작성자</th>
                     <th scope="col">조회수</th>
+                    <th scope="col">작성일</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -105,14 +128,14 @@
         <nav th:if="${boards.size() ne 0}" aria-label="Page navigation example" class="justify-content-center">
             <ul class="pagination">
                 <li class="page-item" th:class="${pageResponse.currentPage == 0} ? 'disabled' : ''">
-                    <a class="page-link" th:href="@{/board(page=0)}" aria-label="First">
+                    <a class="page-link" th:href="@{/board(page=0, category=${pageResponse.category != null ? pageResponse.category.name() : null}, title=${pageResponse.title}, content=${pageResponse.content})}" aria-label="First">
                         <span aria-hidden="true">&laquo;</span>
                     </a>
                 </li>
                 <!-- 이전 페이지 버튼 -->
                 <li class="page-item" th:class="${pageResponse.currentPage < 10} ? 'disabled' : ''">
                     <a class="page-link"
-                       th:href="${pageResponse.currentPage >= 10} ? @{/board(page=${(pageResponse.startPage - 1) - 10})} : '#'"
+                       th:href="${pageResponse.currentPage >= 10} ? @{/board(page=${(pageResponse.startPage - 1) - 10}, category=${pageResponse.category != null ? pageResponse.category.name() : null}, title=${pageResponse.title}, content=${pageResponse.content})} : '#'"
                        aria-label="Previous">
                         &lsaquo;
                     </a>
@@ -121,21 +144,20 @@
                 <!-- 페이지 번호 -->
                 <li th:each="page : ${#numbers.sequence(pageResponse.startPage, pageResponse.endPage)}"
                     th:class="${page - 1 == pageResponse.currentPage} ? 'page-item active' : 'page-item'">
-                    <a class="page-link" th:href="@{/board(page=${page - 1})}" th:text="${page}"></a>
+                    <a class="page-link" th:href="@{/board(page=${page - 1}, category=${pageResponse.category != null ? pageResponse.category.name() : null}, title=${pageResponse.title}, content=${pageResponse.content})}" th:text="${page}"></a>
                 </li>
 
                 <!-- 다음 페이지 버튼 -->
                 <li class="page-item" th:class="${pageResponse.endPage >= pageResponse.totalPages} ? 'disabled' : ''">
                     <a class="page-link"
-                       th:href="${pageResponse.endPage < pageResponse.totalPages} ? @{/board(page=${pageResponse.endPage})} : '#'"
+                       th:href="${pageResponse.endPage < pageResponse.totalPages} ? @{/board(page=${pageResponse.endPage}, category=${pageResponse.category != null ? pageResponse.category.name() : null}, title=${pageResponse.title}, content=${pageResponse.content})} : '#'"
                        aria-label="Next">
                         &rsaquo;
                     </a>
                 </li>
-
                 <li class="page-item"
                     th:class="${pageResponse.currentPage == pageResponse.totalPages - 1} ? 'disabled' : ''">
-                    <a class="page-link" th:href="@{/board(page=${pageResponse.totalPages - 1})}" aria-label="Last">
+                    <a class="page-link" th:href="@{/board(page=${pageResponse.totalPages - 1}, category=${pageResponse.category != null ? pageResponse.category.name() : null}, title=${pageResponse.title}, content=${pageResponse.content})}" aria-label="Last">
                         &raquo;
                     </a>
                 </li>
@@ -226,6 +248,47 @@
         window.onclick = function (event) {
             contextClose();
         }
+
+        let searchType = 'titleContent';
+
+        document.querySelectorAll('.dropdown-item').forEach(item => {
+            item.addEventListener('click', function(e) {
+                e.preventDefault();
+                searchType = this.getAttribute('data-search-type');
+                document.getElementById('dropdownMenuButton').textContent = this.textContent;
+            });
+        });
+
+        document.getElementById('searchForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const searchInput = document.getElementById('searchInput').value.trim();
+            if (searchInput) {
+                let query = '';
+                switch(searchType) {
+                    case 'titleContent':
+                        query = `?title=${searchInput}&content=${searchInput}`;
+                        break;
+                    case 'title':
+                        query = `?title=${searchInput}`;
+                        break;
+                    case 'content':
+                        query = `?content=${searchInput}`;
+                        break;
+                    case 'author':
+                        query = `?writer=${searchInput}`;
+                        break;
+                }
+
+                const category = [[${pageResponse.category != null ? pageResponse.category.name() : null}]];
+                if (category) {
+                    query += `&category=${category}`;
+                }
+                window.location.href = '/board' + query ;
+            }
+            else {
+                alert('검색어를 입력하세요.');
+            }
+        });
     </script>
 </div>
 </html>
