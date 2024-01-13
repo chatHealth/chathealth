@@ -1,5 +1,6 @@
 package chathealth.chathealth.controller;
 
+import chathealth.chathealth.exception.NotExistFile;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -22,7 +23,7 @@ public class FileApiController {
     public String uploadEditorImage(@RequestParam final MultipartFile image) {
         String uploadDir = Paths.get(pathValue, "tui-editor", "upload").toString();
         if (image.isEmpty()) {
-            return "";
+            throw new NotExistFile();
         }
 
         String orgFilename = image.getOriginalFilename();                                         // 원본 파일명
@@ -43,16 +44,10 @@ public class FileApiController {
             image.transferTo(uploadFile);
             return saveFilename;
         } catch (IOException e) {
-            // 예외 처리는 따로 해주는 게 좋습니다.
-            throw new RuntimeException(e);
+            throw new NotExistFile("파일 크기는 10MB를 넘을 수 없습니다.");
         }
     }
 
-    /**
-     * 디스크에 업로드된 파일을 byte[]로 반환
-     * @param filename 디스크에 업로드된 파일명
-     * @return image byte array
-     */
     @GetMapping(value = "/image-print", produces = { MediaType.IMAGE_GIF_VALUE, MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE })
     public byte[] printEditorImage(@RequestParam final String filename) {
         String uploadDir = Paths.get(pathValue, "tui-editor", "upload").toString();
@@ -63,17 +58,15 @@ public class FileApiController {
         // 파일이 없는 경우 예외 throw
         File uploadedFile = new File(fileFullPath);
         if (!uploadedFile.exists()) {
-            throw new RuntimeException();
+            throw new NotExistFile();
         }
 
         try {
             // 이미지 파일을 byte[]로 변환 후 반환
-            byte[] imageBytes = Files.readAllBytes(uploadedFile.toPath());
-            return imageBytes;
+            return Files.readAllBytes(uploadedFile.toPath());
 
         } catch (IOException e) {
-            // 예외 처리는 따로 해주는 게 좋습니다.
-            throw new RuntimeException(e);
+            throw new NotExistFile();
         }
     }
 }

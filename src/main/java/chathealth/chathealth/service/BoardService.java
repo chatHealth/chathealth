@@ -19,6 +19,7 @@ import chathealth.chathealth.repository.board.BoardRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -59,6 +60,7 @@ public class BoardService {
     }
 
     //게시글 수정
+    @Transactional
     public void updateBoard(BoardEditDto boardEditDto, Long memberId, Long boardId) {
 
         Board findBoard = boardRepository.findById(boardId).orElseThrow(BoardNotFoundException::new);

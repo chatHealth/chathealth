@@ -8,37 +8,38 @@
 <div layout:fragment="content" class="main">
 
     <div class="container">
-        <h2 style="text-align: center;">글쓰기</h2>
-<!--        <form action="/board/write" th:action="@{/board/write}" method="post">-->
-            <label>
-                <select name="category">
-                    <option sec:authorize="hasRole('ROLE_ADMIN')"
-                            th:each="category : ${T(chathealth.chathealth.entity.board.Category).values()}"
-                            th:value="${category.name()}"
-                            th:text="${category.message}">Category
-                    </option>
-                    <th:block sec:authorize="hasRole('ROLE_USER')">
-                        <option th:value="'FREE'" th:text="잡담">Category</option>
-                        <option th:value="'QNA'" th:text="질문">Category</option>
-                        <option th:value="'TIP'" th:text="팁">Category</option>
-                        <option th:value="'INFO'" th:text="정보">Category</option>
-                    </th:block>
-                </select>
-            </label>
-            <label>
-                <input type="text" name="title" placeholder="제목을 입력하세요">
-            </label>
-            <div id="content">
+        <h2 style="text-align: center;">글수정</h2>
+        <label>
+            <select name="category">
+                <option sec:authorize="hasRole('ROLE_ADMIN')"
+                        th:each="category : ${T(chathealth.chathealth.entity.board.Category).values()}"
+                        th:selected="${category.name() == board.category.name()}"
+                        th:value="${category.name()}"
+                        th:text="${category.message}">Category
+                </option>
+                <th:block sec:authorize="hasRole('ROLE_USER')">
+                    <option th:value="'FREE'" th:selected="${'FREE' == board.category.name()}" th:text="잡담">Category</option>
+                    <option th:value="'QNA'" th:selected="${'QNA' == board.category.name()}" th:text="질문">Category</option>
+                    <option th:value="'TIP'" th:selected="${'TIP' == board.category.name()}" th:text="팁">Category</option>
+                    <option th:value="'INFO'" th:selected="${'INFO' == board.category.name()}" th:text="정보">Category</option>
+                </th:block>
+            </select>
+        </label>
+        <label>
+            <input type="text" name="title" placeholder="제목을 입력하세요" th:value="${board.title}">
+        </label>
+        <div id="content">
 
-            </div>
-            <div id="btnDiv">
-                <button type="button" class="btn save" onclick="savePost();">저장하기</button>
-                <button type="button"  class="btn back" onclick="goBack()">뒤로 가기</button>
-            </div>
-<!--        </form>-->
+        </div>
+        <div id="btnDiv">
+            <button type="button" class="btn save" onclick="savePost();">수정하기</button>
+            <button type="button"  class="btn back" onclick="goBack()">뒤로 가기</button>
+        </div>
+        <!--        </form>-->
     </div>
     <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
-    <script>
+    <script th:inline="javascript">
+
         const editor = new toastui.Editor({
             el: document.querySelector('#content'), // 에디터를 적용할 요소 (컨테이너)
             height: '500px',                        // 에디터 영역의 높이 값 (OOOpx || auto)
@@ -62,7 +63,7 @@
                             body: formData,
                         });
 
-                        if(!response.ok){
+                        if (!response.ok) {
                             throw new Error('서버에 문제가 있습니다. 잠시 후 다시 시도해 주세요.');
                         }
 
@@ -83,6 +84,10 @@
             /* end of hooks */
         });
 
+        // 기존 게시글 내용 세팅
+        const existingContent = [[${board.content}]];
+        editor.setMarkdown(existingContent);
+
         // 게시글 저장
         async function savePost() {
             // title 입력 필수
@@ -96,35 +101,31 @@
                 throw new Error('content content is required!');
             }
 
-            // 2. url, parameter 세팅
-            const url = '/board';
+            const boardId = [[${board.boardId}]]; // Thymeleaf로부터 boardId 가져오기
+            const url = '/board/' + boardId;
             const params = {
                 category: $('select[name="category"]').val(),
                 title: $('input[name="title"]').val(),
-                content: editor.getHTML(),
-            }
+                content: editor.getHTML(), // Toast UI Editor 인스턴스에서 HTML 가져오기
+            };
 
-            // 3. API 호출
-            try {
-                const response = await fetch(url, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(params),
-                });
-
-                if(!response.ok){
-                    throw new Error('서버에 문제가 있습니다. 잠시 후 다시 시도해 주세요.');
+            // 2. AJAX 요청
+            $.ajax({
+                url: url,
+                method: 'PATCH',
+                contentType: 'application/json',
+                data: JSON.stringify(params),
+                success: function(response) {
+                    // 성공 시 처리
+                    alert('게시글이 수정되었습니다. 게시글 제목: ' + params.title);
+                    location.href = '/board/' + boardId;
+                },
+                error: function(error) {
+                    // 에러 처리
+                    alert('게시글 수정 중 오류가 발생했습니다.');
+                    console.error(error.message);
                 }
-
-                alert('게시글이 저장되었습니다. 게시글 제목: ' + params.title);
-                location.href = '/board';
-
-            } catch (error) {
-                alert(error.message);
-                console.error('저장 실패 : ', error);
-            }
+            });
         }
 
         function goBack() {

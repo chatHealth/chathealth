@@ -22,7 +22,7 @@
                                 <span class="badge bg-success">질문</span>
                             </span>
                             <span th:case="'FREE'">
-                                <span class="badge bg-black">잡담</span>
+                                <span class="badge bg-danger">잡담</span>
                             </span>
                             <span th:case="'NEWS'">
                                 <span class="badge bg-secondary">뉴스</span>
@@ -64,7 +64,7 @@
                 <div th:if="${board.isWriter}">
                     <div class="col-auto" style="display: flex; align-items: center; justify-content: space-between;">
                         <div>
-                            <a th:href="@{/board/edit/{id}(id=${board.boardId})}"
+                            <a th:href="@{/board/{id}/edit(id=${board.boardId})}"
                                class="btn btn-sm btn-outline-secondary">수정</a>
                             <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal"
                                     data-bs-target="#deleteModal">삭제

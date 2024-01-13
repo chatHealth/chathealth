@@ -6,6 +6,30 @@
 
 <div layout:fragment="content" class="main">
     <div class="container">
+        <style>
+            .category-list {
+                list-style-type: none; /* 점 제거 */
+                padding: 0; /* 기본 패딩 제거 */
+                display: flex; /* 가로로 배치 */
+                justify-content: flex-start; /* 항목을 왼쪽에 정렬 */
+                margin-bottom: 10px; /* 아래쪽 여백 추가 */
+            }
+            .category-list li {
+                margin-right: 10px; /* 오른쪽 여백 추가 */
+                text-align: center; /* 텍스트 중앙 정렬 */
+            }
+        </style>
+        <div>
+            <ul class="category-list">
+                <li><a href="/board"><span class="badge bg-black">전체</span></a></li>
+                <li><a href="/board?category=NOTICE"><span class="badge bg-primary">공지</span></a></li>
+                <li><a href="/board?category=NEWS"><span class="badge bg-secondary">뉴스</span></a></li>
+                <li><a href="/board?category=INFO"><span class="badge bg-info">정보</span></a></li>
+                <li><a href="/board?category=TIP"><span class="badge bg-warning">팁</span></a></li>
+                <li><a href="/board?category=QNA"><span class="badge bg-success">질문</span></a></li>
+                <li><a href="/board?category=FREE"><span class="badge bg-danger">잡담</span></a></li>
+            </ul>
+        </div>
         <table class="table">
             <th:block th:if="${boards.size() ne 0}">
                 <thead id="list">
@@ -32,7 +56,7 @@
                                 <span class="badge bg-success">질문</span>
                             </span>
                             <span th:case="'FREE'">
-                                <span class="badge bg-black">잡담</span>
+                                <span class="badge bg-danger">잡담</span>
                             </span>
                             <span th:case="'NEWS'">
                                 <span class="badge bg-secondary">뉴스</span>
@@ -46,7 +70,8 @@
                         </span>
                         </a>
                     </td>
-                    <td><a th:href="@{/board/{id}(id=${item.boardId})}" th:text="|${item.title}(${item.commentCount})|" style="text-decoration: none; color: inherit">제목</a></td>
+                    <td><a th:href="@{/board/{id}(id=${item.boardId})}" th:text="|${item.title}(${item.commentCount})|"
+                           style="text-decoration: none; color: inherit">제목</a></td>
                     <td th:text="${item.createdDate}">작성일</td>
                     <td>
                         <div class="user-name">
@@ -59,7 +84,8 @@
                             <i th:case="'DIAMOND'" class="fa fa-medal text-diamond"></i>
                             <i th:case="null" class="fa fa-medal text-black"></i> <!-- null 처리 -->
                         </span>
-                            <span onclick="toggleContextMenu(event)" style="cursor: pointer" th:text="${item.nickname != null ? item.nickname : item.name}">사용자 이름</span>
+                            <span onclick="toggleContextMenu(event)" style="cursor: pointer"
+                                  th:text="${item.nickname != null ? item.nickname : item.name}">사용자 이름</span>
                             <div class="context-menu">
                                 <a th:href="@{/sendMessage(memberId=${item.memberId})}">쪽지 보내기</a>
                                 <a th:href="@{/userInfo(memberId=${item.memberId})}">유저 정보 보기</a>
@@ -115,7 +141,8 @@
                 </li>
             </ul>
         </nav>
-        <div class="d-grid gap-2 d-md-flex justify-content-md-end" sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_USER')">
+        <div class="d-grid gap-2 d-md-flex justify-content-md-end"
+             sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_USER')">
             <a href="/board/write" class="btn btn-primary me-md-2" type="button">글쓰기</a>
         </div>
     </div>
@@ -196,7 +223,7 @@
         }
 
         // 페이지의 다른 곳을 클릭하면 메뉴 닫기
-        window.onclick = function(event) {
+        window.onclick = function (event) {
             contextClose();
         }
     </script>
