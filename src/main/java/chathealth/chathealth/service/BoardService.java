@@ -4,9 +4,10 @@ import chathealth.chathealth.constants.Role;
 import chathealth.chathealth.dto.request.BoardCreateDto;
 import chathealth.chathealth.dto.request.BoardEditDto;
 import chathealth.chathealth.dto.request.BoardSearchDto;
+import chathealth.chathealth.dto.response.BoardResponse;
 import chathealth.chathealth.dto.response.CustomUserDetails;
 import chathealth.chathealth.dto.response.PageResponse;
-import chathealth.chathealth.dto.response.BoardResponse;
+import chathealth.chathealth.entity.BoardHit;
 import chathealth.chathealth.entity.board.Board;
 import chathealth.chathealth.entity.board.Category;
 import chathealth.chathealth.entity.member.Member;
@@ -14,6 +15,7 @@ import chathealth.chathealth.entity.member.Users;
 import chathealth.chathealth.exception.BoardNotFoundException;
 import chathealth.chathealth.exception.NotPermitted;
 import chathealth.chathealth.exception.UserNotFound;
+import chathealth.chathealth.repository.BoardHit.BoardHitRepository;
 import chathealth.chathealth.repository.MemberRepository;
 import chathealth.chathealth.repository.board.BoardRepository;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +36,7 @@ public class BoardService {
 
     private final BoardRepository boardRepository;
     private final MemberRepository memberRepository;
+    private final BoardHitRepository boardHitRepository;
 
     //게시글 생성
     public Board createBoard(BoardCreateDto boardCreateDto, Long id) {
@@ -122,6 +125,14 @@ public class BoardService {
 
         String email = (customUserDetails == null) ? null : customUserDetails.getLoggedMember().getEmail();
         Role role = customUserDetails != null ? customUserDetails.getLoggedMember().getRole() : null;
+
+        // 로그인한 유저가 12시간 내 조회하지 않았으면 조회수 증가
+        if (customUserDetails != null) {
+            Member findMember = memberRepository.findByEmail(email).orElseThrow(UserNotFound::new);
+            if (!boardHitRepository.existsHit(board, findMember)) {
+                boardHitRepository.save(new BoardHit(board, findMember));
+            }
+        }
 
         Users user = board.getUser();
         return BoardResponse.builder()
