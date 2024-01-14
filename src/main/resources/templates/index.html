@@ -105,7 +105,7 @@
                 <div class="col-md-6">
                     <div id="free-board">
                         <div class="d-flex">
-                            <h4>자유게시판 최신글</h4>
+                            <h4>최신글</h4>
                             <a href="/board" class="btn btn-sm more-button">더보기</a> <!-- "더보기" 버튼 -->
                         </div>
                         <!-- 게시물 리스트 -->
@@ -115,8 +115,8 @@
                 <div class="col-md-6">
                     <div id="notice-board">
                         <div class="d-flex">
-                            <h4>최신 공지</h4>
-                            <a href="/board" class="btn btn-sm more-button">더보기</a> <!-- "더보기" 버튼 -->
+                            <h4>공지사항</h4>
+                            <a href="/board?category=NOTICE" class="btn btn-sm more-button">더보기</a> <!-- "더보기" 버튼 -->
                         </div>
                         <!-- 게시물 리스트 -->
                         <div class="contents"></div>
@@ -194,20 +194,37 @@
                 url: "/board/api/recent",
                 type: "GET",
                 data: {
-                    "category": "FREE"
                 },
                 success: function (response) {
                     let html = "";
                     if (response.length === 0) {
-                        html += "<h2>자유게시판 글이 없습니다</h2>";
+                        html += "<h2>게시판 글이 없습니다</h2>";
                     }
                     let i = 1;
                     html += "<table class=\"table table-hover\">";
                     $.each(response, function (index, item) {
-                        html += "<a href='#'><tr>";
-                        html += '<th>' + i + '</th>'; // "
-                        html += '<td>' + item.title + '</td>';
-                        html += "</tr></a>";
+                        html += "<tr>";
+                        html += '<th>' + i + '</th><td>';
+                        switch (item.category) {
+                            case "FREE":
+                                html += '<span class="badge bg-danger">자유</span>';
+                                break;
+                            case "TIP":
+                                html += '<span class="badge bg-warning">팁</span>';
+                                break;
+                            case "QNA":
+                                html += '<span class="badge bg-success">질문</span>';
+                                break;
+                            case "INFO":
+                                html += '<span class="badge bg-info">정보</span>';
+                                break;
+                            default:
+                                html += '<span class="badge">기타</span>';
+                                break;
+                        }
+                        html += "<a href='/board/" + item.boardId + "' style='text-decoration: none; color: inherit'>" + item.title + "</a></td>";
+
+                        html += "</tr>";
                         i++;
                     });
                     html += "</table>";
@@ -234,10 +251,11 @@
                     let i = 1;
                     html += "<table class=\"table table-hover\">";
                     $.each(response, function (index, item) {
-                        html += "<a href='#'><tr>";
+                        html += "<tr>";
                         html += '<th>' + i + '</th>'; // "
-                        html += '<td>' + item.title + '</td>';
-                        html += "</tr></a>";
+                        html += '<td>';
+                        html += "<a href='/board/" + item.boardId + "' style='text-decoration: none; color: inherit'>" + item.title + "</a></td>";
+                        html += "</tr>";
                         i++;
                     });
                     html += "</table>";

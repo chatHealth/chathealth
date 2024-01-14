@@ -59,7 +59,7 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom {
     }
 
     private BooleanExpression categoryEq(Category category) {
-        return category == null ? null : board.category.eq(category);
+        return category == null ? board.category.in(Category.getUserCategories()) : board.category.eq(category);
     }
 
     private static BooleanExpression contentContains(String content) {

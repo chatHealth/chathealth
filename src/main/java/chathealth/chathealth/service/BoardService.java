@@ -64,10 +64,10 @@ public class BoardService {
 
     //게시글 수정
     @Transactional
-    public void updateBoard(BoardEditDto boardEditDto, Long memberId, Long boardId) {
+    public void updateBoard(BoardEditDto boardEditDto, Member member, Long boardId) {
 
         Board findBoard = boardRepository.findById(boardId).orElseThrow(BoardNotFoundException::new);
-        if (!findBoard.getUser().getId().equals(memberId) && !findBoard.getUser().getRole().equals(ROLE_ADMIN)) {
+        if (!findBoard.getUser().getEmail().equals(member.getEmail()) && !member.getRole().equals(ROLE_ADMIN)) {
             throw new NotPermitted();
         }
 
@@ -76,9 +76,9 @@ public class BoardService {
 
     //게시글 삭제 soft delete
 
-    public void deleteBoard(Long memberId, Long boardId) {
+    public void deleteBoard(Long boardId, Member member) {
         Board findBoard = boardRepository.findById(boardId).orElseThrow(BoardNotFoundException::new);
-        if (!findBoard.getUser().getId().equals(memberId) && !findBoard.getUser().getRole().equals(ROLE_ADMIN)) {
+        if (!findBoard.getUser().getEmail().equals(member.getEmail()) && !member.getRole().equals(ROLE_ADMIN)) {
             throw new NotPermitted();
         }
 
@@ -89,8 +89,8 @@ public class BoardService {
     public List<BoardResponse> getBoards(BoardSearchDto boardSearchDto) {
 
         long totalPage = (long) Math.ceil(getBoardCount(boardSearchDto) / (double) boardSearchDto.getSize());
-        if(boardSearchDto.getPage() > totalPage-1){
-            boardSearchDto.setPage((int) totalPage -1);
+        if (boardSearchDto.getPage() > totalPage - 1) {
+            boardSearchDto.setPage((int) totalPage - 1);
         }
 
         return boardRepository.getBoards(boardSearchDto).stream().map(board -> BoardResponse.builder()
@@ -110,8 +110,13 @@ public class BoardService {
 
     public List<BoardResponse> getRecentBoards(Category category) {
         return boardRepository.getBoardsByCategoryRecent(category).stream().map(board -> BoardResponse.builder()
-                .boardId(board.getId())
-                .title(board.getTitle()).build()).toList();
+                        .boardId(board.getId())
+                        .title(board.getTitle())
+                        .createdDate(board.getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")))
+                        .hit(board.getBoardHitList().size())
+                        .category(board.getCategory())
+                        .build())
+                .toList();
     }
 
     //게시글 조회

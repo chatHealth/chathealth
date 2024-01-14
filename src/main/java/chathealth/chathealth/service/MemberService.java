@@ -127,9 +127,7 @@ public class MemberService {
     }
 
     private static Users toUser(Member member) {
-        if (member.getRole() != ROLE_USER) {
-            throw new UserNotFound();
-        }
+        if (!(member instanceof Users)) throw new UserNotFound();
         return (Users) member;
     }
 

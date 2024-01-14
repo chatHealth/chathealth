@@ -27,12 +27,12 @@ public class BoardRestController {
 
     @PatchMapping("/board/{id}")
     public void updateBoard(@PathVariable Long id,@RequestBody @Valid BoardEditDto boardEditDto, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
-        boardService.updateBoard(boardEditDto, customUserDetails.getLoggedMember().getId(), id);
+        boardService.updateBoard(boardEditDto, customUserDetails.getLoggedMember(), id);
     }
 
     @DeleteMapping("/board/{id}")
     public void deleteBoard(@PathVariable Long id, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
-        boardService.deleteBoard(id, customUserDetails.getLoggedMember().getId());
+        boardService.deleteBoard(id, customUserDetails.getLoggedMember());
     }
 
     @GetMapping("/board/api/recent")
