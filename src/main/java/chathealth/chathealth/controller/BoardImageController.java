@@ -33,13 +33,13 @@ public class BoardImageController {
         }
 
         String orgFilename = image.getOriginalFilename();                                         // 원본 파일명
-        String uploadMon = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMM")) + File.separator;        // 업로드 월 (yyyyMM
+        String uploadMon = "/" + LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMM")) + "/";        // 업로드 월 (yyyyMM
         String uuid = UUID.randomUUID().toString().replaceAll("-", "");           // 32자리 랜덤 문자열
         String saveFilename = getFilename(orgFilename, uploadMon, uuid);
         String fileFullPath = Paths.get(uploadDir, saveFilename).toString();                      // 디스크에 저장할 파일의 전체 경로
 
         // uploadDir에 해당되는 디렉터리가 없으면, uploadDir에 포함되는 전체 디렉터리 생성
-        File dir = new File(uploadDir);
+        File dir = new File(uploadDir + uploadMon);
         if (!dir.exists()) {
             boolean created = dir.mkdirs();
             if (!created) {
@@ -80,7 +80,7 @@ public class BoardImageController {
     }
 
     private static String getFilename(String orgFilename, String uploadMon, String uuid) {
-        String extension = "";
+        String extension;
 
         if (orgFilename != null && !orgFilename.isEmpty()) {
             int lastIndexOfDot = orgFilename.lastIndexOf(".");

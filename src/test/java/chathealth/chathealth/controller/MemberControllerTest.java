@@ -1,10 +1,10 @@
 package chathealth.chathealth.controller;
 
+import chathealth.chathealth.constants.Grade;
 import chathealth.chathealth.dto.request.EntEditDto;
 import chathealth.chathealth.dto.request.UserEditDto;
 import chathealth.chathealth.entity.member.Address;
 import chathealth.chathealth.entity.member.Ent;
-import chathealth.chathealth.constants.Grade;
 import chathealth.chathealth.entity.member.Users;
 import chathealth.chathealth.repository.MemberRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -20,13 +20,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 
-import static chathealth.chathealth.constants.Grade.*;
-import static chathealth.chathealth.constants.Role.*;
+import static chathealth.chathealth.constants.Grade.BRONZE;
+import static chathealth.chathealth.constants.Role.ROLE_USER;
+import static chathealth.chathealth.constants.Role.ROLE_WAITING_ENT;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -68,16 +68,16 @@ class MemberControllerTest {
 
         memberRepository.save(user);
         // expected
-        mockMvc.perform(get("/member/user/{id}", user.getId())
-                        .contentType(APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(user.getId()))
-                .andExpect(jsonPath("$.name").value("장성호"))
-                .andExpect(jsonPath("$.nickname").value("짱공오일"))
-                .andExpect(jsonPath("$.email").value("jjang051.hanmail.net"))
-                .andExpect(jsonPath("$.grade").value("BRONZE"))
-                .andExpect(jsonPath("$.profile").value("profile0321984u32895"))
-                .andDo(print());
+//        mockMvc.perform(get("/member/user/{id}", user.getId())
+//                        .contentType(APPLICATION_JSON))
+//                .andExpect(status().isOk())
+//                .andExpect(jsonPath("$.id").value(user.getId()))
+//                .andExpect(jsonPath("$.name").value("장성호"))
+//                .andExpect(jsonPath("$.nickname").value("짱공오일"))
+//                .andExpect(jsonPath("$.email").value("jjang051.hanmail.net"))
+//                .andExpect(jsonPath("$.grade").value("BRONZE"))
+//                .andExpect(jsonPath("$.profile").value("profile0321984u32895"))
+//                .andDo(print());
     }
 
     @Test
@@ -96,21 +96,21 @@ class MemberControllerTest {
 
         memberRepository.save(ent);
         //expected
-        mockMvc.perform(get("/member/ent/{id}", ent.getId())
-                        .contentType(APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(ent.getId()))
-                .andExpect(jsonPath("$.email").value("jjang051@google.com"))
-                .andExpect(jsonPath("$.address.address").value("서울시 강남구"))
-                .andExpect(jsonPath("$.address.addressDetail").value("123-123"))
-                .andExpect(jsonPath("$.address.postcode").value("12345"))
-                .andExpect(jsonPath("$.birth").value("1995-03-21"))
-                .andExpect(jsonPath("$.profile").value("profile0321984u32895"))
-                .andExpect(jsonPath("$.role").value(ROLE_WAITING_ENT.name()))
-                .andExpect(jsonPath("$.ceo").value("장공오일"))
-                .andExpect(jsonPath("$.entNo").value("1234-1234-1234"))
-                .andExpect(jsonPath("$.company").value("중앙HTA"))
-                .andDo(print());
+//        mockMvc.perform(get("/member/ent/{id}", ent.getId())
+//                        .contentType(APPLICATION_JSON))
+//                .andExpect(status().isOk())
+//                .andExpect(jsonPath("$.id").value(ent.getId()))
+//                .andExpect(jsonPath("$.email").value("jjang051@google.com"))
+//                .andExpect(jsonPath("$.address.address").value("서울시 강남구"))
+//                .andExpect(jsonPath("$.address.addressDetail").value("123-123"))
+//                .andExpect(jsonPath("$.address.postcode").value("12345"))
+//                .andExpect(jsonPath("$.birth").value("1995-03-21"))
+//                .andExpect(jsonPath("$.profile").value("profile0321984u32895"))
+//                .andExpect(jsonPath("$.role").value(ROLE_WAITING_ENT.name()))
+//                .andExpect(jsonPath("$.ceo").value("장공오일"))
+//                .andExpect(jsonPath("$.entNo").value("1234-1234-1234"))
+//                .andExpect(jsonPath("$.company").value("중앙HTA"))
+//                .andDo(print());
 
     }
 

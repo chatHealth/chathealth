@@ -10,29 +10,38 @@
                 <a href="/" class="navbar-brand">
                     <img src="/img/logo.png" alt="chatHealth" style="height: 50px">
                 </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false"
+                        aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNavDropdown">
-                    <th:block sec:authorize="!isAuthenticated()">
                     <ul class="navbar-nav ms-auto">
                         <li class="nav-item"><a href="#" th:href="@{/post}" class="nav-link">건강기능식품</a></li>
                         <li class="nav-item"><a href="#" th:href="@{/board}" class="nav-link">커뮤니티</a></li>
-                        <li class="nav-item"><a href="#" th:href="@{/auth/join}" class="nav-link">join</a></li>
-                        <li class="nav-item"><a href="#" th:href="@{/auth/login}" class="nav-link">login</a></li>
-                        <li class="nav-item"><a href="#" th:href="@{/auth/logout}" class="nav-link">logout</a></li>
-                    </ul>
-                    </th:block>
-                    <th:block sec:authorize="isAuthenticated()">
-                        <ul class="navbar-nav ms-auto">
+                        <th:block sec:authorize="!isAuthenticated()">
+                            <li class="nav-item"><a href="#" th:href="@{/auth/join}" class="nav-link">join</a></li>
+                            <li class="nav-item"><a href="#" th:href="@{/auth/login}" class="nav-link">login</a></li>
+                            <li class="nav-item"><a href="#" th:href="@{/auth/logout}" class="nav-link">logout</a></li>
+                        </th:block>
+                        <th:block sec:authorize="isAuthenticated()">
                             <li class="nav-item"><a href="" th:href="@{/post}" class="nav-link">post</a></li>
-                            <li class="nav-item" sec:authorize="hasRole('ROLE_USER')"><a href="" th:href="@{|/member/user/${#authentication.principal.loggedMember.id}|}" class="nav-link">my page</a></li>
-                            <li class="nav-item" sec:authorize="hasRole('ROLE_PERMITTED_ENT')"><a href="" th:href="@{|/member/ent/${#authentication.principal.loggedMember.id}|}" class="nav-link">my page</a></li>
-                            <li class="nav-item" sec:authorize="hasRole('ROLE_WAITING_ENT')"><a href="" th:href="@{|/member/ent/${#authentication.principal.loggedMember.id}|}" class="nav-link">my page</a></li>
-                            <li class="nav-item"><a href="" th:href="@{/auth/logout}"class="nav-link">log out</a></li>
+                            <li class="nav-item" sec:authorize="hasRole('ROLE_USER')"><a href=""
+                                                                                         th:href="@{|/member/user/${#authentication.principal.loggedMember.id}|}"
+                                                                                         class="nav-link">my page</a>
+                            </li>
+                            <li class="nav-item" sec:authorize="hasRole('ROLE_PERMITTED_ENT')"><a href=""
+                                                                                                  th:href="@{|/member/ent/${#authentication.principal.loggedMember.id}|}"
+                                                                                                  class="nav-link">my
+                                page</a></li>
+                            <li class="nav-item" sec:authorize="hasRole('ROLE_WAITING_ENT')"><a href=""
+                                                                                                th:href="@{|/member/ent/${#authentication.principal.loggedMember.id}|}"
+                                                                                                class="nav-link">my
+                                page</a></li>
+                            <li class="nav-item"><a href="" th:href="@{/auth/logout}" class="nav-link">log out</a></li>
 
-                        </ul>
-                    </th:block>
+                        </th:block>
+                    </ul>
 
                 </div>
             </div>
