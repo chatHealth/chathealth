@@ -4,7 +4,6 @@ import chathealth.chathealth.dto.request.BoardEditDto;
 import chathealth.chathealth.entity.BaseEntity;
 import chathealth.chathealth.entity.BoardComment;
 import chathealth.chathealth.entity.BoardHit;
-import chathealth.chathealth.entity.PictureBoard;
 import chathealth.chathealth.entity.member.Users;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -46,9 +45,6 @@ public class Board extends BaseEntity {
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "member_id")
     private Users user;
-
-    @OneToMany(mappedBy = "board")
-    private final List<PictureBoard> pictureBoardList = new ArrayList<>();
 
     @OneToMany(mappedBy = "board")
     private final List<BoardHit> boardHitList = new ArrayList<>();

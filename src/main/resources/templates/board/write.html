@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layout/layout}">
+
+
+<div layout:fragment="content" class="main">
+
+    <div class="container">
+        <h2 style="text-align: center;">글쓰기</h2>
+<!--        <form action="/board/write" th:action="@{/board/write}" method="post">-->
+            <label>
+                <select name="category">
+                    <option sec:authorize="hasRole('ROLE_ADMIN')"
+                            th:each="category : ${T(chathealth.chathealth.entity.board.Category).values()}"
+                            th:value="${category.name()}"
+                            th:text="${category.message}">Category
+                    </option>
+                    <th:block sec:authorize="hasRole('ROLE_USER')">
+                        <option th:value="'FREE'" th:text="잡담">Category</option>
+                        <option th:value="'QNA'" th:text="질문">Category</option>
+                        <option th:value="'TIP'" th:text="팁">Category</option>
+                        <option th:value="'INFO'" th:text="정보">Category</option>
+                    </th:block>
+                </select>
+            </label>
+            <label>
+                <input type="text" name="title" placeholder="제목을 입력하세요">
+            </label>
+            <div id="content">
+
+            </div>
+            <div id="btnDiv">
+                <button type="button" class="btn save" onclick="savePost();">저장하기</button>
+                <button type="button"  class="btn back" onclick="goBack()">뒤로 가기</button>
+            </div>
+<!--        </form>-->
+    </div>
+    <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
+    <script>
+        const editor = new toastui.Editor({
+            el: document.querySelector('#content'), // 에디터를 적용할 요소 (컨테이너)
+            height: '500px',                        // 에디터 영역의 높이 값 (OOOpx || auto)
+            initialEditType: 'wysiwyg',            // 최초로 보여줄 에디터 타입 (markdown || wysiwyg)
+            initialValue: '',                       // 내용의 초기 값으로, 반드시 마크다운 문자열 형태여야 함
+            previewStyle: 'vertical',               // 마크다운 프리뷰 스타일 (tab || vertical)
+            /* start of hooks */
+            hooks: {
+                async addImageBlobHook(blob, callback) { // 이미지 업로드 로직 커스텀
+                    try {
+                        /*
+                         * 1. 에디터에 업로드한 이미지를 FormData 객체에 저장
+                         *    (이때, 컨트롤러 uploadEditorImage 메서드의 파라미터인 'image'와 formData에 append 하는 key('image')값은 동일해야 함)
+                         */
+                        const formData = new FormData();
+                        formData.append('image', blob);
+
+                        // 2. FileApiController - uploadEditorImage 메서드 호출
+                        const response = await fetch('/board-image/upload', {
+                            method: 'POST',
+                            body: formData,
+                        });
+
+                        if(!response.ok){
+                            throw new Error('서버에 문제가 있습니다. 잠시 후 다시 시도해 주세요.');
+                        }
+
+                        // 3. 컨트롤러에서 전달받은 디스크에 저장된 파일명
+                        const filename = await response.text();
+                        console.log('서버에 저장된 파일명 : ', filename);
+
+                        // 4. addImageBlobHook의 callback 함수를 통해, 디스크에 저장된 이미지를 에디터에 렌더링
+                        const imageUrl = `/board-image/print?filename=${filename}`;
+                        callback(imageUrl, 'image alt attribute');
+
+                    } catch (error) {
+                        alert(error.message);
+                        console.error('업로드 실패 : ', error);
+                    }
+                }
+            }
+            /* end of hooks */
+        });
+
+        // 게시글 저장
+        async function savePost() {
+            // title 입력 필수
+            if (document.querySelector('input[name="title"]').value.length < 1) {
+                alert('제목을 입력해 주세요.');
+                throw new Error('title content is required!');
+            }
+
+            if (editor.getMarkdown().length < 1) {
+                alert('내용을 입력해 주세요.');
+                throw new Error('content content is required!');
+            }
+
+            // 2. url, parameter 세팅
+            const url = '/board';
+            const params = {
+                category: $('select[name="category"]').val(),
+                title: $('input[name="title"]').val(),
+                content: editor.getHTML(),
+            }
+
+            // 3. API 호출
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(params),
+                });
+
+                if(!response.ok){
+                    throw new Error('서버에 문제가 있습니다. 잠시 후 다시 시도해 주세요.');
+                }
+
+                alert('게시글이 저장되었습니다. 게시글 제목: ' + params.title);
+                location.href = '/board';
+
+            } catch (error) {
+                alert(error.message);
+                console.error('저장 실패 : ', error);
+            }
+        }
+
+        function goBack() {
+            window.history.back();
+        }
+    </script>
+</div>
+</html>

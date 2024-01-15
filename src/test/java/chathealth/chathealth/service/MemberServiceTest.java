@@ -93,7 +93,7 @@ class MemberServiceTest {
                 .address(new Address("서울시 강남구", "123-123", "12345"))
                 .birth(LocalDate.of(1995, 3, 21))
                 .profile("profile0321984u32895")
-                .role(valueOf("WAITING_ENT"))
+                .role(ROLE_WAITING_ENT)
                 .ceo("장공오일")
                 .entNo("1234-1234-1234")
                 .company("중앙HTA")
@@ -111,7 +111,7 @@ class MemberServiceTest {
         assertThat(entInfo.getAddress().getPostcode()).isEqualTo("12345");
         assertThat(entInfo.getBirth()).isEqualTo(LocalDate.of(1995, 3, 21));
         assertThat(entInfo.getProfile()).isEqualTo("profile0321984u32895");
-        assertThat(entInfo.getRole()).isEqualTo(valueOf("WAITING_ENT"));
+        assertThat(entInfo.getRole()).isEqualTo(ROLE_WAITING_ENT);
         assertThat(entInfo.getCeo()).isEqualTo("장공오일");
         assertThat(entInfo.getEntNo()).isEqualTo("1234-1234-1234");
         assertThat(entInfo.getCompany()).isEqualTo("중앙HTA");
@@ -126,7 +126,7 @@ class MemberServiceTest {
                 .address(new Address("서울시 강남구", "123-123", "12345"))
                 .birth(LocalDate.of(1995, 3, 21))
                 .profile("profile0321984u32895")
-                .role(valueOf("WAITING_ENT"))
+                .role(ROLE_WAITING_ENT)
                 .ceo("장공오일")
                 .entNo("1234-1234-1234")
                 .company("중앙HTA")
@@ -189,7 +189,7 @@ class MemberServiceTest {
                 .address(new Address("서울시 강남구", "123-123", "12345"))
                 .birth(LocalDate.of(1995, 3, 21))
                 .profile("profile0321984u32895")
-                .role(valueOf("WAITING_ENT"))
+                .role(ROLE_WAITING_ENT)
                 .ceo("장공오일")
                 .pw("1234")
                 .entNo("1234-1234-1234")

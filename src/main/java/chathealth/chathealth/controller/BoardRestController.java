@@ -2,7 +2,6 @@ package chathealth.chathealth.controller;
 
 import chathealth.chathealth.dto.request.BoardCreateDto;
 import chathealth.chathealth.dto.request.BoardEditDto;
-import chathealth.chathealth.dto.request.BoardSearchDto;
 import chathealth.chathealth.dto.response.BoardResponse;
 import chathealth.chathealth.dto.response.CustomUserDetails;
 import chathealth.chathealth.entity.board.Category;
@@ -20,34 +19,24 @@ public class BoardRestController {
 
     private final BoardService boardService;
 
-    @GetMapping("/board/{id}")
-    public BoardResponse getBoard(@PathVariable long id) {
-        return boardService.getBoard(id);
-    }
 
-    @GetMapping("/board")
-    public List<BoardResponse> getBoards(BoardSearchDto boardSearchDto) {
-        return boardService.getBoards(boardSearchDto);
-    }
-
-    @PostMapping("/board")
+    @PostMapping(value = "/board")
     public void createBoard(@RequestBody @Valid BoardCreateDto boardCreateDto, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
         boardService.createBoard(boardCreateDto, customUserDetails.getLoggedMember().getId());
     }
 
     @PatchMapping("/board/{id}")
-    public void updateBoard(@PathVariable Long id, BoardEditDto boardEditDto, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
-        boardService.updateBoard(boardEditDto, customUserDetails.getLoggedMember().getId(), id);
+    public void updateBoard(@PathVariable Long id,@RequestBody @Valid BoardEditDto boardEditDto, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        boardService.updateBoard(boardEditDto, customUserDetails.getLoggedMember(), id);
     }
 
     @DeleteMapping("/board/{id}")
     public void deleteBoard(@PathVariable Long id, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
-        boardService.deleteBoard(id, customUserDetails.getLoggedMember().getId());
+        boardService.deleteBoard(id, customUserDetails.getLoggedMember());
     }
 
     @GetMapping("/board/api/recent")
     public List<BoardResponse> getRecentBoards(Category category) {
-        System.out.println("category = " + category);
         return boardService.getRecentBoards(category);
     }
 }

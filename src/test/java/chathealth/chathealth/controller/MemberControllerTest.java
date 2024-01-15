@@ -21,8 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 
 import static chathealth.chathealth.constants.Grade.*;
-import static chathealth.chathealth.constants.Role.ROLE_USER;
-import static chathealth.chathealth.constants.Role.valueOf;
+import static chathealth.chathealth.constants.Role.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
@@ -89,7 +88,7 @@ class MemberControllerTest {
                 .address(new Address("서울시 강남구", "123-123", "12345"))
                 .birth(LocalDate.of(1995, 3, 21))
                 .profile("profile0321984u32895")
-                .role(valueOf("WAITING_ENT"))
+                .role(ROLE_WAITING_ENT)
                 .ceo("장공오일")
                 .entNo("1234-1234-1234")
                 .company("중앙HTA")
@@ -107,7 +106,7 @@ class MemberControllerTest {
                 .andExpect(jsonPath("$.address.postcode").value("12345"))
                 .andExpect(jsonPath("$.birth").value("1995-03-21"))
                 .andExpect(jsonPath("$.profile").value("profile0321984u32895"))
-                .andExpect(jsonPath("$.role").value("WAITING_ENT"))
+                .andExpect(jsonPath("$.role").value(ROLE_WAITING_ENT.name()))
                 .andExpect(jsonPath("$.ceo").value("장공오일"))
                 .andExpect(jsonPath("$.entNo").value("1234-1234-1234"))
                 .andExpect(jsonPath("$.company").value("중앙HTA"))
@@ -188,7 +187,7 @@ class MemberControllerTest {
                 .pw("1234")
                 .address(address)
                 .profile("profile0321984u32895")
-                .role(valueOf("WAITING_ENT"))
+                .role(ROLE_WAITING_ENT)
                 .entNo("1234-1234-1234")
                 .build();
 

@@ -1,11 +1,7 @@
 package chathealth.chathealth.controller;
-
-
-
+import chathealth.chathealth.constants.Role;
 import chathealth.chathealth.dto.response.CustomUserDetails;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import chathealth.chathealth.entity.member.Ent;
+import chathealth.chathealth.entity.member.Member;
 import chathealth.chathealth.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -21,17 +17,19 @@ public class IndexController {
 
     @GetMapping("/")
     public String index(@AuthenticationPrincipal CustomUserDetails customUserDetails, Model model) {
-        boolean isAuth = customUserDetails != null;
-        if (isAuth){
-            String email = customUserDetails.getLoggedMember().getEmail();
-            if (customUserDetails.getLoggedMember() instanceof Ent) {
+
+        if (customUserDetails != null){
+            Member loggedMember = customUserDetails.getLoggedMember();
+            String email = loggedMember.getEmail();
+            Role role = loggedMember.getRole();
+
+            if (Role.getEntRoles().contains(role)) {
                 model.addAttribute("member", memberService.getEntInfo(email));
             } else {
                 memberService.getUserInfo(email);
                 model.addAttribute("member", memberService.getUserInfo(email));
             }
         }
-        model.addAttribute("isAuth", isAuth);
         return "index";
     }
 }

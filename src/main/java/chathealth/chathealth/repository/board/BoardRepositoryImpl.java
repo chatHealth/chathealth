@@ -26,7 +26,7 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom {
                         contentContains(boardSearchDto.getContent()),
                         writerContains(boardSearchDto.getWriter()),
                         board.deletedDate.isNull())
-                .join(board.user, users)
+                .leftJoin(board.user, users)
                 .fetchJoin()
                 .limit(boardSearchDto.getSize())
                 .offset(boardSearchDto.getOffset())
@@ -35,28 +35,40 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom {
     }
 
     @Override
+    public Long getBoardCount(BoardSearchDto boardSearchDto) {
+        return queryFactory.select(board.count())
+                .from(board)
+                .where(categoryEq(boardSearchDto.getCategory()),
+                        titleContains(boardSearchDto.getTitle()),
+                        contentContains(boardSearchDto.getContent()),
+                        writerContains(boardSearchDto.getWriter()),
+                        board.deletedDate.isNull())
+                .fetchOne();
+    }
+
+    @Override
     public List<Board> getBoardsByCategoryRecent(Category category){
         return queryFactory.selectFrom(board)
                 .where(categoryEq(category),
                         board.deletedDate.isNull())
-//                .join(board.user, users)
-//                .fetchJoin()
+                .join(board.user, users)
+                .fetchJoin()
                 .limit(5)
                 .orderBy(board.createdDate.desc())
                 .fetch();
     }
 
     private BooleanExpression categoryEq(Category category) {
-        return category == null ? null : board.category.eq(category);
+        return category == null ? board.category.in(Category.getUserCategories()) : board.category.eq(category);
     }
 
     private static BooleanExpression contentContains(String content) {
-        return hasText(content) ? board.title.contains(content) : null;
+        return hasText(content) ? board.content.contains(content) : null;
     }
     private static BooleanExpression writerContains(String writer) {
-        return hasText(writer) ? board.content.contains(writer) : null;
+        return hasText(writer) ? board.user.nickname.contains(writer) : null;
     }
     private static BooleanExpression titleContains(String title) {
-        return hasText(title) ? users.nickname.contains(title) : null;
+        return hasText(title) ? board.title.contains(title) : null;
     }
 }

@@ -11,7 +11,7 @@ import static lombok.AccessLevel.PROTECTED;
 
 @Entity
 @NoArgsConstructor(access = PROTECTED)
-public class BoardHit {
+public class BoardHit extends BaseEntity{
 
     @Id
     @GeneratedValue(strategy = SEQUENCE)
@@ -25,4 +25,9 @@ public class BoardHit {
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
+
+    public BoardHit(Board board, Member member) {
+        this.board = board;
+        this.member = member;
+    }
 }

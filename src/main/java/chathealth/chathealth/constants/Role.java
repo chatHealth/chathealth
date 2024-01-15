@@ -3,6 +3,9 @@ package chathealth.chathealth.constants;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Getter
 @RequiredArgsConstructor
 public enum Role {
@@ -12,4 +15,12 @@ public enum Role {
     ROLE_REJECTED_ENT("승인 거절 사업자"),
     ROLE_ADMIN("관리자");
     private final String role;
+
+    public static Set<Role> getEntRoles() {
+        return new HashSet<>() {{
+            add(ROLE_WAITING_ENT);
+            add(ROLE_PERMITTED_ENT);
+            add(ROLE_REJECTED_ENT);
+        }};
+    }
 }

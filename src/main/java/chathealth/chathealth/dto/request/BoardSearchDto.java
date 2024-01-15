@@ -2,14 +2,14 @@ package chathealth.chathealth.dto.request;
 
 import chathealth.chathealth.entity.board.Category;
 import lombok.Builder;
-import lombok.Data;
 import lombok.Getter;
+import lombok.Setter;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 
 @Getter
-@Data
+@Setter
 @Builder
 public class BoardSearchDto {
     //게시판 검색 조건

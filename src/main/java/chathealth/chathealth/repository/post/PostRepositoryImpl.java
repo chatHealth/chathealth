@@ -47,7 +47,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
                 .leftJoin(postHit).on(postHit.post.eq(post))
                 .leftJoin(postLike).on(postLike.post.eq(post))
                 .leftJoin(review).on(review.post.eq(post))
-                .groupBy(post.id)
+                .groupBy(post)
                 .orderBy(getOrderSpecifier(postSearch))
                 .limit(postSearch.getSize())
                 .offset(postSearch.getOffset())
@@ -77,7 +77,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
                         postHit.createdDate.between(LocalDateTime.now().minusDays(1), LocalDateTime.now()))
                 .leftJoin(postHit).on(postHit.post.eq(post))
                 .orderBy(postHit.createdDate.max().desc())
-                .groupBy(post.id)
+                .groupBy(post)
                 .limit(5)
                 .fetch();
     }
@@ -89,7 +89,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
                         postHit.createdDate.between(LocalDateTime.now().minusWeeks(1), LocalDateTime.now()))
                 .leftJoin(postHit).on(postHit.post.eq(post))
                 .orderBy(postHit.createdDate.max().desc())
-                .groupBy(post.id)
+                .groupBy(post)
                 .limit(5)
                 .fetch();
     }
