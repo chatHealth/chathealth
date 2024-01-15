@@ -33,10 +33,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
-class BoardControllerTest {
+class BoardRestControllerTest {
 
     @Autowired
-    BoardController boardController;
+    BoardRestController boardRestController;
     @Autowired
     BoardRepository boardRepository;
     @Autowired

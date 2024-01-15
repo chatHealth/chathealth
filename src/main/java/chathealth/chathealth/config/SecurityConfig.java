@@ -1,7 +1,6 @@
 package chathealth.chathealth.config;
 
 import chathealth.chathealth.handler.UserLoginFailHandler;
-import chathealth.chathealth.service.AuthService;
 import chathealth.chathealth.service.OAuth2DetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -22,10 +21,9 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.authorizeHttpRequests((auth)->auth
-                        .requestMatchers("/","/auth/selection","/auth/userjoin","/auth/entjoin","/auth/login","/auth/confirmEmail",
-                                         "/board","/board/{id}",
-                                         "/member/**",
-                                         "/post","/api/post", "/api/post/best",
+                        .requestMatchers("/","/auth/join","/auth/userjoin","/auth/entjoin","/auth/login","/auth/confirmEmail",
+                                         "/board","/board/{id}", "/board/api", "/board/api/recent",
+                                         "/post","/api/post", "/api/post/best", "/api/post/best-week", "/api/post/recent",
                                          "/error",
                                          "/css/**","/js/**","/img/**")
                         .permitAll()

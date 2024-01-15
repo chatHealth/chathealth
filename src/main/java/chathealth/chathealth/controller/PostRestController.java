@@ -27,6 +27,11 @@ public class PostRestController {
         return postService.getBestPostsPerDay();
     }
 
+    @GetMapping("/api/post/best-week")
+    public List<PostResponse> getBestPostsPerWeek() {
+        return postService.getBestPostsPerWeek();
+    }
+
     @GetMapping("/api/post/recent")
     public List<PostResponse> getRecentPosts(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
         return postService.getRecentPosts(customUserDetails.getLoggedMember());

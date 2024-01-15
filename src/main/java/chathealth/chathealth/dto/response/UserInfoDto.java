@@ -1,7 +1,8 @@
 package chathealth.chathealth.dto.response;
 
-import chathealth.chathealth.entity.member.Address;
 import chathealth.chathealth.constants.Grade;
+import chathealth.chathealth.constants.Role;
+import chathealth.chathealth.entity.member.Address;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
@@ -22,4 +23,5 @@ public class UserInfoDto {
     private String profile;
     private Grade grade;
     private LocalDateTime deletedDate;
+    private Role role;
 }

@@ -93,6 +93,12 @@ public class BoardService {
                 .collect(Collectors.toList());
     }
 
+    public List<BoardResponse> getRecentBoards(Category category) {
+        return boardRepository.getBoardsByCategoryRecent(category).stream().map(board -> BoardResponse.builder()
+                .boardId(board.getId())
+                .title(board.getTitle()).build()).toList();
+    }
+
     //게시글 조회
     public BoardResponse getBoard(long id) {
         Board board = boardRepository.findById(id).orElseThrow(BoardNotFoundException::new);
