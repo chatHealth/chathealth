@@ -59,7 +59,7 @@ public class SecurityConfig {
                                 .userService(oAuth2DetailsService)
                         )
                 )
-                .csrf((csrf) -> csrf.disable());
+                .csrf((csrf)->  csrf.disable());
         return httpSecurity.build();
     }
 }
