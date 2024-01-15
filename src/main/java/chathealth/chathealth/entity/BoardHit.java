@@ -11,6 +11,8 @@ import static lombok.AccessLevel.PROTECTED;
 
 @Entity
 @NoArgsConstructor(access = PROTECTED)
+@Table(indexes = {@Index(name="idx_member", columnList = "member_id"),
+        @Index(name="idx_board", columnList = "board_id")})
 public class BoardHit extends BaseEntity{
 
     @Id
