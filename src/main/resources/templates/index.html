@@ -25,7 +25,7 @@
                             <div class="card-body">
                                 <div class="user-profile row">
                                     <div class="col-auto">
-                                        <img th:src="@{|/profile${member.profile}|}" alt="프로필 이미지" class="profile-image"
+                                        <img th:src="@{|/profile/${member.profile}|}" alt="프로필 이미지" class="profile-image"
                                              onerror="this.src='/img/basic_user.png'">
                                     </div>
                                     <div class="col-auto">

@@ -152,6 +152,7 @@ class BoardServiceTest {
                 .grade(BLACK)
                 .profile("profilePicture")
                 .role(ROLE_USER)
+                .email("2@21321")
                 .build();
         memberRepository.save(user);
 
@@ -171,7 +172,7 @@ class BoardServiceTest {
 
         boardRepository.findById(savedBoard.getId()).orElseThrow(BoardNotFoundException::new);
         //when
-        boardService.updateBoard(boardEditDto, user.getId(), savedBoard.getId());
+        boardService.updateBoard(boardEditDto, user, savedBoard.getId());
 
         em.flush();
         em.clear();
@@ -192,6 +193,7 @@ class BoardServiceTest {
                 .grade(BLACK)
                 .profile("profilePicture")
                 .role(ROLE_USER)
+                .email("2@21321")
                 .build();
         memberRepository.save(user);
 
@@ -202,7 +204,7 @@ class BoardServiceTest {
                 .build();
         Board savedBoard = boardService.createBoard(board, user.getId());
         //when
-        boardService.deleteBoard(user.getId(), savedBoard.getId());
+        boardService.deleteBoard(savedBoard.getId(), user);
 
         //then
         assertThrows(BoardNotFoundException.class, () -> boardService.getBoard(savedBoard.getId(),null));

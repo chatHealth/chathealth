@@ -42,7 +42,7 @@
                 </div>
                 <div class="col-auto" style="display: flex; align-items: center; justify-content: space-between;">
                     <div>
-                        <img th:src="@{|/profile${board.profile}|}" alt="프로필 이미지" class="profile-image-sm"
+                        <img th:src="@{|/profile/${board.profile}|}" alt="프로필 이미지" class="profile-image-sm"
                              onerror="this.src='/img/basic_user.png'">
                         <span th:text="${board.nickname != null ? board.nickname : board.name}">작성자</span>
                         <span th:switch="${board.grade?.name()}">
