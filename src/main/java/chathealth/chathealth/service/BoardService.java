@@ -42,8 +42,7 @@ public class BoardService {
     public Board createBoard(BoardCreateDto boardCreateDto, Long id) {
 
         Member member = memberRepository.findById(id).orElseThrow(UserNotFound::new);
-
-        List<Role> entRoles = List.of(ROLE_WAITING_ENT, ROLE_WAITING_ENT, ROLE_REJECTED_ENT);
+        List<Role> entRoles = List.of(ROLE_WAITING_ENT, ROLE_PERMITTED_ENT, ROLE_REJECTED_ENT);
         if (entRoles.contains(member.getRole())) {
             throw new NotPermitted("사업자는 게시글을 작성할 수 없습니다.");
         }

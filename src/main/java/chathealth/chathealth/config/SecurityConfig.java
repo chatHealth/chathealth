@@ -1,19 +1,21 @@
 package chathealth.chathealth.config;
 
-import chathealth.chathealth.service.AuthService;
+import chathealth.chathealth.handler.UserLoginFailHandler;
 import chathealth.chathealth.service.OAuth2DetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
+@EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
 
     private final OAuth2DetailsService oAuth2DetailsService;
-    private final AuthService authService;
+    private final UserLoginFailHandler userLoginFailHandler;
 
 
     @Bean
@@ -35,18 +37,20 @@ public class SecurityConfig {
                         .usernameParameter("email")
                         .passwordParameter("pw")
                         .loginProcessingUrl("/auth/login")  //post
-                        .defaultSuccessUrl("/", true)
+                        .defaultSuccessUrl("/",true)
+                        .failureHandler(userLoginFailHandler)
                         .permitAll()
                 )
-                .logout(logout -> //logout settings
-                        logout.deleteCookies("JSESSIONID")
-                                .logoutUrl("/auth/logout")
-                                .logoutSuccessHandler(
-                                        (((request, response, authentication) -> {
-                                            String redirectUrl = request.getHeader("Referer");
-                                            response.sendRedirect(redirectUrl == null ? "/" : redirectUrl);
-                                        }))
-                                ))
+                .logout(logout-> //logout settings
+                            logout .deleteCookies("JSESSIONID")
+                                   .logoutUrl("/auth/logout")
+                                    .logoutSuccessHandler(
+                                            (((request, response, authentication) -> {
+                                                response.sendRedirect("/" );
+                                            }))
+                                    )
+                                    .invalidateHttpSession(true)
+                )
 
                 .sessionManagement((auth) -> auth
                         .maximumSessions(1)  //한 아이디로 중복 로그인 방지

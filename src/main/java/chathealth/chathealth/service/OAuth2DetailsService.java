@@ -1,5 +1,6 @@
 package chathealth.chathealth.service;
 
+
 import chathealth.chathealth.dto.response.CustomUserDetails;
 import chathealth.chathealth.entity.member.Member;
 import chathealth.chathealth.constants.Role;
@@ -19,6 +20,9 @@ import org.springframework.stereotype.Service;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+
+import static chathealth.chathealth.constants.Grade.*;
+import static chathealth.chathealth.constants.Role.ROLE_USER;
 
 @Service
 @Slf4j
@@ -42,23 +46,26 @@ public class OAuth2DetailsService extends DefaultOAuth2UserService{
         if(provider.equals("kakao")) { //정보 넘겨준 회사가 카카오면
             socialUserInfo = new KakaoUserInfo(oAuth2UserInfo); //카카오 유저인포 생성
         }
+
+        assert socialUserInfo != null : "이메일 없음";
         String email = socialUserInfo.getEmail();
         String name = socialUserInfo.getName();
         String userId = socialUserInfo.getProviderId();
         log.info(userId);
-        Role role = Role.USER;
+        Role role = ROLE_USER;
         String password = bCryptPasswordEncoder.encode(UUID.randomUUID().toString());
         Users returnMember = null;
 
-        Optional<Member> foundMember =  memberRepository.findByEmail(email);
+        Optional<Member> foundMember =  memberRepository.findByEmail(userId);
         if(foundMember.isPresent()) {
             returnMember = (Users) foundMember.get();
         } else {
             returnMember = Users.builder()
                     .pw(password)
-                    .role(Role.USER)
+                    .role(role)
                     .name(name)
                     .email(userId)
+                    .grade(BRONZE)
                     .build();
             memberRepository.save(returnMember);
         }

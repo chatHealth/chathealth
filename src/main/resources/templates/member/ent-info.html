@@ -1,0 +1,81 @@
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security" xmlns="http://www.w3.org/1999/html">
+
+<div layout:fragment="content" class="main mp-main d-flex justify-content-center">
+    <div class="container d-flex justify-content-center row mt-5">
+        <!--  사이드 바 -->
+        <div class="mp-sidebar col-md-3 ms-md-auto">
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item text-center">
+                    <a href="#" clss="link-underline-opacity-0" style="color: #212529;">
+                        <img th:src="@{|/profile/${entInfo.profile}|}" alt="프로필사진" style="width: 150px; height: 150px; border-radius: 50%; overflow: hidden; object-fit: cover;"></br>
+                        <p class="mt-2">프로필 수정</p>
+                    </a>
+                </li>
+                <li th:text="|안녕하세요, ${entInfo.company}님|" class="list-group-item">상호명 안들어왔당</li>
+            </ul>
+            <span style="border-top: 1px solid #ccc; display: block; margin: 10px 13px;"></span>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item list-group-item-action"><a>내 정보</a></li>
+                <li class="list-group-item list-group-item-action"><a>내 상품</a></li>
+                <li class="list-group-item list-group-item-action"><a>비밀번호 변경</a></li>
+                <li class="list-group-item list-group-item-action"><a>회원 탈퇴</a></li>
+            </ul>
+        </div>
+        <!--  컨텐츠 -->
+        <div class="mp-content col-md-6 ms-md-auto">
+            <div class="col-9">
+                <h2 class="fw-weight-bold mb-5">업체
+                    정보</h2>
+                <table class="table" style="width:550px;">
+                    <th:block sec:authorize="hasRole('ROLE_WAITING_ENT')">
+                        <tr>
+                            <th>법인명</th>
+                            <td th:text="${entInfo.company}"></td>
+                            <td><span style="color:white; border-style: double; font-size: 11px;border-color: #137AE8;background: #137AE8">승인 대기중</span></td>
+                        </tr>
+                    </th:block>
+                    <th:block sec:authorize="hasRole('ROLE_PERMITTED_ENT')">
+                        <tr>
+                            <th>법인명</th>
+                            <td th:text="${entInfo.company}"></td>
+                            <td style="color: white; border-style: double; font-size: 11px;border-color: #65EA4A;background: #65EA4A">승인 완료</td>
+                        </tr>
+                    </th:block>
+                    <th:block sec:authorize="hasRole('ROLE_REJECTED_ENT')">
+                        <tr>
+                            <th>법인명</th>
+                            <td th:text="${entInfo.company}"></td>
+                            <td style="color: white; border-style: double; font-size: 11px;border-color: #EA564E;background: #EA564E">승인 거절</td>
+                        </tr>
+                    </th:block>
+                    <tr>
+                        <th>대표자</th>
+                        <td th:text="${entInfo.ceo}"></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <th>사업자 번호</th>
+                        <td th:text="${entInfo.entNo}"></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <th>주소</th>
+                        <td th:if="${not #strings.isEmpty(entInfo.address.addressDetail)}" th:text="|${entInfo.address.address} ${entInfo.address.addressDetail}|"></td>
+                        <td th:if="${#strings.isEmpty(entInfo.address.addressDetail)}" th:text="|${entInfo.address.address}|"></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <th>이메일</th>
+                        <td th:text="${entInfo.email}"></td>
+                        <td></td>
+                    </tr>
+                </table>
+                <a href="#" class="link-underline-opacity-0"><p>정보 수정</p></a>
+            </div>
+        </div>
+    </div>
+</div>
+</html>

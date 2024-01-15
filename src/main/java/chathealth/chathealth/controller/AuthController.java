@@ -27,7 +27,12 @@ public class AuthController {
 
     //로그인
     @GetMapping("/login")
-    public String login() {
+    public String login(@RequestParam(value = "error", required = false) String error,
+                        @RequestParam(value = "exception", required = false) String exception,
+                        Model model) {
+        model.addAttribute("error", error);
+        model.addAttribute("exception", exception);
+
         return "auth/login";
     }
 
@@ -36,14 +41,25 @@ public class AuthController {
         return "redirect:/";
     }
 
+    //로그아웃
+    @PostMapping("/logout")
+    public String logout(){
+        return "auth/logout";
+    }
+
     //가입
+    @GetMapping("/selection") //개인회원가입창 진입
+    public String selection(Model model) {
+        return "auth/selection";
+    }
+
     @GetMapping("/userjoin") //개인회원가입창 진입
     public String userJoin(Model model) {
         return "auth/user-join";
     }
 
     @PostMapping("/userjoin") //개인회원가입 처리
-    public String userJoin(@ModelAttribute UserJoinDto userJoinDto, MultipartFile profile) {
+    public String userJoin(@ModelAttribute UserJoinDto userJoinDto) {
         //주소 객체화
         Address addressEntity = Address.builder()
                 .postcode(userJoinDto.getPostcode())
@@ -65,15 +81,13 @@ public class AuthController {
     }
 
     @PostMapping("/entjoin") //사업자회원가입 처리
-    public String entJoin(@ModelAttribute EntJoinDto entJoinDto, MultipartFile profile) {
+    public String entJoin(@ModelAttribute EntJoinDto entJoinDto) {
         //주소 객체화
         Address addressEntity = Address.builder()
                 .postcode(entJoinDto.getPostcode())
                 .address(entJoinDto.getFrontAddress())
                 .addressDetail(entJoinDto.getAddressDetail())
                 .build();
-        log.info(String.valueOf(addressEntity));
-
 
         //service에 던질 DTO 빌드
         entJoinDto.setAddress(addressEntity);
@@ -93,7 +107,7 @@ public class AuthController {
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/admin")
     public String admin(Model model) {
-        return "auth/admin-manage-user";
+        return "auth/";
     }
 
     @PostMapping("/confirmEmail") //아이디 중복체크
