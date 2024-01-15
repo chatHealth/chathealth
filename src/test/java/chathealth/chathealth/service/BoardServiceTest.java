@@ -21,7 +21,7 @@ import java.util.List;
 
 import static chathealth.chathealth.entity.board.Category.FREE;
 import static chathealth.chathealth.constants.Grade.BLACK;
-import static chathealth.chathealth.constants.Role.USER;
+import static chathealth.chathealth.constants.Role.ROLE_USER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -115,7 +115,7 @@ class BoardServiceTest {
                 .nickname("장공오일")
                 .grade(BLACK)
                 .profile("profilePicture")
-                .role(USER)
+                .role(ROLE_USER)
                 .build();
         memberRepository.save(user);
 
@@ -147,7 +147,7 @@ class BoardServiceTest {
                 .nickname("장공오일")
                 .grade(BLACK)
                 .profile("profilePicture")
-                .role(USER)
+                .role(ROLE_USER)
                 .build();
         memberRepository.save(user);
 
@@ -187,7 +187,7 @@ class BoardServiceTest {
                 .nickname("장공오일")
                 .grade(BLACK)
                 .profile("profilePicture")
-                .role(USER)
+                .role(ROLE_USER)
                 .build();
         memberRepository.save(user);
 

@@ -36,12 +36,12 @@ public class BoardService {
 
         Member member = memberRepository.findById(id).orElseThrow(UserNotFound::new);
 
-        List<Role> entRoles = List.of(WAITING_ENT, WAITING_ENT, REJECTED_ENT);
+        List<Role> entRoles = List.of(ROLE_WAITING_ENT, ROLE_PERMITTED_ENT, ROLE_REJECTED_ENT);
         if (entRoles.contains(member.getRole())) {
             throw new NotPermitted("사업자는 게시글을 작성할 수 없습니다.");
         }
 
-        if (member.getRole().equals(USER) && boardCreateDto.getCategory().equals(Category.NOTICE)) {
+        if (member.getRole().equals(ROLE_USER) && boardCreateDto.getCategory().equals(Category.NOTICE)) {
             throw new NotPermitted();
         }
 
@@ -59,7 +59,7 @@ public class BoardService {
     public void updateBoard(BoardEditDto boardEditDto, Long memberId, Long boardId) {
 
         Board findBoard = boardRepository.findById(boardId).orElseThrow(BoardNotFoundException::new);
-        if (!findBoard.getUser().getId().equals(memberId) && !findBoard.getUser().getRole().equals(ADMIN)) {
+        if (!findBoard.getUser().getId().equals(memberId) && !findBoard.getUser().getRole().equals(ROLE_ADMIN)) {
             throw new NotPermitted();
         }
 
@@ -70,7 +70,7 @@ public class BoardService {
 
     public void deleteBoard(Long memberId, Long boardId) {
         Board findBoard = boardRepository.findById(boardId).orElseThrow(BoardNotFoundException::new);
-        if (!findBoard.getUser().getId().equals(memberId) && !findBoard.getUser().getRole().equals(ADMIN)) {
+        if (!findBoard.getUser().getId().equals(memberId) && !findBoard.getUser().getRole().equals(ROLE_ADMIN)) {
             throw new NotPermitted();
         }
 

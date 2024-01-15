@@ -23,7 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import static chathealth.chathealth.entity.board.Category.FREE;
 import static chathealth.chathealth.constants.Grade.BLACK;
 import static chathealth.chathealth.constants.Grade.SILVER;
-import static chathealth.chathealth.constants.Role.USER;
+import static chathealth.chathealth.constants.Role.ROLE_USER;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -126,7 +126,7 @@ class BoardRestControllerTest {
                     .grade(SILVER)
                     .email("jjang061@hanmail.net")
                     .profile("프사입니당")
-                    .role(USER)
+                    .role(ROLE_USER)
                     .build();
             memberRepository.save(user);
             Users user2 = Users.builder()
@@ -134,7 +134,7 @@ class BoardRestControllerTest {
                     .grade(SILVER)
                     .email("jjang061@hanmail.com")
                     .profile("프사입니당")
-                    .role(USER)
+                    .role(ROLE_USER)
                     .build();
             memberRepository.save(user2);
     }
