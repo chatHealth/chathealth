@@ -1,0 +1,35 @@
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+    <div layout:fragment="content" class="main">
+        <div class="container bodyContainer w-50" style="text-align: center;">
+            <h1>로그인</h1>
+            <form method="post" action="/auth/login">
+                    <div class="mb-3">
+                        <table class="table table-borderless" style="max-width: 650px;">
+                            <tr>
+                                <td><label for="loginId" class="form-label">이메일</label></td>
+                                <td><input type="text" id="loginId" class="form-control" name="email"></td>
+
+                            <tr>
+                                <td><label for="loginPw" class="form-label">비밀번호</label></td>
+                                <td><input type="password" id="loginPw" class="form-control" name="pw"></td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div th:if="error">
+                        <p id="valid" style="color: red; font-size:15px;"><a th:text="${exception}"></a></p>
+                    </div>
+
+                <button class="btn btn-sm btn-outline-primary" type="submit">로그인</button>
+
+            </form>
+        </div>
+        <div style="text-align: center;">
+            <p class="mt-4" >아직 회원이 아니신가요?</br> <a href="/auth/selection">여기를 눌러 회원가입 하기</a></p></br>
+            <a href="/oauth2/authorization/kakao"><img src="/img/kakao_login_medium_narrow.png"></a>
+        </div>
+    </div>
+</html>

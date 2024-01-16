@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}">
+
+<div layout:fragment="content" class="main">
+    <div class="container">
+        <div class="selectbox">
+            <h3 class="text-body-secondary fw-semibold selet-title">회원 유형을 선택해주세요.</h3>
+            </br>
+            </br>
+            </br>
+            <div class="selectButtons m-0">
+                <a href="#" th:href="@{/auth/userjoin}"><button type="button" class="btn btn-outline-primary btn-lg">
+                    개인 회원가입
+                </button></a>
+                <a href="#" th:href="@{/auth/entjoin}"><button type="button" class="btn btn-outline-success btn-lg">
+                    사업자 회원가입
+                </button></a>
+            </div>
+        </div>
+    </div>
+</div>
+</html>
