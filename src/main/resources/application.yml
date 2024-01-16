@@ -7,8 +7,7 @@ server:
 spring:
   profiles:
     include: oauth
-    active: dev # application-prod
-
+    active: prod # application-prod
   output:
     ansi:
       enabled: always
@@ -22,6 +21,7 @@ spring:
       hibernate:
         format_sql: true
         use_sql_comments: true # false
+        default_batch_fetch_size: 100
 
   ## high quality img  ##
   servlet:
@@ -50,4 +50,4 @@ file:
   path: C:/upload/
 
 pagination:
-  size: 10
+  size: 20
