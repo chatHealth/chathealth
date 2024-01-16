@@ -23,6 +23,7 @@ public class PostWriteDto {
     private String content;
     //@NotBlank(message = "con입력")
     private Long symptom;
+    @NotBlank(message = "성분을 선택해주세요")
     private List<Long> materialList;
     private List<String> postImgList;
 }
