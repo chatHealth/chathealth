@@ -23,7 +23,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -127,21 +126,39 @@ public class PostService {
                 .build()).toList();
     }
 
-    public void createPost(PostWriteDto postWriteDto, CustomUserDetails ent,Long symptomId, List<Long> selectPost) {
-        System.out.println("entㅋㅋㅋㅋ = {}" + ent);
+    public void createPost(PostWriteDto postWriteDto, CustomUserDetails ent) {
         Ent findEnt = (Ent) memberRepository.findByEmail(ent.getLoggedMember().getEmail()).orElseThrow(UserNotFound::new);
 
         Post postInfo = Post.builder()
                 .member(findEnt)
                 .title(postWriteDto.getTitle())
                 .content(postWriteDto.getContent())
-                .symptom(symptomRepository.findById(symptomId).orElseThrow())
+                .symptom(symptomRepository.findById(postWriteDto.getSymptom()).orElseThrow())
                 .build();
         Post savedpost = postRepository.save(postInfo);
-        for (Long aLong : selectPost) {
-            MaterialPost materialPost = MaterialPost.builder().post(savedpost).material(materialRepository.findById(aLong).orElseThrow(RuntimeException::new)).build();
+        for (int i=0;i<postWriteDto.getMaterialList().size();i++) {
+            MaterialPost materialPost = MaterialPost.builder()
+                    .post(savedpost)
+                    .material(materialRepository.findById(postWriteDto.getMaterialList().get(i)).orElseThrow(RuntimeException::new))
+                    .build();
             materialPostRepository.save(materialPost);
         }
-
+        for(int i=0;i<postWriteDto.getPostImgList().size();i++) {
+            if(i==0) {
+                PicturePost picturePost = PicturePost.builder()
+                        .pictureUrl(postWriteDto.getPostImgList().get(i))
+                        .orders(1)
+                        .post(savedpost)
+                        .build();
+                picturePostRepository.save(picturePost);
+            }else {
+                PicturePost picturePost = PicturePost.builder()
+                        .pictureUrl(postWriteDto.getPostImgList().get(i))
+                        .orders(2)
+                        .post(savedpost)
+                        .build();
+                picturePostRepository.save(picturePost);
+            }
+        }
 }
 }

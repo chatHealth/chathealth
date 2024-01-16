@@ -24,7 +24,7 @@ public class PicturePost {
     @JoinColumn(name = "post_id")
     private Post post;
 
-    @Column(name = "picture_url")
+    @Column(name = "picture_url",length = 2000)
     private String pictureUrl;
 
     private Integer orders;

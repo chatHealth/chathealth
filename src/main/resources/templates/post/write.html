@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<html lang="ko" >
 <header>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="/css/layout.css">
@@ -19,27 +19,32 @@
     <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css" />
 </header>
 <body>
-<form action="/post/write" method="post">
+<!--<form action="/post/write" method="post">-->
 <div>
     <div>
-        <input type="text" placeholder="제목" class="inpTitle" name="title">
+        <input type="text" placeholder="제목" class="inpTitle" id="title">
     </div>
     <div style="height: 500px">
-        <div class="WriteContent" id="editor"></div>
+        <div id="content"></div>
 <!--        <textarea class="postWriteContent" id="editor" name="content"></textarea>-->
     </div>
 </div>
 <div class="underBox">
-    <div class="col-3 mt-3 ">
-<!--        <input type="file" class="form-control" id="titleImg"-->
-<!--               placeholder="png,jpg" name=""-->
-<!--               accept="image/gif, image/jpeg, image/png" multiple="multiple"/>-->
-<!--         <label for="titleImg" class="form-label"> 제품대표 이미지  </label>-->
+    <div class="filebox">
+        <input type="file" id="mainImg"  class="postimg" >
+        <label class="input-file-button" for="mainImg">
+            대표이미지 등록
+        </label>
 
-        <div class="preview"> </div>
+        <input type="file" class="postimg" id="serveImg"
+               placeholder="대표이미지" name=""
+               accept="image/gif, image/jpeg, image/png" multiple="multiple">
+        <label class="input-file-button" for="serveImg">
+            서브이미지 등록
+        </label>
     </div>
     <div class="col-3 mt-3">
-        <select id="symptomOptions" name="symptomOptions"
+        <select id="symptom" name="symptom"
                 data-placeholder="증상"
                 class="form-select form-select-sm selectpicker"
                 aria-label="Small select example" data-style="btn-primary">
@@ -50,7 +55,7 @@
     </div>
 
     <div class="col-3 mt-3">
-        <select id="materialOptions" name="materialOptions"
+        <select id="material" name="material"
                 multiple="multiple" data-placeholder="원재료"
                 class="form-select form-select-sm selectpicker"
                 aria-label="Small select example" data-style="btn-primary">
@@ -62,82 +67,187 @@
     </div>
 </div>
     <div class="btnBox">
-        <button class="postInsert" >등록</button>
+        <button class="postInsert" onclick="savePost()">등록</button>
         <button class="postCansel"><a>취소</a></button>
     </div>
 
-</form>
+<!--</form>-->
 </body>
 <script>
+    let mainImgName="";
+    let serveImgName=[];
 
     //multi
-    $('#symptomOptions').select2({
+    $('#symptom').select2({
         theme: "bootstrap-5",
         width: $(this).data('width') ? $(this).data('width') : $(this).hasClass('w-100') ? '100%' : 'style',
         placeholder: $(this).data('placeholder'),
         closeOnSelect: false,
     });
-    $('#materialOptions').select2({
+    $('#material').select2({
         theme: "bootstrap-5",
         width: $(this).data('width') ? $(this).data('width') : $(this).hasClass('w-100') ? '100%' : 'style',
         placeholder: $(this).data('placeholder'),
         closeOnSelect: false,
     });
-    //사진 미리보기
-    $('#titleImg').on('change', function(e){
-        const file= e.target.files[0];
-        const ext = file.name.substring(file.name.lastIndexOf("."));
-        const reader = new FileReader();
 
-        if(!(ext==".png"||ext==".jpg"||ext==".gif")){
-            return false;
-        };
+    //프로필사진
+    $(document).ready(function() {
+        $('#mainImg').change(function() {
+            var fileInput = document.getElementById("mainImg");
+            var file = fileInput.files[0];
 
-        reader.onload = function(e){
-            $(".preview").html(`<img src="\${e.target.result}">`);
-        }
-        reader.readAsDataURL(file);
+
+            if (file) {
+                var formData = new FormData();
+                formData.append('mainImg', file);
+
+                $.ajax({
+                    url: '/post-img/uploadMain',
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        // 파일 업로드가 성공한 경우의 처리
+                        mainImgName=response;
+                    },
+                    error: function(error) {
+                        console.log('Error:', error);
+                    }
+                });
+            } else {
+                alert('파일을 선택하세요.');
+            }
+        });
+    });
+    //서브 사진
+    $(document).ready(function() {
+        $('#serveImg').change(function() {
+            let fileInput = document.getElementById("serveImg");
+            let file = fileInput.files[0];
+            console.log(file)
+            if (file) {
+                let formData = new FormData();
+                for(let i=0;i<fileInput.files.length;i++){
+                    formData.append('serveImg', fileInput.files[i]);
+                }
+
+
+                $.ajax({
+                    url: '/post-img/uploadServe',
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        // 파일 업로드가 성공한 경우의 처리
+                        for (let i=0;i<response.length;i++){
+                            serveImgName.push(response[i])
+                        }
+                    },
+                    error: function(error) {
+                        console.log('Error:', error);
+                    }
+                });
+            } else {
+                alert('파일을 선택하세요.');
+            }
+        });
     });
 
     //toast
 
-        const editor = new toastui.Editor({
-        el: document.querySelector('#editor'), // 에디터를 적용할 요소 (컨테이너)
+    const editor = new toastui.Editor({
+        el: document.querySelector('#content'), // 에디터를 적용할 요소 (컨테이너)
         height: '500px',                        // 에디터 영역의 높이 값 (OOOpx || auto)
         initialEditType: 'wysiwyg',            // 최초로 보여줄 에디터 타입 (markdown || wysiwyg)
-        previewStyle: 'vertical',
-            /* start of hooks */
-            hooks: {
-                async addImageBlobHook(blob, callback) { // 이미지 업로드 로직 커스텀
-                    try {
-                        /*
-                         * 1. 에디터에 업로드한 이미지를 FormData 객체에 저장
-                         *    (이때, 컨트롤러 uploadEditorImage 메서드의 파라미터인 'image'와 formData에 append 하는 key('image')값은 동일해야 함)
-                         */
-                        const formData = new FormData();
-                        formData.append('image', blob);
+        initialValue: '',                       // 내용의 초기 값으로, 반드시 마크다운 문자열 형태여야 함
+        previewStyle: 'vertical',               // 마크다운 프리뷰 스타일 (tab || vertical)
+        /* start of hooks */
+        hooks: {
+            async addImageBlobHook(blob, callback) { // 이미지 업로드 로직 커스텀
+                try {
+                    /*
+                     * 1. 에디터에 업로드한 이미지를 FormData 객체에 저장
+                     *    (이때, 컨트롤러 uploadEditorImage 메서드의 파라미터인 'image'와 formData에 append 하는 key('image')값은 동일해야 함)
+                     */
+                    const formData = new FormData();
+                    formData.append('image', blob);
 
-                        // 2. FileApiController - uploadEditorImage 메서드 호출
-                        const response = await fetch('/tui-editor/image-upload', {
-                            method: 'POST',
-                            body: formData,
-                        });
+                    // 2. FileApiController - uploadEditorImage 메서드 호출
+                    const response = await fetch('/post-img/upload', {
+                        method: 'POST',
+                        body: formData,
+                    });
 
-                        // 3. 컨트롤러에서 전달받은 디스크에 저장된 파일명
-                        const filename = await response.text();
-                        console.log('서버에 저장된 파일명 : ', filename);
-
-                        // 4. addImageBlobHook의 callback 함수를 통해, 디스크에 저장된 이미지를 에디터에 렌더링
-                        const imageUrl = `/tui-editor/image-print?filename=${filename}`;
-                        callback(imageUrl, 'image alt attribute');
-
-                    } catch (error) {
-                        console.error('업로드 실패 : ', error);
+                    if(!response.ok){
+                        throw new Error('서버에 문제가 있습니다. 잠시 후 다시 시도해 주세요.');
                     }
+
+                    // 3. 컨트롤러에서 전달받은 디스크에 저장된 파일명
+                    const filename = await response.text();
+                    console.log('서버에 저장된 파일명 : ', filename);
+
+                    // 4. addImageBlobHook의 callback 함수를 통해, 디스크에 저장된 이미지를 에디터에 렌더링
+                    const imageUrl = `/post-img/print?filename=${filename}`;
+                    callback(imageUrl, 'image alt attribute');
+
+                } catch (error) {
+                    alert(error.message);
+                    console.error('업로드 실패 : ', error);
                 }
             }
+        }
     });
+    //data 전송해보자자자
+    async function savePost() {
+        // title 입력 필수
 
+        if (editor.getMarkdown().length < 1) {
+            alert('내용을 입력해 주세요.');
+            throw new Error('content content is required!');
+        }
+
+        // 2. url, parameter 세팅
+        const url = '/post/write';
+        let imgArr=[];
+        imgArr.push(mainImgName)
+        for(let i=0;i<serveImgName.length;i++){
+            imgArr.push(serveImgName[i]);
+        }
+
+
+        const params = {
+            title: $("#title").val(),
+            symptom: $("#symptom").val(),
+            content: editor.getHTML(),
+            materialList:$("#material").val(),
+            postImgList:imgArr
+        }
+        console.log(params);
+        // 3. API 호출
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(params),
+            });
+
+            if(!response.ok){
+                throw new Error('서버에 문제가 있습니다. 잠시 후 다시 시도해 주세요.');
+            }
+
+            alert('게시글이 저장되었습니다. 게시글 제목: ' + params.title);
+            // location.href = '/';
+
+        } catch (error) {
+            alert(error.message);
+            console.error('저장 실패 : ', error);
+        }
+    }
 
 </script>
 

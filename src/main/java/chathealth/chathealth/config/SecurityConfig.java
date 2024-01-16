@@ -23,7 +23,7 @@ public class SecurityConfig {
                         .requestMatchers("/","/auth/join","/auth/userjoin","/auth/entjoin","/auth/login","/auth/confirmEmail",
                                          "/board","/board/{id}", "/board/api", "/board/api/recent",
                                          "/post","/api/post", "/api/post/best", "/api/post/best-week", "/api/post/recent","/post/write",
-                                         "/error",
+                                         "/error","/post-img/**",
                                          "/css/**","/js/**","/img/**")
                         .permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN") // admin role 가지고 있는 사람만 허용

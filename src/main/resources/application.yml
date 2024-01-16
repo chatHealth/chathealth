@@ -9,9 +9,6 @@ spring:
     include: oauth
     active: dev # application-prod
 
-
-
-
   output:
     ansi:
       enabled: always
@@ -26,6 +23,12 @@ spring:
         format_sql: true
         use_sql_comments: true # false
 
+  ## high quality img  ##
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 100MB
+
 logging:
   level:
     org.hibernate.SQL: info # debug info warn error fatal
@@ -37,11 +40,6 @@ decorator:
       enable-logging: false
 
 
-  ## high quality img  ##
-  servlet:
-    multipart:
-      max-file-size: 10MB
-      max-request-size: 100MB
 
   messages:
     basename: errors

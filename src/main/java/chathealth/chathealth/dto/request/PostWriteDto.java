@@ -22,7 +22,7 @@ public class PostWriteDto {
     @NotBlank(message = "content입력")
     private String content;
     //@NotBlank(message = "con입력")
-    private SymptomType symptom;
-    private List<MaterialPost> materialList;
-    private List<PicturePost> postImgList;
+    private Long symptom;
+    private List<Long> materialList;
+    private List<String> postImgList;
 }
