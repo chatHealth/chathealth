@@ -12,13 +12,9 @@ import lombok.RequiredArgsConstructor;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static chathealth.chathealth.entity.QReview.review;
-import static chathealth.chathealth.entity.member.QEnt.ent;
 import static chathealth.chathealth.entity.post.QMaterial.material;
-import static chathealth.chathealth.entity.post.QMaterialPost.materialPost;
 import static chathealth.chathealth.entity.post.QPost.post;
 import static chathealth.chathealth.entity.post.QPostHit.postHit;
-import static chathealth.chathealth.entity.post.QPostLike.postLike;
 import static chathealth.chathealth.entity.post.QSymptom.symptom;
 
 @RequiredArgsConstructor
@@ -35,19 +31,17 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
                         companyContains(postSearch.getCompany()),
                         symptomTypeEq(postSearch.getSymptomType()),
                         materialIn(postSearch.getMaterialName())
-                        )
-                .innerJoin(post.member, ent)
+                )
+                .innerJoin(post.member)
                 .fetchJoin()
-                .leftJoin(post.symptom, symptom)
+                .leftJoin(post.symptom)
                 .fetchJoin()
-                .rightJoin(materialPost).on(materialPost.post.eq(post))
+                .leftJoin(post.materialList)
                 .fetchJoin()
-                .leftJoin(materialPost).on(materialPost.material.eq(material))
-                .fetchJoin()
-                .leftJoin(postHit).on(postHit.post.eq(post))
-                .leftJoin(postLike).on(postLike.post.eq(post))
-                .leftJoin(review).on(review.post.eq(post))
-                .groupBy(post)
+                .leftJoin(post.postHitList)
+                .leftJoin(post.postLikeList)
+                .leftJoin(post.reviewList)
+                .leftJoin(post.postImgList)
                 .orderBy(getOrderSpecifier(postSearch))
                 .limit(postSearch.getSize())
                 .offset(postSearch.getOffset())
@@ -65,8 +59,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
                         materialIn(postSearch.getMaterialName())
                 )
                 .leftJoin(post.symptom, symptom)
-                .rightJoin(materialPost).on(materialPost.post.eq(post))
-                .leftJoin(materialPost).on(materialPost.material.eq(material))
+                .leftJoin(post.materialList)
                 .fetchOne();
     }
 
@@ -130,7 +123,9 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
         if(company == null || company.isEmpty()){
             return null;
         }
-        return ent.company.contains(company);
+        System.out.println("ent.company = " + post.member.company);
+        return post.member.company.contains(company);
+//        return ent.company.contains(company);
     }
 
     private static OrderSpecifier<?> getOrderSpecifier(PostSearch postSearch) {

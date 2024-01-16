@@ -45,7 +45,7 @@ class PostRepositoryImplTest {
         //given
         PostSearch postSearch = PostSearch.builder()
                 .title("제목입니다")
-                .company("회사입니다")
+//                .company("회사입니다")
                 .symptomType(INTESTINE)
                 .materialName(List.of("아스피린", "타이레놀"))
                 .build();
