@@ -33,14 +33,14 @@
     <div class="filebox">
         <input type="file" id="mainImg"  class="postimg" >
         <label class="input-file-button" for="mainImg">
-            대표이미지 등록
+            대표이미지 등록<br><p class="mainImgCount">0</p>
         </label>
 
         <input type="file" class="postimg" id="serveImg"
                placeholder="대표이미지" name=""
                accept="image/gif, image/jpeg, image/png" multiple="multiple">
         <label class="input-file-button" for="serveImg">
-            서브이미지 등록
+            서브이미지 등록<br><p class="serveImgCount">0</p>
         </label>
     </div>
     <div class="col-3 mt-3">
@@ -92,14 +92,14 @@
     });
 
     //프로필사진
+    let countMain=0
     $(document).ready(function() {
         $('#mainImg').change(function() {
-            var fileInput = document.getElementById("mainImg");
-            var file = fileInput.files[0];
-
+            let fileInput = document.getElementById("mainImg");
+            let file = fileInput.files[0];
 
             if (file) {
-                var formData = new FormData();
+                let formData = new FormData();
                 formData.append('mainImg', file);
 
                 $.ajax({
@@ -111,6 +111,8 @@
                     success: function(response) {
                         // 파일 업로드가 성공한 경우의 처리
                         mainImgName=response;
+                        countMain=1;
+                        $(".mainImgCount").text(countMain);
                     },
                     error: function(error) {
                         console.log('Error:', error);
@@ -122,36 +124,45 @@
         });
     });
     //서브 사진
+            let countSer=0;
     $(document).ready(function() {
         $('#serveImg').change(function() {
             let fileInput = document.getElementById("serveImg");
             let file = fileInput.files[0];
-            console.log(file)
-            if (file) {
-                let formData = new FormData();
-                for(let i=0;i<fileInput.files.length;i++){
-                    formData.append('serveImg', fileInput.files[i]);
-                }
 
-
-                $.ajax({
-                    url: '/post-img/uploadServe',
-                    type: 'POST',
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-                    success: function(response) {
-                        // 파일 업로드가 성공한 경우의 처리
-                        for (let i=0;i<response.length;i++){
-                            serveImgName.push(response[i])
-                        }
-                    },
-                    error: function(error) {
-                        console.log('Error:', error);
-                    }
-                });
+            if(fileInput.files.length>3){
+                alert("서브이미지는 3개까지 등록할 수 있습니다");
+                fileInput.files=[];
             } else {
-                alert('파일을 선택하세요.');
+                if (file) {
+                    let formData = new FormData();
+                    for (let i = 0; i < fileInput.files.length; i++) {
+                        formData.append('serveImg', fileInput.files[i]);
+                    }
+
+
+                    $.ajax({
+                        url: '/post-img/uploadServe',
+                        type: 'POST',
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        success: function (response) {
+                            // 파일 업로드가 성공한 경우의 처리
+                            for (let i = 0; i < response.length; i++) {
+                                serveImgName.push(response[i])
+
+                            }
+                            countSer=response.length;
+                            $(".serveImgCount").text(countSer);
+                        },
+                        error: function (error) {
+                            console.log('Error:', error);
+                        }
+                    });
+                } else {
+                    alert('파일을 선택하세요.');
+                }
             }
         });
     });
@@ -212,7 +223,9 @@
         // 2. url, parameter 세팅
         const url = '/post/write';
         let imgArr=[];
-        imgArr.push(mainImgName)
+        if(!(mainImgName==="")) {
+            imgArr.push(mainImgName)
+        }
         for(let i=0;i<serveImgName.length;i++){
             imgArr.push(serveImgName[i]);
         }
@@ -225,27 +238,38 @@
             materialList:$("#material").val(),
             postImgList:imgArr
         }
-        console.log(params);
+        console.log(params)
         // 3. API 호출
-        try {
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(params),
-            });
+        let titleStr=params.title.replace(/ /g,"");
 
-            if(!response.ok){
-                throw new Error('서버에 문제가 있습니다. 잠시 후 다시 시도해 주세요.');
+        if(titleStr===""){
+            alert("제목을입력해주세요.");
+        }else if(params.materialList.length===0){
+            alert("성분을 선택해주세요")
+        }else if(params.postImgList.length===0){
+            alert("대표이미지를 선택해주세요")
+        }else
+        {
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(params),
+                });
+
+                if (!response.ok) {
+                    throw new Error('서버에 문제가 있습니다. 잠시 후 다시 시도해 주세요.');
+                }
+
+                alert('게시글이 저장되었습니다');
+                // location.href = '/';
+
+            } catch (error) {
+                alert(error.message);
+                console.error('저장 실패 : ', error);
             }
-
-            alert('게시글이 저장되었습니다. 게시글 제목: ' + params.title);
-            // location.href = '/';
-
-        } catch (error) {
-            alert(error.message);
-            console.error('저장 실패 : ', error);
         }
     }
 
