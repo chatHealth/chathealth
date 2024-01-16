@@ -127,14 +127,12 @@ public class MemberService {
     }
 
     private static Users toUser(Member member) {
-        if (member.getRole() != USER) {
-            throw new UserNotFound();
-        }
+        if (!(member instanceof Users)) throw new UserNotFound();
         return (Users) member;
     }
 
     private static Ent toEnt(Member member) {
-        List<Role> entRole = List.of(PERMITTED_ENT, REJECTED_ENT, WAITING_ENT);
+        List<Role> entRole = List.of(ROLE_PERMITTED_ENT, ROLE_REJECTED_ENT, ROLE_WAITING_ENT);
 
         if (!entRole.contains(member.getRole())) {
             throw new UserNotFound();

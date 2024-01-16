@@ -23,8 +23,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Optional;
 import java.util.UUID;
+
+import static chathealth.chathealth.constants.Role.ROLE_USER;
+import static chathealth.chathealth.constants.Role.ROLE_WAITING_ENT;
 
 @Service
 @RequiredArgsConstructor
@@ -51,12 +53,13 @@ public class AuthService implements UserDetailsService {
                 .id(userJoinDto.getId())
                 .pw(bCryptPasswordEncoder.encode(userJoinDto.getPw()))
                 .birth(userJoinDto.getBirth())
-                .role(Role.USER)
+                .role(ROLE_USER)
                 .address(userJoinDto.getAddress())
                 .email(userJoinDto.getEmail())
                 .name(userJoinDto.getName())
+                .nickname(userJoinDto.getNickname())
                 .grade(Grade.BRONZE)
-                .profile(String.valueOf(filePath))
+                .profile(rename)
                 .createdDate(userJoinDto.getCreateDate())
                 .build();
         memberRepository.save(dbJoinUser);
@@ -80,27 +83,23 @@ public class AuthService implements UserDetailsService {
                 .id(entJoinDto.getId())
                 .pw(bCryptPasswordEncoder.encode(entJoinDto.getPw()))
                 .birth(entJoinDto.getBirth())
-                .role(Role.WAITING_ENT)
+                .role(ROLE_WAITING_ENT)
                 .address(entJoinDto.getAddress())
                 .email(entJoinDto.getEmail())
                 .company(entJoinDto.getCompany())
                 .ceo(entJoinDto.getCeo())
                 .entNo(entJoinDto.getEntNo())
-                .profile(String.valueOf(filePath))
+                .profile(rename)
                 .createdDate(entJoinDto.getCreatedDate())
                 .build();
         memberRepository.save(dbJoinEnt);
     }
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-//        Optional<Member> loggedMember = memberRepository.findByEmail(email);
-//        loggedMember.ifPresent(a -> {
-//            new CustomUserDetails(loggedMember.get());
-//        });
-
-//        throw new UsernameNotFoundException("아이디 혹은 비밀번호를 확인해주세요.");
-        return memberRepository.findByEmail(email).map(CustomUserDetails::new).orElseThrow(
-                ()-> new UsernameNotFoundException("아이디확인좀")
+        Member member = memberRepository.findByEmail(email).orElseThrow(
+                () -> new UsernameNotFoundException("사용자가 존재하지 않습니다.")
         );
+
+        return new CustomUserDetails(member);
     }
 
     public boolean confirmEmail(String email) {

@@ -238,3 +238,45 @@ footer {
 .more-button {
     /* 여기에 버튼 스타일을 추가하세요 (예: 패딩, 배경색, 글꼴 등) */
 }
+
+.profile-image {
+    height: 150px;
+    width: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.profile-image-sm {
+    height: 30px;
+    width: 30px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.notice td{
+    border-bottom: 1px solid #dee2e6;
+    background-color: #c9cfd5;
+}
+.news-list td{
+    border-bottom: 1px solid #dee2e6;
+    background-color: #ced8cb;
+}
+
+.context-menu {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+.context-menu a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+.context-menu a:hover {
+    background-color: #f1f1f1;
+}

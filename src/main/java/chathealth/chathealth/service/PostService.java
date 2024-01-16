@@ -39,8 +39,6 @@ public class PostService {
     private final MaterialPostRepository materialPostRepository;
 
 
-    // public Post insertPost(){}
-
     // 포스트 목록 조회
     public List<PostResponse> getPosts(PostSearch postSearch) {
 
@@ -50,22 +48,29 @@ public class PostService {
         if (count / postSearch.getSize() < postSearch.getPage()) {
             postSearch.setPage((int) (count / postSearch.getSize()));
         }
-
         return postRepository.getPosts(postSearch).stream()
-                .map(post ->
-                        PostResponse.builder()
+                .map(post ->{
+                    String representativeImg = null;
+                    if(post.getPostImgList() != null && !post.getPostImgList().isEmpty()){
+                        representativeImg = post.getPostImgList().stream()
+                                .filter(img -> img.getOrders() == 0)
+                                .findFirst()
+                                .map(PicturePost::getPictureUrl)
+                                .orElse(null);
+                    }
+
+                        return PostResponse.builder()
                                 .id(post.getId())
                                 .title(post.getTitle())
                                 .company(post.getMember().getCompany())
-                                .representativeImg(getRepresentativeImg(post))
+                                .representativeImg(representativeImg)
                                 .count(count)
-                                .createdDate(post.getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
                                 .createdAt(post.getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
                                 .hitCount(post.getPostHitCount())
                                 .likeCount(post.getPostLikeCount())
                                 .reviewCount(post.getReviewCount())
                                 .symptom(post.getSymptom().getSymptomName())
-                                .build())
+                                .build();})
                 .toList();
     }
 
@@ -94,7 +99,6 @@ public class PostService {
                 .map(post -> PostResponse.builder()
                         .id(post.getId())
                         .title(post.getTitle())
-                        .representativeImg(getRepresentativeImg(post))
                         .build())
                 .toList();
     }

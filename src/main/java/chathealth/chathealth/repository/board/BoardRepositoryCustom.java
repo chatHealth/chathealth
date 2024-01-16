@@ -10,5 +10,7 @@ public interface BoardRepositoryCustom {
 
     List<Board> getBoards(BoardSearchDto boardSearchDto);
 
+    Long getBoardCount(BoardSearchDto boardSearchDto);
+
     List<Board> getBoardsByCategoryRecent(Category category);
 }

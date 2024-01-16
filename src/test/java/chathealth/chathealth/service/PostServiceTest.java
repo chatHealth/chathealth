@@ -8,6 +8,7 @@ import chathealth.chathealth.entity.member.Users;
 import chathealth.chathealth.entity.post.*;
 import chathealth.chathealth.repository.*;
 import chathealth.chathealth.repository.post.PostRepository;
+import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +44,8 @@ class PostServiceTest {
     PostHitRepository postHitRepository;
     @Autowired
     PostRestController postHitService;
+    @Autowired
+    EntityManager em;
 
     @Test
     @DisplayName("포스트 목록 조회")
@@ -53,7 +56,7 @@ class PostServiceTest {
                 .title("입니다")
                 .company("중앙컴퍼니")
                 .symptomType(INTESTINE)
-                .materialName(List.of("아스피린", "타이레놀"))
+                .materialName(List.of("프로바이오틱스"))
                 .ordercondition(RECENT)
                 .size(20)
                 .build();
@@ -61,41 +64,41 @@ class PostServiceTest {
         Ent ent = Ent.builder()
                 .company("중앙컴퍼니")
                 .build();
-        memberRepository.save(ent);
+        Ent savedEnt = memberRepository.save(ent);
 
         Symptom symptom = Symptom.builder()
                 .symptomName(INTESTINE)
                 .build();
-        symptomRepository.save(symptom);
+        Symptom savedSymptom = symptomRepository.save(symptom);
 
         Material material = Material.builder()
-                .materialName("아스피린")
+                .materialName("프로바이오틱스")
                 .build();
-        materialRepository.save(material);
+        Material savedMaterial = materialRepository.save(material);
 
         Post post = Post.builder()
                 .title("제목입니다")
-                .symptom(symptom)
-                .member(ent)
+                .symptom(savedSymptom)
+                .member(savedEnt)
                 .build();
-        postRepository.save(post);
+        Post savedPost = postRepository.save(post);
 
         MaterialPost materialPost = MaterialPost.builder()
-                .material(material)
-                .post(post)
+                .material(savedMaterial)
+                .post(savedPost)
                 .build();
 
         materialPostRepository.save(materialPost);
 
         PicturePost picture1 = picturePostRepository.save(PicturePost.builder()
                 .pictureUrl("이미지유알엘1")
-                .post(post)
+                .post(savedPost)
                 .orders(0)
                 .build());
 
         PicturePost picture2 = picturePostRepository.save(PicturePost.builder()
                 .pictureUrl("이미지 유알엘2")
-                .post(post)
+                .post(savedPost)
                 .orders(1)
                 .build());
 
@@ -109,27 +112,27 @@ class PostServiceTest {
 
             Post post1 = Post.builder()
                     .title("제목입니다")
-                    .symptom(symptom)
-                    .member(ent)
+                    .symptom(savedSymptom)
+                    .member(savedEnt)
                     .build();
-            postRepository.save(post1);
+            Post savedPost1 = postRepository.save(post1);
 
             MaterialPost materialPost1 = MaterialPost.builder()
-                    .material(material)
-                    .post(post1)
+                    .material(savedMaterial)
+                    .post(savedPost1)
                     .build();
 
-            materialPostRepository.save(materialPost1);
+            MaterialPost savedMaterial1 = materialPostRepository.save(materialPost1);
 
             PicturePost picture4 = picturePostRepository.save(PicturePost.builder()
-                    .pictureUrl("이미지유알엘3")
-                    .post(post1)
+                    .pictureUrl("이미지3")
+                    .post(savedPost1)
                     .orders(0)
                     .build());
 
             PicturePost picture3 = picturePostRepository.save(PicturePost.builder()
                     .pictureUrl("이미지 유알엘2")
-                    .post(post1)
+                    .post(savedPost1)
                     .orders(1)
                     .build());
             List<PicturePost> pictures1 = new ArrayList<>();
@@ -138,19 +141,24 @@ class PostServiceTest {
             picturePostRepository.saveAll(pictures1);
 
             postHitRepository.save(PostHit.builder()
-                    .post(post1)
+                    .post(savedPost1)
                     .build());
             postHitRepository.save(PostHit.builder()
-                    .post(post1)
+                    .post(savedPost1)
                     .build());
         }
+        em.flush();
+        em.clear();
 
         //when
         List<PostResponse> posts = postService.getPosts(postSearch);
+        for (PostResponse postResponse : posts) {
+            System.out.println("postResponsezzz = " + postResponse);
+        }
 
         //then
         assertThat(posts.size()).isEqualTo(20);
-        assertThat(posts.get(0).getRepresentativeImg()).isEqualTo("이미지유알엘3");
+        assertThat(posts.get(0).getRepresentativeImg()).isEqualTo("이미지3");
 //        assertThat(posts.get(0).getCount()).isEqualTo(90);
 
     }

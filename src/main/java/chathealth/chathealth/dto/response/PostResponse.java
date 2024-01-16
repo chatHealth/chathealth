@@ -5,13 +5,14 @@ import chathealth.chathealth.entity.post.PicturePost;
 import chathealth.chathealth.entity.post.SymptomType;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 
 import java.util.List;
 
 @Getter
-@Builder
 @ToString
+@Setter
 public class PostResponse {
 
     private Long id;
@@ -26,16 +27,29 @@ public class PostResponse {
     private SymptomType symptom;
     private List<Material> material;
 
-    // yyyy-MM-dd HH:mm:ss 변환
-    private String createdDate;
-
     // yyyy-MM-dd 변환
     private String createdAt;
 
     private Long count;
 
-    private Long hitCount;
-    private Long likeCount;
-    private Long reviewCount;
+    private Integer hitCount;
+    private Integer likeCount;
+    private Integer reviewCount;
 
+    @Builder
+    public PostResponse(Long id, String title, String content, List<PicturePost> picturePost, String representativeImg, String company, SymptomType symptom, List<Material> material, String createdAt, Long count, Integer hitCount, Integer likeCount, Integer reviewCount) {
+        this.id = id;
+        this.title = title;
+        this.content = content;
+        this.picturePost = picturePost;
+        this.representativeImg = representativeImg;
+        this.company = company;
+        this.symptom = symptom;
+        this.material = material;
+        this.createdAt = createdAt;
+        this.count = count;
+        this.hitCount = hitCount;
+        this.likeCount = likeCount;
+        this.reviewCount = reviewCount;
+    }
 }

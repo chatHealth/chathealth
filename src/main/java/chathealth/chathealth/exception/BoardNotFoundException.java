@@ -9,6 +9,10 @@ public class BoardNotFoundException extends ChatHealthException {
         super(BOARD_NOT_FOUND.getMessage());
     }
 
+    public BoardNotFoundException(String message) {
+        super(message);
+    }
+
     @Override
     public int getStatusCode() {
         return NOT_FOUND.value();

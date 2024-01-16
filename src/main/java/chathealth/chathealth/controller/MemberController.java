@@ -8,33 +8,36 @@ import chathealth.chathealth.repository.MemberRepository;
 import chathealth.chathealth.service.MemberService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.h2.engine.User;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
+@Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/member")
 public class MemberController {
 
     private final MemberService memberService;
-    private final MemberRepository memberRepository;
 
-    @ResponseBody
-    @PreAuthorize("hasRole('USER')") //USER 롤 가지고 있는 사람만 메서드 실행 가능
+    //@PreAuthorize("hasRole('USER')") //USER 롤 가지고 있는 사람만 메서드 실행 가능
     @GetMapping("/user/{id}")
-    public UserInfoDto getUserInfo(@PathVariable Long id, Model model) {
-//        model.addAttribute("userInfo", memberService.getUserInfo(id));
-//        return "member/user-info";
-        return memberService.getUserInfo(id);
+    public String getUserInfo(@PathVariable Long id, Model model) {
+        UserInfoDto userInfoDto = memberService.getUserInfo(id);
+        model.addAttribute("userInfo", userInfoDto);
+       return "member/user-info";
 
     }
 
-    @ResponseBody
+
     @GetMapping("/ent/{id}")
-    public EntInfoDto getEntInfo(@PathVariable Long id) {
-        return memberService.getEntInfo(id);
+    public String getEntInfo(@PathVariable Long id,Model model) {
+        EntInfoDto entInfoDto = memberService.getEntInfo(id);
+        model.addAttribute("entInfo",entInfoDto);
+        return "member/ent-info";
     }
 
     @ResponseBody
