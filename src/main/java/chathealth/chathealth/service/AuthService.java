@@ -8,6 +8,7 @@ import chathealth.chathealth.dto.request.EntJoinDto;
 import chathealth.chathealth.dto.request.UserJoinDto;
 import chathealth.chathealth.dto.response.CustomUserDetails;
 import chathealth.chathealth.entity.member.*;
+import chathealth.chathealth.exception.NotPermitted;
 import chathealth.chathealth.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,10 +20,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
 import static chathealth.chathealth.constants.Role.ROLE_USER;
@@ -34,6 +38,7 @@ import static chathealth.chathealth.constants.Role.ROLE_WAITING_ENT;
 public class AuthService implements UserDetailsService {
     @Value("${file.path}")
     private String path;
+    private String domain = "profile"+ File.separator;
     private final MemberRepository memberRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
@@ -41,8 +46,17 @@ public class AuthService implements UserDetailsService {
     public void userJoin(UserJoinDto userJoinDto) { //개인 회원가입
         String originalFileName = userJoinDto.getProfile().getOriginalFilename(); //원본 파일 네임
         UUID uuid = UUID.randomUUID(); //난수 발생
-        String rename = uuid+"_"+originalFileName; //변경할 이름
-        Path filePath = Paths.get(path+rename); //저장할 경로
+        String uploadMon = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMM")) + File.separator;
+        String rename = domain+uploadMon+uuid+"_"+originalFileName; //변경할 이름
+        Path filePath = Paths.get(path+rename); //저장할 실제경로
+        File checkPath = new File(path+domain+uploadMon); //월별 파일 있는지 체크용도
+
+        if (!checkPath.exists()) {
+            boolean created = checkPath.mkdirs();
+            if (!created) {
+                throw new NotPermitted("디렉터리 생성에 실패했습니다.");
+            }
+        }
         try {
             Files.write(filePath,userJoinDto.getProfile().getBytes());
         } catch (IOException e) {
@@ -70,7 +84,8 @@ public class AuthService implements UserDetailsService {
         // 사업자 회원가입
         String originalFileName = entJoinDto.getProfile().getOriginalFilename(); //원본 파일 네임
         UUID uuid = UUID.randomUUID(); //난수 발생
-        String rename = uuid+"_"+originalFileName; //변경할 이름
+        String uploadMon = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMM")) + File.separator;
+        String rename = domain+File.separator+uploadMon+uuid+"_"+originalFileName; //변경할 이름
         Path filePath = Paths.get(path+rename); //저장할 경로
         try {
             Files.write(filePath,entJoinDto.getProfile().getBytes());
