@@ -10,7 +10,9 @@
                 <a href="/" class="navbar-brand">
                     <img src="/img/logo.png" alt="chatHealth" style="height: 50px">
                 </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false"
+                        aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNavDropdown">
@@ -22,7 +24,7 @@
                         <li class="nav-item"><a href="#" th:href="@{/auth/login}" class="nav-link">login</a></li>
                     </ul>
                     </th:block>
-                    <th:block sec:authorize="isAuthenticated()">
+                        <th:block sec:authorize="isAuthenticated()">
                         <ul class="navbar-nav ms-auto">
                             <li class="nav-item"><a href="" th:href="@{/post}" class="nav-link">post</a></li>
                             <li class="nav-item" sec:authorize="hasRole('ROLE_USER')"><a href="" th:href="@{|/member/user/${#authentication.principal.loggedMember.id}|}" class="nav-link">my page</a></li>

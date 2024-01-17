@@ -68,18 +68,18 @@ public class Post extends BaseEntity {
     private List<Review> reviewList = new ArrayList<>();
 
 
-    public Long getPostHitCount() {
-        if (postHitList == null) return 0L;
-        return (long) postHitList.size();
+    public Integer getPostHitCount() {
+        if (postHitList == null) return 0;
+        return postHitList.size();
     }
 
-    public Long getPostLikeCount() {
-        if(postLikeList == null) return 0L;
-        return (long) postLikeList.size();
+    public Integer getPostLikeCount() {
+        if(postLikeList == null) return 0;
+        return postLikeList.size();
     }
 
-    public Long getReviewCount() {
-        if(reviewList == null) return 0L;
-        return (long) reviewList.size();
+    public Integer getReviewCount() {
+        if(reviewList == null) return 0;
+        return reviewList.size();
     }
 }
