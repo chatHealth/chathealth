@@ -48,7 +48,6 @@ public class MemberController {
     @ResponseBody
     @PatchMapping("/user/{id}")
     public Map<String,String> updateUserProfile(@PathVariable Long id, MultipartFile changeProfile) {
-        log.info("컨트롤러는 들어온다..........");
         memberService.updateProfile(id, changeProfile);
         Map<String, String> resultMap = new HashMap<>();
 
