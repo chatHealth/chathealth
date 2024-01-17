@@ -12,8 +12,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.h2.engine.User;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Controller
 @Slf4j
@@ -32,7 +37,6 @@ public class MemberController {
 
     }
 
-
     @GetMapping("/ent/{id}")
     public String getEntInfo(@PathVariable Long id,Model model) {
         EntInfoDto entInfoDto = memberService.getEntInfo(id);
@@ -40,11 +44,29 @@ public class MemberController {
         return "member/ent-info";
     }
 
+    @Transactional
     @ResponseBody
     @PatchMapping("/user/{id}")
-    public void updateUser(@PathVariable Long id, @RequestBody @Valid UserEditDto userEditDto) {
-        memberService.updateUserInfo(id, userEditDto);
+    public Map<String,String> updateUserProfile(@PathVariable Long id, MultipartFile changeProfile) {
+        log.info("컨트롤러는 들어온다..........");
+        memberService.updateProfile(id, changeProfile);
+        Map<String, String> resultMap = new HashMap<>();
+
+        resultMap.put("isUpdated","isUpdated");
+        return resultMap;
     }
+
+
+    /*@Transactional
+    @ResponseBody
+    @PatchMapping("/user/{id}")
+    public Map<String,String> updateUserInfo(@PathVariable Long id, UserEditDto userEditDto) {
+        memberService.updateUserInfo(id, userEditDto);
+        Map<String, String> resultMap = new HashMap<>();
+
+        resultMap.put("isUpdated","isUpdated");
+        return resultMap;
+    }*/
 
     @ResponseBody
     @PatchMapping("/ent/{id}")
