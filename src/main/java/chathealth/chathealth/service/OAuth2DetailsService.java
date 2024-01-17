@@ -48,23 +48,20 @@ public class OAuth2DetailsService extends DefaultOAuth2UserService{
         }
 
         assert socialUserInfo != null : "이메일 없음";
-        String email = socialUserInfo.getEmail();
         String name = socialUserInfo.getName();
-        String userId = socialUserInfo.getProviderId();
-        log.info(userId);
-        Role role = ROLE_USER;
+        String email = socialUserInfo.getProviderId();
         String password = bCryptPasswordEncoder.encode(UUID.randomUUID().toString());
         Users returnMember = null;
 
-        Optional<Member> foundMember =  memberRepository.findByEmail(userId);
+        Optional<Member> foundMember =  memberRepository.findByEmail(email);
         if(foundMember.isPresent()) {
             returnMember = (Users) foundMember.get();
         } else {
             returnMember = Users.builder()
                     .pw(password)
-                    .role(role)
+                    .role(ROLE_USER)
                     .name(name)
-                    .email(userId)
+                    .email(email)
                     .grade(BRONZE)
                     .build();
             memberRepository.save(returnMember);

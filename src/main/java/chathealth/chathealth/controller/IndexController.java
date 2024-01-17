@@ -5,6 +5,8 @@ import chathealth.chathealth.dto.response.CustomUserDetails;
 import chathealth.chathealth.entity.member.Member;
 import chathealth.chathealth.service.MemberService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

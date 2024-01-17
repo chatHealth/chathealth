@@ -55,7 +55,7 @@ public class SecurityConfig {
 
                 .sessionManagement((auth) -> auth
                         .maximumSessions(1)  //한 아이디로 중복 로그인 방지
-                        .maxSessionsPreventsLogin(true)) //다중 로그인 허용치 초과시 새 로그인 차단. false는 기존 세션 삭제
+                        .maxSessionsPreventsLogin(false)) //다중 로그인 허용치 초과시 새 로그인 차단. false는 기존 세션 삭제
 
                 .oauth2Login((oauth2Login) -> oauth2Login //소셜 로그인 허용
                         .loginPage("/auth/login")
