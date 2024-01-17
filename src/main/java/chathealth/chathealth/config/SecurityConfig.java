@@ -21,7 +21,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/", "/auth/join", "/auth/userjoin", "/auth/entjoin", "/auth/login", "/auth/confirmEmail",
+                        .requestMatchers("/", "/auth/selection", "/auth/userjoin", "/auth/entjoin", "/auth/login", "/auth/confirmEmail",
                                 "/board", "/board/{id}", "/board/api", "/board/api/recent",
                                 "/post", "/api/post", "/api/post/best", "/api/post/best-week", "/api/post/recent",
                                 "/error",
@@ -54,7 +54,7 @@ public class SecurityConfig {
 
                 .sessionManagement((auth) -> auth
                         .maximumSessions(1)  //한 아이디로 중복 로그인 방지
-                        .maxSessionsPreventsLogin(true)) //다중 로그인 허용치 초과시 새 로그인 차단. false는 기존 세션 삭제
+                        .maxSessionsPreventsLogin(false)) //다중 로그인 허용치 초과시 새 로그인 차단. false는 기존 세션 삭제
 
                 .oauth2Login((oauth2Login) -> oauth2Login //소셜 로그인 허용
                         .loginPage("/auth/login")
