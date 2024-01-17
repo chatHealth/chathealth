@@ -2,10 +2,20 @@ package chathealth.chathealth.service;
 
 
 import chathealth.chathealth.dto.request.PostSearch;
+import chathealth.chathealth.dto.request.PostWriteDto;
+import chathealth.chathealth.dto.response.CustomUserDetails;
+import chathealth.chathealth.dto.response.MaterialDto;
 import chathealth.chathealth.dto.response.PostResponse;
+import chathealth.chathealth.dto.response.SymptomDto;
+import chathealth.chathealth.entity.member.Ent;
 import chathealth.chathealth.entity.member.Member;
-import chathealth.chathealth.entity.post.PicturePost;
+import chathealth.chathealth.entity.post.Material;
+import chathealth.chathealth.entity.post.MaterialPost;
 import chathealth.chathealth.entity.post.Post;
+import chathealth.chathealth.entity.post.Symptom;
+import chathealth.chathealth.exception.UserNotFound;
+import chathealth.chathealth.repository.*;
+import chathealth.chathealth.entity.post.PicturePost;
 import chathealth.chathealth.repository.PicturePostRepository;
 import chathealth.chathealth.repository.post.PostRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +33,11 @@ public class PostService {
 
     private final PostRepository postRepository;
     private final PicturePostRepository picturePostRepository;
-    // public Post insertPost(){}
+    private final SymptomRepository symptomRepository;
+    private final MaterialRepository materialRepository;
+    private final MemberRepository memberRepository;
+    private final MaterialPostRepository materialPostRepository;
+
 
     // 포스트 목록 조회
     public List<PostResponse> getPosts(PostSearch postSearch) {
@@ -34,26 +48,33 @@ public class PostService {
         if (count / postSearch.getSize() < postSearch.getPage()) {
             postSearch.setPage((int) (count / postSearch.getSize()));
         }
-
         return postRepository.getPosts(postSearch).stream()
-                .map(post ->
-                        PostResponse.builder()
+                .map(post ->{
+                    String representativeImg = null;
+                    if(post.getPostImgList() != null && !post.getPostImgList().isEmpty()){
+                        representativeImg = post.getPostImgList().stream()
+                                .filter(img -> img.getOrders() == 0)
+                                .findFirst()
+                                .map(PicturePost::getPictureUrl)
+                                .orElse(null);
+                    }
+
+                        return PostResponse.builder()
                                 .id(post.getId())
                                 .title(post.getTitle())
                                 .company(post.getMember().getCompany())
-                                .representativeImg(getRepresentativeImg(post))
+                                .representativeImg(representativeImg)
                                 .count(count)
-                                .createdDate(post.getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
                                 .createdAt(post.getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
                                 .hitCount(post.getPostHitCount())
                                 .likeCount(post.getPostLikeCount())
                                 .reviewCount(post.getReviewCount())
                                 .symptom(post.getSymptom().getSymptomName())
-                                .build())
+                                .build();})
                 .toList();
     }
 
-    public List<PostResponse> getBestPostsPerDay(){
+    public List<PostResponse> getBestPostsPerDay() {
         return postRepository.getBestPostsPerDay().stream()
                 .map(post -> PostResponse.builder()
                         .id(post.getId())
@@ -63,7 +84,7 @@ public class PostService {
                 .toList();
     }
 
-    public List<PostResponse> getBestPostsPerWeek(){
+    public List<PostResponse> getBestPostsPerWeek() {
         return postRepository.getBestPostsPerWeek().stream()
                 .map(post -> PostResponse.builder()
                         .id(post.getId())
@@ -78,7 +99,6 @@ public class PostService {
                 .map(post -> PostResponse.builder()
                         .id(post.getId())
                         .title(post.getTitle())
-                        .representativeImg(getRepresentativeImg(post))
                         .build())
                 .toList();
     }
@@ -91,4 +111,58 @@ public class PostService {
         return pictures.get(0).getPictureUrl();
     }
 
+
+    public List<SymptomDto> getSymptomList() {
+        List<Symptom> symptoms = symptomRepository.findAll();
+        return symptoms.stream().map(symptom -> SymptomDto.builder()
+                .id(symptom.getId())
+                .symptomName(symptom.getSymptomName())
+                .build()).toList();
+
+    }
+
+    public List<MaterialDto> getMaterialList() {
+        List<Material> materials = materialRepository.findAll();
+        return materials.stream().map(material -> MaterialDto.builder()
+                .id(material.getId())
+                .materialName(material.getMaterialName())
+                .functions(material.getFunctions())
+                .build()).toList();
+    }
+
+    public void createPost(PostWriteDto postWriteDto, CustomUserDetails ent) {
+        Ent findEnt = (Ent) memberRepository.findByEmail(ent.getLoggedMember().getEmail()).orElseThrow(UserNotFound::new);
+
+        Post postInfo = Post.builder()
+                .member(findEnt)
+                .title(postWriteDto.getTitle())
+                .content(postWriteDto.getContent())
+                .symptom(symptomRepository.findById(postWriteDto.getSymptom()).orElseThrow())
+                .build();
+        Post savedpost = postRepository.save(postInfo);
+        for (int i=0;i<postWriteDto.getMaterialList().size();i++) {
+            MaterialPost materialPost = MaterialPost.builder()
+                    .post(savedpost)
+                    .material(materialRepository.findById(postWriteDto.getMaterialList().get(i)).orElseThrow(RuntimeException::new))
+                    .build();
+            materialPostRepository.save(materialPost);
+        }
+        for(int i=0;i<postWriteDto.getPostImgList().size();i++) {
+            if(i==0) {
+                PicturePost picturePost = PicturePost.builder()
+                        .pictureUrl(postWriteDto.getPostImgList().get(i))
+                        .orders(1)
+                        .post(savedpost)
+                        .build();
+                picturePostRepository.save(picturePost);
+            }else {
+                PicturePost picturePost = PicturePost.builder()
+                        .pictureUrl(postWriteDto.getPostImgList().get(i))
+                        .orders(2)
+                        .post(savedpost)
+                        .build();
+                picturePostRepository.save(picturePost);
+            }
+        }
+}
 }
