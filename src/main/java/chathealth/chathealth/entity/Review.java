@@ -41,4 +41,7 @@ public class Review extends BaseEntity {
 
     @OneToMany(mappedBy = "review")
     private List<Helpful> helpfulList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "review")
+    private List<PictureReView> pictureReList=new ArrayList<>();
 }

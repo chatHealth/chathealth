@@ -15,9 +15,8 @@ import static lombok.AccessLevel.PROTECTED;
 @Getter
 @SuperBuilder
 @NoArgsConstructor(access = PROTECTED)
-@DynamicUpdate
 @Table(name = "Material")
-public class Material extends BaseEntity {
+public class Material{
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "material_id")

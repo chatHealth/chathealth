@@ -17,7 +17,6 @@ import java.util.List;
 
 import static jakarta.persistence.EnumType.STRING;
 import static jakarta.persistence.FetchType.LAZY;
-import static jakarta.persistence.GenerationType.SEQUENCE;
 import static lombok.AccessLevel.PROTECTED;
 
 @Entity
@@ -26,19 +25,20 @@ import static lombok.AccessLevel.PROTECTED;
 @SuperBuilder
 @SQLDelete(sql = "UPDATE board SET deleted_date = CURRENT_TIMESTAMP where board_id = ?")
 public class Board extends BaseEntity {
-
     @Id
-    @GeneratedValue(strategy = SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "board_id")
     private Long id;
 
     @Column(length = 2000)
     private String title;
+
     @Lob
     private String content;
 
     //    private Integer report;   //고민 좀 해보고..
     private LocalDateTime deletedDate;
+
     @Enumerated(STRING)
     private Category category;
 

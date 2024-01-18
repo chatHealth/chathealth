@@ -1,3 +1,91 @@
+.postWriteContent{
+    width: 500px;
+    height: 600px;
+}
+
+.inpTitle{
+    height: 40px;
+    width: 100%;
+}
+.underBox{
+    display: flex;
+}
+.btnBox {
+    justify-content: right;
+}
+.WriteContent{
+    height: 800px;
+}
+.toastui-editor-contents{
+    height: 900px;
+}
+
+.postimg{
+    display: none;
+}
+
+
+/*뷰페이지*/
+.productBox{
+    display: flex;
+}
+.carousel{
+    position: relative;
+    width: 500px;
+    height: 400px;
+}
+.carousel-item{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.mainpagebox{
+    margin-top: 200px;
+}
+.contentBox{
+    width: 800%;
+}
+
+/*뷰 리뷰*/
+.reviewBox{
+    border: solid;
+    margin: 20px;
+}
+.reWrite{
+    border: solid;
+    margin: 20px;
+}
+.reviewPar{
+    border: solid;
+}
+.imginsert{
+    display: flex;
+}
+.recomment{
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+.recomInfo{
+}
+.recomCon{
+}
+
+
+.input-file-button{
+    margin-top: 10px;
+    width: 150px;
+    height: 50px;
+    background: skyblue;
+    border: solid;
+    border-radius: 3%;
+    text-align: center;
+    justify-content: center;
+}
+
+
+
 .btn-symptom {
     background-color: transparent; /* 배경색 투명 */
     border: none; /* 테두리 제거 */
