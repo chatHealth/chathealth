@@ -3,10 +3,7 @@ package chathealth.chathealth.service;
 
 import chathealth.chathealth.dto.request.PostSearch;
 import chathealth.chathealth.dto.request.PostWriteDto;
-import chathealth.chathealth.dto.response.CustomUserDetails;
-import chathealth.chathealth.dto.response.MaterialDto;
-import chathealth.chathealth.dto.response.PostResponse;
-import chathealth.chathealth.dto.response.SymptomDto;
+import chathealth.chathealth.dto.response.*;
 import chathealth.chathealth.entity.member.Ent;
 import chathealth.chathealth.entity.member.Member;
 import chathealth.chathealth.entity.post.Material;
@@ -38,6 +35,20 @@ public class PostService {
     private final MemberRepository memberRepository;
     private final MaterialPostRepository materialPostRepository;
 
+
+    public PostResponseDetails getAllView(long id){
+        Post post=postRepository.findById(id).orElseThrow();
+        log.info("postFirst===={}",post);
+        log.info("picturesss===={}",picturePostRepository.findAllByPostId(id));
+        return PostResponseDetails.builder()
+                .id(post.getId())
+                .company(post.getMember().getCompany())
+                .title(post.getTitle())
+                .content(post.getContent())
+                .picturePost(picturePostRepository.findAllByPostId(id).stream().map(PicturePost::getPictureUrl).toList())
+                .material(PostResponseDetails.extractMaterialNames(post.getMaterialList()))
+                .build();
+    }
 
     // 포스트 목록 조회
     public List<PostResponse> getPosts(PostSearch postSearch) {
