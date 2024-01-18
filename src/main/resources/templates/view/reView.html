@@ -40,7 +40,18 @@
         <div class="reWrite">
             <div class="imginsert">
                 <div><input type="file"></div>
-                <div>별점선택</div>
+                <div class="col-3 mt-3">
+                    <select id="star" name=""
+                            data-placeholder="별점"
+                            class=""
+                            aria-label="Small select example" data-style="btn-primary">
+                            <option th:value="5"><span>★★★★★</span></option>
+                            <option th:value="4"><span>★★★★☆</span></option>
+                            <option th:value="3"><span>★★★☆☆</span></option>
+                            <option th:value="2"><span>★★☆☆☆</span></option>
+                            <option th:value="1"><span>★☆☆☆☆</span></option>
+                    </select>
+                </div>
             </div>
             <div class="reContent">
                 <textarea></textarea><button>등록</button>

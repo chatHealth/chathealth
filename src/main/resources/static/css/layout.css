@@ -71,6 +71,10 @@
 }
 .recomCon{
 }
+.form-select form-select-sm selectpicker > option{
+    display: flex;
+    justify-content: space-between;
+}
 
 
 .input-file-button{
