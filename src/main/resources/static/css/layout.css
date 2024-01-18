@@ -23,6 +23,33 @@
 .postimg{
     display: none;
 }
+
+
+/*뷰페이지*/
+.productBox{
+    display: flex;
+}
+.carousel{
+    position: relative;
+    width: 500px;
+    height: 400px;
+}
+.carousel-item{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.mainpagebox{
+    margin-top: 200px;
+}
+.contentBox{
+    width: 800%;
+}
+
+
+
+
+
 .input-file-button{
     margin-top: 10px;
     width: 150px;

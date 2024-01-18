@@ -26,7 +26,7 @@ public class FileApiController {
     @Value("${file.path}")
     private String pathValue;
 
-    private final String domain = File.separator + "post" + File.separator;
+    private final String domain = "post" + File.separator;
 
     @PostMapping("/upload")
     public String uploadEditorImage(@RequestParam final MultipartFile image) {

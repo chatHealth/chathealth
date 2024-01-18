@@ -27,7 +27,8 @@ public class SecurityConfig {
                                 "/post", "/api/post", "/api/post/best", "/api/post/best-week", "/api/post/recent","/post/write",
                                 "/error",
                                 "/css/**", "/js/**", "/img/**",
-                                 "/board-image/print","/post-img/**","/profile/**")
+                                 "/board-image/print","/post-img/**","/profile/**"
+                                    ,"/view/**")
                         .permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN") // admin role 가지고 있는 사람만 허용
                         .anyRequest()
