@@ -340,13 +340,12 @@
                     html += "<table class=\"table table-hover\">";
                     $.each(response, function (index, item) {
                         html += "<tr>";
-                        html += '<th>' + i + '</th>'; // "
-                        html += '<td>' + item.title + '</td>';
+                        html += '<th>' + index + '</th>'; // "
+                        html += '<td>' + "<a href='/view/" + item.id + "' style='text-decoration: none; color: inherit'>" + item.title + '</a></td>';
                         //조회수 이모티콘 + 조회수
                         html += '<td><i class=\"fa fa-eye text-secondary\"></i>' + item.hitCount + '</td>';
                         // 행 종료: 현재 인덱스가 4의 배수이고 마지막 요소가 아닐 때
                         html += "</tr>";
-                        i++;
                     });
                     html += "</table>";
                     $('#best-per-day div').html(html);
@@ -373,10 +372,9 @@
                         html += "<table class=\"table table-hover\">";
                         $.each(response, function (index, item) {
                             html += "<tr>";
-                            html += '<th>' + i + '</th>'; // "
-                            html += '<td>' + item.title + '</td>';
+                            html += '<th>' + index + '</th>'; // "
+                            html += '<td>' + "<a href='/view/" + item.id + "' style='text-decoration: none; color: inherit'>" + item.title + '</a></td>';
                             html += "</tr>";
-                            i++;
                         });
                         html += "</table>";
                         $('#view-recent div').html(html);
@@ -463,7 +461,7 @@
 
                         html += '<div class="col-lg-3 col-sm-6 mb-4">';
                         html += '    <div class="card h-100 shadow-sm bg-light"> <!-- Original background color -->';
-                        html += '        <a href="' + item.id + '" style="text-decoration: none; color: inherit;">';
+                        html += '        <a href="/view/' + item.id + '" style="text-decoration: none; color: inherit;">';
                         html += '            <img src="' + item.representativeImg + '" class="card-img-top rounded" alt="Image of ' + item.title + '" onError="this.onerror=null; this.src=\'/img/basic_post.svg\'">';
                         html += '            <h5 class="card-title font-weight-bold text-center" style="margin-top: 10px;">' + item.title + '</h5>';
                         html += '        </a>';

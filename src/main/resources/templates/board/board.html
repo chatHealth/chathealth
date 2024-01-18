@@ -41,8 +41,11 @@
                 </div>
                 <div class="col-auto" style="display: flex; align-items: center; justify-content: space-between;">
                     <div>
-                        <img th:src="@{|/profile/${board.profile}|}" alt="프로필 이미지" class="profile-image-sm"
-                             onerror="this.src='/img/basic_user.png'">
+                        <!--                        <span th:text="${board.nickname != null ? board.nickname : board.name}">작성자</span>-->
+
+                        <span onclick="toggleContextMenu(event)" style="cursor: pointer">
+                            <img th:src="@{|/profile/${board.profile}|}" alt="프로필 이미지" class="profile-image-sm"
+                                 onerror="this.src='/img/basic_user.png'">
                         <span th:text="${board.nickname != null ? board.nickname : board.name}">작성자</span>
                         <span th:switch="${board.grade?.name()}">
                             <i th:case="'BRONZE'" class="fa fa-medal text-bronze"></i>
@@ -53,6 +56,14 @@
                             <i th:case="'DIAMOND'" class="fa fa-medal text-diamond"></i>
                             <i th:case="null" class="fa fa-medal text-black"></i> <!-- null 처리 -->
                         </span>
+                        </span>
+
+                        <div class="context-menu">
+                            <a th:href="@{/sendMessage(memberId=${board.memberId})}">쪽지 보내기</a>
+                            <a th:href="@{/member/user/{id}(id=${board.memberId})}">유저 정보 보기</a>
+                        </div>
+
+
                     </div>
                     <div>
                         <span th:if="${board.modifiedDate != null}" th:text="|수정일: ${board.modifiedDate}|">수정일</span>
@@ -263,7 +274,13 @@
                         html += "<div class='card mb-3'>";
                         html += "<div class='card-header d-flex justify-content-between'>";
                         html += "<strong><img src='/profile/" + item.profile + "' alt='프로필 이미지' class='profile-image-sm' onError='this.src=\"/img/basic_user.png\"'>";
+                        html += "<span onClick='toggleContextMenu(event)' style='cursor: pointer'>"
                         html += item.memberNickname;
+                        html += "</span>";
+                        html += "<div class='context-menu'>";
+                        html += "<a href='/sendMessage?memberId=" + item.memberId + "'>쪽지 보내기</a>";
+                        html += "<a href='/member/user/" + item.memberId + "'>유저 정보 보기</a>";
+                        html += "</div>";
                         html += "<span><i class='fa " + iconClass + " " + textColor + "'></i></span>";
                         if (item.memberId === memberId) {
                             html += "<span class='badge bg-dark bg-opacity-50 rounded-pill'>작성자</span>";
@@ -273,7 +290,7 @@
                         html += "</div>";
                         html += "<div class='card-body'>";
                         html += "<p class='card-text'>" + item.content + "</p>";
-                        if(item.writer) {
+                        if (item.writer) {
                             html += "<button type='button' class='btn btn-sm btn-outline-secondary' data-bs-toggle='modal' data-bs-target='#deleteCommentModal' onclick='deleteComment(" + item.id + ")'>삭제</button>";
                         }
                         html += "</div>";
@@ -331,24 +348,45 @@
 
         // 댓글 삭제
         function deleteComment(commentId) {
-            $('#deleteConfirmButton').off('click').on('click', function() {
+            $('#deleteConfirmButton').off('click').on('click', function () {
                 $.ajax({
                     url: `/board-comment/${commentId}`,
                     type: 'DELETE',
-                    success: function(response) {
+                    success: function (response) {
                         // 삭제 성공 후, 모달 닫고 댓글 목록 재로드
                         $('#deleteCommentModal').modal('hide');
                         loadComments(); // 현재 페이지 번호를 넘겨주거나 다시 최신 상태로 로드할 수 있음
                     },
-                    error: function(error) {
+                    error: function (error) {
                         alert(error.message);
                     }
                 });
             });
         }
-        onclick='deleteComment(" + item.commentId + ")'
+
+        onclick = 'deleteComment(" + item.commentId + ")'
+
+        function toggleContextMenu(event) {
+            contextClose();
+            event.stopPropagation();
+            let contextMenu = event.currentTarget.nextElementSibling;
+            contextMenu.style.display = contextMenu.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function contextClose() {
+            const contextMenus = document.querySelectorAll('.context-menu');
+            contextMenus.forEach(function (menu) {
+                menu.style.display = 'none';
+            });
+        }
+
+        // 페이지의 다른 곳을 클릭하면 메뉴 닫기
+        window.onclick = function (event) {
+            contextClose();
+        }
     </script>
-    <div class="modal fade" id="deleteCommentModal" tabindex="-1" aria-labelledby="deleteCommentModalLabel" aria-hidden="true">
+    <div class="modal fade" id="deleteCommentModal" tabindex="-1" aria-labelledby="deleteCommentModalLabel"
+         aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
