@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
+import static jakarta.persistence.FetchType.LAZY;
 import static lombok.AccessLevel.PROTECTED;
 
 
@@ -20,7 +21,7 @@ public class PictureReView {
     @Column(name = "picture_id")
     private Long id;
 
-    @ManyToOne()
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "review_id")
     private Review review;
 
