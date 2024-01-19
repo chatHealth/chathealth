@@ -41,15 +41,15 @@
     </div>
     <script>
 
-        let memberId;
+        let receiverId;
 
         document.addEventListener('DOMContentLoaded', function () {
             // 쪽지 보내기 링크에 이벤트 리스너 추가
             document.querySelectorAll('.send-message-link').forEach(function (link) {
                 link.addEventListener('click', function (event) {
                     event.preventDefault();
-                    memberId = this.getAttribute('data-member-id');
-                    console.log(memberId);
+                    receiverId = this.getAttribute('data-member-id');
+                    console.log(receiverId);
                     // 수신자 ID를 모달의 hidden input에 설정
                     document.getElementById('recipient-name').value = this.getAttribute('data-member-name');
                     // 모달 표시
@@ -66,12 +66,11 @@
 
             console.log(data);
             $.ajax({
-                url: '/api/message/' + memberId,
+                url: '/api/message/' + receiverId,
                 type: 'POST',
                 contentType: 'application/json',
                 data: JSON.stringify(data),
                 success: function (response) {
-                    console.log(response);
                     alert('쪽지를 보냈습니다.');
                     $('#sendMessageModal').modal('hide');
                 },

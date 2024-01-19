@@ -9,7 +9,8 @@ public enum Constants {
     BOARD_NOT_FOUND("존재하지 않는 게시글 입니다."),
     FORBIDDEN("권한이 없습니다."),
     NOT_EXIST_FILE("존재하지 않는 파일입니다."),
-    MESSAGE_NOT_FOUND("존재하지 않는 메세지입니다.");
+    MESSAGE_NOT_FOUND("존재하지 않는 메세지입니다."),
+    UNAUTHORIZED("로그인이 필요합니다.");
 
     private final String message;
 
