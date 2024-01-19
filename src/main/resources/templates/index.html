@@ -71,8 +71,10 @@
                                         </th:block>
                                     </div>
                                 </div>
-                                <a th:href="@{/user/${id}(id=${member.id})}" class="btn btn-primary" style="width:100%">내
-                                    정보 보기</a>
+                                <a sec:authorize="hasRole('ROLE_USER')" th:href="@{|/member/user/${#authentication.principal.loggedMember.id}|}" class="btn btn-primary" style="width:100%">내정보 보기</a>
+                                <a sec:authorize="hasRole('ROLE_WAITING_ENT')" th:href="@{|/member/ent/${#authentication.principal.loggedMember.id}|}" class="btn btn-primary" style="width:100%">내정보 보기</a>
+                                <a sec:authorize="hasRole('ROLE_PERMITTED_ENT')" th:href="@{|/member/ent/${#authentication.principal.loggedMember.id}|}" class="btn btn-primary" style="width:100%">내정보 보기</a>
+                                <a sec:authorize="hasRole('ROLE_REJECTED_ENT')" th:href="@{|/member/ent/${#authentication.principal.loggedMember.id}|}" class="btn btn-primary" style="width:100%">내정보 보기</a>
                             </div>
                         </div>
                     </th:block>
