@@ -111,7 +111,7 @@
                                   th:text="${item.nickname != null ? item.nickname : item.name}">사용자 이름</span>
                             <div class="context-menu">
                                 <a href="#" class="send-message-link" th:data-member-id="${item.memberId}" th:data-member-name="${item.nickname != null ? item.nickname : item.name}">쪽지 보내기</a>
-                                <a th:href="@{/userInfo(memberId=${item.memberId})}">유저 정보 보기</a>
+                                <a th:href="@{/member/user/{id}(id=${item.memberId})}">유저 정보 보기</a>
                             </div>
                         </div>
                     </td>

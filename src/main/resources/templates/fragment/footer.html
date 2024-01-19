@@ -57,8 +57,8 @@
                 });
             });
         });
-
-        document.getElementById('sendMessageModal').querySelector('#btn-send-message').addEventListener('click', function () {
+        // document.getElementById('sendMessageModal').querySelector('#btn-send-message').addEventListener('click', function () {
+        $('#btn-send-message').on('click', function () {
             const data = {
                 title: document.getElementById('message-subject').value,
                 content: document.getElementById('message-text').value,
@@ -71,11 +71,27 @@
                 contentType: 'application/json',
                 data: JSON.stringify(data),
                 success: function (response) {
+                    console.log(response);
                     alert('쪽지를 보냈습니다.');
                     $('#sendMessageModal').modal('hide');
                 },
-                error: function (error) {
-                    alert(error.message);
+                error: function (xhr) {
+                    let errorResult = JSON.parse(xhr.responseText);
+                    if (errorResult.code === "400") {
+                        if (errorResult.validation !== undefined) {
+                            if (errorResult.validation.title !== undefined) {
+                                document.getElementById('message-subject').placeholder = errorResult.validation.title;
+                            }
+                            if (errorResult.validation.content !== undefined) {
+                                document.getElementById('message-text').placeholder = errorResult.validation.content;
+                            }
+                        } else {
+                            alert(errorResult.message);
+                        }
+                    } else {
+                        console.log(errorResult);
+                        alert(errorResult.message);
+                    }
                 }
             })
         });
