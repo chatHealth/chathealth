@@ -23,6 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -40,6 +41,24 @@ public class PostService {
     private final PictureReviewRepository pictureReviewRepository;
     private final ReViewRepository reViewRepository;
 
+
+
+    public List<ReViewSelectDto> getReview(long id){
+        List<Review> re=reViewRepository.findAllById(id);
+        List<ReViewSelectDto> dto=new ArrayList<>();
+        for(int i=0;i<re.size();i++){
+        ReViewSelectDto dtoIndex = ReViewSelectDto.builder()
+                .content(re.get(i).getContent())
+                .score(re.get(i).getScore())
+                .nickName(memberRepository.findById(re.get(i).getId()).getNickName())
+                .profile(memberRepository.findById(re.get(i).getId()).toString())
+                .pictureReView(pictureReviewRepository.findAllByReviewId(re.getId()).stream().map(PictureReView::getPictureUrl).toList())
+                .build();
+        dto.add(dtoIndex);
+        }
+        log.info("dtooo====={}",dto);
+        return dto;
+    }
     public Review insertRe(ReviewDto reviewDto){
         Review re= Review.builder()
                 .post(postRepository.findById(reviewDto.getPost()).orElseThrow())

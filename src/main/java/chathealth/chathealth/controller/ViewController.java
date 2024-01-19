@@ -5,6 +5,7 @@ import chathealth.chathealth.dto.request.ReviewDto;
 import chathealth.chathealth.dto.response.CustomUserDetails;
 import chathealth.chathealth.dto.response.PostResponse;
 import chathealth.chathealth.dto.response.PostResponseDetails;
+import chathealth.chathealth.dto.response.ReViewSelectDto;
 import chathealth.chathealth.service.PostService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,8 +23,14 @@ public class ViewController {
     private final PostService postService;
     @GetMapping("/{id}")
     public String viewPage(@PathVariable long id, Model model){
+        //post정보
         PostResponseDetails post=postService.getAllView(id);
         model.addAttribute("postList",post);
+
+        //review정보
+        ReViewSelectDto reViewSelectDto=postService.getReview(id);
+        log.info("rerere===={}",reViewSelectDto);
+        model.addAttribute("reViewList",reViewSelectDto);
         return "view/view";
     }
 
