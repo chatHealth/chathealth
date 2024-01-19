@@ -15,9 +15,6 @@
     <div class="imgBox">
         <div id="carouselExampleAutoplaying" class="carousel slide" data-bs-ride="carousel">
             <div class="carousel-inner">
-<!--                    <div class="carousel-item active">-->
-<!--                            <img th:src="@{|/profile/${postList.getPicturePost().get(0)}|}"  class="d-block w-100" alt="...">-->
-<!--                    </div>-->
                 <th:block th:each="item : ${postList.picturePost}">
                         <div class="carousel-item">
                             <img th:src="@{|/profile/${item}|}" class="d-block w-100" alt="...">
@@ -42,7 +39,7 @@
             <ul class="list-group list-group-flush">
                 <li class="list-group-item" th:text="${postList.company}"></li>
                 <li class="list-group-item" th:text="${postList.material}"></li>
-                <li class="list-group-item"></li>
+                <li class="list-group-item" ></li>
                 <li class="list-group-item">A fourth item</li>
                 <li class="list-group-item">And a fifth one</li>
             </ul>
@@ -58,8 +55,82 @@
 
 
 
+<!--리뷰-->
+<div>
+    <div class="reviewHeader">
+        <h2>상품리뷰</h2>
+    </div>
+    <div class="reviewBox">
 
-<script th:script>
+        <div class="reviewPar">
+            <div class="userinfo">
+                <p>유저정보</p>
+            </div>
+            <hr>
+            <div class="reviewImglist">
+                <p>이미지</p>
+            </div>
+            <hr>
+            <div class="reviewContent">
+                <p>리뷰내용</p>
+            </div>
+        </div>
+        <div class="recomment">
+            <div class="recomInfo"><p>대댓글 유저정보</p></div>
+            <div class="recomCon"><p>대댓글 내용</p></div>
+        </div>
+    </div>
+
+    <div class="reWrite">
+        <div class="imginsert">
+            <div>
+                <input type="file" class="postimg" id="reImg"
+                       placeholder="대표이미지" name=""
+                       accept="image/gif, image/jpeg, image/png" multiple="multiple">
+                <label class="input-file-button" for="reImg">
+                    이미지 등록<br><p class="reImgCount">0</p>
+                </label>
+            </div>
+            <div class="col-3 mt-3">
+                <select id="star" name=""
+                        data-placeholder="별점"
+                        class=""
+                        aria-label="Small select example" data-style="btn-primary">
+                    <option th:value="5.0"><span>★★★★★</span></option>
+                    <option th:value="4.0"><span>★★★★☆</span></option>
+                    <option th:value="3.0"><span>★★★☆☆</span></option>
+                    <option th:value="2.0"><span>★★☆☆☆</span></option>
+                    <option th:value="1.0"><span>★☆☆☆☆</span></option>
+                </select>
+            </div>
+        </div>
+        <div class="reContent">
+            <textarea class="reContent"></textarea>
+            <button type="submit" onclick=insertRe()>등록</button>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script th:inline="javascript">
+    const postId= [[${postList.id}]];
+
+
     addClassName()
     function addClassName(){
         let imgbox=$(".carousel-inner > div:first-child");
@@ -67,6 +138,76 @@
 
         let contentBox=$(".contentBox > p > img");
         contentBox.css("object-fit","cover");
+    }
+
+    <!--리뷰이미지등록-->
+    let countRe=0;
+    let reImgName=[];
+    $(document).ready(function() {
+        $('#reImg').change(function() {
+            let fileInput = document.getElementById("reImg");
+            let file = fileInput.files[0];
+
+            if(fileInput.files.length>3){
+                $(".reImgCount").text(0);
+                alert("이미지는 3개까지 등록할 수 있습니다");
+                fileInput.files=[];
+            } else {
+                if (file) {
+                    let formData = new FormData();
+                    for (let i = 0; i < fileInput.files.length; i++) {
+                        formData.append('serveImg', fileInput.files[i]);
+                    }
+                    $.ajax({
+                        url: '/post-img/uploadServe',
+                        type: 'POST',
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        success: function (response) {
+                            // 파일 업로드가 성공한 경우의 처리
+                            for (let i = 0; i < response.length; i++) {
+                                reImgName.push(response[i])
+
+                            }
+                            countRe=response.length;
+                            $(".reImgCount").text(countRe);
+                        },
+                        error: function (error) {
+                            console.log('Error:', error);
+                        }
+                    });
+                } else {
+                    alert('파일을 선택하세요.');
+                }
+            }
+        });
+    });
+
+    // 리뷰등록
+    function insertRe(){
+        var reContentValue = document.querySelector(".reContent textarea").value.trim();
+        const date={
+            "content": reContentValue,
+            "score": $("#star").val(),
+            "pictureReList":reImgName,
+            "post":postId
+        }
+        console.log(date)
+        $.ajax({
+            method:"POST",
+            url:"/view/reWrite",
+            contentType: 'application/json',
+            data:JSON.stringify(date),
+            success: function (response){
+                console.log("리뷰작성 완")
+            },
+            error:function (){
+                console.log("리뷰작성 실패")
+            }
+
+        })
+
     }
 
 </script>

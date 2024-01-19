@@ -3,7 +3,10 @@ package chathealth.chathealth.service;
 
 import chathealth.chathealth.dto.request.PostSearch;
 import chathealth.chathealth.dto.request.PostWriteDto;
+import chathealth.chathealth.dto.request.ReviewDto;
 import chathealth.chathealth.dto.response.*;
+import chathealth.chathealth.entity.PictureReView;
+import chathealth.chathealth.entity.Review;
 import chathealth.chathealth.entity.member.Ent;
 import chathealth.chathealth.entity.member.Member;
 import chathealth.chathealth.entity.post.Material;
@@ -34,12 +37,30 @@ public class PostService {
     private final MaterialRepository materialRepository;
     private final MemberRepository memberRepository;
     private final MaterialPostRepository materialPostRepository;
+    private final PictureReviewRepository pictureReviewRepository;
+    private final ReViewRepository reViewRepository;
+
+    public Review insertRe(ReviewDto reviewDto){
+        Review re= Review.builder()
+                .post(postRepository.findById(reviewDto.getPost()).orElseThrow())
+                .member(memberRepository.findById(reviewDto.getMember()).orElseThrow())
+                .content(reviewDto.getContent())
+                .score(reviewDto.getScore())
+                .build();
+        reViewRepository.save(re);
+        for(int i=0;i<reviewDto.getPictureReList().size();i++){
+            PictureReView pic=PictureReView.builder()
+                    .review(re)
+                    .pictureUrl(reviewDto.getPictureReList().get(i))
+                    .build();
+            pictureReviewRepository.save(pic);
+        }
+        return re;
+    }
 
 
     public PostResponseDetails getAllView(long id){
         Post post=postRepository.findById(id).orElseThrow();
-        log.info("postFirst===={}",post);
-        log.info("picturesss===={}",picturePostRepository.findAllByPostId(id));
         return PostResponseDetails.builder()
                 .id(post.getId())
                 .company(post.getMember().getCompany())
