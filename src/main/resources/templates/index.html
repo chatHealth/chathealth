@@ -71,14 +71,9 @@
                                         </th:block>
                                     </div>
                                 </div>
-                                <th:block sec:authorize="hasAnyRole('ROLE_USER', 'ROLE_ADMIN')">
-                                    <a th:href="@{/member/user/{id}(id=${member.id})}" class="btn btn-primary" style="width:100%">내
-                                        정보 보기</a>
-                                </th:block>
-                                <th:block sec:authorize="hasAnyRole('ROLE_WATING_ENT', 'ROLE_REJECTED_ENT', 'ROLE_PERMITTED_ENT')">
-                                    <a th:href="@{/member/ent/{id}(id=${member.id})}" class="btn btn-primary" style="width:100%">내
-                                        정보 보기</a>
-                                </th:block>
+                                <a sec:authorize="hasRole('ROLE_USER')" th:href="@{|/member/user/${#authentication.principal.loggedMember.id}|}" class="btn btn-primary" style="width:100%">내정보 보기</a>
+                                <a sec:authorize="hasAnyRole('ROLE_WAITING_ENT','ROLE_PERMITTED_ENT','ROLE_REJECTED_ENT')" th:href="@{|/member/ent/${#authentication.principal.loggedMember.id}|}" class="btn btn-primary" style="width:100%">내정보 보기</a>
+                                <a sec:authorize="hasRole('ROLE_ADMIN')" th:href="@{/auth/admin}" class="btn btn-primary" style="width:100%">관리 페이지</a>
                             </div>
                         </div>
                     </th:block>

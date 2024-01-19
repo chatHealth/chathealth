@@ -36,6 +36,16 @@ import static chathealth.chathealth.constants.Role.ROLE_WAITING_ENT;
 @RequiredArgsConstructor
 @Slf4j
 public class AuthService implements UserDetailsService {
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        Member member = memberRepository.findByEmail(username).orElseThrow(
+                () -> new UsernameNotFoundException("사용자가 존재하지 않습니다.")
+        );
+        return new CustomUserDetails(member);
+    }
+
+
     @Value("${file.path}")
     private String path;
     private String domain = "profile"+ File.separator;
@@ -109,16 +119,11 @@ public class AuthService implements UserDetailsService {
                 .build();
         memberRepository.save(dbJoinEnt);
     }
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        Member member = memberRepository.findByEmail(email).orElseThrow(
-                () -> new UsernameNotFoundException("사용자가 존재하지 않습니다.")
-        );
-
-        return new CustomUserDetails(member);
-    }
 
     public boolean confirmEmail(String email) {
         boolean isExists = memberRepository.existsByEmail(email);
         return isExists;
     }
+
+
 }
