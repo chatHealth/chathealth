@@ -59,6 +59,8 @@ dependencies {
     //mail
     implementation 'org.springframework.boot:spring-boot-starter-mail'
 
+    // apache commons text
+    implementation 'org.apache.commons:commons-text:1.11.0'
 
 }
 

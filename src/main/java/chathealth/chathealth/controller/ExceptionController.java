@@ -2,7 +2,6 @@ package chathealth.chathealth.controller;
 
 import chathealth.chathealth.dto.response.ErrorResult;
 import chathealth.chathealth.exception.ChatHealthException;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -11,20 +10,22 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+
 @ControllerAdvice
 public class ExceptionController {
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ErrorResult invalidRequestHandler(MethodArgumentNotValidException e) {
+    public ResponseEntity<ErrorResult> invalidRequestHandler(MethodArgumentNotValidException e) {
         ErrorResult errorResult = ErrorResult.builder()
                 .message("잘못된 요청입니다.")
-                .code(HttpStatus.BAD_REQUEST.toString())
+                .code(String.valueOf(BAD_REQUEST.value()))
                 .build();
         for (FieldError fieldError : e.getFieldErrors()) {
             errorResult.addValidError(fieldError.getField(), fieldError.getDefaultMessage());
         }
-            return errorResult;
+        return ResponseEntity.status(BAD_REQUEST).body(errorResult);
     }
 
     @ResponseBody

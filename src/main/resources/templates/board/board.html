@@ -2,7 +2,6 @@
 <html lang="en"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout/layout}"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
 >
 
 <div layout:fragment="content" class="main">
@@ -42,8 +41,11 @@
                 </div>
                 <div class="col-auto" style="display: flex; align-items: center; justify-content: space-between;">
                     <div>
-                        <img th:src="@{|/profile/${board.profile}|}" alt="프로필 이미지" class="profile-image-sm"
-                             onerror="this.src='/img/basic_user.png'">
+                        <!--                        <span th:text="${board.nickname != null ? board.nickname : board.name}">작성자</span>-->
+
+                        <span onclick="toggleContextMenu(event)" style="cursor: pointer">
+                            <img th:src="@{|/profile/${board.profile}|}" alt="프로필 이미지" class="profile-image-sm"
+                                 onerror="this.src='/img/basic_user.png'">
                         <span th:text="${board.nickname != null ? board.nickname : board.name}">작성자</span>
                         <span th:switch="${board.grade?.name()}">
                             <i th:case="'BRONZE'" class="fa fa-medal text-bronze"></i>
@@ -54,6 +56,14 @@
                             <i th:case="'DIAMOND'" class="fa fa-medal text-diamond"></i>
                             <i th:case="null" class="fa fa-medal text-black"></i> <!-- null 처리 -->
                         </span>
+                        </span>
+
+                        <div class="context-menu">
+                            <a th:href="@{/sendMessage(memberId=${board.memberId})}">쪽지 보내기</a>
+                            <a th:href="@{/member/user/{id}(id=${board.memberId})}">유저 정보 보기</a>
+                        </div>
+
+
                     </div>
                     <div>
                         <span th:if="${board.modifiedDate != null}" th:text="|수정일: ${board.modifiedDate}|">수정일</span>
@@ -83,64 +93,316 @@
             </div>
 
         </div>
-        <div>
-            <span th:text="|댓글:${board.commentCount}|">댓글</span>
+        <div id="total-comments">
+            <!--            <span th:text="|댓글:${board.commentCount}|">댓글</span>-->
         </div>
 
-        <!--         삭제 모달 -->
-        <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="deleteModalLabel">삭제 확인</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        정말로 삭제하시겠습니까?
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
-                        <button type="button" class="btn btn-danger" id="deleteConfirm">삭제</button>
-                    </div>
-                    <script th:inline="javascript">
-                        $(document).ready(function () {
-                            $('#deleteConfirm').click(function () {
-                                const boardId = [[${board.boardId}]]
-                                $.ajax({
-                                    url: '/board/' + boardId,
-                                    type: 'DELETE',
-                                    success: function (data) {
-                                        alert('삭제되었습니다.')
-                                        location.href = '/board'
-                                    },
-                                    error: function (error) {
-                                        alert(error.message);
-                                    }
+
+        <!--        댓글-->
+        <div class="row">
+            <div class="col" id="comments">
+
+                <div id="comment-list">
+                    <!-- 댓글 카드 -->
+                    <div id="comment-load"></div>
+                </div>
+                <!-- 댓글 작성 -->
+                <div class="form-group">
+                    <label for="commentInput"></label>
+                    <p id="content-binding" class="text-danger"></p>
+                    <textarea class="form-control" id="commentInput" rows="3"
+                              placeholder="여기에 댓글을 작성하세요"
+                              th:placeholder="${#authorization.expression('hasAnyRole(''ROLE_USER'', ''ROLE_ADMIN'')') ? '여기에 댓글을 작성하세요' : '댓글 작성 권한이 없습니다'}"
+                              th:readonly="${!#authorization.expression('hasAnyRole(''ROLE_USER'', ''ROLE_ADMIN'')')}"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary" id="btn-comment"
+                        th:disabled="${!#authorization.expression('hasAnyRole(''ROLE_USER'', ''ROLE_ADMIN'')')}">댓글 작성
+                </button>
+            </div>
+
+            <!--         삭제 모달 -->
+            <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel"
+                 aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="deleteModalLabel">삭제 확인</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            정말로 삭제하시겠습니까?
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                            <button type="button" class="btn btn-danger" id="deleteConfirm">삭제</button>
+                        </div>
+                        <script th:inline="javascript">
+                            $(document).ready(function () {
+                                $('#deleteConfirm').click(function () {
+                                    const boardId = [[${board.boardId}]]
+                                    $.ajax({
+                                        url: '/board/' + boardId,
+                                        type: 'DELETE',
+                                        success: function (data) {
+                                            alert('삭제되었습니다.')
+                                            location.href = '/board'
+                                        },
+                                        error: function (error) {
+                                            alert(error.message);
+                                        }
+                                    });
                                 });
                             });
-                        });
-                    </script>
+                        </script>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
-<script th:inline="javascript">
-    $(document).ready(function () {
-        $('#deleteConfirm').click(function () {
-            const boardId = [[${board.boardId}]]
+    <script th:inline="javascript">
+        $(document).ready(function () {
+            $('#deleteConfirm').click(function () {
+                const boardId = [[${board.boardId}]]
+                $.ajax({
+                    url: '/board/' + boardId,
+                    type: 'DELETE',
+                    success: function (data) {
+                        alert('삭제되었습니다.')
+                        location.href = '/board'
+                    },
+                    error: function (error) {
+                        alert(error.message);
+                    }
+                });
+            });
+        });
+    </script>
+
+    <!-- 댓글 -->
+    <script th:inline="javascript">
+        // 댓글 리스트
+        const boardId = [[${board.boardId}]];
+        const memberId = [[${board.memberId}]];
+        let page;
+        //마지막 페이지로 로딩하기
+
+
+        $(document).ready(function () {
+            loadComments(page);
+        })
+
+        // 댓글 작성
+        $(document).ready(function () {
+            $('#btn-comment').click(function () {
+                const boardId = [[${board.boardId}]];
+                let content = $('#commentInput').val();
+                let data = {
+                    content: content
+                };
+                $.ajax({
+                    url: '/board-comment/' + boardId,
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(data),
+                    success: function (response) {
+                        document.getElementById("commentInput").value = "";
+                        document.getElementById("content-binding").innerHTML = "";
+                        loadComments();
+                    }, error: function (xhr, status, error) {
+                        let errorResult = JSON.parse(xhr.responseText);
+                        if (errorResult.code === "400") {
+                            if (errorResult.validation.content !== undefined) {
+                                document.getElementById("content-binding").innerHTML = errorResult.validation.content;
+                                document.getElementById("commentInput").focus();
+                            }
+                        } else {
+                            console.log(errorResult);
+                            alert(errorResult.message);
+                        }
+                    }
+                })
+            });
+        })
+
+
+        function loadComments(page) {
+            if (page === null || page === undefined) {
+                $.ajax({
+                    url: `/board-comment/${boardId}`,
+                    type: "GET",
+                    success: function (response) {
+                        page = response.totalPages - 1;
+                        loadComments(page);
+                    }
+                });
+            }
+
+            document.getElementById("comment-load").innerHTML = "";
             $.ajax({
-                url: '/board/' + boardId,
-                type: 'DELETE',
-                success: function (data) {
-                    alert('삭제되었습니다.')
-                    location.href = '/board'
+                url: `/board-comment/${boardId}?page=${page}`,
+                type: "GET",
+                success: function (response) {
+                    let html = "";
+                    $.each(response.content, function (index, item) {
+                        let grade = item.grade;
+                        let iconClass = "fa-medal";
+                        let textColor = "";
+                        switch (grade) {
+                            case "BRONZE":
+                                textColor = "text-bronze";
+                                break;
+                            case "BLACK":
+                                textColor = "text-black";
+                                break;
+                            case "SILVER":
+                                textColor = "text-silver";
+                                break;
+                            case "GOLD":
+                                textColor = "text-gold";
+                                break;
+                            case "PLATINUM":
+                                textColor = "text-platinum";
+                                break;
+                            case "DIAMOND":
+                                textColor = "text-diamond";
+                                break;
+                            default:
+                                textColor = "text-black"; // null 처리
+                                break;
+                        }
+
+                        html += "<div class='card mb-3'>";
+                        html += "<div class='card-header d-flex justify-content-between'>";
+                        html += "<strong><img src='/profile/" + item.profile + "' alt='프로필 이미지' class='profile-image-sm' onError='this.src=\"/img/basic_user.png\"'>";
+                        html += "<span onClick='toggleContextMenu(event)' style='cursor: pointer'>"
+                        html += item.memberNickname;
+                        html += "</span>";
+                        html += "<div class='context-menu'>";
+                        html += "<a href='/sendMessage?memberId=" + item.memberId + "'>쪽지 보내기</a>";
+                        html += "<a href='/member/user/" + item.memberId + "'>유저 정보 보기</a>";
+                        html += "</div>";
+                        html += "<span><i class='fa " + iconClass + " " + textColor + "'></i></span>";
+                        if (item.memberId === memberId) {
+                            html += "<span class='badge bg-dark bg-opacity-50 rounded-pill'>작성자</span>";
+                        }
+                        html += "</strong>";
+                        html += "<small class='text-muted'>" + item.createdDate + "</small>";
+                        html += "</div>";
+                        html += "<div class='card-body'>";
+                        html += "<p class='card-text'>" + item.content + "</p>";
+                        if (item.writer) {
+                            html += "<button type='button' class='btn btn-sm btn-outline-secondary' data-bs-toggle='modal' data-bs-target='#deleteCommentModal' onclick='deleteComment(" + item.id + ")'>삭제</button>";
+                        }
+                        html += "</div>";
+                        html += "</div>";
+                    });
+                    //pagination
+                    html += createPagination(html, response);
+
+                    document.getElementById("comment-load").innerHTML = html;
+                    let html2 = "";
+                    html2 += "<span>" + "댓글:" + response.totalElements + "</span>";
+                    document.getElementById("total-comments").innerHTML = html2;
                 },
                 error: function (error) {
                     alert(error.message);
                 }
             });
-        });
-    });
-</script>
+
+        }
+
+        function createPagination(html, response) {
+            html = "<div class='d-flex justify-content-center'>";
+            html += "<ul class='pagination'>";
+
+            const currentPage = response.pageable.pageNumber;
+            const totalPages = response.totalPages;
+            const pageGroupSize = 5; // 한 번에 보여줄 페이지 수
+            const currentPageGroup = Math.floor(currentPage / pageGroupSize); // 현재 페이지 그룹
+
+            // "Previous" 버튼
+            if (currentPageGroup > 0) {
+                html += "<li class='page-item'>";
+                html += "<a class='page-link' href='#' onclick='loadComments(" + ((currentPageGroup - 1) * pageGroupSize) + ")'>Previous</a>";
+                html += "</li>";
+            }
+
+            // 페이지 번호
+            for (let i = currentPageGroup * pageGroupSize; i < Math.min((currentPageGroup + 1) * pageGroupSize, totalPages); i++) {
+                html += "<li class='page-item" + (currentPage === i ? " active" : "") + "'>";
+                html += "<a class='page-link' href='#' onclick='loadComments(" + i + ")'>" + (i + 1) + "</a>";
+                html += "</li>";
+            }
+
+            // "Next" 버튼
+            if (currentPageGroup < Math.ceil(totalPages / pageGroupSize) - 1) {
+                html += "<li class='page-item'>";
+                html += "<a class='page-link' href='#' onclick='loadComments(" + ((currentPageGroup + 1) * pageGroupSize) + ")'>Next</a>";
+                html += "</li>";
+            }
+
+            html += "</ul>";
+            html += "</div>";
+            return html;
+        }
+
+        // 댓글 삭제
+        function deleteComment(commentId) {
+            $('#deleteConfirmButton').off('click').on('click', function () {
+                $.ajax({
+                    url: `/board-comment/${commentId}`,
+                    type: 'DELETE',
+                    success: function (response) {
+                        // 삭제 성공 후, 모달 닫고 댓글 목록 재로드
+                        $('#deleteCommentModal').modal('hide');
+                        loadComments(); // 현재 페이지 번호를 넘겨주거나 다시 최신 상태로 로드할 수 있음
+                    },
+                    error: function (error) {
+                        alert(error.message);
+                    }
+                });
+            });
+        }
+
+        onclick = 'deleteComment(" + item.commentId + ")'
+
+        function toggleContextMenu(event) {
+            contextClose();
+            event.stopPropagation();
+            let contextMenu = event.currentTarget.nextElementSibling;
+            contextMenu.style.display = contextMenu.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function contextClose() {
+            const contextMenus = document.querySelectorAll('.context-menu');
+            contextMenus.forEach(function (menu) {
+                menu.style.display = 'none';
+            });
+        }
+
+        // 페이지의 다른 곳을 클릭하면 메뉴 닫기
+        window.onclick = function (event) {
+            contextClose();
+        }
+    </script>
+    <div class="modal fade" id="deleteCommentModal" tabindex="-1" aria-labelledby="deleteCommentModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteCommentModalLabel">댓글 삭제 확인</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    댓글을 삭제하시겠습니까?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                    <button type="button" class="btn btn-danger" id="deleteConfirmButton">삭제</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
 </html>
