@@ -1,11 +1,9 @@
 package chathealth.chathealth.controller;
 
 import chathealth.chathealth.dto.request.EntEditDto;
-import chathealth.chathealth.dto.request.UserEditDto;
 import chathealth.chathealth.dto.response.EntInfoDto;
 import chathealth.chathealth.dto.response.PostLikeDto;
 import chathealth.chathealth.dto.response.UserInfoDto;
-import chathealth.chathealth.entity.member.Address;
 import chathealth.chathealth.service.MemberService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -86,10 +84,18 @@ public class MemberController {
     public List<PostLikeDto> getPostLike(@PathVariable Long id){
         return memberService.getPostLike(id);}
 
-    @GetMapping("/user/get-userinfo/{id}")
+
+    @GetMapping("/user/getinfo/{id}")
     @ResponseBody
     public UserInfoDto getUserInfo(@PathVariable String id){
         Long getId = Long.parseLong(id);
         return memberService.getUserInfo(getId);
+    }
+
+    @GetMapping("/ent/getinfo/{id}")
+    @ResponseBody
+    public EntInfoDto getEntInfo(@PathVariable String id){
+        Long getId = Long.parseLong(id);
+        return memberService.getEntInfo(getId);
     }
 }

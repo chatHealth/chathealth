@@ -18,10 +18,10 @@
             </ul>
             <span style="border-top: 1px solid #ccc; display: block; margin: 10px 13px;"></span>
             <ul class="list-group list-group-flush">
-                <li class="list-group-item list-group-item-action"><button class="btn">내 정보</button></li>
-                <li class="list-group-item list-group-item-action"><button class="btn">내 상품</button></li>
-                <li class="list-group-item list-group-item-action"><button class="btn">비밀번호 변경</button></li>
-                <li class="list-group-item list-group-item-action"><button class="btn">회원 탈퇴</button></li>
+                <li class="list-group-item list-group-item-action"><button class="btn" id="myinfoBtn">내 정보</button></li>
+                <li class="list-group-item list-group-item-action"><button class="btn" id="mypostBtn">내 상품</button></li>
+                <li class="list-group-item list-group-item-action"><button class="btn" id="changepwBtn">비밀번호 변경</button></li>
+                <li class="list-group-item list-group-item-action"><button class="btn" id="deleteaccountBtn">회원 탈퇴</button></li>
             </ul>
             <!-- 프로필사진 변경 모달 -->
             <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -49,11 +49,56 @@
 
         </div>
         <!--  컨텐츠 -->
-        <div class="mp-content col-md-6 ms-md-auto">
+        <div class="mp-content col-md-6 ms-md-auto" id="mp-content">
 
         </div>
     </div>
 
+    <script th:inline="javascript">
+        $(document).ready(function () {
+            const id = [[${entInfo.id}]];
+
+            //내정보 버튼
+            $('#myinfoBtn').click(function () {
+                $.ajax({
+                    url: `/member/ent/getinfo/${id}`,
+                    type: "GET",
+                    data: id,
+                    success: function (response) {
+                        displayEntInfo(response);
+                    },
+                    error: function (error) {
+                        alert(JSON.stringify(error));
+                    },
+                    complete: function () {
+                    }
+                });
+            });
+            $('#myinfoBtn').click();
+            function displayEntInfo(response) {
+                const container = $('<div>').addClass('ent-info-container');
+                container.append('<h2 class="mb-4" style="color:#198754;"><b>내 정보</b></h2>');
+
+                const table = $('<table>').addClass('table');
+
+                table.append('<tr><th style="color:#198754;">법인명</th><td>' + response.company + '</td></tr>');
+                table.append('<tr><th style="color:#198754;">대표자</th><td>' + response.ceo + '</td></tr>');
+                table.append('<tr><th style="color:#198754;">이메일(아이디)</th><td>' + response.email + '</td></tr>');
+                table.append('<tr><th style="color:#198754;">주소</th><td>' + response.address.address + '</td></tr>');
+                table.append('<tr><th style="color:#198754;">상세 주소</th><td>' + response.address.addressDetail + '</td></tr>');
+                table.append('<tr><th style="color:#198754;">개업연월일</th><td>' + response.birth + '</td></tr>');
+
+                container.append(table);
+
+                $('#mp-content').empty();
+                $('#mp-content').html(container);
+            }
+
+            //내 상품 버튼
+
+
+        });
+    </script>
     <!-- 프로필사진 변경 스크립트 -->
     <script th:inline="javascript">
         const id = [[${entInfo.id}]];

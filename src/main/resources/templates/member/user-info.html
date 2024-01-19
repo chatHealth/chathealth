@@ -19,7 +19,7 @@
             <span style="border-top: 1px solid #ccc; display: block; margin: 10px 13px;"></span>
             <ul class="list-group list-group-flush">
                 <li class="list-group-item list-group-item-action"><button type="button" class="btn" id="myinfoBtn">내 정보</button></li>
-                <li class="list-group-item list-group-item-action"><button type="button" class="btn" id="postlikeBtn">관심 제품</button></li>
+                <li class="list-group-item list-group-item-action"><button type="button" class="btn" id="postlikeBtn">관심 상품</button></li>
                 <li class="list-group-item list-group-item-action"><button type="button" class="btn" id="myreviewBtn">내 리뷰</button></li>
                 <li class="list-group-item list-group-item-action"><button type="button" class="btn" id="changepwBtn">비밀번호 변경</button></li>
                 <li class="list-group-item list-group-item-action"><button type="button" class="btn" id="deleteaccountBtn">회원 탈퇴</button></li>
@@ -55,16 +55,13 @@
     </div>
 
     <script th:inline="javascript">
-        const id = [[${userInfo.id}]];
-
         $(document).ready(function () {
             const id = [[${userInfo.id}]];
-
+            $('#myinfoBtn').click();
             //내정보 버튼
             $('#myinfoBtn').click(function () {
-                console.log(id);
                 $.ajax({
-                    url: `/member/user/get-userinfo/${id}`,
+                    url: `/member/user/getinfo/${id}`,
                     type: "GET",
                     data: id,
                     success: function (response) {
@@ -77,7 +74,11 @@
                     }
                 });
             });
+            $('#myinfoBtn').click();
             function displayUserInfo(userInfo) {
+                const container = $('<div>').addClass('user-info-container');
+                container.append('<h2 class="mb-4" style="color:#198754;"><b>내 정보</b></h2>');
+
                 const table = $('<table>').addClass('table');
 
                 table.append('<tr><th style="color:#198754;">별명</th><td>' + userInfo.nickname + '</td></tr>');
@@ -87,12 +88,13 @@
                 table.append('<tr><th style="color:#198754;">상세 주소</th><td>' + userInfo.address.addressDetail + '</td></tr>');
                 table.append('<tr><th style="color:#198754;">생년월일</th><td>' + userInfo.birth + '</td></tr>');
 
-                $('#mp-content').empty();
-                $('#mp-content').html(table);
+                container.append(table);
 
+                $('#mp-content').empty();
+                $('#mp-content').html(container);
             }
 
-            //관심제품 버튼
+            //관심상품 버튼
             $('#postlikeBtn').click(function(){
                 $.ajax({
                     url: `/member/post-like/${id}`,
@@ -110,7 +112,7 @@
                             html += '<th>' + i + '</th>'; // "
                             html += '<td><a th:href="/view/"'+item.postId + item.title + '</td>';
                             //조회수 이모티콘 + 조회수
-                            html += '<td><i class="bi bi-heart-fill"></i></td>';
+                            html += '<td><botton><i class="bi bi-heart-fill"></i></botton>></td>';
                             // 행 종료: 현재 인덱스가 4의 배수이고 마지막 요소가 아닐 때
                             html += "</tr>";
                             i++;
@@ -126,56 +128,6 @@
                     }
                 })
             });
-
-            //프로필 사진 변겅
-            $('#editprofilebtn').click(function (e) {
-                e.preventDefault();
-                $('#editModal').modal("show");
-            });
-            $('#close').click(function (e) {
-                e.preventDefault();
-                $('#editModal').modal("hide");
-            });
-            $("#changeProfile").on("change", function (e) {
-                const changeProfile = e.target.files[0];
-                if (!changeProfile.type.match("image.*")) {
-                    alert("이미지 파일만 가능합니다.");
-                    return false;
-                }
-
-                let fileReader = new FileReader();
-                fileReader.onload = function (e) {
-                    $("#preview").attr("src", e.target.result);
-                };
-                fileReader.readAsDataURL(changeProfile);
-            });
-            $('#saveProfileBtn').on("click",function (e) {
-                e.preventDefault();
-
-                const profileForm = $("#changeProfileForm")[0];
-                //document.querySelector("#changeProfileForm");
-                const formData = new FormData(profileForm);
-                $.ajax({
-                    url: `/member/user/${id}`, // Controller에서 요청 받을 주소
-                    method: "PATCH", // PATCH 방식으로 전달
-                    contentType: false,
-                    processData: false,
-                    data: formData,
-                    success: function (response) { // 컨트롤러에서 넘어온 값을 받는다
-                        if (response.isUpdated === "isUpdated") { // 1 이면 -> 성공
-                            $('#editModal').modal("hide");
-                            location.reload();
-                        } else { // 0이면 -> 실패
-                            alert("프로필 변경 실패~~");
-                        }
-                    },
-                    error: function () {
-                        alert("프로필 변경 실패~~");
-                    }
-                });
-        });
-
-
         });
     </script>
 
