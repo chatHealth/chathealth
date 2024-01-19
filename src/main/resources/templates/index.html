@@ -141,14 +141,14 @@
                     let i = 1;
                     html += "<table class=\"table table-hover\">";
                     $.each(response, function (index, item) {
-                        html += "<a href='#'><tr>";
+                        html += "<tr>";
                         html += '<th>' + i + '</th>';
                         html += '<td><img src="' + item.representativeImg + '" class="card-img-top rounded" alt="Image of ' + item.title + '" onError="this.onerror=null; this.src=\'/img/basic_post.svg\'" style="height: 20px"></th>';
-                        html += '<td>' + item.title + '</td>';
+                        html += '<td>' + "<a href='/view/" + item.id + "' style='text-decoration: none; color: inherit'>" + item.title + '</a></td>';
                         //조회수 이모티콘 + 조회수
                         html += '<td><i class=\"fa fa-eye text-secondary\"></i>' + item.hitCount + '</td>';
                         // 행 종료: 현재 인덱스가 4의 배수이고 마지막 요소가 아닐 때
-                        html += "</tr></a>";
+                        html += "</tr>";
                         i++;
                     });
                     html += "</table>";
@@ -172,13 +172,13 @@
                     let i = 1;
                     html += "<table class=\"table table-hover\">";
                     $.each(response, function (index, item) {
-                        html += "<a href='#'><tr>";
+                        html += "<tr>";
                         html += '<th>' + i + '</th>'; // "
                         html += '<td><img src="' + item.representativeImg + '" class="card-img-top rounded" alt="Image of ' + item.title + '" onError="this.onerror=null; this.src=\'/img/basic_post.svg\'" style="height: 20px"></th>';
-                        html += '<td>' + item.title + '</td>';
+                        html += '<td>' + "<a href='/view/" + item.id + "' style='text-decoration: none; color: inherit'>" + item.title + '</a></td>';
                         //조회수 이모티콘 + 조회수
                         html += '<td><i class=\"fa fa-eye text-secondary\"></i>' + item.hitCount + '</td>';
-                        html += "</tr></a>";
+                        html += "</tr>";
                         i++;
                     });
                     html += "</table>";

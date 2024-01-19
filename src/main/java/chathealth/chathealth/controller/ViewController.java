@@ -22,10 +22,12 @@ public class ViewController {
     @GetMapping("/{id}")
     public String viewPage(@PathVariable long id, Model model){
         PostResponseDetails post=postService.getAllView(id);
-        log.info("postpostpost======={}",post);
         model.addAttribute("postList",post);
         return "view/view";
     }
+
+    @GetMapping("/re/{id}")
+    public String Review(){return "view/reView";}
 
 
 

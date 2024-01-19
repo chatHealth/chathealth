@@ -25,6 +25,7 @@ public class SecurityConfig {
                         .requestMatchers("/", "/auth/selection", "/auth/userjoin", "/auth/entjoin", "/auth/login", "/auth/confirmEmail",
                                 "/board", "/board/{id}", "/board/api", "/board/api/recent",
                                 "/post", "/api/post", "/api/post/best", "/api/post/best-week", "/api/post/recent","/post/write",
+                                "/board-commant/{id}",
                                 "/error",
                                 "/css/**", "/js/**", "/img/**",
                                  "/board-image/print","/post-img/**","/profile/**"

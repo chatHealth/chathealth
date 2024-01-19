@@ -1,4 +1,4 @@
-package chathealth.chathealth.entity.post;
+package chathealth.chathealth.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -13,8 +13,8 @@ import static lombok.AccessLevel.PROTECTED;
 @Getter
 @SuperBuilder
 @NoArgsConstructor(access = PROTECTED)
-@Table(name = "PicturePost")
-public class PicturePost {
+@Table(name = "PictureReView")
+public class PictureReView {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
@@ -22,12 +22,11 @@ public class PicturePost {
     private Long id;
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "post_id")
-    private Post post;
+    @JoinColumn(name = "review_id")
+    private Review review;
 
     @Column(name = "picture_url",length = 2000)
     private String pictureUrl;
 
-    private Integer orders;
 
 }
