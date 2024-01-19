@@ -56,13 +56,12 @@ public class MemberController {
     }
 
 
-    @Transactional
+    /*@Transactional
     @ResponseBody
     @PatchMapping("/user/updateInfo")
     public Map<String,String> updateUserInfo(UserEditDto userEditDto) {
         log.info("컨트롤러 들어왔다~");
         Address address = Address.builder()
-                .address(userEditDto.getFrontAddress())
                 .addressDetail(null)
                 .build();
         log.info(address.getAddress());
@@ -73,7 +72,7 @@ public class MemberController {
         Map<String, String> resultMap = new HashMap<>();
         resultMap.put("isUpdated","isUpdated");
         return resultMap;
-    }
+    }*/
 
     @Transactional
     @ResponseBody
