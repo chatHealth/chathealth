@@ -6,14 +6,10 @@ import chathealth.chathealth.dto.response.EntInfoDto;
 import chathealth.chathealth.dto.response.PostLikeDto;
 import chathealth.chathealth.dto.response.UserInfoDto;
 import chathealth.chathealth.entity.member.Address;
-import chathealth.chathealth.repository.MemberRepository;
-import chathealth.chathealth.repository.PostLikeRepository;
 import chathealth.chathealth.service.MemberService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.h2.engine.User;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
@@ -34,17 +30,17 @@ public class MemberController {
 
     //@PreAuthorize("hasRole('USER')") //USER 롤 가지고 있는 사람만 메서드 실행 가능
     @GetMapping("/user/{id}")  //개인 마이페이지로 이동
-    public String getUserInfo(@PathVariable Long id, Model model) {
+    public String goUserInfo(@PathVariable Long id, Model model) {
         UserInfoDto userInfoDto = memberService.getUserInfo(id);
         model.addAttribute("userInfo", userInfoDto);
-       return "member/user-info";
+        return "member/user-info";
 
     }
 
     @GetMapping("/ent/{id}")  //사업자 마이페이지로 이동
-    public String getEntInfo(@PathVariable Long id,Model model) {
+    public String goEntInfo(@PathVariable Long id,Model model) {
         EntInfoDto entInfoDto = memberService.getEntInfo(id);
-        model.addAttribute("entInfo",entInfoDto);
+        model.addAttribute("entInfo", entInfoDto);
         return "member/ent-info";
     }
 
@@ -90,4 +86,11 @@ public class MemberController {
     @ResponseBody
     public List<PostLikeDto> getPostLike(@PathVariable Long id){
         return memberService.getPostLike(id);}
+
+    @GetMapping("/user/get-userinfo/{id}")
+    @ResponseBody
+    public UserInfoDto getUserInfo(@PathVariable String id){
+        Long getId = Long.parseLong(id);
+        return memberService.getUserInfo(getId);
+    }
 }

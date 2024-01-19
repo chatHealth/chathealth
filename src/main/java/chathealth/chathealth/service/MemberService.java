@@ -49,6 +49,7 @@ public class MemberService {
     private String path;
     private String domain = "profile"+File.separator;
 
+
     public UserInfoDto getUserInfo(Long id) {
 
         Member member = memberRepository.findById(id).orElseThrow(
@@ -56,7 +57,6 @@ public class MemberService {
         );
 
         Users findUser = toUser(member);
-
         return UserInfoDto.builder()
                 .id(findUser.getId())
                 .name(findUser.getName())
@@ -66,53 +66,12 @@ public class MemberService {
                 .birth(findUser.getBirth())
                 .deletedDate(findUser.getDeletedDate())
                 .grade(findUser.getGrade())
-                .address(findUser.getAddress())
-                .build();
-    }
-    public UserInfoDto getUserInfo(String email) {
-
-        Member member = memberRepository.findByEmail(email).orElseThrow(
-                UserNotFound::new
-        );
-
-        Users findUser = toUser(member);
-
-        return UserInfoDto.builder()
-                .id(findUser.getId())
-                .name(findUser.getName())
-                .nickname(findUser.getNickname())
-                .email(findUser.getEmail())
-                .profile(findUser.getProfile())
-                .birth(findUser.getBirth())
-                .deletedDate(findUser.getDeletedDate())
-                .grade(findUser.getGrade())
-                .address(findUser.getAddress())
                 .role(findUser.getRole())
+                .address(findUser.getAddress())
                 .build();
     }
-
     public EntInfoDto getEntInfo(Long id) {
         Member member = memberRepository.findById(id).orElseThrow(
-                UserNotFound::new
-        );
-
-        Ent findEnt = toEnt(member);
-
-        return EntInfoDto.builder()
-                .id(findEnt.getId())
-                .email(findEnt.getEmail())
-                .address(findEnt.getAddress())
-                .birth(findEnt.getBirth())
-                .profile(findEnt.getProfile())
-                .deletedDate(findEnt.getDeletedDate())
-                .role(findEnt.getRole())
-                .ceo(findEnt.getCeo())
-                .company(findEnt.getCompany())
-                .entNo(findEnt.getEntNo())
-                .build();
-    }
-    public EntInfoDto getEntInfo(String email) {
-        Member member = memberRepository.findByEmail(email).orElseThrow(
                 UserNotFound::new
         );
 
@@ -187,8 +146,29 @@ public class MemberService {
                         .company(postLike.getPost().getMember().getCompany())
                         .build())
                 .toList();
-        log.info(dto.toString());
         return dto;
+    }
+
+    public List<EntInfoDto> getEntInfoList(Long id) {
+        Ent findEnt = (Ent) memberRepository.findById(id).orElseThrow(
+                UserNotFound::new
+        );
+        return memberRepository.findByEmail(findEnt.getEmail()).stream()
+                .map(u->EntInfoDto.builder()
+                        .id(findEnt.getId())
+                        .email(findEnt.getEmail())
+                        .address(findEnt.getAddress())
+                        .birth(findEnt.getBirth())
+                        .profile(findEnt.getProfile())
+                        .deletedDate(findEnt.getDeletedDate())
+                        .role(findEnt.getRole())
+                        .ceo(findEnt.getCeo())
+                        .company(findEnt.getCompany())
+                        .entNo(findEnt.getEntNo())
+                        .build()
+                )
+                .toList();
+
     }
 
     private static Users toUser(Member member) {
