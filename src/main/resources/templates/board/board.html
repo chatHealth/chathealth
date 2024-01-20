@@ -59,7 +59,7 @@
                         </span>
 
                         <div class="context-menu">
-                            <a th:href="@{/sendMessage(memberId=${board.memberId})}">쪽지 보내기</a>
+                            <a href="#" class="send-message-link" th:data-member-id="${board.memberId}" th:data-member-name="${board.nickname != null ? board.nickname : board.name}">쪽지 보내기</a>
                             <a th:href="@{/member/user/{id}(id=${board.memberId})}">유저 정보 보기</a>
                         </div>
 
@@ -278,7 +278,7 @@
                         html += item.memberNickname;
                         html += "</span>";
                         html += "<div class='context-menu'>";
-                        html += "<a href='/sendMessage?memberId=" + item.memberId + "'>쪽지 보내기</a>";
+                        html += "<a href='#' class='send-message-link' data-member-id='" + item.memberId + "' data-member-name='" + item.memberNickname + "'>쪽지 보내기</a>";
                         html += "<a href='/member/user/" + item.memberId + "'>유저 정보 보기</a>";
                         html += "</div>";
                         html += "<span><i class='fa " + iconClass + " " + textColor + "'></i></span>";

@@ -28,7 +28,7 @@
                         </div>
                         <div class="form-group">
                             <label for="message-text" class="col-form-label">메시지:</label>
-                            <textarea class="form-control" id="message-text"></textarea>
+                            <textarea class="form-control input-scroll" id="message-text"></textarea>
                         </div>
                     </form>
                 </div>
@@ -43,28 +43,32 @@
 
         let receiverId;
 
-        document.addEventListener('DOMContentLoaded', function () {
-            // 쪽지 보내기 링크에 이벤트 리스너 추가
-            document.querySelectorAll('.send-message-link').forEach(function (link) {
-                link.addEventListener('click', function (event) {
-                    event.preventDefault();
-                    receiverId = this.getAttribute('data-member-id');
-                    console.log(receiverId);
-                    // 수신자 ID를 모달의 hidden input에 설정
-                    document.getElementById('recipient-name').value = this.getAttribute('data-member-name');
-                    // 모달 표시
-                    $('#sendMessageModal').modal('show');
-                });
+        $(document).ready(function () {
+            // 이벤트 위임을 사용하여 동적으로 생성된 요소들에 대한 이벤트 핸들링
+            $('body').on('click', '.send-message-link', function (event) {
+                event.preventDefault();
+                receiverId = $(this).data('member-id');
+                console.log(receiverId);
+                // 수신자 ID와 이름을 모달의 입력 필드에 설정
+                $('#recipient-name').val($(this).data('member-name'));
+                // 모달 표시
+                $('#sendMessageModal').modal('show');
             });
         });
-        // document.getElementById('sendMessageModal').querySelector('#btn-send-message').addEventListener('click', function () {
+
+
+        // 쪽지 닫기
+        $('#sendMessageModal').on()
+
         $('#btn-send-message').on('click', function () {
+            sendMessage();
+        });
+        function sendMessage() {
             const data = {
                 title: document.getElementById('message-subject').value,
                 content: document.getElementById('message-text').value,
             };
 
-            console.log(data);
             $.ajax({
                 url: '/api/message/' + receiverId,
                 type: 'POST',
@@ -73,6 +77,8 @@
                 success: function (response) {
                     alert('쪽지를 보냈습니다.');
                     $('#sendMessageModal').modal('hide');
+                    document.getElementById('message-subject').value = '';
+                    document.getElementById('message-text').value = '';
                 },
                 error: function (xhr) {
                     let errorResult = JSON.parse(xhr.responseText);
@@ -80,20 +86,21 @@
                         if (errorResult.validation !== undefined) {
                             if (errorResult.validation.title !== undefined) {
                                 document.getElementById('message-subject').placeholder = errorResult.validation.title;
-                            }
-                            if (errorResult.validation.content !== undefined) {
+                                alert(errorResult.validation.title);
+                            }else if (errorResult.validation.content !== undefined) {
                                 document.getElementById('message-text').placeholder = errorResult.validation.content;
+                                alert(errorResult.validation.content);
                             }
                         } else {
                             alert(errorResult.message);
                         }
                     } else {
-                        console.log(errorResult);
                         alert(errorResult.message);
                     }
                 }
             })
-        });
+        }
+
 
     </script>
 </div>

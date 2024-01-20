@@ -3,10 +3,12 @@ package chathealth.chathealth.dto.response.message;
 import chathealth.chathealth.entity.Message;
 import chathealth.chathealth.entity.member.Users;
 import lombok.Builder;
+import lombok.Getter;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+@Getter
 public class MessageSendResponse {
 
     private Long id;
@@ -22,8 +24,8 @@ public class MessageSendResponse {
         this.receiverId = receiverId;
         this.receiverNickname = receiverNickname;
         this.title = title;
-        this.sendDate = sendDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-        this.isRead = isRead != 1;
+        this.sendDate = sendDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+        this.isRead = isRead == 1;
     }
 
     public static MessageSendResponse get(Message message, Users receiver) {
@@ -31,7 +33,7 @@ public class MessageSendResponse {
                 .id(message.getId())
                 .title(message.getTitle())
                 .receiverId(receiver.getId())
-                .receiverNickname(receiver.getNickname())
+                .receiverNickname(receiver.getNickname() == null ? receiver.getName() : receiver.getNickname())
                 .isRead(message.getIsRead())
                 .sendDate(message.getCreatedDate())
                 .build();

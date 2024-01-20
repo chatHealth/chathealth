@@ -1,21 +1,23 @@
 package chathealth.chathealth.controller;
 
+import chathealth.chathealth.constants.Role;
 import chathealth.chathealth.dto.request.EntJoinDto;
 import chathealth.chathealth.dto.request.UserJoinDto;
+import chathealth.chathealth.dto.response.CustomUserDetails;
 import chathealth.chathealth.entity.member.Address;
-
-
 import chathealth.chathealth.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import static chathealth.chathealth.constants.Role.ROLE_USER;
 
 @Controller
 @RequestMapping("/auth")
@@ -37,13 +39,13 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public String loginProcess(){
+    public String loginProcess() {
         return "redirect:/";
     }
 
     //로그아웃
     @PostMapping("/logout")
-    public String logout(){
+    public String logout() {
         return "auth/logout";
     }
 
@@ -118,5 +120,32 @@ public class AuthController {
         resultMap.put("isExist", isExist);
         return resultMap;
 
+    }
+
+    // 로그인 상태 확인 api
+    @ResponseBody
+    @GetMapping("/login-check")
+    public Boolean loginCheck(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        return customUserDetails != null;
+    }
+
+    // 로그인한게 유저인지 확인 api
+    @ResponseBody
+    @GetMapping("/is-user")
+    public Boolean isUser(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        if(customUserDetails == null) {
+            return false;
+        }
+        return customUserDetails.getLoggedMember().getRole().equals(ROLE_USER);
+    }
+
+    // 로그인한게 ent인지 확인 api
+    @ResponseBody
+    @GetMapping("/is-ent")
+    public Boolean isEnt(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        if(customUserDetails == null) {
+            return false;
+        }
+        return Role.getEntRoles().contains(customUserDetails.getLoggedMember().getRole());
     }
 }

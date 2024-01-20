@@ -18,6 +18,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -55,7 +56,7 @@ public class MessageService {
 
     //보낸 쪽지 읽기
     public MessageSendResponseDetail getSendMessage(Long messageId) {
-        Message message = messageRepository.findById(messageId).orElseThrow(MessageNotFound::new);
+        Message message = messageRepository.findFetchById(messageId).orElseThrow(MessageNotFound::new);
 
         Users receiver;
         if (message.getReceiver() instanceof Users) {
@@ -68,14 +69,17 @@ public class MessageService {
     }
 
     //받은 쪽지 읽기 + 쪽지 읽음 처리
+    @Transactional
     public MessageReceiveResponseDetail getReceivedMessage(Long messageId) {
-        Message message = messageRepository.findById(messageId).orElseThrow(MessageNotFound::new);
+        Message message = messageRepository.findFetchById(messageId).orElseThrow(MessageNotFound::new);
 
-        if (message.getIsRead() == 1) {
-            message.getReadMessage();
+        if (message.getIsRead() == 0) {
+            System.out.println("읽지 않은 쪽지 읽음 처리");
+            message.readMessage();
         }
 
         Users sender;
+
         if (message.getSender() instanceof Users) {
             sender = (Users) message.getSender();
         } else {
@@ -107,7 +111,7 @@ public class MessageService {
 
     public boolean isSender(Authentication authentication, Long messageId) {
         String currentUsername = authentication.getName();
-        String senderEmail = messageRepository.findById(messageId)
+        String senderEmail = messageRepository.findFetchById(messageId)
                 .orElseThrow(MessageNotFound::new).getSender().getEmail();
         return currentUsername.equals(senderEmail);
     }

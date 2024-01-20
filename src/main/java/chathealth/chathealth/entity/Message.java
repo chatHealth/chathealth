@@ -42,7 +42,7 @@ public class Message extends BaseEntity{
     @JoinColumn(name = "receiver_id")
     private Member receiver;
 
-    public void getReadMessage() {
+    public void readMessage() {
         this.isRead = 1;
     }
 }

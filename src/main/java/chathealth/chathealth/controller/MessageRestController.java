@@ -33,12 +33,14 @@ public class MessageRestController {
     }
 
     //받은 쪽지함
+    @Secured({"ROLE_USER", "ROLE_ADMIN"})
     @GetMapping("/api/message/received")
     public Page<MessageReceiveResponse> receivedMessages(@AuthenticationPrincipal CustomUserDetails customUserDetails, Pageable pageable) {
         return messageService.receivedMessages(customUserDetails, pageable);
     }
 
     //보낸 쪽지함
+    @Secured({"ROLE_USER", "ROLE_ADMIN"})
     @GetMapping("/api/message/send")
     public Page<MessageSendResponse> sendMessages(@AuthenticationPrincipal CustomUserDetails customUserDetails, Pageable pageable) {
         return messageService.sendMessages(customUserDetails, pageable);
@@ -52,24 +54,28 @@ public class MessageRestController {
     }
 
     //보낸 쪽지 읽기
-    @GetMapping("/api/message/{id}")
+    @Secured({"ROLE_USER", "ROLE_ADMIN"})
+    @GetMapping("/api/message/send/{id}")
     public MessageSendResponseDetail getSendMessage(@PathVariable Long id) {
         return messageService.getSendMessage(id);
     }
 
     //받은 쪽지 읽기
+    @Secured({"ROLE_USER", "ROLE_ADMIN"})
     @GetMapping("/api/message/received/{id}")
     public MessageReceiveResponseDetail getReceivedMessage(@PathVariable Long id) {
         return messageService.getReceivedMessage(id);
     }
 
     //읽지 않은 쪽지 개수
+    @Secured({"ROLE_USER", "ROLE_ADMIN"})
     @GetMapping("/api/message/unread")
     public Long getUnreadMessageCount(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
         return messageService.getUnreadMessageCount(customUserDetails);
     }
 
     //읽지 않은 쪽지함
+    @Secured({"ROLE_USER", "ROLE_ADMIN"})
     @GetMapping("/api/message/received/unread")
     public Page<MessageReceiveResponse> getUnreadMessages(@AuthenticationPrincipal CustomUserDetails customUserDetails, Pageable pageable) {
         return messageService.getUnreadMessages(customUserDetails, pageable);

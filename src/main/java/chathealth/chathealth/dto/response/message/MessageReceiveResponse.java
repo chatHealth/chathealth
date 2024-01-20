@@ -24,8 +24,8 @@ public class MessageReceiveResponse {
         this.senderId = senderId;
         this.senderNickname = senderNickname;
         this.title = title;
-        this.sendDate = sendDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-        this.isRead = isRead != 1;
+        this.sendDate = sendDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+        this.isRead = isRead == 1;
     }
 
     public static MessageReceiveResponse get(Message message, Users sender) {
@@ -33,7 +33,7 @@ public class MessageReceiveResponse {
                 .id(message.getId())
                 .title(message.getTitle())
                 .senderId(sender.getId())
-                .senderNickname(sender.getNickname())
+                .senderNickname(sender.getNickname() == null ? sender.getName() : sender.getNickname())
                 .isRead(message.getIsRead())
                 .sendDate(message.getCreatedDate())
                 .build();

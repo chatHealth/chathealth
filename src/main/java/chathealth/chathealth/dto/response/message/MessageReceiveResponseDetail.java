@@ -29,7 +29,7 @@ public class MessageReceiveResponseDetail {
     public static MessageReceiveResponseDetail get(Message message, Users sender) {
         return MessageReceiveResponseDetail.builder()
                 .senderId(sender.getId())
-                .senderNickname(sender.getNickname())
+                .senderNickname(sender.getNickname() == null ? sender.getName() : sender.getNickname())
                 .title(message.getTitle())
                 .sendDate(message.getCreatedDate())
                 .content(message.getContent())
