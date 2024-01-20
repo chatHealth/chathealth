@@ -17,8 +17,8 @@ import static lombok.AccessLevel.PROTECTED;
 @Getter
 @NoArgsConstructor(access = PROTECTED)
 @SuperBuilder
-@SQLDelete(sql = "UPDATE message SET deleted_date = CURRENT_TIMESTAMP where message_id = ?") //h2
-//@SQLDelete(sql = "UPDATE message SET deleted_date = SYSDATE where board_id = ?") //oracle
+//@SQLDelete(sql = "UPDATE message SET deleted_date = CURRENT_TIMESTAMP where message_id = ?") //h2 보낸 쪽에서만 삭제
+@SQLDelete(sql = "UPDATE message SET deleted_date = SYSDATE where board_id = ?") //oracle 보낸 쪽에서만 삭제
 public class Message extends BaseEntity{
 
     @Id

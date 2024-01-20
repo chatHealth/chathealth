@@ -86,6 +86,7 @@
             checkUser();
 
             // 로그인한게 유저인지
+            let checkMessagesInterval;
             function checkUser() {
                 $.ajax({
                     url: "/auth/is-user",
@@ -93,7 +94,8 @@
                     success: function (isUser) {
                         if (isUser) {
                             checkUnreadMessages(); // 최초 실행
-                            // setInterval(checkUnreadMessages, 10000); // 10초마다 반복
+                            // requestNotificationPermission();
+                            checkMessagesInterval = setInterval(checkUnreadMessages, 10000); // 10초마다 반복
                         } else {
                             $("#messageCount").hide();
                         }
@@ -104,27 +106,45 @@
             }
 
             // 읽지 않은 쪽지 개수 확인
+            let lastUnreadCount = 0; // 마지막으로 확인한 읽지 않은 메시지 수
             function checkUnreadMessages() {
                 $.ajax({
                     url: "/api/message/unread",
                     type: "GET",
                     success: function (response) {
-                        if (response > 0) {
-                            let currentCount = $("#messageCount").text();
-                            let newCount = response > 99 ? "99+" : response;
-                            if (currentCount !== newCount) {
-                                $("#messageCount").text(newCount).show();
-                            }
-                        } else {
+                        let newCount = response > 99 ? "99+" : response.toString();
+                        if (response > lastUnreadCount) {
+                            // 읽지 않은 메시지 수가 증가한 경우에만 알림 표시
+                            $("#messageCount").text(newCount).show();
+                            showNewMessageNotification();
+                            lastUnreadCount = response; // 마지막 읽지 않은 메시지 수 업데이트
+                        } else if (response <= lastUnreadCount && newCount !== $("#messageCount").text()) {
+                            // 읽지 않은 메시지 수가 감소한 경우, 카운트만 업데이트
+                            $("#messageCount").text(newCount);
+                        }
+
+                        if (response === 0) {
                             $("#messageCount").hide();
                         }
                     },
                     error: function (response) {
-                        alert(response.message)
+                        if (response.status === 401) {
+                            clearInterval(checkMessagesInterval);
+                            alert("로그인 세션이 만료되었습니다. 다시 로그인해주세요.");
+                            window.location.href = "/auth/login";
+                        }
+                        else{
+                            alert(response.message)
+                        }
                     }
                 });
             }
         });
+
+        //알림
+        function showNewMessageNotification() {
+            toastr.info('새 쪽지가 도착했습니다!');
+        }
 
         // 쪽지함 모달 열기(확인 안한 쪽지 페이지 로드)
         $("#messageButton").click(function () {
@@ -441,8 +461,6 @@
 
         // 쪽지 답장 보내기
         function replyMessage(replyReceiverId, replyReceiverNickname, title){
-            console.log(replyReceiverId);
-            console.log(replyReceiverNickname);
             let messageDetail = $("#messageModal #message-detail");
             messageDetail.empty(); // 기존 내용 제거
             let html = "";
