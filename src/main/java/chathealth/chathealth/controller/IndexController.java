@@ -23,14 +23,14 @@ public class IndexController {
 
         if (customUserDetails != null){
             Member loggedMember = customUserDetails.getLoggedMember();
-            String email = loggedMember.getEmail();
+            Long id = loggedMember.getId();
             Role role = loggedMember.getRole();
 
             if (Role.getEntRoles().contains(role)) {
-                model.addAttribute("member", memberService.getEntInfo(email));
+                model.addAttribute("member", memberService.getEntInfo(id));
             } else {
-                memberService.getUserInfo(email);
-                model.addAttribute("member", memberService.getUserInfo(email));
+                memberService.getUserInfo(id);
+                model.addAttribute("member", memberService.getUserInfo(id));
             }
         }
         return "index";

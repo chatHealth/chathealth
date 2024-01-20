@@ -3,25 +3,25 @@ package chathealth.chathealth.service;
 import chathealth.chathealth.dto.request.EntEditDto;
 import chathealth.chathealth.dto.request.UserEditDto;
 import chathealth.chathealth.dto.response.EntInfoDto;
+import chathealth.chathealth.dto.response.PostLikeDto;
 import chathealth.chathealth.dto.response.UserInfoDto;
 import chathealth.chathealth.entity.member.Ent;
 import chathealth.chathealth.entity.member.Member;
 import chathealth.chathealth.constants.Role;
 import chathealth.chathealth.entity.member.Users;
-import chathealth.chathealth.exception.NotExistFile;
+import chathealth.chathealth.entity.post.PostLike;
 import chathealth.chathealth.exception.NotPermitted;
 import chathealth.chathealth.exception.UserNotFound;
 import chathealth.chathealth.repository.MemberRepository;
+import chathealth.chathealth.repository.PostLikeRepository;
+import chathealth.chathealth.repository.post.PostRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -41,9 +41,14 @@ import static chathealth.chathealth.constants.Role.*;
 public class MemberService {
 
     private final MemberRepository memberRepository;
+    private final PostLikeRepository postLikeRepository;
+    private final PostRepository postRepository;
+
+
     @Value("${file.path}")
     private String path;
     private String domain = "profile"+File.separator;
+
 
     public UserInfoDto getUserInfo(Long id) {
 
@@ -52,7 +57,6 @@ public class MemberService {
         );
 
         Users findUser = toUser(member);
-
         return UserInfoDto.builder()
                 .id(findUser.getId())
                 .name(findUser.getName())
@@ -62,53 +66,12 @@ public class MemberService {
                 .birth(findUser.getBirth())
                 .deletedDate(findUser.getDeletedDate())
                 .grade(findUser.getGrade())
-                .address(findUser.getAddress())
-                .build();
-    }
-    public UserInfoDto getUserInfo(String email) {
-
-        Member member = memberRepository.findByEmail(email).orElseThrow(
-                UserNotFound::new
-        );
-
-        Users findUser = toUser(member);
-
-        return UserInfoDto.builder()
-                .id(findUser.getId())
-                .name(findUser.getName())
-                .nickname(findUser.getNickname())
-                .email(findUser.getEmail())
-                .profile(findUser.getProfile())
-                .birth(findUser.getBirth())
-                .deletedDate(findUser.getDeletedDate())
-                .grade(findUser.getGrade())
-                .address(findUser.getAddress())
                 .role(findUser.getRole())
+                .address(findUser.getAddress())
                 .build();
     }
-
     public EntInfoDto getEntInfo(Long id) {
         Member member = memberRepository.findById(id).orElseThrow(
-                UserNotFound::new
-        );
-
-        Ent findEnt = toEnt(member);
-
-        return EntInfoDto.builder()
-                .id(findEnt.getId())
-                .email(findEnt.getEmail())
-                .address(findEnt.getAddress())
-                .birth(findEnt.getBirth())
-                .profile(findEnt.getProfile())
-                .deletedDate(findEnt.getDeletedDate())
-                .role(findEnt.getRole())
-                .ceo(findEnt.getCeo())
-                .company(findEnt.getCompany())
-                .entNo(findEnt.getEntNo())
-                .build();
-    }
-    public EntInfoDto getEntInfo(String email) {
-        Member member = memberRepository.findByEmail(email).orElseThrow(
                 UserNotFound::new
         );
 
@@ -174,6 +137,39 @@ public class MemberService {
         }
     }
 
+    public List<PostLikeDto> getPostLike(Long id){
+        List<PostLikeDto> dto = postLikeRepository.findByMemberId(id).stream()
+                .map(postLike -> PostLikeDto.builder()
+                        .memberId(postLike.getMember().getId())
+                        .postId(postLike.getPost().getId())
+                        .title(postLike.getPost().getTitle())
+                        .company(postLike.getPost().getMember().getCompany())
+                        .build())
+                .toList();
+        return dto;
+    }
+
+    public List<EntInfoDto> getEntInfoList(Long id) {
+        Ent findEnt = (Ent) memberRepository.findById(id).orElseThrow(
+                UserNotFound::new
+        );
+        return memberRepository.findByEmail(findEnt.getEmail()).stream()
+                .map(u->EntInfoDto.builder()
+                        .id(findEnt.getId())
+                        .email(findEnt.getEmail())
+                        .address(findEnt.getAddress())
+                        .birth(findEnt.getBirth())
+                        .profile(findEnt.getProfile())
+                        .deletedDate(findEnt.getDeletedDate())
+                        .role(findEnt.getRole())
+                        .ceo(findEnt.getCeo())
+                        .company(findEnt.getCompany())
+                        .entNo(findEnt.getEntNo())
+                        .build()
+                )
+                .toList();
+
+    }
 
     private static Users toUser(Member member) {
         if (!(member instanceof Users)) throw new UserNotFound();

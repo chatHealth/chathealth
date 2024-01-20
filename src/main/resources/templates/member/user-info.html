@@ -5,12 +5,12 @@
 
 <div layout:fragment="content" class="main mp-main d-flex justify-content-center">
     <div class="container d-flex justify-content-center row mt-5">
-        <!--  사이드 바 -->
+        <!--  고정 사이드 바 -->
         <div class="mp-sidebar col-md-3 ms-md-auto">
             <ul class="list-group list-group-flush">
                 <li class="list-group-item text-center">
-                    <button id="editbtn" class="btn edit-profile">
-                        <img th:src="@{|/profile/${userInfo.profile}|}" alt="프로필사진" id="profile" style="width: 100px; height: 100px; border-radius: 50%; overflow: hidden; object-fit: cover;"></br>
+                    <button id="editprofilebtn" class="btn edit-profile">
+                        <img th:src="@{|/profile/${userInfo.profile}|}" alt="프로필사진" id="profile" style="width: 100px; height: 100px; border-radius: 50%; overflow: hidden; object-fit: cover;" ></br>
                         <p>프로필 수정</p>
                     </button>
                 </li>
@@ -18,11 +18,11 @@
             </ul>
             <span style="border-top: 1px solid #ccc; display: block; margin: 10px 13px;"></span>
             <ul class="list-group list-group-flush">
-                <li class="list-group-item list-group-item-action"><a>내 정보</a></li>
-                <li class="list-group-item list-group-item-action"><a>관심 제품</a></li>
-                <li class="list-group-item list-group-item-action"><a>내 리뷰</a></li>
-                <li class="list-group-item list-group-item-action"><a>비밀번호 변경</a></li>
-                <li class="list-group-item list-group-item-action"><a>회원 탈퇴</a></li>
+                <li class="list-group-item list-group-item-action"><button type="button" class="btn" id="myinfoBtn">내 정보</button></li>
+                <li class="list-group-item list-group-item-action"><button type="button" class="btn" id="postlikeBtn">관심 상품</button></li>
+                <li class="list-group-item list-group-item-action"><button type="button" class="btn" id="myreviewBtn">내 리뷰</button></li>
+                <li class="list-group-item list-group-item-action"><button type="button" class="btn" id="changepwBtn">비밀번호 변경</button></li>
+                <li class="list-group-item list-group-item-action"><button type="button" class="btn" id="deleteaccountBtn">회원 탈퇴</button></li>
             </ul>
             <!-- 프로필사진 변경 모달 -->
             <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -49,50 +49,94 @@
 
         </div>
         <!--  컨텐츠 -->
-        <div class="mp-content col-md-6 ms-md-auto">
-            <div class="col-9">
-                <h2 class="fw-weight-bold mb-5">내 정보</h2>
-                <table class="table">
-                    <tr>
-                        <th>닉네임</th>
-                        <td th:text="${userInfo.nickname}"></td>
-                    </tr>
-                    <tr>
-                        <th>이름</th>
-                        <td th:text="${userInfo.name}"></td>
-                    </tr>
-                    <tr>
-                        <th>주소</th>
-                        <td th:if="${userInfo != null and userInfo.address != null and #strings.isEmpty(userInfo.address.addressDetail) and #strings.isEmpty(userInfo.address.address)}">
-                            주소정보가 없습니다
-                        </td>
+        <div class="mp-content col-md-6 ms-md-auto" id="mp-content">
 
-                        <td th:if="${userInfo != null and userInfo.address != null and !#strings.isEmpty(userInfo.address.addressDetail)}"
-                            th:text="${userInfo.address.address} + ' ' + ${userInfo.address.addressDetail}">
-                        </td>
-
-                        <td th:if="${userInfo.address != null and userInfo.address.address != null and userInfo.address.addressDetail == null}"
-                            th:text="${userInfo.address.address}">
-                        </td>
-
-                    </tr>
-                    <tr>
-                        <th>아이디</th>
-                        <td th:text="${userInfo.email}"></td>
-                    </tr>
-                </table>
-                <a href="#" class="link-underline-opacity-0"><p>정보 수정</p></a>
-            </div>
         </div>
     </div>
+
+    <script th:inline="javascript">
+        $(document).ready(function () {
+            const id = [[${userInfo.id}]];
+            $('#myinfoBtn').click();
+            //내정보 버튼
+            $('#myinfoBtn').click(function () {
+                $.ajax({
+                    url: `/member/user/getinfo/${id}`,
+                    type: "GET",
+                    data: id,
+                    success: function (response) {
+                        displayUserInfo(response);
+                    },
+                    error: function (error) {
+                        alert(JSON.stringify(error));
+                    },
+                    complete: function () {
+                    }
+                });
+            });
+            $('#myinfoBtn').click();
+            function displayUserInfo(userInfo) {
+                const container = $('<div>').addClass('user-info-container');
+                container.append('<h2 class="mb-4" style="color:#198754;"><b>내 정보</b></h2>');
+
+                const table = $('<table>').addClass('table');
+
+                table.append('<tr><th style="color:#198754;">별명</th><td>' + userInfo.nickname + '</td></tr>');
+                table.append('<tr><th style="color:#198754;">이름</th><td>' + userInfo.name + '</td></tr>');
+                table.append('<tr><th style="color:#198754;">이메일(아이디)</th><td>' + userInfo.email + '</td></tr>');
+                table.append('<tr><th style="color:#198754;">주소</th><td>' + userInfo.address.address + '</td></tr>');
+                table.append('<tr><th style="color:#198754;">상세 주소</th><td>' + userInfo.address.addressDetail + '</td></tr>');
+                table.append('<tr><th style="color:#198754;">생년월일</th><td>' + userInfo.birth + '</td></tr>');
+
+                container.append(table);
+
+                $('#mp-content').empty();
+                $('#mp-content').html(container);
+            }
+
+            //관심상품 버튼
+            $('#postlikeBtn').click(function(){
+                $.ajax({
+                    url: `/member/post-like/${id}`,
+                    type:"GET",
+                    dataType: "JSON",
+                    success: function (response) {
+                        let html="";
+                        if(response.length === 0){
+                            html += "<h3 style='color:#198754;'>관심 상품이 없습니다.</h3>"
+                        }
+                        let i = 1;
+                        html += "<table class=\"table table-hover\">";
+                        $.each(response, function (index, item) {
+                            html += "<tr>";
+                            html += '<th>' + i + '</th>'; // "
+                            html += '<td><a th:href="/view/"'+item.postId + item.title + '</td>';
+                            //조회수 이모티콘 + 조회수
+                            html += '<td><botton><i class="bi bi-heart-fill"></i></botton>></td>';
+                            // 행 종료: 현재 인덱스가 4의 배수이고 마지막 요소가 아닐 때
+                            html += "</tr>";
+                            i++;
+                        });
+                        html += "</table>";
+                        $('#mp-content').empty();
+                        $('.mp-content').html(html);
+                    },
+                    error: function (error) {
+                        alert(JSON.stringify(error));
+                    },
+                    complete: function () {
+                    }
+                })
+            });
+        });
+    </script>
 
     <!-- 프로필사진 변경 스크립트 -->
     <script th:inline="javascript">
         const id = [[${userInfo.id}]];
 
-        $('#editbtn').click(function (e) {
+        $('#editprofilebtn').click(function (e) {
             e.preventDefault();
-            console.log("버튼은 눌림");
             $('#editModal').modal("show");
         });
 
@@ -130,6 +174,7 @@
                 success: function (response) { // 컨트롤러에서 넘어온 값을 받는다
                     if (response.isUpdated === "isUpdated") { // 1 이면 -> 성공
                         $('#editModal').modal("hide");
+                        location.reload();
                     } else { // 0이면 -> 실패
                         alert("프로필 변경 실패~~");
                     }
@@ -140,6 +185,28 @@
             });
         });
     </script>
+    <!-- 정보변경 스크립트 진짜 못해먹겠다 -->
+    <!--<script th:inline="javascript">
+        $(document).ready(function () {
+            // editInfoBtn 클릭 시 실행되는 함수
+            $('#editInfoBtn').click(function () {
+                // 각 td의 내용을 input으로 변경
+                $('#frontAddress, #nickname').each(function () {
+                    var content = $(this).text();
+                    var id = $(this).attr('id');
+                    var input = $('<input>').attr({
+                        'type': 'text',
+                        'id': 'input' + id, // input에 id 추가
+                    }).addClass('form-control').val(content);
+                    $(this).html(input);
+                });
 
+                // 버튼을 저장 버튼으로 변경
+                $('#editInfoBtn').attr('id', 'saveInfoBtn').text('정보 저장');
+
+                // saveInfoBtn 클릭 시 실행되는 함수 바인딩
+            });
+        });
+    </script>-->
 </div>
 </html>

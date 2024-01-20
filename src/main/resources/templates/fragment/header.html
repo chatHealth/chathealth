@@ -37,19 +37,12 @@
                                     </button>
                                 </li>
                             </th:block>
-                            <li class="nav-item"><a href="" th:href="@{/post}" class="nav-link">post</a></li>
-                            <li class="nav-item" sec:authorize="hasRole('ROLE_USER')"><a href=""
-                                                                                         th:href="@{|/member/user/${#authentication.principal.loggedMember.id}|}"
-                                                                                         class="nav-link">마이 페이지</a>
-                            </li>
-                            <li class="nav-item" sec:authorize="hasRole('ROLE_PERMITTED_ENT')"><a href=""
-                                                                                                  th:href="@{|/member/ent/${#authentication.principal.loggedMember.id}|}"
-                                                                                                  class="nav-link">마이
-                                페이지</a></li>
-                            <li class="nav-item" sec:authorize="hasRole('ROLE_WAITING_ENT')"><a href=""
-                                                                                                th:href="@{|/member/ent/${#authentication.principal.loggedMember.id}|}"
-                                                                                                class="nav-link">마이
-                                페이지</a></li>
+                            <li class="nav-item"><a href="#" th:href="@{/post}" class="nav-link">건강기능식품</a></li>
+                            <li class="nav-item"><a href="#" th:href="@{/board}" class="nav-link">커뮤니티</a></li>
+                            <li class="nav-item" sec:authorize="hasRole('ROLE_USER')"><a href="" th:href="@{|/member/user/${#authentication.principal.loggedMember.id}|}" class="nav-link">마이 페이지</a></li>
+                            <li class="nav-item" sec:authorize="hasRole('ROLE_PERMITTED_ENT')"><a href="" th:href="@{|/member/ent/${#authentication.principal.loggedMember.id}|}" class="nav-link">마이 페이지</a></li>
+                            <li class="nav-item" sec:authorize="hasRole('ROLE_WAITING_ENT')"><a href="" th:href="@{|/member/ent/${#authentication.principal.loggedMember.id}|}" class="nav-link">마이 페이지</a></li>
+                            <li class="nav-item" sec:authorize="hasRole('ROLE_REJECTED_ENT')"><a href="" th:href="@{|/member/ent/${#authentication.principal.loggedMember.id}|}" class="nav-link">마이 페이지</a></li>
                             <li class="nav-item"><a href="" th:href="@{/auth/logout}" class="nav-link">로그아웃</a></li>
                         </ul>
                     </th:block>
