@@ -54,7 +54,14 @@ public class MessageService {
         messageRepository.deleteById(messageId);
     }
 
+    //쪽지 삭제 (받은 사람 쪽에서만 삭제)
+    @Transactional
+    public void deleteReceivedMessage(Long messageId) {
+        Message message = messageRepository.findFetchById(messageId).orElseThrow(MessageNotFound::new);
+        message.deleteReceivedMessage();
+    }
     //보낸 쪽지 읽기
+
     public MessageSendResponseDetail getSendMessage(Long messageId) {
         Message message = messageRepository.findFetchById(messageId).orElseThrow(MessageNotFound::new);
 
@@ -67,8 +74,8 @@ public class MessageService {
 
         return MessageSendResponseDetail.get(message, receiver);
     }
-
     //받은 쪽지 읽기 + 쪽지 읽음 처리
+
     @Transactional
     public MessageReceiveResponseDetail getReceivedMessage(Long messageId) {
         Message message = messageRepository.findFetchById(messageId).orElseThrow(MessageNotFound::new);
@@ -88,8 +95,8 @@ public class MessageService {
 
         return MessageReceiveResponseDetail.get(message, sender);
     }
-
     //받은 쪽지 중 읽지 않은 쪽지 개수
+
     public Long getUnreadMessageCount(CustomUserDetails customUserDetails) {
         Member member = memberRepository.findByEmail(customUserDetails.getLoggedMember().getEmail()).orElseThrow(UserNotFound::new);
         if (member instanceof Users) {
@@ -98,8 +105,8 @@ public class MessageService {
             throw new UserNotFound();
         }
     }
-
     //받은 쪽지 중 읽지 않은 쪽지 리스트
+
     public Page<MessageReceiveResponse> getUnreadMessages(CustomUserDetails customUserDetails, Pageable pageable) {
         Member member = memberRepository.findByEmail(customUserDetails.getLoggedMember().getEmail()).orElseThrow(UserNotFound::new);
         if (member instanceof Users) {
@@ -114,5 +121,12 @@ public class MessageService {
         String senderEmail = messageRepository.findFetchById(messageId)
                 .orElseThrow(MessageNotFound::new).getSender().getEmail();
         return currentUsername.equals(senderEmail);
+    }
+
+    public boolean isReceiver(Authentication authentication, Long messageId) {
+        String currentUsername = authentication.getName();
+        String receiverEmail = messageRepository.findFetchById(messageId)
+                .orElseThrow(MessageNotFound::new).getReceiver().getEmail();
+        return currentUsername.equals(receiverEmail);
     }
 }

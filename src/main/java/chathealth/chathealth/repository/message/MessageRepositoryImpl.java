@@ -24,7 +24,7 @@ public class MessageRepositoryImpl implements MessageRepositoryCustom {
     @Override
     public Page<MessageReceiveResponse> receivedMessages(Member me, Pageable pageable) {
         List<Message> fetch = queryFactory.selectFrom(message)
-                .where(message.receiver.eq(me), message.deletedDate.isNull())
+                .where(message.receiver.eq(me), message.deletedReceivedDate.isNull())
                 .orderBy(message.createdDate.desc())
                 .innerJoin(message.sender)
                 .fetchJoin()
@@ -44,7 +44,8 @@ public class MessageRepositoryImpl implements MessageRepositoryCustom {
     @Override
     public Page<MessageSendResponse> sendMessages(Member me, Pageable pageable) {
         List<Message> fetch = queryFactory.selectFrom(message)
-                .where(message.sender.eq(me))
+                .where(message.sender.eq(me),
+                        message.deletedDate.isNull())
                 .orderBy(message.createdDate.desc())
                 .innerJoin(message.receiver)
                 .fetchJoin()

@@ -17,7 +17,7 @@ import static lombok.AccessLevel.PROTECTED;
 @Getter
 @NoArgsConstructor(access = PROTECTED)
 @SuperBuilder
-@SQLDelete(sql = "UPDATE message SET deleted_date = CURRENT_TIMESTAMP where board_id = ?") //h2
+@SQLDelete(sql = "UPDATE message SET deleted_date = CURRENT_TIMESTAMP where message_id = ?") //h2
 //@SQLDelete(sql = "UPDATE message SET deleted_date = SYSDATE where board_id = ?") //oracle
 public class Message extends BaseEntity{
 
@@ -32,7 +32,11 @@ public class Message extends BaseEntity{
 
     private String content;
 
+    //보낸 쪽지에서 삭제
     private LocalDateTime deletedDate;
+
+    //받은 쪽지에서 삭제
+    private LocalDateTime deletedReceivedDate;
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "sender_id")
@@ -44,5 +48,9 @@ public class Message extends BaseEntity{
 
     public void readMessage() {
         this.isRead = 1;
+    }
+
+    public void deleteReceivedMessage() {
+        this.deletedReceivedDate = LocalDateTime.now();
     }
 }

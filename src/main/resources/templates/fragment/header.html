@@ -375,6 +375,10 @@
 
                     let html = "";
                     // 쪽지 데이터를 모달에 로드하는 로직
+                    // 삭제 버튼
+                    html += "<div class='d-flex justify-content-end'><button type='button' class='btn btn-danger' "
+                        + "onclick='deleteReceivedMessage(" + messageId + ")'>" +
+                        "삭제</button></div>";
                     html += "<p>From." + response.senderNickname + "</p>"
                     html += "<div class='card'><div class='card-header'><h5 class='card-title'>" + response.title + "</h5></div>";
                     html += "<div class='card-body'><p class='card-text'>" + response.content + "</p></div>";
@@ -403,6 +407,10 @@
                     messageDetail.empty(); // 기존 내용 제거
                     let html = "";
                     // 쪽지 데이터를 모달에 로드하는 로직
+                    // 삭제 버튼
+                    html += "<div class='d-flex justify-content-end'><button type='button' class='btn btn-danger' "
+                        + "onclick='deleteMessage(" + messageId + ")'>" +
+                        "삭제</button></div>";
                     html += "<p>To." + response.receiverNickname + "</p>"
                     html += "<div class='card'><div class='card-header'><h5 class='card-title'>" + response.title;
                     if(response.read){
@@ -430,6 +438,8 @@
             let $tr = $("tr").eq(idx);
             $tr.addClass("is-read");
         }
+
+        // 쪽지 답장 보내기
         function replyMessage(replyReceiverId, replyReceiverNickname, title){
             console.log(replyReceiverId);
             console.log(replyReceiverNickname);
@@ -483,6 +493,38 @@
                     }else {
                         alert(errorResult.message);
                     }
+                }
+            });
+        }
+
+        // 쪽지 삭제
+        function deleteMessage(messageId){
+            $.ajax({
+                url: "/api/message/" + messageId,
+                type: "DELETE",
+                success: function (response) {
+                    alert("쪽지를 삭제했습니다.");
+                    sendMessagePage(0);
+                },
+                error: function (response) {
+                    response = JSON.parse(response.responseText);
+                    console.log(response.message);
+                }
+            });
+        }
+
+        // 쪽지 삭제(받은 쪽지함)
+        function deleteReceivedMessage(messageId){
+            $.ajax({
+                url: "/api/message/delete/" + messageId,
+                type: "POST",
+                success: function (response) {
+                    alert("쪽지를 삭제했습니다.");
+                    receiveMessagePage(0);
+                },
+                error: function (response) {
+                    response = JSON.parse(response.responseText);
+                    console.log(response.message);
                 }
             });
         }

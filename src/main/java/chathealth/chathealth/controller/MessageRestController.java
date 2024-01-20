@@ -53,6 +53,13 @@ public class MessageRestController {
         messageService.deleteSendMessage(id);
     }
 
+    //쪽지 삭제 (받은 사람 쪽에서만 삭제)
+    @PreAuthorize("hasRole('ROLE_ADMIN') || @messageService.isReceiver(authentication, #id)")
+    @PostMapping("/api/message/delete/{id}")
+    public void deleteReceivedMessage(@PathVariable Long id) {
+        messageService.deleteReceivedMessage(id);
+    }
+
     //보낸 쪽지 읽기
     @Secured({"ROLE_USER", "ROLE_ADMIN"})
     @GetMapping("/api/message/send/{id}")

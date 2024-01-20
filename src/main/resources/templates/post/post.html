@@ -220,7 +220,7 @@
                                 <div class="form-check form-check-inline">
                                     <input class="form-check-input" type="checkbox" value="마그네슘"
                                            id="vitality3">
-                                    <label class="form-check-label" for="vitality3">마그네슌</label>
+                                    <label class="form-check-label" for="vitality3">마그네슘</label>
                                 </div>
                                 <div class="form-check form-check-inline">
                                     <input class="form-check-input" type="checkbox" value="테아닌"
@@ -262,6 +262,15 @@
                             <!--                        <button id="searchBtn">검색</button>-->
                         </div>
                         <hr>
+
+                        <!-- 글 작성 -->
+                        <!-- 승인된 ent만 보이도록함 -->
+                        <th:block sec:authorize="hasRole('ROLE_PERMITTED_ENT')">
+                            <div class="d-flex justify-content-start">
+                                <a href="#" th:href="@{/post/write}" class="btn btn-primary">새 상품 소개하기</a>
+                            </div>
+                        </th:block>
+
                         <!-- 정렬 조건 -->
                         <div class="btn-group" role="group" aria-label="Basic radio toggle button group"
                              id="target-element">
@@ -636,19 +645,6 @@
         $('.materials input[type="checkbox"]').on('change', function () {
             materialList = [];
         });
-
-        // document.querySelector('.toggle-button').addEventListener('click', function () {
-        //     let leftBox = document.querySelector('.left-box');
-        //     if (leftBox.style.left === '50px') {
-        //         leftBox.style.left = '-250px';
-        //         leftBox.style.display = 'none';
-        //         leftBox.style.transition = 'all 0.5s ease';
-        //     } else {
-        //         leftBox.style.left = '50px';
-        //         leftBox.style.display = 'block';
-        //         leftBox.style.transition = 'all 0.5s ease';
-        //     }
-        // });
     </script>
 </div>
 </html>
