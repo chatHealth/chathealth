@@ -16,6 +16,9 @@ public class UserEditDto {
 
     @NotBlank(message = "닉네임은 필수입니다.")
     private String nickname;
+    private String frontAddress;
+    private String addressDetail;
+    private String postcode;
     private Address address;
 
 //    @NotBlank(message = "기존 비밀번호를 입력해주세요.")

@@ -57,6 +57,7 @@
     <script th:inline="javascript">
         $(document).ready(function () {
             const id = [[${entInfo.id}]];
+            console.log(id);
 
             //내정보 버튼
             $('#myinfoBtn').click(function () {
@@ -75,23 +76,72 @@
                 });
             });
             $('#myinfoBtn').click();
-            function displayEntInfo(response) {
+            function displayEntInfo(entInfo) {
                 const container = $('<div>').addClass('ent-info-container');
                 container.append('<h2 class="mb-4" style="color:#198754;"><b>내 정보</b></h2>');
 
                 const table = $('<table>').addClass('table');
 
-                table.append('<tr><th style="color:#198754;">법인명</th><td>' + response.company + '</td></tr>');
-                table.append('<tr><th style="color:#198754;">대표자</th><td>' + response.ceo + '</td></tr>');
-                table.append('<tr><th style="color:#198754;">이메일(아이디)</th><td>' + response.email + '</td></tr>');
-                table.append('<tr><th style="color:#198754;">주소</th><td>' + response.address.address + '</td></tr>');
-                table.append('<tr><th style="color:#198754;">상세 주소</th><td>' + response.address.addressDetail + '</td></tr>');
-                table.append('<tr><th style="color:#198754;">개업연월일</th><td>' + response.birth + '</td></tr>');
+                table.append('<tr><th style="color:#198754;">법인명</th><td>' + entInfo.company + '</td></tr>');
+                table.append('<tr><th style="color:#198754;">대표자</th><td>' + entInfo.ceo + '</td></tr>');
+                table.append('<tr><th style="color:#198754;">이메일(아이디)</th><td>' + entInfo.email + '</td></tr>');
+                table.append('<tr><th style="color:#198754;">주소</th><td>' + entInfo.address.address + '</td></tr>');
+                table.append('<tr><th style="color:#198754;">상세 주소</th><td>' + entInfo.address.addressDetail + '</td></tr>');
+                table.append('<tr><th style="color:#198754;">개업연월일</th><td>' + entInfo.birth + '</td></tr>');
 
                 container.append(table);
+                container.append("<button class='btn btn-success' id='updateInfoBtn'>정보 수정</button>");
 
                 $('#mp-content').empty();
                 $('#mp-content').html(container);
+
+                $('#updateInfoBtn').on("click",function (){
+                    const originalCompany = [[${entInfo.company}]];
+                    const originalCeo = [[${entInfo.ceo}]];
+                    const originalAddress = [[${entInfo.address.address}]];
+                    const originalAddressDetail = [[${entInfo.address.addressDetail}]];
+
+
+                    $('#mp-content').empty();
+                    const container = $('<div>').addClass('ent-update-container');
+                    const table = $('<table>').addClass('table')
+                    table.append(`<tr><th style="color:#198754;">상호명</th><td><input type="text" class="form-control new" id="company" value="${originalCompany}"></td></tr>`);
+                    table.append(`<tr><th style="color:#198754;">대표자</th><td><input type="text" class="form-control new" id="ceo" value="${originalCeo}"></td></tr>`);
+                    table.append('<tr><th style="color:#198754;">이메일(아이디)</th><td>' + entInfo.email + '</td></tr>');
+                    table.append(`<tr><th style="color:#198754;">주소</th><td><input type="text" id="sample4_roadAddress" class="form-control new" value="${originalAddress}" required>`+
+                        '<td><input type="button" class=" btn btn-sm btn-outline-success" onclick="sample4_execDaumPostcode()" value="우편번호 찾기"></td>' +
+                        '<td><input type="text" style="display:none" id="sample4_jibunAddress" class="new" placeholder="지번주소"></td>' +
+                        '<td><input type="text" id="sample4_postcode" placeholder="우편번호" class="new" style="display:none"></td>' +
+                        '<td><input type="text" class="hidden" id="sample4_extraAddress" placeholder="참고항목" style="display:none"></td>' +
+                        '<td><span id="guide" style="color: #999;" type="hidden" style="display:none"></span></td></tr>');
+                    table.append(`<tr><th style="color:#198754;">상세 주소</th><td><input type="text" class="form-control new" id="sample4_detailAddress" value="${originalAddressDetail}"></td></tr>`);
+                    table.append('<tr><th style="color:#198754;">개업연월일</th><td>' + entInfo.birth + '</td></tr>');
+
+                    container.append(table);
+                    container.append('<button class="btn btn-success" id="updateSubmitBtn">정보 저장</button>');
+                    $('#mp-content').html(container);
+                });
+
+                $('body').on("click","#updateSubmitBtn",function (){
+                    console.log("저장 버튼 눌렸다");
+
+                    let entEditDto = {"company": $('#company').val(), "ceo":$('#ceo').val(), "postcode":$('#postcode').val(),
+                        "frontAddress":$('#sample4_roadAddress').val(), "addressDetail":$('#sample4_detailAddress').val()};
+                    $.ajax({
+                        url: `/member/ent/updateInfo/${id}`,
+                        method: "PATCH",
+                        data : JSON.stringify(entEditDto),
+                        contentType:"application/json",
+                        success: function (response){
+                            if(response.isUpdated === "isUpdated"){
+                                alert("정보 수정이 완료되었습니다.");
+                                location.reload();
+                            }
+                        }, error:function(){
+                            alert("실패~");
+                        }
+                    })
+                });
             }
 
             //내 상품 버튼
