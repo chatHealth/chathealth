@@ -1,9 +1,12 @@
 package chathealth.chathealth.controller;
 
 import chathealth.chathealth.dto.request.EntEditDto;
+import chathealth.chathealth.dto.request.UserEditDto;
 import chathealth.chathealth.dto.response.EntInfoDto;
 import chathealth.chathealth.dto.response.PostLikeDto;
 import chathealth.chathealth.dto.response.UserInfoDto;
+import chathealth.chathealth.entity.member.Address;
+import chathealth.chathealth.entity.member.Users;
 import chathealth.chathealth.service.MemberService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -54,23 +57,22 @@ public class MemberController {
     }
 
 
-    /*@Transactional
+    @Transactional
     @ResponseBody
-    @PatchMapping("/user/updateInfo")
-    public Map<String,String> updateUserInfo(UserEditDto userEditDto) {
-        log.info("컨트롤러 들어왔다~");
-        Address address = Address.builder()
-                .addressDetail(null)
+    @PatchMapping("/user/updateInfo/{id}")
+    public Map<String,String> updateUserInfo(@PathVariable Long id, @RequestBody UserEditDto userEditDto) {
+        Address addressEntity = Address.builder()
+                .postcode(userEditDto.getPostcode())
+                .address(userEditDto.getFrontAddress())
+                .addressDetail(userEditDto.getAddressDetail())
                 .build();
-        log.info(address.getAddress());
-        log.info(address.getAddressDetail());
-        userEditDto.setAddress(address);
-        log.info(String.valueOf(userEditDto));
-        memberService.updateUserInfo(userEditDto.getId(), userEditDto);
+        userEditDto.setAddress(addressEntity);
+        memberService.updateUserInfo(id,userEditDto);
         Map<String, String> resultMap = new HashMap<>();
+
         resultMap.put("isUpdated","isUpdated");
         return resultMap;
-    }*/
+        }
 
     @Transactional
     @ResponseBody
