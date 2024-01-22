@@ -47,34 +47,50 @@
 }
 
 /*뷰 리뷰*/
-.reviewBox{
-    border: solid;
-    margin: 20px;
+.reviewBox {
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    margin-bottom: 20px;
 }
-.reWrite{
-    border: solid;
-    margin: 20px;
+
+.reviewPar {
+    padding: 15px;
 }
-.reviewPar{
-    border: solid;
-}
-.imginsert{
-    display: flex;
-}
-.recomment{
-    padding-left: 20px;
-    padding-right: 20px;
-    padding-top: 5px;
-    padding-bottom: 5px;
-}
-.recomInfo{
-}
-.recomCon{
-}
-.form-select form-select-sm selectpicker > option{
+
+.userinfo {
     display: flex;
     justify-content: space-between;
+    align-items: center;
 }
+
+.userinfo img {
+    border-radius: 50%;
+    margin-right: 10px;
+}
+.reviewImglistmg{
+    display: flex;
+}
+
+.reviewImglistmg img {
+    margin-right: 10px;
+    margin-bottom: 10px;
+}
+
+.recomment {
+    margin-top: 20px;
+    padding: 15px;
+    border-top: 1px solid #ccc;
+}
+
+.recomInfo, .recomCon {
+    margin-bottom: 10px;
+}
+
+
+
+
+
+
 
 
 .input-file-button{

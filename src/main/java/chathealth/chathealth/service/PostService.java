@@ -9,10 +9,12 @@ import chathealth.chathealth.entity.PictureReView;
 import chathealth.chathealth.entity.Review;
 import chathealth.chathealth.entity.member.Ent;
 import chathealth.chathealth.entity.member.Member;
+import chathealth.chathealth.entity.member.Users;
 import chathealth.chathealth.entity.post.Material;
 import chathealth.chathealth.entity.post.MaterialPost;
 import chathealth.chathealth.entity.post.Post;
 import chathealth.chathealth.entity.post.Symptom;
+import chathealth.chathealth.exception.BoardNotFoundException;
 import chathealth.chathealth.exception.UserNotFound;
 import chathealth.chathealth.repository.*;
 import chathealth.chathealth.entity.post.PicturePost;
@@ -25,6 +27,7 @@ import org.springframework.stereotype.Service;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Slf4j
@@ -44,19 +47,26 @@ public class PostService {
 
 
     public List<ReViewSelectDto> getReview(long id){
-        List<Review> re=reViewRepository.findAllById(id);
-        List<ReViewSelectDto> dto=new ArrayList<>();
-        for(int i=0;i<re.size();i++){
-        ReViewSelectDto dtoIndex = ReViewSelectDto.builder()
-                .content(re.get(i).getContent())
-                .score(re.get(i).getScore())
-                .nickName(memberRepository.findById(re.get(i).getId()).getNickName())
-                .profile(memberRepository.findById(re.get(i).getId()).toString())
-                .pictureReView(pictureReviewRepository.findAllByReviewId(re.getId()).stream().map(PictureReView::getPictureUrl).toList())
-                .build();
-        dto.add(dtoIndex);
-        }
-        log.info("dtooo====={}",dto);
+        Post post = postRepository.findById(id).orElseThrow(BoardNotFoundException::new);
+        List<Review> re=reViewRepository.findAllByPost(post);
+        List<ReViewSelectDto> dto=re.stream()
+                .filter(review -> (review.getMember() instanceof Users))
+                .map(Review -> {
+                    Users user = (Users) Review.getMember();
+                    String profiles="/profile/"+ user.getProfile();
+                    if(user.getProfile().endsWith("_")){
+                        profiles="/img/basic_user.png";
+                    }
+            return ReViewSelectDto.builder()
+                    .content(Review.getContent())
+                    .score(Review.getScore())
+                    .nickName(user.getNickname())
+                    .profile(profiles)
+                    .pictureReView(Review.getPictureReList().stream().map(PictureReView::getPictureUrl).toList())
+                    .createdDate(Review.getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+                    .build();
+        }).collect(Collectors.toList());
+
         return dto;
     }
     public Review insertRe(ReviewDto reviewDto){

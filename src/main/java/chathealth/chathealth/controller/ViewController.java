@@ -14,6 +14,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Controller
 @RequiredArgsConstructor
 @Slf4j
@@ -27,12 +29,14 @@ public class ViewController {
         PostResponseDetails post=postService.getAllView(id);
         model.addAttribute("postList",post);
 
-        //review정보
-        ReViewSelectDto reViewSelectDto=postService.getReview(id);
-        log.info("rerere===={}",reViewSelectDto);
-        model.addAttribute("reViewList",reViewSelectDto);
+//        //review정보
+//        List<ReViewSelectDto> reViewSelectDto=postService.getReview(id);
+//        log.info("rerere===={}",reViewSelectDto);
+//        model.addAttribute("reViewList",reViewSelectDto);
         return "view/view";
     }
+
+
 
 
     @PostMapping("/reWrite")
