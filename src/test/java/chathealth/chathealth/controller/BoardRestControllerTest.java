@@ -1,5 +1,6 @@
 package chathealth.chathealth.controller;
 
+import chathealth.chathealth.controller.board.BoardRestController;
 import chathealth.chathealth.dto.request.BoardCreateDto;
 import chathealth.chathealth.dto.request.BoardEditDto;
 import chathealth.chathealth.entity.board.Board;
