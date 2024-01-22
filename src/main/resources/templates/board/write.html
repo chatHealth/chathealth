@@ -55,9 +55,10 @@
                          */
                         const formData = new FormData();
                         formData.append('image', blob);
+                        formData.append('board', 'board');
 
                         // 2. FileApiController - uploadEditorImage 메서드 호출
-                        const response = await fetch('/board-image/upload', {
+                        const response = await fetch('/board/upload', {
                             method: 'POST',
                             body: formData,
                         });
@@ -70,7 +71,7 @@
                         const filename = await response.text();
 
                         // 4. addImageBlobHook의 callback 함수를 통해, 디스크에 저장된 이미지를 에디터에 렌더링
-                        const imageUrl = `/board-image/print?filename=/${filename}`;
+                        const imageUrl = `/board/print?filename=/${filename}`;
                         callback(imageUrl, 'image alt attribute');
 
                     } catch (error) {
