@@ -42,6 +42,7 @@ public class MemberController {
     public String goEntInfo(@PathVariable Long id,Model model) {
         EntInfoDto entInfoDto = memberService.getEntInfo(id);
         model.addAttribute("entInfo", entInfoDto);
+        log.info(String.valueOf(entInfoDto));
         return "member/ent-info";
     }
 
@@ -60,7 +61,7 @@ public class MemberController {
     @Transactional
     @ResponseBody
     @PatchMapping("/user/updateInfo/{id}")
-    public Map<String,String> updateUserInfo(@PathVariable Long id, @RequestBody UserEditDto userEditDto) {
+    public Map<String,String> updateUserInfo(@PathVariable Long id, @RequestBody @Valid UserEditDto userEditDto) {
         Address addressEntity = Address.builder()
                 .postcode(userEditDto.getPostcode())
                 .address(userEditDto.getFrontAddress())
@@ -76,9 +77,19 @@ public class MemberController {
 
     @Transactional
     @ResponseBody
-    @PatchMapping("/ent/updateInfo")
-    public void updateEnt(@PathVariable Long id, @RequestBody @Valid EntEditDto entEditDto) {
-        memberService.updateEntInfo(id, entEditDto);
+    @PatchMapping("/ent/updateInfo/{id}")
+    public Map<String,String> updateEnt(@PathVariable Long id, @RequestBody @Valid EntEditDto entEditDto) {
+        Address addressEntity = Address.builder()
+                .postcode(entEditDto.getPostcode())
+                .address(entEditDto.getFrontAddress())
+                .addressDetail(entEditDto.getAddressDetail())
+                .build();
+        entEditDto.setAddress(addressEntity);
+        memberService.updateEntInfo(id,entEditDto);
+        Map<String, String> resultMap = new HashMap<>();
+
+        resultMap.put("isUpdated","isUpdated");
+        return resultMap;
     }
 
     @GetMapping("/post-like/{id}")
