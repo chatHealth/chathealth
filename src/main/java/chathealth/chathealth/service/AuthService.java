@@ -2,7 +2,6 @@ package chathealth.chathealth.service;
 
 
 import chathealth.chathealth.constants.Grade;
-import chathealth.chathealth.constants.Role;
 
 import chathealth.chathealth.dto.request.EntJoinDto;
 import chathealth.chathealth.dto.request.UserJoinDto;
@@ -10,6 +9,7 @@ import chathealth.chathealth.dto.response.CustomUserDetails;
 import chathealth.chathealth.entity.member.*;
 import chathealth.chathealth.exception.NotPermitted;
 import chathealth.chathealth.repository.MemberRepository;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,6 +27,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Optional;
 import java.util.UUID;
 
 import static chathealth.chathealth.constants.Role.ROLE_USER;
@@ -53,7 +54,7 @@ public class AuthService implements UserDetailsService {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Transactional
-    public void userJoin(UserJoinDto userJoinDto) { //개인 회원가입
+    public void userJoin(@Valid UserJoinDto userJoinDto) { //개인 회원가입
         String originalFileName = userJoinDto.getProfile().getOriginalFilename(); //원본 파일 네임
         UUID uuid = UUID.randomUUID(); //난수 발생
         String uploadMon = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMM")) + File.separator;
@@ -90,7 +91,7 @@ public class AuthService implements UserDetailsService {
     }
 
     @Transactional
-    public void entJoin(EntJoinDto entJoinDto) {
+    public void entJoin(@Valid EntJoinDto entJoinDto) {
         // 사업자 회원가입
         String originalFileName = entJoinDto.getProfile().getOriginalFilename(); //원본 파일 네임
         UUID uuid = UUID.randomUUID(); //난수 발생
@@ -118,6 +119,16 @@ public class AuthService implements UserDetailsService {
                 .createdDate(entJoinDto.getCreatedDate())
                 .build();
         memberRepository.save(dbJoinEnt);
+    }
+
+    @Transactional
+    public void updatePw(Long id, String pw){
+        String newPw = bCryptPasswordEncoder.encode(pw);
+        Optional<Member> optionalMember = memberRepository.findById(id);
+        if(optionalMember.isPresent()){
+            Member findMember = optionalMember.get();
+            findMember.updatePw(newPw);
+        }
     }
 
     public boolean confirmEmail(String email) {
