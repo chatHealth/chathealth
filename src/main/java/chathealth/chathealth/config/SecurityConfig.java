@@ -34,7 +34,8 @@ public class SecurityConfig {
                                 "/css/**", "/js/**", "/img/**",
                                  "/board-image/print","/post-img/**","/profile/**"
                                     ,"/view/**",
-                                "/auth/login-check", "/auth/is-user", "/auth/is-ent")
+                                "/auth/login-check", "/auth/is-user", "/auth/is-ent",
+                                "/noty/subscribe")
                         .permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN") // admin role 가지고 있는 사람만 허용
                         .anyRequest()
