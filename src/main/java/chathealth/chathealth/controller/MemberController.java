@@ -6,8 +6,10 @@ import chathealth.chathealth.dto.response.EntInfoDto;
 import chathealth.chathealth.dto.response.PostLikeDto;
 import chathealth.chathealth.dto.response.UserInfoDto;
 import chathealth.chathealth.entity.member.Address;
-import chathealth.chathealth.entity.member.Users;
+import chathealth.chathealth.service.AuthService;
+import chathealth.chathealth.service.MailService;
 import chathealth.chathealth.service.MemberService;
+import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +30,8 @@ import java.util.Map;
 public class MemberController {
 
     private final MemberService memberService;
+    private final AuthService authService;
+    private final MailService mailService;
 
     //@PreAuthorize("hasRole('USER')") //USER 롤 가지고 있는 사람만 메서드 실행 가능
     @GetMapping("/user/{id}")  //개인 마이페이지로 이동
@@ -86,6 +90,22 @@ public class MemberController {
                 .build();
         entEditDto.setAddress(addressEntity);
         memberService.updateEntInfo(id,entEditDto);
+        Map<String, String> resultMap = new HashMap<>();
+
+        resultMap.put("isUpdated","isUpdated");
+        return resultMap;
+    }
+
+    @ResponseBody
+    @PostMapping("/emails/verification-request")
+    public String sendMail(String email) throws MessagingException{
+        return mailService.sendEmail(email);
+    }
+
+    @PatchMapping("/update-pw/{id}")
+    @ResponseBody
+    public Map<String,String> updateUserPw(@PathVariable Long id, String pw){
+        authService.updatePw(id,pw);
         Map<String, String> resultMap = new HashMap<>();
 
         resultMap.put("isUpdated","isUpdated");

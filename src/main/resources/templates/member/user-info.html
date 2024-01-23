@@ -22,7 +22,7 @@
                 <li class="list-group-item list-group-item-action"><button type="button" class="btn" id="postlikeBtn">관심 상품</button></li>
                 <li class="list-group-item list-group-item-action"><button type="button" class="btn" id="myreviewBtn">내 리뷰</button></li>
                 <li class="list-group-item list-group-item-action"><button type="button" class="btn" id="changepwBtn">비밀번호 변경</button></li>
-                <li class="list-group-item list-group-item-action"><button type="button" class="btn" id="deleteaccountBtn">회원 탈퇴</button></li>
+                <li class="list-group-item list-group-item-action"><button type="button" class="btn" id="withdrawBtn">회원 탈퇴</button></li>
             </ul>
             <!-- 프로필사진 변경 모달 -->
             <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -116,14 +116,11 @@
                     table.append('<tr><th style="color:#198754;">생년월일</th><td>' + userInfo.birth + '</td></tr>');
 
                     container.append(table);
-                    container.append('<button class="btn btn-success" id="updateSubmitBtn">정보 저장</button>');
+                    container.append('<div></div><button class="btn btn-success" id="updateSubmitBtn">정보 저장</button><button class="btn btn-secondary" id="cancelBtn">취소</button></div>');
                     $('#mp-content').html(container);
                 });
 
                 $('body').on("click","#updateSubmitBtn",function (){
-                    console.log("저장 버튼 눌렸다");
-                    console.log(id);
-
                     let userEditDto = {"nickname": $('#nickname').val(), "postcode":$('#postcode').val(),
                                 "frontAddress":$('#sample4_roadAddress').val(), "addressDetail":$('#sample4_detailAddress').val()};
                     $.ajax({
@@ -140,6 +137,10 @@
                             alert("실패~");
                         }
                     })
+                });
+
+                $('body').on("click","#cancelBtn",function (){
+                    $('#myinfoBtn').click();
                 });
             }
 
@@ -176,6 +177,88 @@
                     complete: function () {
                     }
                 })
+            });
+
+            //비밀번호 변경
+            $('#changepwBtn').click(function(){
+                let responseCode;
+                let authcode;
+                const email = [[${userInfo.email}]];
+                    $('#mp-content').empty();
+                        //이메일 인증메일 보내기
+                        $.ajax({
+                            url: `/member/emails/verification-request`,
+                            type: "POST",
+                            async: false,
+                            data:{email:email},
+                            success: function (response) {
+                                responseCode = response;
+                                const container = $('<div>').addClass('email-verifying-container');
+                                container.append('<h2 class="mb-4" style="color:#198754;"><b>이메일 인증</b></h2>');
+                                container.append('<p class="mb-1">회원님의 이메일로 인증코드 6자리를 보내드렸습니다.</p>');
+                                container.append('<p class="mb-5">인증코드를 확인하시고 10분 이내에 입력해주시기 바랍니다.</p>');
+                                container.append('<input type="text" class="form-control mb-1" style="width: 203px;" id="authcode">');
+                                container.append('<p class="mb-5">메일 발송까지 약간의 시간이 소요될 수 있습니다.</p>');
+                                container.append('<button class="btn btn-success" id="checkAuthcodeBtn">인증하기</button>');
+                                $('#mp-content').html(container);
+                            },
+                            error: function (error) {
+                                alert(JSON.stringify(error));
+                            },
+                            complete: function () {
+                            }
+                    });
+
+
+                //비밀번호 변경 입력
+                $('body').on("click","#checkAuthcodeBtn",function (){
+                    if (responseCode===$('#authcode').val()){
+                        $('#mp-content').empty();
+                        const container = $('<div>').addClass('password-change-container');
+                        const table = $('<table>').addClass('table')
+                        table.append(`<tr><th style="color:#198754;">새 비밀번호</th><td><input type="text" class="form-control new" id="newPw"></td></tr>`);
+                        table.append(`<tr><th> </th><td><span style="color: #999999;">비밀번호는 8~15자리이고 영문, 숫자, 특수문자([!@#$%^*+=-)를 포함해야 합니다.</span></td></tr>`);
+                        table.append(`<tr><th style="color:#198754;">비밀번호 확인</th><td><input type="text" class="form-control new" id="checkNewPw"></td></tr>`);
+                        table.append(`<tr><td><span id="confirmPw"></span></td></tr>`);
+                        table.append(`<td><button class="btn btn-success" id="changePwSubmitBtn" style="width:100%;">비밀번호 변경</button></td><td><button class="btn btn-secondary" id="cancelBtn">취소</button></td>`);
+
+                        container.append('<h2 class="mb-4" style="color:#198754;"><b>비밀번호 변경</b></h2>');
+                        container.append(table);
+                        $('#mp-content').html(container);
+
+                        //비밀번호 변경 ajax 통신
+                        $('#changePwSubmitBtn').on("click",function (){
+                            const pw = $('#newPw').val();
+                            const regex = /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,15}$/;
+                            if (regex.test(pw)) {
+                                $.ajax({
+                                    url: `/member/update-pw/${id}`,
+                                    method: "PATCH",
+                                    data:{pw:pw},
+                                    success:function(response){
+                                        if(response.isUpdated === "isUpdated"){
+                                            alert("비밀번호 변경이 완료되었습니다.")
+                                            location.reload();
+                                        }
+                                    },
+                                    error: function (error) {
+                                        alert(JSON.stringify(error));
+                                    },
+                                    complete: function () {
+                                    }
+                                });
+                            } else {
+                                $('#confirmPw').text('비밀번호는 8~15자리이고 영문, 숫자, 특수문자를 포함해야 합니다.').removeClass('text-success').addClass('text-danger');
+                                $('#newPw').focus();
+                            }
+
+                        });
+                        //취소 버튼 누르면
+                        $('body').on("click","#cancelBtn",function (){
+                            $('#myinfoBtn').click();
+                        });
+                    }
+                });
             });
         });
     </script>
@@ -234,29 +317,7 @@
             });
         });
     </script>
-    <!-- 정보변경 스크립트 진짜 못해먹겠다 -->
-    <!--<script th:inline="javascript">
-        $(document).ready(function () {
-            // editInfoBtn 클릭 시 실행되는 함수
-            $('#editInfoBtn').click(function () {
-                // 각 td의 내용을 input으로 변경
-                $('#frontAddress, #nickname').each(function () {
-                    var content = $(this).text();
-                    var id = $(this).attr('id');
-                    var input = $('<input>').attr({
-                        'type': 'text',
-                        'id': 'input' + id, // input에 id 추가
-                    }).addClass('form-control').val(content);
-                    $(this).html(input);
-                });
 
-                // 버튼을 저장 버튼으로 변경
-                $('#editInfoBtn').attr('id', 'saveInfoBtn').text('정보 저장');
-
-                // saveInfoBtn 클릭 시 실행되는 함수 바인딩
-            });
-        });
-    </script>-->
     <!-- 주소 다음 API -->
     <script>
         //본 예제에서는 도로명 주소 표기 방식에 대한 법령에 따라, 내려오는 데이터를 조합하여 올바른 주소를 구성하는 방법을 설명합니다.
