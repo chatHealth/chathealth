@@ -127,7 +127,6 @@
 
     // 리뷰목록조회
     function reViewList(){
-        console.log("success")
         $.ajax({
             url:`/review/${postId}`,
             success: function (data){
@@ -135,40 +134,50 @@
 
                 $.each(data,function (key,val){
                     ht+=`<div class="row">
-            <div class="col-md-12">
-                <div class="reviewBox">
-                    <div class="reviewPar">
-                        <div class="userinfo">
-                            <div style="width: 60px; height: 60px; display: flex">
-                                <img src="${val.profile}" style="object-fit: cover; width: 100%; height: 100%;">
-                                <div>${val.nickname}</div>
+                            <div class="col-md-12">
+                                <div class="reviewBox" >
+                                    <div class="reviewPar"data-num="${val.id}" data-content="${val.content}" data-picture="${val.pictureReView}">
+                                        <div class="userinfo">
+                                            <div style="width: 60px; height: 60px; display: flex">
+                                                <img src="${val.profile}" style="object-fit: cover; width: 100%; height: 100%;">
+                                                <div>${val.nickName}</div>
+                                            </div>
+                                            <div class="secondinfo" style="float: right">
+                                                <div class="btnset">
+                                                    <button type="button" class="deleteBtn">삭제</button>
+                                                    <button type="button" class="modifyBtn" >수정</button>
+                                                 </div>
+                                                <div class="starscore">
+                                                    <span>별점 : </span><span>${val.score}</span>
+                                                </div>
+                                                <div>${val.createdDate}</div>
+                                            </div>
+                                        </div>`;
+                                            if(val.pictureReView.length!==0) {
+
+                                                ht+=`<hr>
+                                                     <div class="reviewImglistmg">`;
+                                                for (let i = 0; i < val.pictureReView.length; i++) {
+                                                    ht += `<div style="width: 100px; height: 100px" class="imgBBox">
+                                                        <img src="/profile/${val.pictureReView[i]}" style="object-fit: cover; width: 100%; height: 100%;">
+                                                            </div>`;
+                                                }
+                                                ht+=`</div>`;
+                                            }
+                                        ht+=`
+                                        <hr>
+                                        <div class="reviewContent" style="padding: 10px">
+                                            <p>${val.content}</p>
+                                        </div>
+
+                                    </div>
+                                    <div class="recomment">
+                                        <div class="recomInfo"><p>대댓글 유저정보</p></div>
+                                        <div class="recomCon"><p>대댓글 내용</p></div>
+                                    </div>
+                                </div>
                             </div>
-                            <div style="float: right">
-                                <span>별점 : </span><span>${val.score}</span>
-                                <div>${val.createdDate}</div>
-                            </div>
-                        </div>
-                        <hr>
-                        <div class="reviewImglistmg">`;
-                        for(let i=0;i<val.pictureReView.length;i++){
-                            ht+=`<div style="width: 100px; height: 100px" class="imgBBox">
-                                <img src="/profile/${val.pictureReView[i]}" style="object-fit: cover; width: 100%; height: 100%;">
-                            </div>`;
-                        }
-                        ht+=`
-                        </div>
-                        <hr>
-                        <div class="reviewContent" style="padding: 10px">
-                            <p>${val.content}</p>
-                        </div>
-                    </div>
-                    <div class="recomment">
-                        <div class="recomInfo"><p>대댓글 유저정보</p></div>
-                        <div class="recomCon"><p>대댓글 내용</p></div>
-                    </div>
-                </div>
-            </div>
-        </div>`;
+                         </div>`;
 
                 })
                 $(".container").html(ht);
@@ -180,7 +189,7 @@
             }
         })
     }
-
+// 리뷰작성
 
 
 
@@ -240,22 +249,166 @@
             "pictureReList":reImgName,
             "post":postId
         }
-        console.log(date)
         $.ajax({
             method:"POST",
-            url:"/view/reWrite",
+            url:"/review/write",
             contentType: 'application/json',
             data:JSON.stringify(date),
             success: function (response){
                 console.log("리뷰작성 완")
+                $(".reContent textarea").val("");
+                reImgName=[];
+                $(".reImgCount").text(0);
+                reViewList()
             },
             error:function (){
                 console.log("리뷰작성 실패")
             }
 
         })
-
     }
+
+    // 리뷰 수정
+    $("body").on("click",".modifyBtn",function (){
+        let par=(this).closest(".reviewPar");
+        let content=par.dataset.content;
+        let picture=par.dataset.picture;
+        let imgcount=picture.split(",");
+
+
+        let btnset=`<button type="button" class="deleteBtn">삭제</button>
+                    <button type="button" class="endBtn" >수정완료</button>`;
+        let scorelist=`<div class="col-3 mt-3">
+                    <select id="star" name=""
+                        data-placeholder="별점"
+                        class="star"
+                        aria-label="Small select example" data-style="btn-primary">
+                    <option value="5.0"><span>★★★★★</span></option>
+                    <option value="4.0"><span>★★★★☆</span></option>
+                    <option value="3.0"><span>★★★☆☆</span></option>
+                    <option value="2.0"><span>★★☆☆☆</span></option>
+                    <option value="1.0"><span>★☆☆☆☆</span></option>
+                </select>
+                </div>`;
+        let Imglist=`<div>
+                <input type="file" class="postimg" id="modImg"
+                       placeholder="대표이미지" name=""
+                       accept="image/gif, image/jpeg, image/png" multiple="multiple">
+                <label class="input-file-button" for="modImg">
+                    이미지 등록<br><p class="modImgCount" >${imgcount.length}</p>
+                </label>
+            </div>`;
+        let Imglistno=`<hr>
+             <div class="reviewImglistmg">
+                        <div>
+                <input type="file" class="postimg" id="modImg"
+                       placeholder="대표이미지" name=""
+                       accept="image/gif, image/jpeg, image/png" multiple="multiple">
+                <label class="input-file-button" for="modImg">
+                    이미지 등록<br><p class="modImgCount" >${imgcount.length}</p>
+                </label>
+            </div>
+            </div>`;
+        let contentBox=`<input class="reContent" value="${content}"></input>`;
+
+
+
+        let reviewBox = $(this).closest(".reviewBox");
+        $(this).closest(".btnset").html(btnset);
+        reviewBox.find(".starscore").html(scorelist);
+        if (reviewBox.find(".reviewImglistmg").length > 0) {
+            reviewBox.find(".reviewImglistmg").html(Imglist);
+        }else {
+            reviewBox.find(".userinfo").next().html(Imglistno);
+        }
+        reviewBox.find(".reviewContent").html(contentBox);
+    })
+
+    //리뷰 수정 이미지 입력
+    let countmod=0;
+    let modImgName=[];
+
+
+    $(document).ready(function() {
+        $(".container").on("change","#modImg",function() {
+            let fileInput = document.getElementById("modImg");
+            let file = fileInput.files[0];
+            if(fileInput.files.length>3){
+                $(".modImgCount").text(0);
+                alert("이미지는 3개까지 등록할 수 있습니다");
+                fileInput.files=[];
+            } else {
+                if (file) {
+                    let formData = new FormData();
+                    for (let i = 0; i < fileInput.files.length; i++) {
+                        formData.append('serveImg', fileInput.files[i]);
+                    }
+                    $.ajax({
+                        url: '/post-img/uploadServe',
+                        type: 'POST',
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        success: function (response) {
+                            // 파일 업로드가 성공한 경우의 처리
+                            for (let i = 0; i < response.length; i++) {
+                                modImgName.push(response[i])
+                            }
+                            console.log(modImgName);
+                            countmod=response.length;
+                            $(".modImgCount").text(countmod);
+                        },
+                        error: function (error) {
+                            console.log('Error:', error);
+                        }
+                    });
+                } else {
+                    alert('파일을 선택하세요.');
+                }
+            }
+        });
+    });
+
+
+
+
+    //리뷰 수정 완료
+    function modifyReview(num, content, pictureReList, score) {
+        const date = {
+            "content": content,
+            "score": score,
+            "pictureReList": pictureReList,
+        };
+        $.ajax({
+            method: "POST",
+            url: `/review/mod/${num}`,
+            contentType: 'application/json',
+            data: JSON.stringify(date),
+            success: function () {
+                console.log("리뷰 수정 완료");
+                reViewList(); // 수정 후 리뷰 목록을 새로고침합니다.
+            },
+            error: function (xhr, status, error) {
+                console.log("리뷰 수정 실패");
+
+            }
+        });
+    }
+    $("body").on("click", ".endBtn", function () {
+        let par = $(this).closest(".reviewPar");
+        let content = par.find(".reContent").val();
+        let score = par.find("#star").val();
+        let num = par.data("num");
+        let pictureReList=modImgName
+
+
+        // ... (기존 코드)
+
+        // 가정: 별점, 내용, 이미지가 선택되었다고 가정하고
+        // 이 정보를 사용하여 리뷰를 수정합니다.
+        modifyReview(num, content, pictureReList,score);
+    });
+
 
 </script>
 

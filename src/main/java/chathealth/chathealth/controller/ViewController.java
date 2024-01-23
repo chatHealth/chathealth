@@ -39,13 +39,9 @@ public class ViewController {
 
 
 
-    @PostMapping("/reWrite")
-    public String insertRe(@RequestBody ReviewDto reviewDto,@AuthenticationPrincipal CustomUserDetails userId){
-        reviewDto.setMember(userId.getLoggedMember().getId());
-        postService.insertRe(reviewDto);
-        return "redirect:/view/1";}
-
-
-
-
+//    @PostMapping("/reWrite")
+//    public String insertRe(@RequestBody ReviewDto reviewDto,@AuthenticationPrincipal CustomUserDetails userId){
+//        reviewDto.setMember(userId.getLoggedMember().getId());
+//        postService.insertRe(reviewDto);
+//        return "redirect:/view/1";}
 }

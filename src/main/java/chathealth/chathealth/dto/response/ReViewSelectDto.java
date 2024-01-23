@@ -22,6 +22,7 @@ import static jakarta.persistence.GenerationType.SEQUENCE;
 @Builder
 @ToString
 public class ReViewSelectDto {
+    private Long id;
     private String nickName;
     private String profile;
     private String content;

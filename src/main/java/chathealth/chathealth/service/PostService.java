@@ -4,6 +4,7 @@ package chathealth.chathealth.service;
 import chathealth.chathealth.dto.request.PostSearch;
 import chathealth.chathealth.dto.request.PostWriteDto;
 import chathealth.chathealth.dto.request.ReviewDto;
+import chathealth.chathealth.dto.request.ReviewModDto;
 import chathealth.chathealth.dto.response.*;
 import chathealth.chathealth.entity.PictureReView;
 import chathealth.chathealth.entity.Review;
@@ -20,6 +21,7 @@ import chathealth.chathealth.repository.*;
 import chathealth.chathealth.entity.post.PicturePost;
 import chathealth.chathealth.repository.PicturePostRepository;
 import chathealth.chathealth.repository.post.PostRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -44,6 +46,24 @@ public class PostService {
     private final PictureReviewRepository pictureReviewRepository;
     private final ReViewRepository reViewRepository;
 
+@Transactional
+    public void modifyReView(long num, ReviewModDto reviewModDto){
+    Review re = reViewRepository.findById(num).orElseThrow(BoardNotFoundException::new);
+
+    re.update(reviewModDto);
+        log.info("rerere======{}",re);
+
+        if(reviewModDto.getPictureReList().size()>0) {
+            pictureReviewRepository.deleteAllByReview(re);
+            for (int i = 0; i < reviewModDto.getPictureReList().size(); i++) {
+                PictureReView pic = PictureReView.builder()
+                        .review(re)
+                        .pictureUrl(reviewModDto.getPictureReList().get(i))
+                        .build();
+                pictureReviewRepository.save(pic);
+            }
+        }
+    }
 
 
     public List<ReViewSelectDto> getReview(long id){
@@ -58,6 +78,7 @@ public class PostService {
                         profiles="/img/basic_user.png";
                     }
             return ReViewSelectDto.builder()
+                    .id(Review.getId())
                     .content(Review.getContent())
                     .score(Review.getScore())
                     .nickName(user.getNickname())

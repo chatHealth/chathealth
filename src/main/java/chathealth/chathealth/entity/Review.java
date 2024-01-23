@@ -1,5 +1,6 @@
 package chathealth.chathealth.entity;
 
+import chathealth.chathealth.dto.request.ReviewModDto;
 import chathealth.chathealth.entity.member.Member;
 import chathealth.chathealth.entity.post.Post;
 import jakarta.persistence.*;
@@ -50,4 +51,10 @@ public class Review extends BaseEntity {
 
     @OneToMany(mappedBy = "review")
     private List<PictureReView> pictureReList=new ArrayList<>();
+
+
+    public void update(ReviewModDto reviewModDto) {
+        this.content = reviewModDto.getContent();
+        this.score = reviewModDto.getScore();
+    }
 }

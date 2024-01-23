@@ -28,7 +28,7 @@ public class SecurityConfig {
                                 "/error",
                                 "/css/**", "/js/**", "/img/**",
                                  "/board-image/print","/post-img/**","/profile/**"
-                                    ,"/view/**","/review/**")
+                                    ,"/view/**","/review/**","/review/mod/**")
                         .permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN") // admin role 가지고 있는 사람만 허용
                         .anyRequest()
