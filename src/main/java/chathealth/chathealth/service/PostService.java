@@ -46,12 +46,16 @@ public class PostService {
     private final PictureReviewRepository pictureReviewRepository;
     private final ReViewRepository reViewRepository;
 
+
+    public void deleteRe(long num){
+        Review re= reViewRepository.findById(num).orElseThrow();
+        reViewRepository.delete(re);
+    }
+
 @Transactional
     public void modifyReView(long num, ReviewModDto reviewModDto){
     Review re = reViewRepository.findById(num).orElseThrow(BoardNotFoundException::new);
-
     re.update(reviewModDto);
-        log.info("rerere======{}",re);
 
         if(reviewModDto.getPictureReList().size()>0) {
             pictureReviewRepository.deleteAllByReview(re);
@@ -71,7 +75,9 @@ public class PostService {
         List<Review> re=reViewRepository.findAllByPost(post);
         List<ReViewSelectDto> dto=re.stream()
                 .filter(review -> (review.getMember() instanceof Users))
+                .filter(review-> review.getDeletedDate()==null)
                 .map(Review -> {
+//                    if(Review.getDeletedDate()==null){
                     Users user = (Users) Review.getMember();
                     String profiles="/profile/"+ user.getProfile();
                     if(user.getProfile().endsWith("_")){
@@ -87,6 +93,7 @@ public class PostService {
                     .createdDate(Review.getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
                     .build();
         }).collect(Collectors.toList());
+
 
         return dto;
     }

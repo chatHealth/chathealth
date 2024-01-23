@@ -400,14 +400,21 @@
         let score = par.find("#star").val();
         let num = par.data("num");
         let pictureReList=modImgName
-
-
-        // ... (기존 코드)
-
-        // 가정: 별점, 내용, 이미지가 선택되었다고 가정하고
-        // 이 정보를 사용하여 리뷰를 수정합니다.
         modifyReview(num, content, pictureReList,score);
     });
+
+    //리뷰 삭제
+    $("body").on("click",".deleteBtn",function (){
+        let num= $(this).closest(".reviewPar").data("num");
+        $.ajax({
+            url:`/review/delete/${num}`,
+            method: "DELETE",
+            success:function (response){
+                console.log("리뷰 삭제")
+                reViewList()
+            }
+        })
+    })
 
 
 </script>

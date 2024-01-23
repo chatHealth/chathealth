@@ -36,9 +36,13 @@ public class ViewRestController {
     @PostMapping("/mod/{num}")
     public void modRe(@PathVariable long num, @RequestBody ReviewModDto reviewModDto){
         postService.modifyReView(num,reviewModDto);
-        log.info("reviewModDto====={}",reviewModDto);
     }
 
+    @DeleteMapping("/delete/{num}")
+    public void deleteRe(@PathVariable long num){
+        log.info("nuuuuuuum====={}",num);
+        postService.deleteRe(num);
+    }
 
 
 }

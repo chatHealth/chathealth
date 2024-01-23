@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.SQLDelete;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -21,6 +22,7 @@ import static lombok.AccessLevel.PROTECTED;
 @Getter
 @SuperBuilder
 @NoArgsConstructor(access = PROTECTED)
+@SQLDelete(sql = "UPDATE review SET deleted_date = CURRENT_TIMESTAMP where review_id = ?")
 public class Review extends BaseEntity {
 
     @Id
@@ -56,5 +58,10 @@ public class Review extends BaseEntity {
     public void update(ReviewModDto reviewModDto) {
         this.content = reviewModDto.getContent();
         this.score = reviewModDto.getScore();
+    }
+    public void updateDelete(){
+
+            this.deletedDate = LocalDateTime.now();
+
     }
 }
