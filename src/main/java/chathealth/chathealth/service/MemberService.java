@@ -15,6 +15,7 @@ import chathealth.chathealth.exception.UserNotFound;
 import chathealth.chathealth.repository.MemberRepository;
 import chathealth.chathealth.repository.PostLikeRepository;
 import chathealth.chathealth.repository.post.PostRepository;
+import chathealth.chathealth.util.ImageUpload;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -42,11 +43,12 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final PostLikeRepository postLikeRepository;
+    private final ImageUpload imageUpload;
 
 
     @Value("${file.path}")
     private String path;
-    private String domain = "profile"+File.separator;
+    private String domain = "profile";
 
 
     public UserInfoDto getUserInfo(Long id) {
@@ -110,30 +112,7 @@ public class MemberService {
     }
 
     public void updateProfile(Long id, MultipartFile changeProfile) {
-        String originalFileName = changeProfile.getOriginalFilename(); //원본 파일 네임
-        UUID uuid = UUID.randomUUID(); //난수 발생
-        String uploadMon = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMM")) + File.separator;
-        String rename = domain+uploadMon+uuid+"_"+originalFileName; //변경할 이름
-        Path filePath = Paths.get(path+rename); //저장할 실제경로
-        File checkPath = new File(path+domain+uploadMon); //월별 파일 있는지 체크용도
-
-        if (!checkPath.exists()) {
-            boolean created = checkPath.mkdirs();
-            if (!created) {
-                throw new NotPermitted("디렉터리 생성에 실패했습니다.");
-            }
-        }
-
-        try {
-            Files.write(filePath,changeProfile.getBytes());
-            Optional<Member> optionalMember = memberRepository.findById(id);
-            if(optionalMember.isPresent()){
-                Member findMember = optionalMember.get();
-                findMember.updateProfile(rename);
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        imageUpload.uploadImage(changeProfile,domain);
     }
 
     public List<PostLikeDto> getPostLike(Long id){
