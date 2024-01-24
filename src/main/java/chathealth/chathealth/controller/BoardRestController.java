@@ -26,7 +26,7 @@ public class BoardRestController {
     }
 
     @PatchMapping("/board/{id}")
-    public void updateBoard(@PathVariable Long id, @RequestBody @Valid BoardEditDto boardEditDto, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+    public void updateBoard(@PathVariable Long id,@RequestBody @Valid BoardEditDto boardEditDto, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
         boardService.updateBoard(boardEditDto, customUserDetails.getLoggedMember(), id);
     }
 
