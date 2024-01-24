@@ -16,9 +16,9 @@
         <div id="carouselExampleAutoplaying" class="carousel slide" data-bs-ride="carousel">
             <div class="carousel-inner">
                 <th:block th:each="item : ${postList.picturePost}">
-                        <div class="carousel-item">
-                            <img th:src="@{|/profile/${item}|}" class="d-block w-100" alt="...">
-                        </div>
+                    <div class="carousel-item">
+                        <img th:src="@{|/profile/${item}|}" class="d-block w-100" alt="...">
+                    </div>
                 </th:block>
             </div>
             <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleAutoplaying" data-bs-slide="prev">
@@ -43,6 +43,13 @@
                 <li class="list-group-item">A fourth item</li>
                 <li class="list-group-item">And a fifth one</li>
             </ul>
+        </div>
+        <div class="prr">
+            <div class="prrLike">
+                <button class="prrlikebtn"></button>
+                <span class="postlikecount" th:text="${postList.likeCount}"></span>
+                <img src="/img/빈하트.png" id="postlikeimg">
+            </div>
         </div>
     </div>
 </div>
@@ -114,6 +121,8 @@
 
 <script th:inline="javascript">
     const postId= [[${postList.id}]];
+    const postLike=[[${postUserLike}]];
+    console.log(postLike)
 
     reViewList()
     addClassName()
@@ -123,6 +132,11 @@
 
         let contentBox=$(".contentBox > p > img");
         contentBox.css("object-fit","cover");
+
+        if(postLike==10){
+            $("#postlikeimg").attr("src","/img/빨간하트png.png");
+        }
+
     }
 
     // 리뷰목록조회
@@ -144,32 +158,32 @@
                                             </div>
                                             <div class="secondinfo" style="float: right">
                                                 <div class="btnset">`;
-                                                    if(val.same==5){
-                                                        ht+=`<button type="button" class="deleteBtn">삭제</button>
+                    if(val.same==5){
+                        ht+=`<button type="button" class="deleteBtn">삭제</button>
                                                         <button type="button" class="modifyBtn">수정</button>`;
-                                                    }
+                    }
 
 
-                                                 ht+=`</div>
+                    ht+=`</div>
                                                 <div class="starscore">
                                                     <span>별점 : </span><span>${val.score}</span>
                                                 </div>
                                                 <div>${val.createdDate}</div>
                                             </div>
                                         </div>`;
-                                            if(val.pictureReView.length!==0) {
+                    if(val.pictureReView.length!==0) {
 
-                                                ht+=`<hr>
+                        ht+=`<hr>
                                                      <div class="reviewImglistmg">`;
 
-                                                for (let i = 0; i < val.pictureReView.length; i++) {
-                                                    ht += `<div style="width: 100px; height: 100px" class="imgBBox">
+                        for (let i = 0; i < val.pictureReView.length; i++) {
+                            ht += `<div style="width: 100px; height: 100px" class="imgBBox">
                                                         <img src="/profile/${val.pictureReView[i]}" style="object-fit: cover; width: 100%; height: 100%;">
                                                             </div>`;
-                                                }
-                                                ht+=`</div>`;
-                                            }
-                                        ht+=`
+                        }
+                        ht+=`</div>`;
+                    }
+                    ht+=`
                                         <hr>
                                         <div class="reviewContent" style="padding: 10px">
                                             <p>${val.content}</p>
@@ -191,11 +205,11 @@
 
             },
             error(error){
-              console.log("listSelectError")
+                console.log("listSelectError")
             }
         })
     }
-// 리뷰작성
+    // 리뷰작성
 
 
 
@@ -252,7 +266,7 @@
 
 
         if(reContentValue.replace(/\s/g, '')=="") {
-                alert("내용을 입력해주세요.")
+            alert("내용을 입력해주세요.")
         }else{
             const date = {
                 "content": reContentValue,
@@ -337,7 +351,6 @@
     })
 
     //리뷰 수정 이미지 입력
-    let countmod=0;
     let modImgName=[];
 
 
@@ -436,7 +449,28 @@
 
     })
 
+    //post좋아요버튼
 
+    $("body").on("click",".prrlikebtn",function (){
+        $.ajax({
+            url:`/view/like/${postId}`,
+            method: "POST",
+            success:function (response){
+                $(".postlikecount").text(response[0]);
+                console.log("좋아요 성공"+response[1])
+                if(response[1]==10){
+                    $("#postlikeimg").attr("src","/img/빨간하트png.png")
+                }else{
+                    $("#postlikeimg").attr("src","/img/빈하트.png")
+                }
+
+            },
+            error:function (){
+                console.log("좋아요 실패")
+            }
+
+        })
+    })
 </script>
 
 </body>
