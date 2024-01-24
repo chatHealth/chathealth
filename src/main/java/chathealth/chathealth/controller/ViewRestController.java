@@ -5,6 +5,7 @@ import chathealth.chathealth.dto.request.ReviewDto;
 import chathealth.chathealth.dto.request.ReviewModDto;
 import chathealth.chathealth.dto.response.CustomUserDetails;
 import chathealth.chathealth.dto.response.ReViewSelectDto;
+import chathealth.chathealth.entity.Review;
 import chathealth.chathealth.service.PostService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/review")
@@ -23,8 +25,9 @@ public class ViewRestController {
 
 
     @GetMapping("/{postId}")
-    public List<ReViewSelectDto> selectRe(@PathVariable long postId){
-        return postService.getReview(postId);
+    public List<ReViewSelectDto> selectRe(@PathVariable long postId,@AuthenticationPrincipal CustomUserDetails login){
+        List<ReViewSelectDto> select=postService.getReview(postId,login);
+        return select;
     }
 
 

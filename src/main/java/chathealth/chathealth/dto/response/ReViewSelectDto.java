@@ -7,6 +7,7 @@ import chathealth.chathealth.entity.member.Member;
 import chathealth.chathealth.entity.post.Post;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -21,8 +22,10 @@ import static jakarta.persistence.GenerationType.SEQUENCE;
 @AllArgsConstructor
 @Builder
 @ToString
+@Slf4j
 public class ReViewSelectDto {
     private Long id;
+    private Long member;
     private String nickName;
     private String profile;
     private String content;
@@ -30,4 +33,14 @@ public class ReViewSelectDto {
     private String createdDate;
     private List<String> pictureReView;
 
+    private Integer same;
+    public Integer sameclass(Long member,CustomUserDetails login){
+        if(login!=null){
+            if(member.equals(login.getLoggedMember().getId())){
+                return 5;
+            }else {
+                return 1;
+            }
+        }return 2;
+    }
 }

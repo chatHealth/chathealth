@@ -70,8 +70,9 @@ public class PostService {
     }
 
 
-    public List<ReViewSelectDto> getReview(long id){
+    public List<ReViewSelectDto> getReview(long id,CustomUserDetails login){
         Post post = postRepository.findById(id).orElseThrow(BoardNotFoundException::new);
+        ReViewSelectDto userCheck = new ReViewSelectDto();
         List<Review> re=reViewRepository.findAllByPost(post);
         List<ReViewSelectDto> dto=re.stream()
                 .filter(review -> (review.getMember() instanceof Users))
@@ -85,10 +86,12 @@ public class PostService {
                     }
             return ReViewSelectDto.builder()
                     .id(Review.getId())
+                    .member(user.getId())
                     .content(Review.getContent())
                     .score(Review.getScore())
                     .nickName(user.getNickname())
                     .profile(profiles)
+                    .same(userCheck.sameclass(user.getId(),login))
                     .pictureReView(Review.getPictureReList().stream().map(PictureReView::getPictureUrl).toList())
                     .createdDate(Review.getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
                     .build();

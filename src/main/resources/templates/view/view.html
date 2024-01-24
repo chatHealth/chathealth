@@ -143,10 +143,14 @@
                                                 <div>${val.nickName}</div>
                                             </div>
                                             <div class="secondinfo" style="float: right">
-                                                <div class="btnset">
-                                                    <button type="button" class="deleteBtn">삭제</button>
-                                                    <button type="button" class="modifyBtn" >수정</button>
-                                                 </div>
+                                                <div class="btnset">`;
+                                                    if(val.same==5){
+                                                        ht+=`<button type="button" class="deleteBtn">삭제</button>
+                                                        <button type="button" class="modifyBtn">수정</button>`;
+                                                    }
+
+
+                                                 ht+=`</div>
                                                 <div class="starscore">
                                                     <span>별점 : </span><span>${val.score}</span>
                                                 </div>
@@ -157,6 +161,7 @@
 
                                                 ht+=`<hr>
                                                      <div class="reviewImglistmg">`;
+
                                                 for (let i = 0; i < val.pictureReView.length; i++) {
                                                     ht += `<div style="width: 100px; height: 100px" class="imgBBox">
                                                         <img src="/profile/${val.pictureReView[i]}" style="object-fit: cover; width: 100%; height: 100%;">
@@ -180,6 +185,7 @@
                          </div>`;
 
                 })
+
                 $(".container").html(ht);
 
 
@@ -242,30 +248,36 @@
 
     // 리뷰등록
     function insertRe(){
-        var reContentValue = document.querySelector(".reContent textarea").value.trim();
-        const date={
-            "content": reContentValue,
-            "score": $("#star").val(),
-            "pictureReList":reImgName,
-            "post":postId
-        }
-        $.ajax({
-            method:"POST",
-            url:"/review/write",
-            contentType: 'application/json',
-            data:JSON.stringify(date),
-            success: function (response){
-                console.log("리뷰작성 완")
-                $(".reContent textarea").val("");
-                reImgName=[];
-                $(".reImgCount").text(0);
-                reViewList()
-            },
-            error:function (){
-                console.log("리뷰작성 실패")
-            }
+        let reContentValue = document.querySelector(".reContent textarea").value.trim();
 
-        })
+
+        if(reContentValue.replace(/\s/g, '')=="") {
+                alert("내용을 입력해주세요.")
+        }else{
+            const date = {
+                "content": reContentValue,
+                "score": $("#star").val(),
+                "pictureReList": reImgName,
+                "post": postId
+            }
+            $.ajax({
+                method: "POST",
+                url: "/review/write",
+                contentType: 'application/json',
+                data: JSON.stringify(date),
+                success: function (response) {
+                    console.log("리뷰작성 완")
+                    $(".reContent textarea").val("");
+                    reImgName = [];
+                    $(".reImgCount").text(0);
+                    reViewList()
+                },
+                error: function () {
+                    console.log("리뷰작성 실패")
+                }
+
+            })
+        }
     }
 
     // 리뷰 수정
@@ -374,25 +386,32 @@
 
     //리뷰 수정 완료
     function modifyReview(num, content, pictureReList, score) {
-        const date = {
-            "content": content,
-            "score": score,
-            "pictureReList": pictureReList,
-        };
-        $.ajax({
-            method: "POST",
-            url: `/review/mod/${num}`,
-            contentType: 'application/json',
-            data: JSON.stringify(date),
-            success: function () {
-                console.log("리뷰 수정 완료");
-                reViewList(); // 수정 후 리뷰 목록을 새로고침합니다.
-            },
-            error: function (xhr, status, error) {
-                console.log("리뷰 수정 실패");
 
-            }
-        });
+        if(content.replace(/\s/g, '')=="") {
+            alert("내용을 입력해주세요.")
+        }else {
+
+
+            const date = {
+                "content": content,
+                "score": score,
+                "pictureReList": pictureReList,
+            };
+            $.ajax({
+                method: "POST",
+                url: `/review/mod/${num}`,
+                contentType: 'application/json',
+                data: JSON.stringify(date),
+                success: function () {
+                    console.log("리뷰 수정 완료");
+                    reViewList(); // 수정 후 리뷰 목록을 새로고침합니다.
+                },
+                error: function (xhr, status, error) {
+                    console.log("리뷰 수정 실패");
+
+                }
+            });
+        }
     }
     $("body").on("click", ".endBtn", function () {
         let par = $(this).closest(".reviewPar");
@@ -404,16 +423,17 @@
     });
 
     //리뷰 삭제
-    $("body").on("click",".deleteBtn",function (){
-        let num= $(this).closest(".reviewPar").data("num");
+    $("body").on("click",".deleteBtn",function () {
+        let num = $(this).closest(".reviewPar").data("num");
         $.ajax({
-            url:`/review/delete/${num}`,
+            url: `/review/delete/${num}`,
             method: "DELETE",
-            success:function (response){
+            success: function (response) {
                 console.log("리뷰 삭제")
                 reViewList()
             }
         })
+
     })
 
 
