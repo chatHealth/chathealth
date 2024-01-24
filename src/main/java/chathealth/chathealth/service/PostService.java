@@ -3,24 +3,33 @@ package chathealth.chathealth.service;
 
 import chathealth.chathealth.dto.request.PostSearch;
 import chathealth.chathealth.dto.request.PostWriteDto;
+import chathealth.chathealth.dto.request.ReviewDto;
+import chathealth.chathealth.dto.request.ReviewModDto;
 import chathealth.chathealth.dto.response.*;
+import chathealth.chathealth.entity.PictureReView;
+import chathealth.chathealth.entity.Review;
 import chathealth.chathealth.entity.member.Ent;
 import chathealth.chathealth.entity.member.Member;
+import chathealth.chathealth.entity.member.Users;
 import chathealth.chathealth.entity.post.Material;
 import chathealth.chathealth.entity.post.MaterialPost;
 import chathealth.chathealth.entity.post.Post;
 import chathealth.chathealth.entity.post.Symptom;
+import chathealth.chathealth.exception.BoardNotFoundException;
 import chathealth.chathealth.exception.UserNotFound;
 import chathealth.chathealth.repository.*;
 import chathealth.chathealth.entity.post.PicturePost;
 import chathealth.chathealth.repository.PicturePostRepository;
 import chathealth.chathealth.repository.post.PostRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Slf4j
@@ -34,12 +43,84 @@ public class PostService {
     private final MaterialRepository materialRepository;
     private final MemberRepository memberRepository;
     private final MaterialPostRepository materialPostRepository;
+    private final PictureReviewRepository pictureReviewRepository;
+    private final ReViewRepository reViewRepository;
+
+
+    public void deleteRe(long num){
+        Review re= reViewRepository.findById(num).orElseThrow();
+        reViewRepository.delete(re);
+    }
+
+@Transactional
+    public void modifyReView(long num, ReviewModDto reviewModDto){
+    Review re = reViewRepository.findById(num).orElseThrow(BoardNotFoundException::new);
+    re.update(reviewModDto);
+
+        if(reviewModDto.getPictureReList().size()>0) {
+            pictureReviewRepository.deleteAllByReview(re);
+            for (int i = 0; i < reviewModDto.getPictureReList().size(); i++) {
+                PictureReView pic = PictureReView.builder()
+                        .review(re)
+                        .pictureUrl(reviewModDto.getPictureReList().get(i))
+                        .build();
+                pictureReviewRepository.save(pic);
+            }
+        }
+    }
+
+
+    public List<ReViewSelectDto> getReview(long id,CustomUserDetails login){
+        Post post = postRepository.findById(id).orElseThrow(BoardNotFoundException::new);
+        ReViewSelectDto userCheck = new ReViewSelectDto();
+        List<Review> re=reViewRepository.findAllByPost(post);
+        List<ReViewSelectDto> dto=re.stream()
+                .filter(review -> (review.getMember() instanceof Users))
+                .filter(review-> review.getDeletedDate()==null)
+                .map(Review -> {
+//                    if(Review.getDeletedDate()==null){
+                    Users user = (Users) Review.getMember();
+                    String profiles="/profile/"+ user.getProfile();
+                    if(user.getProfile().endsWith("_")){
+                        profiles="/img/basic_user.png";
+                    }
+            return ReViewSelectDto.builder()
+                    .id(Review.getId())
+                    .member(user.getId())
+                    .content(Review.getContent())
+                    .score(Review.getScore())
+                    .nickName(user.getNickname())
+                    .profile(profiles)
+                    .same(userCheck.sameclass(user.getId(),login))
+                    .pictureReView(Review.getPictureReList().stream().map(PictureReView::getPictureUrl).toList())
+                    .createdDate(Review.getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+                    .build();
+        }).collect(Collectors.toList());
+
+
+        return dto;
+    }
+    public Review insertRe(ReviewDto reviewDto){
+        Review re= Review.builder()
+                .post(postRepository.findById(reviewDto.getPost()).orElseThrow())
+                .member(memberRepository.findById(reviewDto.getMember()).orElseThrow())
+                .content(reviewDto.getContent())
+                .score(reviewDto.getScore())
+                .build();
+        reViewRepository.save(re);
+        for(int i=0;i<reviewDto.getPictureReList().size();i++){
+            PictureReView pic=PictureReView.builder()
+                    .review(re)
+                    .pictureUrl(reviewDto.getPictureReList().get(i))
+                    .build();
+            pictureReviewRepository.save(pic);
+        }
+        return re;
+    }
 
 
     public PostResponseDetails getAllView(long id){
         Post post=postRepository.findById(id).orElseThrow();
-        log.info("postFirst===={}",post);
-        log.info("picturesss===={}",picturePostRepository.findAllByPostId(id));
         return PostResponseDetails.builder()
                 .id(post.getId())
                 .company(post.getMember().getCompany())
