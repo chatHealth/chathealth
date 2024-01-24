@@ -148,4 +148,15 @@ public class AuthController {
         }
         return Role.getEntRoles().contains(customUserDetails.getLoggedMember().getRole());
     }
+
+    // 로그인한 유저 email 식별자
+    @ResponseBody
+    @GetMapping("/email")
+    public String email(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        if(customUserDetails == null || Role.getEntRoles().contains(customUserDetails.getLoggedMember().getRole())){
+            return null;
+        }
+        return customUserDetails.getLoggedMember().getEmail();
+    }
+
 }
