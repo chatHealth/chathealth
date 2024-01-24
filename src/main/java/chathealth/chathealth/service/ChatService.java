@@ -42,7 +42,7 @@ public class ChatService {
     private final ImageUpload imageUpload;
 
     @Transactional
-    public void createChatRoom(CustomUserDetails userDetails, CreateChatRoom createChatRoom, MultipartFile image) {
+    public Long createChatRoom(CustomUserDetails userDetails, CreateChatRoom createChatRoom, MultipartFile image) {
         String email = userDetails.getLoggedMember().getEmail();
         Member member = memberRepository.findByEmail(email).orElseThrow(UserNotFound::new);
 
@@ -53,6 +53,8 @@ public class ChatService {
 
         chatRoomRepository.save(chatRoom);
         chatRoomMemberRepository.save(chatRoomMember);
+
+        return chatRoom.getId();
     }
 
     public List<ChatMessageResponse> getChatMessages(Long roomId, CustomUserDetails userDetails) {
@@ -74,10 +76,9 @@ public class ChatService {
     @Transactional
     public ChatMessageResponse sendChatMessage(ChatMessageDto messageDto, String senderEmail) {
         if (messageDto.getType().equals(ChatMessageType.ENTER)) {
-            messageDto.setContent(messageDto.getNickname() + ENTER_MESSAGE);
-            enterChatRoom(messageDto, senderEmail);
+            messageDto.setContent(messageDto.getNickname() + ENTER_MESSAGE.getMessage());
         } else if (messageDto.getType().equals(ChatMessageType.QUIT)) {
-            messageDto.setContent(messageDto.getNickname() + QUIT_MESSAGE);
+            messageDto.setContent(messageDto.getNickname() + QUIT_MESSAGE.getMessage());
         }
 
         ChatRoom chatRoom = chatRoomRepository.findById(messageDto.getRoomId()).orElseThrow(RoomNotFound::new);
@@ -93,9 +94,6 @@ public class ChatService {
 
         chatMessageRepository.save(message);
 
-        if (messageDto.getType().equals(ChatMessageType.QUIT)) {
-            quitChatRoom(messageDto, senderEmail);
-        }
 
         return ChatMessageResponse.builder()
                 .message(message.getMessage())
@@ -106,13 +104,16 @@ public class ChatService {
 
     }
 
-    public void enterChatRoom(ChatMessageDto messageDto, String senderEmail) {
-        ChatRoom chatRoom = chatRoomRepository.findById(messageDto.getRoomId()).orElseThrow(RoomNotFound::new);
-        Member member = memberRepository.findByEmail(senderEmail).orElseThrow(UserNotFound::new);
+    @Transactional
+    public Long enterChatRoom(Long roomId, String memberEmail, String nickname) {
+        ChatRoom chatRoom = chatRoomRepository.findById(roomId).orElseThrow(RoomNotFound::new);
+        Member member = memberRepository.findByEmail(memberEmail).orElseThrow(UserNotFound::new);
 
-        ChatRoomMember chatRoomMember = ChatRoomMember.enterChatRoomMember(messageDto.getNickname(), chatRoom, member);
+        ChatRoomMember chatRoomMember = ChatRoomMember.enterChatRoomMember(nickname, chatRoom, member);
 
-        chatRoomMemberRepository.save(chatRoomMember);
+        ChatRoomMember savedRoomMember = chatRoomMemberRepository.save(chatRoomMember);
+
+        return savedRoomMember.getId();
     }
 
     public void quitChatRoom(ChatMessageDto messageDto, String senderEmail) {

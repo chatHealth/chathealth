@@ -26,16 +26,16 @@ public class ChatMessageController {
     @MessageMapping("/chat/message")
     public void message(ChatMessageDto messageDto, Principal principal) {
 
-
         ChatMessageResponse response = chatService.sendChatMessage(messageDto, principal.getName());
         messagingTemplate.convertAndSend("/sub/chat/" + messageDto.getRoomId(), response);
     }
 
     @PostMapping("/chat/room")
-    public void chat(@RequestPart CreateChatRoom createChatRoom,
+    public Long chat(@RequestPart CreateChatRoom createChatRoom,
                      @RequestPart MultipartFile image,
                      @AuthenticationPrincipal CustomUserDetails userDetails) {
 
-        chatService.createChatRoom(userDetails, createChatRoom, image);
+        Long chatRoomId = chatService.createChatRoom(userDetails, createChatRoom, image);
+        return chatRoomId;
     }
 }

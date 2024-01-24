@@ -6,8 +6,8 @@
 <div layout:fragment="content" class="main">
     <div class="container mt-5">
         <div class="card">
-            <div class="card-header">채팅방</div>
-            <div class="card-body" id="chatMessages" style="height: 400px; overflow-y: auto;">
+            <div class="card-header"><span th:text="${room.name}">채팅방 이름</span><span class="badge bg-secondary" th:text="${room.userCount} + ' members'"></span></div>
+            <div class="card-body" id="chatMessages" style="height: 500px; overflow-y: auto;">
                 <!-- 채팅 메시지들이 여기에 동적으로 표시됩니다. -->
             </div>
         </div>

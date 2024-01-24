@@ -1,5 +1,6 @@
 package chathealth.chathealth.controller;
 
+import chathealth.chathealth.dto.response.ChatRoomInner;
 import chathealth.chathealth.dto.response.ChatRoomResponse;
 import chathealth.chathealth.dto.response.CustomUserDetails;
 import chathealth.chathealth.service.ChatService;
@@ -7,9 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.List;
@@ -33,15 +32,18 @@ public class ChatRoomController {
     @GetMapping("/chat/{id}")
     public String chatRoom(@AuthenticationPrincipal CustomUserDetails userDetails,
                            @PathVariable Long id, Model model) {
-        model.addAttribute("room", chatService.getChatRoom(id, userDetails));
+        ChatRoomInner chatRoom = chatService.getChatRoom(id, userDetails);
+        model.addAttribute("room", chatRoom);
         return "chat/room";
     }
 
-    // 채팅방 가입
-    @PostMapping("/chat/{id}")
-    public String joinChatRoom(@AuthenticationPrincipal CustomUserDetails userDetails,
-                               @PathVariable Long id) {
-//        chatService.joinChatRoom(id, userDetails);
-        return "redirect:/chat/" + id;
+    @ResponseBody
+    @PostMapping("/chat/room/{id}")
+    public Long enterRoom(@AuthenticationPrincipal CustomUserDetails userDetails,
+                            @PathVariable Long id,
+                            @RequestParam String nickname) {
+        Long senderId = chatService.enterChatRoom(id, userDetails.getLoggedMember().getEmail(), nickname);
+
+        return senderId;
     }
 }
