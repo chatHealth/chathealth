@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}">
+
+<div layout:fragment="content" class="main">
+    <div class="container mt-5">
+        <div class="card">
+            <div class="card-header">채팅방</div>
+            <div class="card-body" id="chatMessages" style="height: 400px; overflow-y: auto;">
+                <!-- 채팅 메시지들이 여기에 동적으로 표시됩니다. -->
+            </div>
+        </div>
+        <input type="text" id="messageInput" class="form-control mt-3" placeholder="메시지 입력">
+        <button id="sendMessageButton" class="btn btn-primary mt-2">보내기</button>
+    </div>
+
+    <script th:inline="javascript">
+        //로그인한 사용자의 이메일
+        const userEmail = [[${#authentication.principal.username}]];
+        /* SockJS와 STOMP 클라이언트 초기화 */
+        let socket = new SockJS('/chatting');
+        let stompClient = Stomp.over(socket);
+        const roomId = [[${room.id}]]
+
+        //현재 사용자의 senderId
+        const senderId = [[${room.senderId}]];
+
+        //로그 비활성화
+        //stompClient.debug = null;
+
+        stompClient.connect({}, function(frame) {
+            // 구독 설정
+            stompClient.subscribe('/sub/chat/' + roomId, function(message) {
+                let messageBody = JSON.parse(message.body);
+                displayMessage(messageBody.nickname, messageBody.message, messageBody.timestamp, messageBody.senderId === senderId);
+                console.log(messageBody);
+            });
+        });
+
+        document.getElementById('sendMessageButton').addEventListener('click', function() {
+            let messageContent = document.getElementById('messageInput').value.trim();
+            if(messageContent && stompClient) {
+                let chatMessage = { roomId: roomId, content: messageContent, type: 'TALK', senderEmail: userEmail, senderId: senderId};
+                stompClient.send("/pub/chat/message", {}, JSON.stringify(chatMessage));
+                document.getElementById('messageInput').value = '';
+            }
+        });
+
+        function displayMessage(nickname, message, timestamp, isMine) {
+            let messageBox = $('<div></div>').addClass('message-box');
+            let messageElement = $('<span></span>').addClass('message-content');
+            let nicknameElement = $('<span></span>').addClass('nickname').text(nickname);
+            let timestampElement = $('<span></span>').addClass('timestamp');
+
+            messageElement.text(message);
+            nicknameElement.text(nickname);
+            timestampElement.text(timestamp);
+
+            if(isMine) {
+                messageBox.addClass('my-message-box');
+                messageElement.addClass('my-message');
+            } else {
+                messageBox.addClass('other-message-box');
+                messageElement.addClass('other-message');
+            }
+
+            messageBox.append(nicknameElement);
+            messageBox.append(messageElement);
+            messageBox.append(timestampElement);
+            $('#chatMessages').append(messageBox);
+            $('#chatMessages').scrollTop($('#chatMessages')[0].scrollHeight);
+        }
+    </script>
+</div>
+
+</html>

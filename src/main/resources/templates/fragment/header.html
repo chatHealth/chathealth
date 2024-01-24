@@ -37,6 +37,7 @@
                                     </button>
                                 </li>
                             </th:block>
+                            <li class="nav-item"><a href="#" th:href="@{/chat}" class="nav-link">채팅</a></li>
                             <li class="nav-item"><a href="#" th:href="@{/post}" class="nav-link">건강기능식품</a></li>
                             <li class="nav-item"><a href="#" th:href="@{/board}" class="nav-link">커뮤니티</a></li>
                             <li class="nav-item" sec:authorize="hasRole('ROLE_USER')"><a href="" th:href="@{|/member/user/${#authentication.principal.loggedMember.id}|}" class="nav-link">마이 페이지</a></li>
@@ -493,10 +494,11 @@
                     if (errorResult.code === "400") {
                         if (errorResult.validation !== undefined) {
                             if (errorResult.validation.title !== undefined) {
-                                alert(errorResult.validation.title);
+                                sendWarnMessage(errorResult.validation.title);
                             }
                             if (errorResult.validation.content !== undefined) {
                                 alert(errorResult.validation.content);
+                                sendWarnMessage(errorResult.validation.content);
                             }
                         }else{
                             alert(errorResult.message);
@@ -530,7 +532,7 @@
                 url: "/api/message/delete/" + messageId,
                 type: "POST",
                 success: function (response) {
-                    alert("쪽지를 삭제했습니다.");
+                    sendInfoMessage("쪽지를 삭제했습니다.");
                     receiveMessagePage(0);
                 },
                 error: function (response) {
@@ -538,6 +540,14 @@
                     console.log(response.message);
                 }
             });
+        }
+
+        function sendInfoMessage(message) {
+            toastr.info(message);
+        }
+
+        function sendErrorMessage(message) {
+            toastr.error(message);
         }
     </script>
 

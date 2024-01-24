@@ -354,3 +354,58 @@ footer {
     max-height: 150px; /* 최대 높이 설정 */
     resize: none;
 }
+/* 내가 보낸 메시지에 대한 스타일 */
+.my-message-box {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    margin-bottom: 10px;
+}
+
+.my-message-box .message-content {
+    background-color: #DCF8C6;
+    padding: 10px;
+    border-radius: 10px;
+    max-width: 60%;
+    word-break: break-word;
+}
+
+.my-message-box .nickname {
+    font-size: 0.8em;
+    color: #888;
+    margin-bottom: 3px;
+}
+
+.my-message-box .timestamp {
+    font-size: 0.8em;
+    color: #888;
+    margin-top: 3px;
+}
+
+/* 다른 사람이 보낸 메시지에 대한 스타일 */
+.other-message-box {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 10px;
+}
+
+.other-message-box .message-content {
+    background-color: #ECECEC;
+    padding: 10px;
+    border-radius: 10px;
+    max-width: 60%;
+    word-break: break-word;
+}
+
+.other-message-box .nickname {
+    font-size: 0.8em;
+    color: #888;
+    margin-bottom: 3px;
+}
+
+.other-message-box .timestamp {
+    font-size: 0.8em;
+    color: #888;
+    margin-top: 3px;
+}

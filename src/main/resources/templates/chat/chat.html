@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}">
+
+<div layout:fragment="content" class="main">
+    <div class="container mt-4">
+        <h2>채팅방 리스트</h2>
+        <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#chatRoomModal">채팅방 개설</button>
+        <ul class="list-group">
+            <li th:each="chatRoom : ${chatRooms}" class="list-group-item d-flex align-items-center justify-content-between">
+                <div class="d-flex align-items-center">
+                    <img th:src="@{|/chat/${chatRoom.image}|}" class="img-fluid rounded-circle mr-3" style="width: 60px; height: 60px;" alt="Room Image" />
+                    <div>
+                        <h5 class="mb-0" th:text="${chatRoom.name}">Chat Room Name</h5>
+                        <small th:text="${chatRoom.description}">Description</small>
+                        <span class="badge bg-secondary" th:text="${chatRoom.userCount} + ' members'"></span>
+                    </div>
+                </div>
+                <div>
+                    <a th:if="${chatRoom.isJoined}" href="#" th:href="@{|/chat/${chatRoom.id}|}" class="btn btn-success">참여중</a>
+                    <a th:unless="${chatRoom.isJoined}" href="#" th:href="@{|/chat/${chatRoom.id}|}" class="btn btn-primary">Join</a>
+                </div>
+            </li>
+        </ul>
+    </div>
+
+
+    <!-- 채팅방 모달 -->
+    <div class="modal fade" id="chatRoomModal" tabindex="-1" aria-labelledby="chatRoomModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="chatRoomModalLabel">채팅방 개설</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="chatRoomForm">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="chatRoomName" class="form-label">채팅방 이름</label>
+                            <input type="text" class="form-control" id="chatRoomName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="chatRoomNickName" class="form-label">채팅에서 쓸 닉네임</label>
+                            <input type="text" class="form-control" id="chatRoomNickName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="chatRoomDescription" class="form-label">설명</label>
+                            <textarea class="form-control" id="chatRoomDescription" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="chatRoomImage" class="form-label">대표 사진</label>
+                            <input type="file" class="form-control" id="chatRoomImage" accept="image/*">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+                        <button id="createChatRoom" class="btn btn-primary">개설하기</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script th:inline="javascript">
+
+
+        $(document).ready(function () {
+
+            $("#createChatRoom").on("click", function (e) {
+                e.preventDefault();
+                createChatRoom();
+            });
+
+        });
+
+        function createChatRoom() {
+            console.log("submit");
+            let formData = new FormData();
+            formData.append("createChatRoom",
+                new Blob([JSON.stringify({name:$("#chatRoomName").val(),
+                        description: $("#chatRoomDescription").val(),
+                        nickname: $("#chatRoomNickName").val()})],
+                    {type: "application/json"}));
+            formData.append("image", $("#chatRoomImage")[0].files[0]);
+            console.log(formData);
+
+            $.ajax({
+                url: "/chat/room",
+                type: "POST",
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (data) {
+                    toastr.info("채팅방 개설에 성공하였습니다.");
+                    $("#chatRoomModal").modal("hide");
+                    $("#chatRoomForm")[0].reset();
+                    alert("채팅방 개설에 성공하였습니다.");
+                },
+                error: function (e) {
+                    e = JSON.parse(e.responseText);
+                    toastr.error("채팅방 개설에 실패하였습니다.");
+                    console.log(e);
+                    alert("채팅방 개설에 실패하였습니다.");
+                }
+            });
+        }
+    </script>
+</div>
+
+</html>
