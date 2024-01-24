@@ -3,7 +3,6 @@ package chathealth.chathealth.constants;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
-import java.util.HashSet;
 import java.util.Set;
 
 @Getter
@@ -17,10 +16,6 @@ public enum Role {
     private final String role;
 
     public static Set<Role> getEntRoles() {
-        return new HashSet<>() {{
-            add(ROLE_WAITING_ENT);
-            add(ROLE_PERMITTED_ENT);
-            add(ROLE_REJECTED_ENT);
-        }};
+        return Set.of(ROLE_WAITING_ENT, ROLE_PERMITTED_ENT, ROLE_REJECTED_ENT);
     }
 }

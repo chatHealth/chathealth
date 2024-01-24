@@ -1,4 +1,4 @@
-package chathealth.chathealth.controller;
+package chathealth.chathealth.controller.board;
 
 import chathealth.chathealth.dto.request.BoardCreateDto;
 import chathealth.chathealth.dto.request.BoardEditDto;

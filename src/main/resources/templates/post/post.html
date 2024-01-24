@@ -220,7 +220,7 @@
                                 <div class="form-check form-check-inline">
                                     <input class="form-check-input" type="checkbox" value="마그네슘"
                                            id="vitality3">
-                                    <label class="form-check-label" for="vitality3">마그네슌</label>
+                                    <label class="form-check-label" for="vitality3">마그네슘</label>
                                 </div>
                                 <div class="form-check form-check-inline">
                                     <input class="form-check-input" type="checkbox" value="테아닌"
@@ -262,6 +262,15 @@
                             <!--                        <button id="searchBtn">검색</button>-->
                         </div>
                         <hr>
+
+                        <!-- 글 작성 -->
+                        <!-- 승인된 ent만 보이도록함 -->
+                        <th:block sec:authorize="hasRole('ROLE_PERMITTED_ENT')">
+                            <div class="d-flex justify-content-start">
+                                <a href="#" th:href="@{/post/write}" class="btn btn-primary">새 상품 소개하기</a>
+                            </div>
+                        </th:block>
+
                         <!-- 정렬 조건 -->
                         <div class="btn-group" role="group" aria-label="Basic radio toggle button group"
                              id="target-element">
@@ -340,13 +349,12 @@
                     html += "<table class=\"table table-hover\">";
                     $.each(response, function (index, item) {
                         html += "<tr>";
-                        html += '<th>' + i + '</th>'; // "
-                        html += '<td>' + item.title + '</td>';
+                        html += '<th>' + index + '</th>'; // "
+                        html += '<td>' + "<a href='/view/" + item.id + "' style='text-decoration: none; color: inherit'>" + item.title + '</a></td>';
                         //조회수 이모티콘 + 조회수
                         html += '<td><i class=\"fa fa-eye text-secondary\"></i>' + item.hitCount + '</td>';
                         // 행 종료: 현재 인덱스가 4의 배수이고 마지막 요소가 아닐 때
                         html += "</tr>";
-                        i++;
                     });
                     html += "</table>";
                     $('#best-per-day div').html(html);
@@ -373,10 +381,9 @@
                         html += "<table class=\"table table-hover\">";
                         $.each(response, function (index, item) {
                             html += "<tr>";
-                            html += '<th>' + i + '</th>'; // "
-                            html += '<td>' + item.title + '</td>';
+                            html += '<th>' + index + '</th>'; // "
+                            html += '<td>' + "<a href='/view/" + item.id + "' style='text-decoration: none; color: inherit'>" + item.title + '</a></td>';
                             html += "</tr>";
-                            i++;
                         });
                         html += "</table>";
                         $('#view-recent div').html(html);
@@ -638,19 +645,6 @@
         $('.materials input[type="checkbox"]').on('change', function () {
             materialList = [];
         });
-
-        // document.querySelector('.toggle-button').addEventListener('click', function () {
-        //     let leftBox = document.querySelector('.left-box');
-        //     if (leftBox.style.left === '50px') {
-        //         leftBox.style.left = '-250px';
-        //         leftBox.style.display = 'none';
-        //         leftBox.style.transition = 'all 0.5s ease';
-        //     } else {
-        //         leftBox.style.left = '50px';
-        //         leftBox.style.display = 'block';
-        //         leftBox.style.transition = 'all 0.5s ease';
-        //     }
-        // });
     </script>
 </div>
 </html>

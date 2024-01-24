@@ -161,7 +161,6 @@ public class PostService {
                                 .hitCount(post.getPostHitCount())
                                 .likeCount(post.getPostLikeCount())
                                 .reviewCount(post.getReviewCount())
-                                .symptom(post.getSymptom().getSymptomName())
                                 .build();})
                 .toList();
     }

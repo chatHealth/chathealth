@@ -18,10 +18,10 @@
             </ul>
             <span style="border-top: 1px solid #ccc; display: block; margin: 10px 13px;"></span>
             <ul class="list-group list-group-flush">
-                <li class="list-group-item list-group-item-action"><a>내 정보</a></li>
-                <li class="list-group-item list-group-item-action"><a>내 상품</a></li>
-                <li class="list-group-item list-group-item-action"><a>비밀번호 변경</a></li>
-                <li class="list-group-item list-group-item-action"><a>회원 탈퇴</a></li>
+                <li class="list-group-item list-group-item-action"><button class="btn" id="myinfoBtn">내 정보</button></li>
+                <li class="list-group-item list-group-item-action"><button class="btn" id="mypostBtn">내 상품</button></li>
+                <li class="list-group-item list-group-item-action"><button class="btn" id="changepwBtn">비밀번호 변경</button></li>
+                <li class="list-group-item list-group-item-action"><button class="btn" id="deleteaccountBtn">회원 탈퇴</button></li>
             </ul>
             <!-- 프로필사진 변경 모달 -->
             <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -49,58 +49,185 @@
 
         </div>
         <!--  컨텐츠 -->
-        <div class="mp-content col-md-6 ms-md-auto">
-            <div class="col-9">
-                <h2 class="fw-weight-bold mb-5">업체 정보</h2>
-                <table class="table" style="width:550px;">
-                    <th:block sec:authorize="hasRole('ROLE_WAITING_ENT')">
-                        <tr>
-                            <th>법인명</th>
-                            <td th:text="${entInfo.company}"></td>
-                            <td><span style="color:white; border-style: double; font-size: 11px;border-color: #137AE8;background: #137AE8">승인 대기중</span></td>
-                        </tr>
-                    </th:block>
-                    <th:block sec:authorize="hasRole('ROLE_PERMITTED_ENT')">
-                        <tr>
-                            <th>법인명</th>
-                            <td th:text="${entInfo.company}"></td>
-                            <td style="color: white; border-style: double; font-size: 11px;border-color: #65EA4A;background: #65EA4A">승인 완료</td>
-                        </tr>
-                    </th:block>
-                    <th:block sec:authorize="hasRole('ROLE_REJECTED_ENT')">
-                        <tr>
-                            <th>법인명</th>
-                            <td th:text="${entInfo.company}"></td>
-                            <td style="color: white; border-style: double; font-size: 11px;border-color: #EA564E;background: #EA564E">승인 거절</td>
-                        </tr>
-                    </th:block>
-                    <tr>
-                        <th>대표자</th>
-                        <td th:text="${entInfo.ceo}"></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <th>사업자 번호</th>
-                        <td th:text="${entInfo.entNo}"></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <th>주소</th>
-                        <td th:if="${not #strings.isEmpty(entInfo.address.addressDetail)}" th:text="|${entInfo.address.address} ${entInfo.address.addressDetail}|"></td>
-                        <td th:if="${#strings.isEmpty(entInfo.address.addressDetail)}" th:text="|${entInfo.address.address}|"></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <th>이메일</th>
-                        <td th:text="${entInfo.email}"></td>
-                        <td></td>
-                    </tr>
-                </table>
-                <a href="#" class="link-underline-opacity-0"><p>정보 수정</p></a>
-            </div>
+        <div class="mp-content col-md-6 ms-md-auto" id="mp-content">
+
         </div>
     </div>
 
+    <script th:inline="javascript">
+        $(document).ready(function () {
+            const id = [[${entInfo.id}]];
+            console.log(id);
+
+            //내정보 버튼
+            $('#myinfoBtn').click(function () {
+                $.ajax({
+                    url: `/member/ent/getinfo/${id}`,
+                    type: "GET",
+                    data: id,
+                    success: function (response) {
+                        displayEntInfo(response);
+                    },
+                    error: function (error) {
+                        alert(JSON.stringify(error));
+                    },
+                    complete: function () {
+                    }
+                });
+            });
+            $('#myinfoBtn').click();
+            function displayEntInfo(entInfo) {
+                const container = $('<div>').addClass('ent-info-container');
+                container.append('<h2 class="mb-4" style="color:#198754;"><b>내 정보</b></h2>');
+
+                const table = $('<table>').addClass('table');
+
+                table.append('<tr><th style="color:#198754;">법인명</th><td>' + entInfo.company + '</td></tr>');
+                table.append('<tr><th style="color:#198754;">대표자</th><td>' + entInfo.ceo + '</td></tr>');
+                table.append('<tr><th style="color:#198754;">이메일(아이디)</th><td>' + entInfo.email + '</td></tr>');
+                table.append('<tr><th style="color:#198754;">주소</th><td>' + entInfo.address.address + '</td></tr>');
+                table.append('<tr><th style="color:#198754;">상세 주소</th><td>' + entInfo.address.addressDetail + '</td></tr>');
+                table.append('<tr><th style="color:#198754;">개업연월일</th><td>' + entInfo.birth + '</td></tr>');
+
+                container.append(table);
+                container.append("<button class='btn btn-success' id='updateInfoBtn'>정보 수정</button>");
+
+                $('#mp-content').empty();
+                $('#mp-content').html(container);
+
+                $('#updateInfoBtn').on("click",function (){
+                    const originalCompany = [[${entInfo.company}]];
+                    const originalCeo = [[${entInfo.ceo}]];
+                    const originalAddress = [[${entInfo.address.address}]];
+                    const originalAddressDetail = [[${entInfo.address.addressDetail}]];
+
+
+                    $('#mp-content').empty();
+                    const container = $('<div>').addClass('ent-update-container');
+                    const table = $('<table>').addClass('table')
+                    table.append(`<tr><th style="color:#198754;">상호명</th><td><input type="text" class="form-control new" id="company" value="${originalCompany}"></td></tr>`);
+                    table.append(`<tr><th style="color:#198754;">대표자</th><td><input type="text" class="form-control new" id="ceo" value="${originalCeo}"></td></tr>`);
+                    table.append('<tr><th style="color:#198754;">이메일(아이디)</th><td>' + entInfo.email + '</td></tr>');
+                    table.append(`<tr><th style="color:#198754;">주소</th><td><input type="text" id="sample4_roadAddress" class="form-control new" value="${originalAddress}" required>`+
+                        '<td><input type="button" class=" btn btn-sm btn-outline-success" onclick="sample4_execDaumPostcode()" value="우편번호 찾기"></td>' +
+                        '<td><input type="text" style="display:none" id="sample4_jibunAddress" class="new" placeholder="지번주소"></td>' +
+                        '<td><input type="text" id="sample4_postcode" placeholder="우편번호" class="new" style="display:none"></td>' +
+                        '<td><input type="text" class="hidden" id="sample4_extraAddress" placeholder="참고항목" style="display:none"></td>' +
+                        '<td><span id="guide" style="color: #999;" type="hidden" style="display:none"></span></td></tr>');
+                    table.append(`<tr><th style="color:#198754;">상세 주소</th><td><input type="text" class="form-control new" id="sample4_detailAddress" value="${originalAddressDetail}"></td></tr>`);
+                    table.append('<tr><th style="color:#198754;">개업연월일</th><td>' + entInfo.birth + '</td></tr>');
+
+                    container.append(table);
+                    container.append('<button class="btn btn-success" id="updateSubmitBtn">정보 저장</button><button class="btn btn-secondary" id="cancelBtn" style="width:100%;">취소</button>');
+                    $('#mp-content').html(container);
+                });
+
+                $('body').on("click","#updateSubmitBtn",function (){
+                    let entEditDto = {"company": $('#company').val(), "ceo":$('#ceo').val(), "postcode":$('#postcode').val(),
+                        "frontAddress":$('#sample4_roadAddress').val(), "addressDetail":$('#sample4_detailAddress').val()};
+                    $.ajax({
+                        url: `/member/ent/updateInfo/${id}`,
+                        method: "PATCH",
+                        data : JSON.stringify(entEditDto),
+                        contentType:"application/json",
+                        success: function (response){
+                            if(response.isUpdated === "isUpdated"){
+                                alert("정보 수정이 완료되었습니다.");
+                                location.reload();
+                            }
+                        }, error:function(){
+                            alert("실패~");
+                        }
+                    })
+                });
+                $('body').on("click","#cancelBtn",function (){
+                    $('#myinfoBtn').click();
+                });
+            }
+
+            //비밀번호 변경
+            $('#changepwBtn').click(function(){
+                let responseCode;
+                const email = [[${entInfo.email}]];
+                $('#mp-content').empty();
+                //이메일 인증메일 보내기
+                $.ajax({
+                    url: `/member/emails/verification-request`,
+                    type: "POST",
+                    async: false,
+                    data:{email:email},
+                    success: function (response) {
+                        responseCode = response;
+                        const container = $('<div>').addClass('email-verifying-container');
+                        container.append('<h2 class="mb-4" style="color:#198754;"><b>이메일 인증</b></h2>');
+                        container.append('<p class="mb-1">회원님의 이메일로 인증코드 6자리를 보내드렸습니다.</p>');
+                        container.append('<p class="mb-5">인증코드를 확인하시고 10분 이내에 입력해주시기 바랍니다.</p>');
+                        container.append('<input type="text" class="form-control mb-1" style="width: 203px;" id="authcode">');
+                        container.append('<p class="mb-5">메일 발송까지 약간의 시간이 소요될 수 있습니다.</p>');
+                        container.append('<button class="btn btn-success" id="checkAuthcodeBtn">인증하기</button>');
+                        $('#mp-content').html(container);
+                    },
+                    error: function (error) {
+                        alert(JSON.stringify(error));
+                    },
+                    complete: function () {
+                    }
+                });
+
+
+                //비밀번호 변경 입력
+                $('body').on("click","#checkAuthcodeBtn",function (){
+                    if (responseCode===$('#authcode').val()){
+                        $('#mp-content').empty();
+                        const container = $('<div>').addClass('password-change-container');
+                        const table = $('<table>').addClass('table')
+                        table.append(`<tr><th style="color:#198754;">새 비밀번호</th><td><input type="text" class="form-control new" id="newPw"></td></tr>`);
+                        table.append(`<tr><th> </th><td><span style="color: #999999;">비밀번호는 8~15자리이고 영문, 숫자, 특수문자([!@#$%^*+=-)를 포함해야 합니다.</span></td></tr>`);
+                        table.append(`<tr><th style="color:#198754;">비밀번호 확인</th><td><input type="text" class="form-control new" id="checkNewPw"></td></tr>`);
+                        table.append(`<tr><td><span id="confirmPw"></span></td></tr>`);
+                        table.append(`<td><button class="btn btn-success" id="changePwSubmitBtn" style="width:100%;">비밀번호 변경</button></td><td><button class="btn btn-secondary" id="cancelBtn" style="width:100%;">취소</button></td>`);
+
+                        container.append('<h2 class="mb-4" style="color:#198754;"><b>비밀번호 변경</b></h2>');
+                        container.append(table);
+                        $('#mp-content').html(container);
+
+                        //비밀번호 변경 ajax 통신
+                        $('#changePwSubmitBtn').on("click",function (){
+                            const pw = $('#newPw').val();
+                            const regex = /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,15}$/;
+                            if (regex.test(pw)) {
+                                $.ajax({
+                                    url: `/member/update-pw/${id}`,
+                                    method: "PATCH",
+                                    data:{pw:pw},
+                                    success:function(response){
+                                        if(response.isUpdated === "isUpdated"){
+                                            alert("비밀번호 변경이 완료되었습니다.")
+                                            location.reload();
+                                        }
+                                    },
+                                    error: function (error) {
+                                        alert(JSON.stringify(error));
+                                    },
+                                    complete: function () {
+                                    }
+                                });
+                            } else {
+                                $('#confirmPw').text('비밀번호는 8~15자리이고 영문, 숫자, 특수문자를 포함해야 합니다.').removeClass('text-success').addClass('text-danger');
+                            }
+
+                        });
+                        // 취소 버튼 누르면
+                        $('body').on("click","#cancelBtn",function (){
+                            $('#myinfoBtn').click();
+                        });
+                    }
+                });
+            });
+
+
+        });
+    </script>
     <!-- 프로필사진 변경 스크립트 -->
     <script th:inline="javascript">
         const id = [[${entInfo.id}]];

@@ -2,7 +2,6 @@ package chathealth.chathealth.service;
 
 
 import chathealth.chathealth.constants.Grade;
-import chathealth.chathealth.constants.Role;
 
 import chathealth.chathealth.dto.request.EntJoinDto;
 import chathealth.chathealth.dto.request.UserJoinDto;
@@ -10,6 +9,7 @@ import chathealth.chathealth.dto.response.CustomUserDetails;
 import chathealth.chathealth.entity.member.*;
 import chathealth.chathealth.exception.NotPermitted;
 import chathealth.chathealth.repository.MemberRepository;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,6 +27,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Optional;
 import java.util.UUID;
 
 import static chathealth.chathealth.constants.Role.ROLE_USER;
@@ -36,6 +37,16 @@ import static chathealth.chathealth.constants.Role.ROLE_WAITING_ENT;
 @RequiredArgsConstructor
 @Slf4j
 public class AuthService implements UserDetailsService {
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        Member member = memberRepository.findByEmail(username).orElseThrow(
+                () -> new UsernameNotFoundException("사용자가 존재하지 않습니다.")
+        );
+        return new CustomUserDetails(member);
+    }
+
+
     @Value("${file.path}")
     private String path;
     private String domain = "profile"+ File.separator;
@@ -43,7 +54,7 @@ public class AuthService implements UserDetailsService {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Transactional
-    public void userJoin(UserJoinDto userJoinDto) { //개인 회원가입
+    public void userJoin(@Valid UserJoinDto userJoinDto) { //개인 회원가입
         String originalFileName = userJoinDto.getProfile().getOriginalFilename(); //원본 파일 네임
         UUID uuid = UUID.randomUUID(); //난수 발생
         String uploadMon = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMM")) + File.separator;
@@ -80,7 +91,7 @@ public class AuthService implements UserDetailsService {
     }
 
     @Transactional
-    public void entJoin(EntJoinDto entJoinDto) {
+    public void entJoin(@Valid EntJoinDto entJoinDto) {
         // 사업자 회원가입
         String originalFileName = entJoinDto.getProfile().getOriginalFilename(); //원본 파일 네임
         UUID uuid = UUID.randomUUID(); //난수 발생
@@ -109,16 +120,21 @@ public class AuthService implements UserDetailsService {
                 .build();
         memberRepository.save(dbJoinEnt);
     }
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        Member member = memberRepository.findByEmail(email).orElseThrow(
-                () -> new UsernameNotFoundException("사용자가 존재하지 않습니다.")
-        );
 
-        return new CustomUserDetails(member);
+    @Transactional
+    public void updatePw(Long id, String pw){
+        String newPw = bCryptPasswordEncoder.encode(pw);
+        Optional<Member> optionalMember = memberRepository.findById(id);
+        if(optionalMember.isPresent()){
+            Member findMember = optionalMember.get();
+            findMember.updatePw(newPw);
+        }
     }
 
     public boolean confirmEmail(String email) {
         boolean isExists = memberRepository.existsByEmail(email);
         return isExists;
     }
+
+
 }

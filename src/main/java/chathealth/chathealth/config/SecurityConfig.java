@@ -1,5 +1,7 @@
 package chathealth.chathealth.config;
 
+import chathealth.chathealth.handler.CustomAuthenticationEntryPoint;
+import chathealth.chathealth.handler.CustomDeniedHandler;
 import chathealth.chathealth.handler.UserLoginFailHandler;
 import chathealth.chathealth.service.OAuth2DetailsService;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +18,8 @@ public class SecurityConfig {
 
     private final OAuth2DetailsService oAuth2DetailsService;
     private final UserLoginFailHandler userLoginFailHandler;
+    private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
+    private final CustomDeniedHandler customDeniedHandler;
 
 
     @Bean
@@ -25,10 +29,12 @@ public class SecurityConfig {
                         .requestMatchers("/", "/auth/selection", "/auth/userjoin", "/auth/entjoin", "/auth/login", "/auth/confirmEmail",
                                 "/board", "/board/{id}", "/board/api", "/board/api/recent",
                                 "/post", "/api/post", "/api/post/best", "/api/post/best-week", "/api/post/recent","/post/write",
+                                "/board-comment/{id}",
                                 "/error",
                                 "/css/**", "/js/**", "/img/**",
                                  "/board-image/print","/post-img/**","/profile/**"
-                                    ,"/view/**","/review/**")
+                                    ,"/view/**","/review/**",
+                                "/auth/login-check", "/auth/is-user", "/auth/is-ent")
                         .permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN") // admin role 가지고 있는 사람만 허용
                         .anyRequest()
@@ -65,6 +71,13 @@ public class SecurityConfig {
                                 .userService(oAuth2DetailsService)
                         )
                 )
+
+                //예외 처리
+                .exceptionHandling(exceptionHandling ->
+                        exceptionHandling.authenticationEntryPoint(customAuthenticationEntryPoint)
+                                .accessDeniedHandler(customDeniedHandler)
+                )
+
                 .csrf((csrf)->  csrf.disable());
         return httpSecurity.build();
     }

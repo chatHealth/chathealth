@@ -5,12 +5,12 @@
 
 <div layout:fragment="content" class="main mp-main d-flex justify-content-center">
     <div class="container d-flex justify-content-center row mt-5">
-        <!--  사이드 바 -->
+        <!--  고정 사이드 바 -->
         <div class="mp-sidebar col-md-3 ms-md-auto">
             <ul class="list-group list-group-flush">
                 <li class="list-group-item text-center">
-                    <button id="editbtn" class="btn edit-profile">
-                        <img th:src="@{|/profile/${userInfo.profile}|}" alt="프로필사진" id="profile" style="width: 100px; height: 100px; border-radius: 50%; overflow: hidden; object-fit: cover;"></br>
+                    <button id="editprofilebtn" class="btn edit-profile">
+                        <img th:src="@{|/profile/${userInfo.profile}|}" alt="프로필사진" id="profile" style="width: 130px; height: 130px; border-radius: 50%; overflow: hidden; object-fit: cover;" ></br>
                         <p>프로필 수정</p>
                     </button>
                 </li>
@@ -18,11 +18,11 @@
             </ul>
             <span style="border-top: 1px solid #ccc; display: block; margin: 10px 13px;"></span>
             <ul class="list-group list-group-flush">
-                <li class="list-group-item list-group-item-action"><a>내 정보</a></li>
-                <li class="list-group-item list-group-item-action"><a>관심 제품</a></li>
-                <li class="list-group-item list-group-item-action"><a>내 리뷰</a></li>
-                <li class="list-group-item list-group-item-action"><a>비밀번호 변경</a></li>
-                <li class="list-group-item list-group-item-action"><a>회원 탈퇴</a></li>
+                <li class="list-group-item list-group-item-action"><button type="button" class="btn" id="myinfoBtn">내 정보</button></li>
+                <li class="list-group-item list-group-item-action"><button type="button" class="btn" id="postlikeBtn">관심 상품</button></li>
+                <li class="list-group-item list-group-item-action"><button type="button" class="btn" id="myreviewBtn">내 리뷰</button></li>
+                <li class="list-group-item list-group-item-action"><button type="button" class="btn" id="changepwBtn">비밀번호 변경</button></li>
+                <li class="list-group-item list-group-item-action"><button type="button" class="btn" id="withdrawBtn">회원 탈퇴</button></li>
             </ul>
             <!-- 프로필사진 변경 모달 -->
             <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -49,50 +49,226 @@
 
         </div>
         <!--  컨텐츠 -->
-        <div class="mp-content col-md-6 ms-md-auto">
-            <div class="col-9">
-                <h2 class="fw-weight-bold mb-5">내 정보</h2>
-                <table class="table">
-                    <tr>
-                        <th>닉네임</th>
-                        <td th:text="${userInfo.nickname}"></td>
-                    </tr>
-                    <tr>
-                        <th>이름</th>
-                        <td th:text="${userInfo.name}"></td>
-                    </tr>
-                    <tr>
-                        <th>주소</th>
-                        <td th:if="${userInfo != null and userInfo.address != null and #strings.isEmpty(userInfo.address.addressDetail) and #strings.isEmpty(userInfo.address.address)}">
-                            주소정보가 없습니다
-                        </td>
+        <div class="mp-content col-md-6 ms-md-auto" id="mp-content">
 
-                        <td th:if="${userInfo != null and userInfo.address != null and !#strings.isEmpty(userInfo.address.addressDetail)}"
-                            th:text="${userInfo.address.address} + ' ' + ${userInfo.address.addressDetail}">
-                        </td>
-
-                        <td th:if="${userInfo.address != null and userInfo.address.address != null and userInfo.address.addressDetail == null}"
-                            th:text="${userInfo.address.address}">
-                        </td>
-
-                    </tr>
-                    <tr>
-                        <th>아이디</th>
-                        <td th:text="${userInfo.email}"></td>
-                    </tr>
-                </table>
-                <a href="#" class="link-underline-opacity-0"><p>정보 수정</p></a>
-            </div>
         </div>
     </div>
+
+    <script th:inline="javascript">
+        $(document).ready(function () {
+            const id = [[${userInfo.id}]];
+            $('#myinfoBtn').click();
+            //내정보 버튼
+            $('#myinfoBtn').click(function () {
+                $.ajax({
+                    url: `/member/user/getinfo/${id}`,
+                    type: "GET",
+                    data: id,
+                    success: function (response) {
+                        displayUserInfo(response);
+                    },
+                    error: function (error) {
+                        alert(JSON.stringify(error));
+                    },
+                    complete: function () {
+                    }
+                });
+            });
+            $('#myinfoBtn').click();
+
+            function displayUserInfo(userInfo) {
+                const container = $('<div>').addClass('user-info-container');
+                container.append('<h2 class="mb-4" style="color:#198754;"><b>내 정보</b></h2>');
+
+                const table = $('<table>').addClass('table');
+
+                table.append('<tr><th style="color:#198754;">별명</th><td id="#originalNickname">' + userInfo.nickname + '</td></tr>');
+                table.append('<tr><th style="color:#198754;">이름</th><td>' + userInfo.name + '</td></tr>');
+                table.append('<tr><th style="color:#198754;">이메일(아이디)</th><td>' + userInfo.email + '</td></tr>');
+                table.append('<tr><th style="color:#198754;">주소</th><td id="#originalAddress">' + userInfo.address.address + '</td></tr>');
+                table.append('<tr><th style="color:#198754;">상세 주소</th><td id="#originalAddressDetail">' + userInfo.address.addressDetail + '</td></tr>');
+                table.append('<tr><th style="color:#198754;">생년월일</th><td>' + userInfo.birth + '</td></tr>');
+
+                container.append(table);
+                container.append("<button class='btn btn-success' id='updateInfoBtn'>정보 수정</button>");
+
+                $('#mp-content').empty();
+                $('#mp-content').html(container);
+
+                $('#updateInfoBtn').on("click",function (){
+                    const originalNickname = [[${userInfo.nickname}]];
+                    const originalAddress = [[${userInfo.address.address}]];
+                    const originalAddressDetail = [[${userInfo.address.addressDetail}]];
+
+                    $('#mp-content').empty();
+                    const container = $('<div>').addClass('user-update-container');
+                    const table = $('<table>').addClass('table')
+                    table.append(`<tr><th style="color:#198754;">별명</th><td><input type="text" class="form-control new" id="nickname" value="${originalNickname}"></td></tr>`);
+                    table.append('<tr><th style="color:#198754;">이름</th><td>' + userInfo.name + '</td></tr>');
+                    table.append('<tr><th style="color:#198754;">이메일(아이디)</th><td>' + userInfo.email + '</td></tr>');
+                    table.append(`<tr><th style="color:#198754;">주소</th><td><input type="text" id="sample4_roadAddress" class="form-control new" value="${originalAddress}" required>`+
+                        '<td><input type="button" class=" btn btn-sm btn-outline-success" onclick="sample4_execDaumPostcode()" value="우편번호 찾기"></td>' +
+                        '<td><input type="text" style="display:none" id="sample4_jibunAddress" class="new" placeholder="지번주소"></td>' +
+                        '<td><input type="text" id="sample4_postcode" placeholder="우편번호" class="new" style="display:none"></td>' +
+                        '<td><input type="text" class="hidden" id="sample4_extraAddress" placeholder="참고항목" style="display:none"></td>' +
+                        '<td><span id="guide" style="color: #999;" type="hidden" style="display:none"></span></td></tr>');
+                    table.append(`<tr><th style="color:#198754;">상세 주소</th><td><input type="text" class="form-control new" id="sample4_detailAddress" value="${originalAddressDetail}"></td></tr>`);
+                    table.append('<tr><th style="color:#198754;">생년월일</th><td>' + userInfo.birth + '</td></tr>');
+
+                    container.append(table);
+                    container.append('<div></div><button class="btn btn-success" id="updateSubmitBtn">정보 저장</button><button class="btn btn-secondary" id="cancelBtn">취소</button></div>');
+                    $('#mp-content').html(container);
+                });
+
+                $('body').on("click","#updateSubmitBtn",function (){
+                    let userEditDto = {"nickname": $('#nickname').val(), "postcode":$('#postcode').val(),
+                                "frontAddress":$('#sample4_roadAddress').val(), "addressDetail":$('#sample4_detailAddress').val()};
+                    $.ajax({
+                        url: `/member/user/updateInfo/${id}`,
+                        method: "PATCH",
+                        data : JSON.stringify(userEditDto),
+                        contentType:"application/json",
+                        success: function (response){
+                            if(response.isUpdated === "isUpdated"){
+                                alert("정보 수정이 완료되었습니다.");
+                                location.reload();
+                            }
+                        }, error:function(){
+                            alert("실패~");
+                        }
+                    })
+                });
+
+                $('body').on("click","#cancelBtn",function (){
+                    $('#myinfoBtn').click();
+                });
+            }
+
+            //관심상품 버튼
+            $('#postlikeBtn').click(function () {
+                $.ajax({
+                    url: `/member/post-like/${id}`,
+                    type: "GET",
+                    dataType: "JSON",
+                    success: function (response) {
+                        let html = "";
+                        if (response.length === 0) {
+                            html += "<h3 style='color:#198754;'>관심 상품이 없습니다.</h3>"
+                        }
+                        let i = 1;
+                        html += "<table class=\"table table-hover\">";
+                        $.each(response, function (index, item) {
+                            html += "<tr>";
+                            html += '<th>' + i + '</th>'; // "
+                            html += '<td><a th:href="/view/"' + item.postId + item.title + '</td>';
+                            //조회수 이모티콘 + 조회수
+                            html += '<td><botton><i class="bi bi-heart-fill"></i></botton>></td>';
+                            // 행 종료: 현재 인덱스가 4의 배수이고 마지막 요소가 아닐 때
+                            html += "</tr>";
+                            i++;
+                        });
+                        html += "</table>";
+                        $('#mp-content').empty();
+                        $('.mp-content').html(html);
+                    },
+                    error: function (error) {
+                        alert(JSON.stringify(error));
+                    },
+                    complete: function () {
+                    }
+                })
+            });
+
+            //비밀번호 변경
+            $('#changepwBtn').click(function(){
+                let responseCode;
+                let authcode;
+                const email = [[${userInfo.email}]];
+                    $('#mp-content').empty();
+                        //이메일 인증메일 보내기
+                        $.ajax({
+                            url: `/member/emails/verification-request`,
+                            type: "POST",
+                            async: false,
+                            data:{email:email},
+                            success: function (response) {
+                                responseCode = response;
+                                const container = $('<div>').addClass('email-verifying-container');
+                                container.append('<h2 class="mb-4" style="color:#198754;"><b>이메일 인증</b></h2>');
+                                container.append('<p class="mb-1">회원님의 이메일로 인증코드 6자리를 보내드렸습니다.</p>');
+                                container.append('<p class="mb-5">인증코드를 확인하시고 10분 이내에 입력해주시기 바랍니다.</p>');
+                                container.append('<input type="text" class="form-control mb-1" style="width: 203px;" id="authcode">');
+                                container.append('<p class="mb-5">메일 발송까지 약간의 시간이 소요될 수 있습니다.</p>');
+                                container.append('<button class="btn btn-success" id="checkAuthcodeBtn">인증하기</button>');
+                                $('#mp-content').html(container);
+                            },
+                            error: function (error) {
+                                alert(JSON.stringify(error));
+                            },
+                            complete: function () {
+                            }
+                    });
+
+
+                //비밀번호 변경 입력
+                $('body').on("click","#checkAuthcodeBtn",function (){
+                    if (responseCode===$('#authcode').val()){
+                        $('#mp-content').empty();
+                        const container = $('<div>').addClass('password-change-container');
+                        const table = $('<table>').addClass('table')
+                        table.append(`<tr><th style="color:#198754;">새 비밀번호</th><td><input type="text" class="form-control new" id="newPw"></td></tr>`);
+                        table.append(`<tr><th> </th><td><span style="color: #999999;">비밀번호는 8~15자리이고 영문, 숫자, 특수문자([!@#$%^*+=-)를 포함해야 합니다.</span></td></tr>`);
+                        table.append(`<tr><th style="color:#198754;">비밀번호 확인</th><td><input type="text" class="form-control new" id="checkNewPw"></td></tr>`);
+                        table.append(`<tr><td><span id="confirmPw"></span></td></tr>`);
+                        table.append(`<td><button class="btn btn-success" id="changePwSubmitBtn" style="width:100%;">비밀번호 변경</button></td><td><button class="btn btn-secondary" id="cancelBtn">취소</button></td>`);
+
+                        container.append('<h2 class="mb-4" style="color:#198754;"><b>비밀번호 변경</b></h2>');
+                        container.append(table);
+                        $('#mp-content').html(container);
+
+                        //비밀번호 변경 ajax 통신
+                        $('#changePwSubmitBtn').on("click",function (){
+                            const pw = $('#newPw').val();
+                            const regex = /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,15}$/;
+                            if (regex.test(pw)) {
+                                $.ajax({
+                                    url: `/member/update-pw/${id}`,
+                                    method: "PATCH",
+                                    data:{pw:pw},
+                                    success:function(response){
+                                        if(response.isUpdated === "isUpdated"){
+                                            alert("비밀번호 변경이 완료되었습니다.")
+                                            location.reload();
+                                        }
+                                    },
+                                    error: function (error) {
+                                        alert(JSON.stringify(error));
+                                    },
+                                    complete: function () {
+                                    }
+                                });
+                            } else {
+                                $('#confirmPw').text('비밀번호는 8~15자리이고 영문, 숫자, 특수문자를 포함해야 합니다.').removeClass('text-success').addClass('text-danger');
+                                $('#newPw').focus();
+                            }
+
+                        });
+                        //취소 버튼 누르면
+                        $('body').on("click","#cancelBtn",function (){
+                            $('#myinfoBtn').click();
+                        });
+                    }
+                });
+            });
+        });
+    </script>
 
     <!-- 프로필사진 변경 스크립트 -->
     <script th:inline="javascript">
         const id = [[${userInfo.id}]];
 
-        $('#editbtn').click(function (e) {
+        $('#editprofilebtn').click(function (e) {
             e.preventDefault();
-            console.log("버튼은 눌림");
             $('#editModal').modal("show");
         });
 
@@ -115,7 +291,7 @@
         });
 
         // "저장" 버튼 클릭 시에 Ajax 호출
-        $('#saveProfileBtn').on("click",function (e) {
+        $('#saveProfileBtn').on("click", function (e) {
             e.preventDefault();
 
             const profileForm = $("#changeProfileForm")[0];
@@ -130,6 +306,7 @@
                 success: function (response) { // 컨트롤러에서 넘어온 값을 받는다
                     if (response.isUpdated === "isUpdated") { // 1 이면 -> 성공
                         $('#editModal').modal("hide");
+                        location.reload();
                     } else { // 0이면 -> 실패
                         alert("프로필 변경 실패~~");
                     }
@@ -141,5 +318,62 @@
         });
     </script>
 
+    <!-- 주소 다음 API -->
+    <script>
+        //본 예제에서는 도로명 주소 표기 방식에 대한 법령에 따라, 내려오는 데이터를 조합하여 올바른 주소를 구성하는 방법을 설명합니다.
+        function sample4_execDaumPostcode() {
+            new daum.Postcode({
+                oncomplete: function(data) {
+                    // 팝업에서 검색결과 항목을 클릭했을때 실행할 코드를 작성하는 부분.
+                    // 도로명 주소의 노출 규칙에 따라 주소를 표시한다.
+                    // 내려오는 변수가 값이 없는 경우엔 공백('')값을 가지므로, 이를 참고하여 분기 한다.
+                    var roadAddr = data.roadAddress; // 도로명 주소 변수
+                    var extraRoadAddr = ''; // 참고 항목 변수
+
+                    // 법정동명이 있을 경우 추가한다. (법정리는 제외)
+                    // 법정동의 경우 마지막 문자가 "동/로/가"로 끝난다.
+                    if(data.bname !== '' && /[동|로|가]$/g.test(data.bname)){
+                        extraRoadAddr += data.bname;
+                    }
+                    // 건물명이 있고, 공동주택일 경우 추가한다.
+                    if(data.buildingName !== '' && data.apartment === 'Y'){
+                        extraRoadAddr += (extraRoadAddr !== '' ? ', ' + data.buildingName : data.buildingName);
+                    }
+                    // 표시할 참고항목이 있을 경우, 괄호까지 추가한 최종 문자열을 만든다.
+                    if(extraRoadAddr !== ''){
+                        extraRoadAddr = ' (' + extraRoadAddr + ')';
+                    }
+
+                    // 우편번호와 주소 정보를 해당 필드에 넣는다.
+                    document.getElementById('sample4_postcode').value = data.zonecode;
+                    document.getElementById("sample4_roadAddress").value = roadAddr;
+                    document.getElementById("sample4_jibunAddress").value = data.jibunAddress;
+                    document.getElementById("sample4_detailAddress").value = "";
+
+                    // 참고항목 문자열이 있을 경우 해당 필드에 넣는다.
+                    if(roadAddr !== ''){
+                        document.getElementById("sample4_extraAddress").value = extraRoadAddr;
+                    } else {
+                        document.getElementById("sample4_extraAddress").value = '';
+                    }
+
+                    var guideTextBox = document.getElementById("guide");
+                    // 사용자가 '선택 안함'을 클릭한 경우, 예상 주소라는 표시를 해준다.
+                    if(data.autoRoadAddress) {
+                        var expRoadAddr = data.autoRoadAddress + extraRoadAddr;
+                        guideTextBox.innerHTML = '(예상 도로명 주소 : ' + expRoadAddr + ')';
+
+                    } else if(data.autoJibunAddress) {
+                        var expJibunAddr = data.autoJibunAddress;
+                        guideTextBox.innerHTML = '(예상 지번 주소 : ' + expJibunAddr + ')';
+                        guideTextBox.style.display = 'block';
+                    } else {
+                        guideTextBox.innerHTML = '';
+                        guideTextBox.style.display = 'none';
+                    }
+                }
+            }).open();
+        }
+    </script>
 </div>
 </html>
