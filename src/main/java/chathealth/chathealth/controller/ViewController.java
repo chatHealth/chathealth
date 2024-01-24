@@ -24,24 +24,16 @@ public class ViewController {
 
     private final PostService postService;
     @GetMapping("/{id}")
-    public String viewPage(@PathVariable long id, Model model){
+    public String viewPage(@PathVariable long id, Model model,@AuthenticationPrincipal CustomUserDetails userid){
         //post정보
         PostResponseDetails post=postService.getAllView(id);
+        model.addAttribute("postUserLike",postService.postLikeCheck(id,userid));
         model.addAttribute("postList",post);
-
-//        //review정보
-//        List<ReViewSelectDto> reViewSelectDto=postService.getReview(id);
-//        log.info("rerere===={}",reViewSelectDto);
-//        model.addAttribute("reViewList",reViewSelectDto);
         return "view/view";
     }
-
-
-
-
-//    @PostMapping("/reWrite")
-//    public String insertRe(@RequestBody ReviewDto reviewDto,@AuthenticationPrincipal CustomUserDetails userId){
-//        reviewDto.setMember(userId.getLoggedMember().getId());
-//        postService.insertRe(reviewDto);
-//        return "redirect:/view/1";}
+    @PostMapping("/like/{postId}")
+    @ResponseBody
+    public List<Long> likeinsert(@PathVariable long postId,@AuthenticationPrincipal CustomUserDetails id){
+        return postService.insertlike(postId,id);
+    }
 }

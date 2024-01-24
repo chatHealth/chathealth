@@ -32,9 +32,8 @@ public class PostResponseDetails {
     private String createdAt;
 
     private Integer hitCount;
-    private Integer likeCount;
+    private Long likeCount;
     private Integer reviewCount;
-
 
     public static List<String> extractMaterialNames(List<MaterialPost> materialPosts) {
         return materialPosts.stream()

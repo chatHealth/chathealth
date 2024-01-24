@@ -11,16 +11,13 @@ import chathealth.chathealth.entity.Review;
 import chathealth.chathealth.entity.member.Ent;
 import chathealth.chathealth.entity.member.Member;
 import chathealth.chathealth.entity.member.Users;
-import chathealth.chathealth.entity.post.Material;
-import chathealth.chathealth.entity.post.MaterialPost;
-import chathealth.chathealth.entity.post.Post;
-import chathealth.chathealth.entity.post.Symptom;
+import chathealth.chathealth.entity.post.*;
 import chathealth.chathealth.exception.BoardNotFoundException;
 import chathealth.chathealth.exception.UserNotFound;
 import chathealth.chathealth.repository.*;
-import chathealth.chathealth.entity.post.PicturePost;
 import chathealth.chathealth.repository.PicturePostRepository;
 import chathealth.chathealth.repository.post.PostRepository;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -45,6 +42,40 @@ public class PostService {
     private final MaterialPostRepository materialPostRepository;
     private final PictureReviewRepository pictureReviewRepository;
     private final ReViewRepository reViewRepository;
+    private final PostLikeRepository postLikeRepository;
+
+    public Integer postLikeCheck(long postId,CustomUserDetails id){
+        if (id!=null){
+            if(postLikeRepository.findByMemberIdAndPostId(id.getLoggedMember().getId(),postId)==null){
+                return 5;
+            }else {
+                return 10;
+            }
+        }else {
+            return 10;
+        }
+    }
+
+    @Transactional
+    public List<Long> insertlike(long postId, CustomUserDetails id){
+        List<Long> likeset=new ArrayList<>();
+        Long addM;
+
+        if(postLikeRepository.findByMemberIdAndPostId(id.getLoggedMember().getId(),postId)==null) {
+            PostLike postLike = PostLike.builder()
+                    .member(memberRepository.findById(id.getLoggedMember().getId()).orElseThrow())
+                    .post(postRepository.findById(postId).orElseThrow())
+                    .build();
+            postLikeRepository.save(postLike);
+            addM= Long.valueOf(10);
+        }else {
+            postLikeRepository.deleteByMemberIdAndPostId(id.getLoggedMember().getId(),postId);
+            addM= Long.valueOf(5);
+        }
+        likeset.add(postLikeRepository.countByPostId(postId));
+        likeset.add(addM);
+        return likeset;
+    }
 
 
     public void deleteRe(long num){
@@ -52,10 +83,10 @@ public class PostService {
         reViewRepository.delete(re);
     }
 
-@Transactional
+    @Transactional
     public void modifyReView(long num, ReviewModDto reviewModDto){
-    Review re = reViewRepository.findById(num).orElseThrow(BoardNotFoundException::new);
-    re.update(reviewModDto);
+        Review re = reViewRepository.findById(num).orElseThrow(BoardNotFoundException::new);
+        re.update(reviewModDto);
 
         if(reviewModDto.getPictureReList().size()>0) {
             pictureReviewRepository.deleteAllByReview(re);
@@ -78,24 +109,23 @@ public class PostService {
                 .filter(review -> (review.getMember() instanceof Users))
                 .filter(review-> review.getDeletedDate()==null)
                 .map(Review -> {
-//                    if(Review.getDeletedDate()==null){
                     Users user = (Users) Review.getMember();
                     String profiles="/profile/"+ user.getProfile();
                     if(user.getProfile().endsWith("_")){
                         profiles="/img/basic_user.png";
                     }
-            return ReViewSelectDto.builder()
-                    .id(Review.getId())
-                    .member(user.getId())
-                    .content(Review.getContent())
-                    .score(Review.getScore())
-                    .nickName(user.getNickname())
-                    .profile(profiles)
-                    .same(userCheck.sameclass(user.getId(),login))
-                    .pictureReView(Review.getPictureReList().stream().map(PictureReView::getPictureUrl).toList())
-                    .createdDate(Review.getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
-                    .build();
-        }).collect(Collectors.toList());
+                    return ReViewSelectDto.builder()
+                            .id(Review.getId())
+                            .member(user.getId())
+                            .content(Review.getContent())
+                            .score(Review.getScore())
+                            .nickName(user.getNickname())
+                            .profile(profiles)
+                            .same(userCheck.sameclass(user.getId(),login))
+                            .pictureReView(Review.getPictureReList().stream().map(PictureReView::getPictureUrl).toList())
+                            .createdDate(Review.getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+                            .build();
+                }).collect(Collectors.toList());
 
 
         return dto;
@@ -125,6 +155,7 @@ public class PostService {
                 .id(post.getId())
                 .company(post.getMember().getCompany())
                 .title(post.getTitle())
+                .likeCount(postLikeRepository.countByPostId(post.getId()))
                 .content(post.getContent())
                 .picturePost(picturePostRepository.findAllByPostId(id).stream().map(PicturePost::getPictureUrl).toList())
                 .material(PostResponseDetails.extractMaterialNames(post.getMaterialList()))
@@ -151,17 +182,17 @@ public class PostService {
                                 .orElse(null);
                     }
 
-                        return PostResponse.builder()
-                                .id(post.getId())
-                                .title(post.getTitle())
-                                .company(post.getMember().getCompany())
-                                .representativeImg(representativeImg)
-                                .count(count)
-                                .createdAt(post.getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
-                                .hitCount(post.getPostHitCount())
-                                .likeCount(post.getPostLikeCount())
-                                .reviewCount(post.getReviewCount())
-                                .build();})
+                    return PostResponse.builder()
+                            .id(post.getId())
+                            .title(post.getTitle())
+                            .company(post.getMember().getCompany())
+                            .representativeImg(representativeImg)
+                            .count(count)
+                            .createdAt(post.getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+                            .hitCount(post.getPostHitCount())
+                            .likeCount(post.getPostLikeCount())
+                            .reviewCount(post.getReviewCount())
+                            .build();})
                 .toList();
     }
 
@@ -255,5 +286,5 @@ public class PostService {
                 picturePostRepository.save(picturePost);
             }
         }
-}
+    }
 }
