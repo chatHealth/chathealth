@@ -33,7 +33,7 @@ public class SecurityConfig {
                                 "/error",
                                 "/css/**", "/js/**", "/img/**",
                                  "/board-image/print","/post-img/**","/profile/**"
-                                    ,"/view/**",
+                                    ,"/view/**", "/review/**,
                                 "/auth/login-check", "/auth/is-user", "/auth/is-ent",
                                 "/noty/subscribe")
                         .permitAll()

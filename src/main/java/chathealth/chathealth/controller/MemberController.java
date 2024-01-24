@@ -1,10 +1,15 @@
 package chathealth.chathealth.controller;
 
 import chathealth.chathealth.dto.request.EntEditDto;
+import chathealth.chathealth.dto.request.UserEditDto;
 import chathealth.chathealth.dto.response.EntInfoDto;
 import chathealth.chathealth.dto.response.PostLikeDto;
 import chathealth.chathealth.dto.response.UserInfoDto;
+import chathealth.chathealth.entity.member.Address;
+import chathealth.chathealth.service.AuthService;
+import chathealth.chathealth.service.MailService;
 import chathealth.chathealth.service.MemberService;
+import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,6 +30,8 @@ import java.util.Map;
 public class MemberController {
 
     private final MemberService memberService;
+    private final AuthService authService;
+    private final MailService mailService;
 
     //@PreAuthorize("hasRole('USER')") //USER 롤 가지고 있는 사람만 메서드 실행 가능
     @GetMapping("/user/{id}")  //개인 마이페이지로 이동
@@ -39,6 +46,7 @@ public class MemberController {
     public String goEntInfo(@PathVariable Long id,Model model) {
         EntInfoDto entInfoDto = memberService.getEntInfo(id);
         model.addAttribute("entInfo", entInfoDto);
+        log.info(String.valueOf(entInfoDto));
         return "member/ent-info";
     }
 
@@ -54,29 +62,54 @@ public class MemberController {
     }
 
 
-    /*@Transactional
+    @Transactional
     @ResponseBody
-    @PatchMapping("/user/updateInfo")
-    public Map<String,String> updateUserInfo(UserEditDto userEditDto) {
-        log.info("컨트롤러 들어왔다~");
-        Address address = Address.builder()
-                .addressDetail(null)
+    @PatchMapping("/user/updateInfo/{id}")
+    public Map<String,String> updateUserInfo(@PathVariable Long id, @RequestBody @Valid UserEditDto userEditDto) {
+        Address addressEntity = Address.builder()
+                .postcode(userEditDto.getPostcode())
+                .address(userEditDto.getFrontAddress())
+                .addressDetail(userEditDto.getAddressDetail())
                 .build();
-        log.info(address.getAddress());
-        log.info(address.getAddressDetail());
-        userEditDto.setAddress(address);
-        log.info(String.valueOf(userEditDto));
-        memberService.updateUserInfo(userEditDto.getId(), userEditDto);
+        userEditDto.setAddress(addressEntity);
+        memberService.updateUserInfo(id,userEditDto);
         Map<String, String> resultMap = new HashMap<>();
+
         resultMap.put("isUpdated","isUpdated");
         return resultMap;
-    }*/
+        }
 
     @Transactional
     @ResponseBody
-    @PatchMapping("/ent/updateInfo")
-    public void updateEnt(@PathVariable Long id, @RequestBody @Valid EntEditDto entEditDto) {
-        memberService.updateEntInfo(id, entEditDto);
+    @PatchMapping("/ent/updateInfo/{id}")
+    public Map<String,String> updateEnt(@PathVariable Long id, @RequestBody @Valid EntEditDto entEditDto) {
+        Address addressEntity = Address.builder()
+                .postcode(entEditDto.getPostcode())
+                .address(entEditDto.getFrontAddress())
+                .addressDetail(entEditDto.getAddressDetail())
+                .build();
+        entEditDto.setAddress(addressEntity);
+        memberService.updateEntInfo(id,entEditDto);
+        Map<String, String> resultMap = new HashMap<>();
+
+        resultMap.put("isUpdated","isUpdated");
+        return resultMap;
+    }
+
+    @ResponseBody
+    @PostMapping("/emails/verification-request")
+    public String sendMail(String email) throws MessagingException{
+        return mailService.sendEmail(email);
+    }
+
+    @PatchMapping("/update-pw/{id}")
+    @ResponseBody
+    public Map<String,String> updateUserPw(@PathVariable Long id, String pw){
+        authService.updatePw(id,pw);
+        Map<String, String> resultMap = new HashMap<>();
+
+        resultMap.put("isUpdated","isUpdated");
+        return resultMap;
     }
 
     @GetMapping("/post-like/{id}")

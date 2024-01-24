@@ -196,6 +196,14 @@
 
             // submit 버튼 클릭 이벤트
             $("#submitBtn").on('click', function (event) {
+                const regex = /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,15}$/;
+                if(regex.test($('#inputPw').val())){
+
+                }else{
+                    $('#passwordHelp').text('비밀번호는 8~15자리이고 영문, 숫자, 특수문자를 포함해야 합니다.').removeClass('text-success').addClass('text-danger');
+                    $('#inputPw').focus();
+                    event.preventDefault();
+                }
                 if (!$("#isConfirmed").hasClass("yes")) {
                     // 이메일 중복확인을 진행하지 않은 경우
                     event.preventDefault();
@@ -205,8 +213,7 @@
                     event.preventDefault();
                     alert("비밀번호가 일치하지 않습니다.");
                 }
-                // 이메일 중복확인을 완료하고 비밀번호가 일치하는 경우, 폼을 전송
-                // (위의 두 경우가 모두 아닌 경우에만 폼이 전송됨)
+                // 이메일 중복확인을 완료하고 비밀번호가 일치하며 정규식 조건에 맞을때 폼 전송
             });
         });
     </script>

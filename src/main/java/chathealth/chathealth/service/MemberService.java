@@ -42,7 +42,6 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final PostLikeRepository postLikeRepository;
-    private final PostRepository postRepository;
 
 
     @Value("${file.path}")
