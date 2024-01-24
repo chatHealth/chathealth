@@ -11,8 +11,10 @@
                 <!-- 채팅 메시지들이 여기에 동적으로 표시됩니다. -->
             </div>
         </div>
-        <input type="text" id="messageInput" class="form-control mt-3" placeholder="메시지 입력">
-        <button id="sendMessageButton" class="btn btn-primary mt-2">보내기</button>
+        <div class="message-input-container">
+            <input type="text" id="messageInput" class="form-control" placeholder="메시지 입력">
+            <button id="sendMessageButton" class="btn btn-primary send-message-btn"><i class="fas fa-paper-plane"></i></button>
+        </div>
     </div>
 
     <script th:inline="javascript">
@@ -26,17 +28,78 @@
         //현재 사용자의 senderId
         const senderId = [[${room.senderId}]];
 
+        let currentPage = 0; // 현재 페이지 번호
+        let isLoading = false; // 데이터 로드 중인지 여부
+        let isLastPage = false; // 마지막 페이지인지 여부
+        let newMessage = true;
+
         //로그 비활성화
-        //stompClient.debug = null;
+        stompClient.debug = null;
 
         stompClient.connect({}, function(frame) {
             // 구독 설정
             stompClient.subscribe('/sub/chat/' + roomId, function(message) {
                 let messageBody = JSON.parse(message.body);
                 displayMessage(messageBody.nickname, messageBody.message, messageBody.timestamp, messageBody.senderId === senderId);
-                console.log(messageBody);
             });
         });
+
+        // 초기 채팅 메시지 로드
+        loadMessages();
+
+        // 엔터쳤을 때도 전송
+        $('#messageInput').keypress(function (e) {
+            if (e.keyCode === 13) {
+                $('#sendMessageButton').click();
+            }
+        });
+
+        // 스크롤 이벤트 감지
+        $('#chatMessages').scroll(function () {
+            if ($(this).scrollTop() === 0 && !isLoading && !isLastPage) {
+                loadMessages();
+            }
+        });
+
+        function loadMessages() {
+
+            let oldScrollHeight = $('#chatMessages')[0].scrollHeight;
+
+            if (isLoading || isLastPage) {
+                return;
+            }
+            isLoading = true;
+            $.ajax({
+                url: `/chat/room/${roomId}?page=${currentPage}`,
+                type: 'GET',
+                success: function (response) {
+                    newMessage = false;
+                    // 마지막 페이지 여부 확인
+                    isLastPage = response.last;
+                    // 페이지 번호 증가
+                    currentPage++;
+                    // 메시지를 역순으로 반복하여 추가
+                    response.content.forEach(message => {
+                        displayMessage(message.nickname, message.message, message.timestamp, message.senderId === senderId);
+                    });
+                    newMessage = true;
+
+                    // 새로운 메시지로 인해 변경된 스크롤 높이 계산
+                    let newScrollHeight = $('#chatMessages')[0].scrollHeight;
+
+                    // 새로운 메시지가 있을 경우 스크롤 위치 유지
+                    $('#chatMessages').scrollTop(newScrollHeight - oldScrollHeight);
+                },
+                error: function (error) {
+                    console.error("메시지 로드 중 오류 발생", error);
+                },
+                complete: function () {
+                    isLoading = false;
+                }
+            });
+        }
+
+
 
         document.getElementById('sendMessageButton').addEventListener('click', function() {
             let messageContent = document.getElementById('messageInput').value.trim();
@@ -68,7 +131,11 @@
             messageBox.append(nicknameElement);
             messageBox.append(messageElement);
             messageBox.append(timestampElement);
-            $('#chatMessages').append(messageBox);
+            if(newMessage) {
+                $('#chatMessages').append(messageBox);
+            } else {
+                $('#chatMessages').prepend(messageBox);
+            }
             $('#chatMessages').scrollTop($('#chatMessages')[0].scrollHeight);
         }
     </script>

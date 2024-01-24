@@ -14,11 +14,14 @@ public class ChatMessageResponse {
 
     private Long senderId;
 
+    private boolean isMine;
+
     @Builder
-    public ChatMessageResponse(String nickname, String message, String timestamp,Long senderId) {
+    public ChatMessageResponse(String nickname, String message, String timestamp,Long senderId, boolean isMine) {
         this.nickname = nickname;
         this.message = message;
         this.timestamp = timestamp;
         this.senderId = senderId;
+        this.isMine = isMine;
     }
 }

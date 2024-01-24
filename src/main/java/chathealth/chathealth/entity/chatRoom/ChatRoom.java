@@ -1,13 +1,14 @@
 package chathealth.chathealth.entity.chatRoom;
 
 import chathealth.chathealth.dto.request.CreateChatRoom;
+import chathealth.chathealth.entity.BaseEntity;
 import chathealth.chathealth.entity.ChatRoomMember;
 import chathealth.chathealth.entity.member.Member;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +18,8 @@ import static jakarta.persistence.GenerationType.SEQUENCE;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class ChatRoom {
+@SuperBuilder
+public class ChatRoom extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = SEQUENCE)
@@ -38,14 +40,6 @@ public class ChatRoom {
 
     public int getMembers() {
         return chatRoomMembers.size();
-    }
-
-    @Builder
-    public ChatRoom(String name, String description, String roomImage, Member representativeMember) {
-        this.name = name;
-        this.description = description;
-        this.roomImage = roomImage;
-        this.representativeMember = representativeMember;
     }
 
     public static ChatRoom createChatRoom(CreateChatRoom createChatRoom, Member member, String roomImage) {

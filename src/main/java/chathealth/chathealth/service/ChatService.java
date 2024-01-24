@@ -19,6 +19,7 @@ import chathealth.chathealth.repository.ChatRoomRepository;
 import chathealth.chathealth.repository.MemberRepository;
 import chathealth.chathealth.util.ImageUpload;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -57,21 +58,31 @@ public class ChatService {
         return chatRoom.getId();
     }
 
-    public List<ChatMessageResponse> getChatMessages(Long roomId, CustomUserDetails userDetails) {
+    public Slice<ChatMessageResponse> getChatMessages(Long roomId, CustomUserDetails userDetails, Pageable pageable) {
 
         String email = userDetails.getLoggedMember().getEmail();
         Member member = memberRepository.findByEmail(email).orElseThrow(UserNotFound::new);
 
         ChatRoom chatRoom = chatRoomRepository.findById(roomId).orElseThrow(RoomNotFound::new);
 
-        return chatMessageRepository.findAllByChatRoom(chatRoom)
-                .stream().map(chatMessage ->
-                        ChatMessageResponse.builder()
-                                .message(chatMessage.getMessage())
-                                .senderId(chatMessage.getSender().getId())
-                                .nickname(chatMessage.getSender().getChatNickname())
-                                .timestamp(chatMessage.getTimestamp().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")))
-                                .build()).toList();
+        Slice<ChatMessage> messageSlices = chatMessageRepository.findAllByChatRoomOrderByTimestampDesc(chatRoom, pageable);
+
+        List<ChatMessageResponse> list = messageSlices.getContent()
+                .stream()
+                .map(chatMessage ->{
+                        // 내꺼인지
+                    boolean isMine = chatMessage.getSender().getMember().equals(member);
+
+                    return ChatMessageResponse.builder()
+                            .message(chatMessage.getMessage())
+                            .senderId(chatMessage.getSender().getId())
+                            .nickname(chatMessage.getSender().getChatNickname())
+                            .timestamp(chatMessage.getTimestamp().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")))
+                            .isMine(isMine)
+                            .build();})
+                .toList();
+
+        return new SliceImpl<>(list, pageable, messageSlices.hasNext());
     }
     @Transactional
     public ChatMessageResponse sendChatMessage(ChatMessageDto messageDto, String senderEmail) {
@@ -124,27 +135,26 @@ public class ChatService {
         chatRoomMemberRepository.delete(chatRoomMember);
     }
 
-    public List<ChatRoomResponse> getChatRooms(Principal principal) {
+    public Page<ChatRoomResponse> getChatRooms(Principal principal, Pageable pageable) {
 
         Member member = memberRepository.findByEmail(principal.getName()).orElseThrow(UserNotFound::new);
 
-        List<ChatRoom> list = chatRoomRepository.findAll();
+        Page<ChatRoom> chatRoomPage = chatRoomRepository.findAllByOrderByCreatedDateDesc(pageable);
 
-        return list.stream().map(chatRoom ->
-                {
-                    boolean isJoined = chatRoomMemberRepository.existsByChatRoomAndMember(chatRoom, member);
+        List<ChatRoomResponse> list = chatRoomPage.getContent().stream().map(chatRoom -> {
+            boolean isJoined = chatRoomMemberRepository.existsByChatRoomAndMember(chatRoom, member);
 
-                    return ChatRoomResponse
-                            .builder()
-                            .id(chatRoom.getId())
-                            .name(chatRoom.getName())
-                            .image(chatRoom.getRoomImage())
-                            .description(chatRoom.getDescription())
-                            .userCount(chatRoom.getMembers())
-                            .isJoined(isJoined)
-                            .build();
-                })
-                .toList();
+            return ChatRoomResponse.builder()
+                    .id(chatRoom.getId())
+                    .name(chatRoom.getName())
+                    .image(chatRoom.getRoomImage())
+                    .description(chatRoom.getDescription())
+                    .userCount(chatRoom.getMembers())
+                    .isJoined(isJoined)
+                    .build();
+        }).toList();
+
+        return new PageImpl<>(list, pageable, chatRoomPage.getTotalElements());
     }
 
     public ChatRoomInner getChatRoom(Long id, CustomUserDetails userDetails) {
