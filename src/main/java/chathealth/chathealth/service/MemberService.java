@@ -112,7 +112,12 @@ public class MemberService {
     }
 
     public void updateProfile(Long id, MultipartFile changeProfile) {
-        imageUpload.uploadImage(changeProfile,domain);
+        String newProfile = domain+imageUpload.uploadImage(changeProfile,domain);
+        Optional<Member> optionalMember = memberRepository.findById(id);
+        if(optionalMember.isPresent()){
+            Member findMember = optionalMember.get();
+            findMember.updateProfile(newProfile);
+        }
     }
 
     public List<PostLikeDto> getPostLike(Long id){

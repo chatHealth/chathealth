@@ -27,6 +27,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 import java.util.UUID;
@@ -57,7 +58,7 @@ public class AuthService implements UserDetailsService {
 
     @Transactional
     public void userJoin(@Valid UserJoinDto userJoinDto) { //개인 회원가입
-        String rename = imageUpload.uploadImage(userJoinDto.getProfile(),domain);
+        String rename = domain+imageUpload.uploadImage(userJoinDto.getProfile(),domain);
 
         Member dbJoinUser = Users.builder()
                 .id(userJoinDto.getId())
@@ -78,8 +79,7 @@ public class AuthService implements UserDetailsService {
     @Transactional
     public void entJoin(@Valid EntJoinDto entJoinDto) {
         // 사업자 회원가입
-        String rename = imageUpload.uploadImage(entJoinDto.getProfile(),domain);
-
+        String rename = domain+imageUpload.uploadImage(entJoinDto.getProfile(),domain);
 
         Member dbJoinEnt = Ent.builder()
                 .id(entJoinDto.getId())
@@ -107,10 +107,16 @@ public class AuthService implements UserDetailsService {
         }
     }
 
+    public void memberWithdraw(Long id) {
+        Optional<Member> optionalMember = memberRepository.findById(id);
+        if(optionalMember.isPresent()){
+            Member findMember = optionalMember.get();
+            findMember.withdraw(LocalDateTime.now());
+        }
+    }
+
     public boolean confirmEmail(String email) {
         boolean isExists = memberRepository.existsByEmail(email);
         return isExists;
     }
-
-
 }
