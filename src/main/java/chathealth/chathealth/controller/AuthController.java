@@ -41,7 +41,7 @@ public class AuthController {
         return "auth/login";
     }
 
-    @Secured("hasAnyRole('ROLE_USER','ROLE_WAITING_ENT','ROLE_PERMITTED_ENT','ROLE_REJECTED_ENT','ROLE_ADMIN')")
+    //@Secured("hasAnyRole('ROLE_USER','ROLE_WAITING_ENT','ROLE_PERMITTED_ENT','ROLE_REJECTED_ENT','ROLE_ADMIN')")
     @PostMapping("/login")
     public String loginProcess() {
         return "redirect:/";
