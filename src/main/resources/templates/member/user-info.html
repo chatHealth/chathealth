@@ -57,6 +57,8 @@
     <script th:inline="javascript">
         $(document).ready(function () {
             const id = [[${userInfo.id}]];
+            const email = [[${userInfo.email}]];
+
             $('#myinfoBtn').click();
             //내정보 버튼
             $('#myinfoBtn').click(function () {
@@ -75,7 +77,6 @@
                 });
             });
             $('#myinfoBtn').click();
-
             function displayUserInfo(userInfo) {
                 const container = $('<div>').addClass('user-info-container');
                 container.append('<h2 class="mb-4" style="color:#198754;"><b>내 정보</b></h2>');
@@ -182,9 +183,8 @@
             //비밀번호 변경
             $('#changepwBtn').click(function(){
                 let responseCode;
-                let authcode;
-                const email = [[${userInfo.email}]];
                     $('#mp-content').empty();
+                    mailVerifyingLayout();
                         //이메일 인증메일 보내기
                         $.ajax({
                             url: `/member/emails/verification-request`,
@@ -193,25 +193,19 @@
                             data:{email:email},
                             success: function (response) {
                                 responseCode = response;
-                                const container = $('<div>').addClass('email-verifying-container');
-                                container.append('<h2 class="mb-4" style="color:#198754;"><b>이메일 인증</b></h2>');
-                                container.append('<p class="mb-1">회원님의 이메일로 인증코드 6자리를 보내드렸습니다.</p>');
-                                container.append('<p class="mb-5">인증코드를 확인하시고 10분 이내에 입력해주시기 바랍니다.</p>');
-                                container.append('<input type="text" class="form-control mb-1" style="width: 203px;" id="authcode">');
-                                container.append('<p class="mb-5">메일 발송까지 약간의 시간이 소요될 수 있습니다.</p>');
-                                container.append('<button class="btn btn-success" id="checkAuthcodeBtn">인증하기</button>');
-                                $('#mp-content').html(container);
                             },
                             error: function (error) {
                                 alert(JSON.stringify(error));
                             },
                             complete: function () {
                             }
-                    });
+                        });
 
 
                 //비밀번호 변경 입력
                 $('body').on("click","#checkAuthcodeBtn",function (){
+                    console.log("인증버튼 눌림")
+
                     if (responseCode===$('#authcode').val()){
                         $('#mp-content').empty();
                         const container = $('<div>').addClass('password-change-container');
@@ -260,6 +254,74 @@
                     }
                 });
             });
+
+            //회원 탈퇴
+            $('#withdrawBtn').click(function (){
+                if(confirm("한번 탈퇴하면 동일한 이메일로 재가입할 수 없습니다. 정말 탈퇴하시겠습니까?")===true){
+                }else{return false;}
+                let responseCode;
+
+                $('#mp-content').empty();
+                mailVerifyingLayout();
+                $.ajax({
+                    url: `/member/emails/verification-request`,
+                    type: "POST",
+                    async: false,
+                    data:{email:email},
+                    success: function (response) {
+                        responseCode = response;
+                        const container = $('<div>').addClass('email-verifying-container');
+                        container.append('<h2 class="mb-4" style="color:#198754;"><b>이메일 인증</b></h2>');
+                        container.append('<p class="mb-1">회원님의 이메일로 인증코드 6자리를 보내드렸습니다.</p>');
+                        container.append('<p class="mb-5">인증코드를 확인하시고 10분 이내에 입력해주시기 바랍니다.</p>');
+                        container.append('<input type="text" class="form-control mb-1" style="width: 203px;" id="authcode">');
+                        container.append('<p class="mb-5">메일 발송까지 약간의 시간이 소요될 수 있습니다.</p>');
+                        container.append('<button class="btn btn-success" id="checkAuthcodeBtn">인증하기</button>');
+                        $('#mp-content').html(container);
+                        console.log(responseCode)
+                    },
+                    error: function (error) {
+                        alert(JSON.stringify(error));
+                    },
+                    complete: function () {
+                    }
+                });
+
+                $('body').on("click","#checkAuthcodeBtn",function (){
+                    if (responseCode===$('#authcode').val()){
+                        console.log(id);
+                        $('#mp-content').empty();
+                        const container = $('<div>').addClass('member-withdraw-container');
+                        container.append("이용해주셔서 감사합니다. 다시 만날 날을 기다리고 있습니다.")
+                        $('#mp-content').html(container);
+
+                        setTimeout(function () {
+                            $.ajax({
+                                url: `/auth/withdraw/${id}`,
+                                type: 'POST',
+                                success: function () {
+                                    window.location.href = '/';
+                                },
+                                error: function (error) {
+                                    console.error('로그아웃 중 에러 발생:', error);
+                                }
+                            });
+                        }, 3000);
+                    }
+                });
+
+            });
+
+            function mailVerifyingLayout(){
+                const container = $('<div>').addClass('email-verifying-container');
+                container.append('<h2 class="mb-4" style="color:#198754;"><b>이메일 인증</b></h2>');
+                container.append('<p class="mb-1">회원님의 이메일로 인증코드 6자리를 보내드렸습니다.</p>');
+                container.append('<p class="mb-5">인증코드를 확인하시고 10분 이내에 입력해주시기 바랍니다.</p>');
+                container.append('<input type="text" class="form-control mb-1" style="width: 203px;" id="authcode">');
+                container.append('<p class="mb-5">메일 발송까지 약간의 시간이 소요될 수 있습니다.</p>');
+                container.append('<button class="btn btn-success" id="checkAuthcodeBtn">인증하기</button>');
+                $('#mp-content').html(container);
+            }
         });
     </script>
 
