@@ -11,7 +11,7 @@ public enum Constants {
     NOT_EXIST_FILE("존재하지 않는 파일입니다."),
     MESSAGE_NOT_FOUND("존재하지 않는 메세지입니다."),
     UNAUTHORIZED("로그인이 필요합니다."),
-    EXPIREDSESSION("세션이 만료되었습니다. 다시 로그인해주세요."),;
+    EXPIRED_SESSION("세션이 만료되었습니다. 다시 로그인해주세요.");
 
     private final String message;
 

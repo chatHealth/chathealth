@@ -2,12 +2,12 @@ package chathealth.chathealth.exception;
 
 import org.springframework.http.HttpStatus;
 
-import static chathealth.chathealth.constants.Constants.EXPIREDSESSION;
+import static chathealth.chathealth.constants.Constants.EXPIRED_SESSION;
 
 public class ExpiredSession extends ChatHealthException {
 
     public ExpiredSession() {
-        super(EXPIREDSESSION.getMessage());
+        super(EXPIRED_SESSION.getMessage());
     }
 
     public ExpiredSession(String message) {
