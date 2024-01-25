@@ -53,7 +53,7 @@ public class MessageService {
         messageRepository.save(sendMessageDto.toEntity(member, receiver));
 
         notificationController.dispatchNewMessage(receiver.getEmail(),
-                sender.getNickname()!=null? sender.getNickname() : sender.getName() + "님에게 새로운 쪽지가 도착했습니다.");
+                (sender.getNickname()!=null? sender.getNickname() : sender.getName()) + "님에게 새로운 쪽지가 도착했습니다.");
     }
 
     //받은 쪽지함
