@@ -7,6 +7,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -20,6 +22,8 @@ import static lombok.AccessLevel.PROTECTED;
 @SuperBuilder
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @NoArgsConstructor(access = PROTECTED)
+@SQLDelete(sql = "UPDATE member SET deleted_date = SYSDATE where member_id = ?")
+@Where(clause = "deleted_date != null")
 public abstract class Member extends BaseEntity {
 
     @Id
@@ -65,4 +69,6 @@ public abstract class Member extends BaseEntity {
     protected void update(Address address) {if(address != null) this.address = address;}
     public void updateProfile(String profile) {if(profile != null) this.profile = profile;}
     public void updatePw(String pw) {this.pw = pw;}
+    public void withdraw(LocalDateTime now) {this.deletedDate = now;}
+    public void changeRole(Role role) {this.role = role;}
 }
