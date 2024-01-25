@@ -51,7 +51,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
     @Override
     public Long getPostsCount(PostSearch postSearch) {
         return queryFactory
-                .select(post.count())
+                .select(post.countDistinct())
                 .from(post)
                 .where(post.deletedDate.isNull(),
                         titleContains(postSearch.getTitle()),
