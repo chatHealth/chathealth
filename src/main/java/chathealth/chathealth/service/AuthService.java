@@ -110,6 +110,7 @@ public class AuthService implements UserDetailsService {
         }
     }
 
+    @Transactional
     public void memberWithdraw(Long id) {
         Optional<Member> optionalMember = memberRepository.findById(id);
         if (optionalMember.isPresent()) {
