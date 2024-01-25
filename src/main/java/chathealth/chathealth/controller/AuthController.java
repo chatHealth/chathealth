@@ -103,9 +103,8 @@ public class AuthController {
     }
 
     @Transactional
-    @PostMapping("/withdraw/{id}")
+    @DeleteMapping("/withdraw/{id}")
     public void memberWithdraw(@PathVariable Long id){
-        log.info("컨트롤러 들어온다아아아ㅏ아아ㅏ아");
         authService.memberWithdraw(id);
     }
 
