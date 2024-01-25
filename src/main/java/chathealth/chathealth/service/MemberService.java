@@ -112,7 +112,7 @@ public class MemberService {
     }
 
     public void updateProfile(Long id, MultipartFile changeProfile) {
-        String newProfile = domain+imageUpload.uploadImage(changeProfile,domain);
+        String newProfile = domain+File.separator+imageUpload.uploadImage(changeProfile,domain);
         Optional<Member> optionalMember = memberRepository.findById(id);
         if(optionalMember.isPresent()){
             Member findMember = optionalMember.get();
