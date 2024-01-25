@@ -86,15 +86,16 @@ public class ChatService {
     }
     @Transactional
     public ChatMessageResponse sendChatMessage(ChatMessageDto messageDto, String senderEmail) {
-        if (messageDto.getType().equals(ChatMessageType.ENTER)) {
-            messageDto.setContent(messageDto.getNickname() + ENTER_MESSAGE.getMessage());
-        } else if (messageDto.getType().equals(ChatMessageType.QUIT)) {
-            messageDto.setContent(messageDto.getNickname() + QUIT_MESSAGE.getMessage());
-        }
 
         ChatRoom chatRoom = chatRoomRepository.findById(messageDto.getRoomId()).orElseThrow(RoomNotFound::new);
         Member member = memberRepository.findByEmail(senderEmail).orElseThrow(UserNotFound::new);
-        ChatRoomMember chatRoomMember = chatRoomMemberRepository.findByChatRoomAndMember(chatRoom, member).orElseThrow(UserNotFound::new);
+        ChatRoomMember chatRoomMember = chatRoomMemberRepository.findByChatRoomAndMemberAndDeletedDateIsNull(chatRoom, member).orElseThrow(UserNotFound::new);
+
+        if (messageDto.getType().equals(ChatMessageType.ENTER)) {
+            messageDto.setContent(messageDto.getNickname() + ENTER_MESSAGE.getMessage());
+        } else if (messageDto.getType().equals(ChatMessageType.QUIT)) {
+            messageDto.setContent(chatRoomMember.getChatNickname() + QUIT_MESSAGE.getMessage());
+        }
 
         ChatMessage message = ChatMessage.builder()
                 .chatRoom(chatRoom)
@@ -127,14 +128,6 @@ public class ChatService {
         return savedRoomMember.getId();
     }
 
-    public void quitChatRoom(ChatMessageDto messageDto, String senderEmail) {
-        ChatRoom chatRoom = chatRoomRepository.findById(messageDto.getRoomId()).orElseThrow(RoomNotFound::new);
-        Member member = memberRepository.findByEmail(senderEmail).orElseThrow(UserNotFound::new);
-        ChatRoomMember chatRoomMember = chatRoomMemberRepository.findByChatRoomAndMember(chatRoom, member).orElseThrow(UserNotFound::new);
-
-        chatRoomMemberRepository.delete(chatRoomMember);
-    }
-
     public Page<ChatRoomResponse> getChatRooms(Principal principal, Pageable pageable) {
 
         Member member = memberRepository.findByEmail(principal.getName()).orElseThrow(UserNotFound::new);
@@ -142,7 +135,7 @@ public class ChatService {
         Page<ChatRoom> chatRoomPage = chatRoomRepository.findAllByOrderByCreatedDateDesc(pageable);
 
         List<ChatRoomResponse> list = chatRoomPage.getContent().stream().map(chatRoom -> {
-            boolean isJoined = chatRoomMemberRepository.existsByChatRoomAndMember(chatRoom, member);
+            boolean isJoined = chatRoomMemberRepository.existsByChatRoomAndMemberAndDeletedDateIsNull(chatRoom, member);
 
             return ChatRoomResponse.builder()
                     .id(chatRoom.getId())
@@ -161,8 +154,8 @@ public class ChatService {
 
         String email = userDetails.getLoggedMember().getEmail();
         Member member = memberRepository.findByEmail(email).orElseThrow(UserNotFound::new);
-        ChatRoom chatRoom = chatRoomRepository.findById(id).orElseThrow(RoomNotFound::new);
-        ChatRoomMember chatRoomMember = chatRoomMemberRepository.findByChatRoomAndMember(chatRoom, member).orElseThrow(UserNotFound::new);
+        ChatRoom chatRoom = chatRoomRepository.findByIdFetch(id).orElseThrow(RoomNotFound::new);
+        ChatRoomMember chatRoomMember = chatRoomMemberRepository.findByChatRoomAndMemberAndDeletedDateIsNull(chatRoom, member).orElseThrow(UserNotFound::new);
 
         return ChatRoomInner.builder()
                 .id(chatRoom.getId())
@@ -170,8 +163,23 @@ public class ChatService {
                 .userCount(chatRoom.getMembers())
                 .image(chatRoom.getRoomImage())
                 .name(chatRoom.getName())
-                .representativeMemberId(chatRoom.getRepresentativeMember().getId())
+                .isRepresentative(chatRoom.getRepresentativeMember().equals(member))
                 .description(chatRoom.getDescription())
                 .build();
+    }
+    //채팅방 나가기
+    @Transactional
+    public void quitChatRoom(Long roomId, String memberEmail) {
+
+        ChatRoom chatRoom = chatRoomRepository.findById(roomId).orElseThrow(RoomNotFound::new);
+        Member member = memberRepository.findByEmail(memberEmail).orElseThrow(UserNotFound::new);
+
+        chatRoomMemberRepository.quitChatRoomMember(chatRoom, member);
+    }
+
+    //채팅박 삭제
+    @Transactional
+    public void deleteChatRoom(Long roomId) {
+        chatRoomRepository.deleteById(roomId);
     }
 }

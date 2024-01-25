@@ -13,20 +13,22 @@ public class ChatRoomInner {
 
     private Long senderId;
 
-    private Long representativeMemberId;
+//    private Long representativeMemberId;
 
     private String description;
 
     private int userCount;
 
+    private boolean isRepresentative;
+
     @Builder
-    public ChatRoomInner(Long id, String name, String image, Long senderId, Long representativeMemberId, String description, int userCount) {
+    public ChatRoomInner(Long id, String name, String image, Long senderId, String description, int userCount, boolean isRepresentative) {
         this.id = id;
         this.name = name;
         this.image = image;
         this.senderId = senderId;
-        this.representativeMemberId = representativeMemberId;
         this.description = description;
         this.userCount = userCount;
+        this.isRepresentative = isRepresentative;
     }
 }

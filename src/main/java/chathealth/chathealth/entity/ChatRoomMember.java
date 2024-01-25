@@ -8,6 +8,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -28,6 +30,8 @@ public class ChatRoomMember {
 
     @Column(name = "chat_nickname")
     private String chatNickname;
+
+    private LocalDateTime deletedDate;
 
     @Builder
     public ChatRoomMember(Member member, ChatRoom chatRoom, String chatNickname) {

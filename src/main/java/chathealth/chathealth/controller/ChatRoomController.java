@@ -47,7 +47,7 @@ public class ChatRoomController {
     @GetMapping("/chat/room/{id}")
     public Slice<ChatMessageResponse> getChatMessages(@PathVariable Long id, Pageable pageable,
                                                       @AuthenticationPrincipal CustomUserDetails userDetails) {
-        Slice<ChatMessageResponse> chatMessages = chatService.getChatMessages(id, userDetails,pageable);
+        Slice<ChatMessageResponse> chatMessages = chatService.getChatMessages(id, userDetails, pageable);
         return chatMessages;
     }
 
@@ -55,10 +55,26 @@ public class ChatRoomController {
     @ResponseBody
     @PostMapping("/chat/room/{id}")
     public Long enterRoom(@AuthenticationPrincipal CustomUserDetails userDetails,
-                            @PathVariable Long id,
-                            @RequestParam String nickname) {
+                          @PathVariable Long id,
+                          @RequestParam String nickname) {
         Long senderId = chatService.enterChatRoom(id, userDetails.getLoggedMember().getEmail(), nickname);
 
         return senderId;
+    }
+
+    //채팅방 퇴장
+    @ResponseBody
+    @DeleteMapping("/chat/room/{id}")
+    public void quitRoom(@AuthenticationPrincipal CustomUserDetails userDetails,
+                         @PathVariable Long id) {
+
+        chatService.quitChatRoom(id, userDetails.getLoggedMember().getEmail());
+    }
+
+    //채팅방 삭제
+    @ResponseBody
+    @DeleteMapping("/chat/{id}")
+    public void deleteRoom(@PathVariable Long id) {
+        chatService.deleteChatRoom(id);
     }
 }

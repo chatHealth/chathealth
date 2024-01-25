@@ -5,16 +5,66 @@
 
 <div layout:fragment="content" class="main">
     <div class="container mt-5">
+
+        <div class="text-end">
+            <th:block th:unless="${room.representative}">
+                <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#confirmQuitModal" data-action="exit">나가기</button>
+            </th:block>
+            <th:block th:if="${room.representative}">
+                <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" data-action="delete">삭제</button>
+            </th:block>
+        </div>
+
         <div class="card">
-            <div class="card-header"><span th:text="${room.name}">채팅방 이름</span><span class="badge bg-secondary" th:text="${room.userCount} + ' members'"></span></div>
+            <div class="card-header"><span th:text="${room.name}">채팅방 이름</span><span class="badge bg-secondary"
+                                                                                     th:text="${room.userCount} + ' members'"></span>
+            </div>
             <div class="card-body" id="chatMessages" style="height: 500px; overflow-y: auto;">
                 <!-- 채팅 메시지들이 여기에 동적으로 표시됩니다. -->
             </div>
         </div>
         <div class="message-input-container">
             <input type="text" id="messageInput" class="form-control" placeholder="메시지 입력">
-            <button id="sendMessageButton" class="btn btn-primary send-message-btn"><i class="fas fa-paper-plane"></i></button>
+            <button id="sendMessageButton" class="btn btn-primary send-message-btn"><i class="fas fa-paper-plane"></i>
+            </button>
         </div>
+
+        <!-- Modal -->
+        <div class="modal fade" id="confirmQuitModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalLabel">채팅방 나가기</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p id="modalText">채팅방에서 나간 후 재입장시 기존 내 메세지는 다른 사람의 메세지로 취급합니다. 정말 나가시겠습니까?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-danger" id="quitChatRoom">Confirm</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalLabel">채팅방 삭제</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p id="modalText">채팅방을 삭제하면 기존 대화 목록은 복구 불가능합니다. 정말 삭제하시겠습니까?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-danger" id="deleteChatRoom">Confirm</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <script th:inline="javascript">
@@ -36,9 +86,9 @@
         //로그 비활성화
         stompClient.debug = null;
 
-        stompClient.connect({}, function(frame) {
+        stompClient.connect({}, function (frame) {
             // 구독 설정
-            stompClient.subscribe('/sub/chat/' + roomId, function(message) {
+            stompClient.subscribe('/sub/chat/' + roomId, function (message) {
                 let messageBody = JSON.parse(message.body);
                 displayMessage(messageBody.nickname, messageBody.message, messageBody.timestamp, messageBody.senderId === senderId);
             });
@@ -100,11 +150,16 @@
         }
 
 
-
-        document.getElementById('sendMessageButton').addEventListener('click', function() {
+        document.getElementById('sendMessageButton').addEventListener('click', function () {
             let messageContent = document.getElementById('messageInput').value.trim();
-            if(messageContent && stompClient) {
-                let chatMessage = { roomId: roomId, content: messageContent, type: 'TALK', senderEmail: userEmail, senderId: senderId};
+            if (messageContent && stompClient) {
+                let chatMessage = {
+                    roomId: roomId,
+                    content: messageContent,
+                    type: 'TALK',
+                    senderEmail: userEmail,
+                    senderId: senderId
+                };
                 stompClient.send("/pub/chat/message", {}, JSON.stringify(chatMessage));
                 document.getElementById('messageInput').value = '';
             }
@@ -120,7 +175,7 @@
             nicknameElement.text(nickname);
             timestampElement.text(timestamp);
 
-            if(isMine) {
+            if (isMine) {
                 messageBox.addClass('my-message-box');
                 messageElement.addClass('my-message');
             } else {
@@ -131,13 +186,53 @@
             messageBox.append(nicknameElement);
             messageBox.append(messageElement);
             messageBox.append(timestampElement);
-            if(newMessage) {
+            if (newMessage) {
                 $('#chatMessages').append(messageBox);
             } else {
                 $('#chatMessages').prepend(messageBox);
             }
             $('#chatMessages').scrollTop($('#chatMessages')[0].scrollHeight);
         }
+
+        //채팅방 나가기
+        $('#quitChatRoom').click(function () {
+            if (stompClient) {
+                let chatMessage = {
+                    roomId: roomId,
+                    type: 'QUIT',
+                    senderEmail: userEmail,
+                    senderId: senderId
+                };
+                console.log(chatMessage);
+                stompClient.send("/pub/chat/message", {}, JSON.stringify(chatMessage));
+            }
+            $.ajax({
+                url: `/chat/room/${roomId}`,
+                type: 'DELETE',
+                success: function (response) {
+                    toastr.success('채팅방에서 나왔습니다.');
+                    window.location.href = '/chat';
+                },
+                error: function (error) {
+                    console.error("채팅방 나가기 중 오류 발생", error);
+                }
+            })
+        })
+
+        //채팅방 삭제
+        $('#deleteChatRoom').click(function () {
+            $.ajax({
+                url: `/chat/${roomId}`,
+                type: 'DELETE',
+                success: function (response) {
+                    toastr.success('채팅방을 삭제했습니다.');
+                    window.location.href = '/chat';
+                },
+                error: function (error) {
+                    console.error("채팅방 삭제 중 오류 발생", error);
+                }
+            })
+        })
     </script>
 </div>
 
