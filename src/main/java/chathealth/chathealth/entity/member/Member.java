@@ -23,7 +23,7 @@ import static lombok.AccessLevel.PROTECTED;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @NoArgsConstructor(access = PROTECTED)
 @SQLDelete(sql = "UPDATE member SET deleted_date = SYSDATE where member_id = ?")
-@Where(clause = "deleted_date != null")
+//@Where(clause = "deleted_date != null")
 public abstract class Member extends BaseEntity {
 
     @Id
