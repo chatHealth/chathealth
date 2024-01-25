@@ -122,7 +122,7 @@
 <script th:inline="javascript">
     const postId= [[${postList.id}]];
     const postLike=[[${postUserLike}]];
-    console.log(postLike)
+    let userCheck=[[${userCheck}]];
 
     reViewList()
     addClassName()
@@ -147,6 +147,7 @@
                 let ht="";
 
                 $.each(data,function (key,val){
+                    console.log(val.helpfulCheck)
                     ht+=`<div class="row">
                             <div class="col-md-12">
                                 <div class="reviewBox" >
@@ -154,7 +155,10 @@
                                         <div class="userinfo">
                                             <div style="width: 60px; height: 60px; display: flex">
                                                 <img src="${val.profile}" style="object-fit: cover; width: 100%; height: 100%;">
-                                                <div>${val.nickName}</div>
+                                                <div>
+                                                    <div>${val.nickName}</div>
+                                                    <div style="width:120px ">${val.createdDate}</div>
+                                                </div>
                                             </div>
                                             <div class="secondinfo" style="float: right">
                                                 <div class="btnset">`;
@@ -164,11 +168,23 @@
                     }
 
 
-                    ht+=`</div>
+                                            ht+=`</div>
+                                                   <div class="reviewlike" style="display: flex">
+                                                         <div style="display: flex;width: 30px;height: 30px;position: relative;">`;
+
+                                                            if(val.helpfulCheck==5){
+                                                            ht+=`<img src="/img/bgood.png" style="object-fit: cover;width: 100%;height: 100%" class="reviewlikeimg">`;
+                                                                }else {
+                                                                ht+=`<img src="/img/agood.png" style="object-fit: cover;width: 100%;height: 100%" class="reviewlikeimg">`;
+                                                            }
+
+                                                                ht+= `<button class="reviewlikebtn" style="position: absolute;width: 80%;height: 80%;background: none;border: none"></button>
+                                                         </div>
+                                                        <span style="margin-left: 3px" class="reviewlikenum">${val.helpful}</span>
+                                                    </div>
                                                 <div class="starscore">
                                                     <span>별점 : </span><span>${val.score}</span>
                                                 </div>
-                                                <div>${val.createdDate}</div>
                                             </div>
                                         </div>`;
                     if(val.pictureReView.length!==0) {
@@ -263,34 +279,35 @@
     // 리뷰등록
     function insertRe(){
         let reContentValue = document.querySelector(".reContent textarea").value.trim();
+        if(userCheck==0){alert("로그인 후 사용가능합니다")}else {
 
-
-        if(reContentValue.replace(/\s/g, '')=="") {
-            alert("내용을 입력해주세요.")
-        }else{
-            const date = {
-                "content": reContentValue,
-                "score": $("#star").val(),
-                "pictureReList": reImgName,
-                "post": postId
-            }
-            $.ajax({
-                method: "POST",
-                url: "/review/write",
-                contentType: 'application/json',
-                data: JSON.stringify(date),
-                success: function (response) {
-                    console.log("리뷰작성 완")
-                    $(".reContent textarea").val("");
-                    reImgName = [];
-                    $(".reImgCount").text(0);
-                    reViewList()
-                },
-                error: function () {
-                    console.log("리뷰작성 실패")
+            if (reContentValue.replace(/\s/g, '') == "") {
+                alert("내용을 입력해주세요.")
+            } else {
+                const date = {
+                    "content": reContentValue,
+                    "score": $("#star").val(),
+                    "pictureReList": reImgName,
+                    "post": postId
                 }
+                $.ajax({
+                    method: "POST",
+                    url: "/review/write",
+                    contentType: 'application/json',
+                    data: JSON.stringify(date),
+                    success: function (response) {
+                        console.log("리뷰작성 완")
+                        $(".reContent textarea").val("");
+                        reImgName = [];
+                        $(".reImgCount").text(0);
+                        reViewList()
+                    },
+                    error: function () {
+                        console.log("리뷰작성 실패")
+                    }
 
-            })
+                })
+            }
         }
     }
 
@@ -452,24 +469,50 @@
     //post좋아요버튼
 
     $("body").on("click",".prrlikebtn",function (){
-        $.ajax({
-            url:`/view/like/${postId}`,
-            method: "POST",
-            success:function (response){
-                $(".postlikecount").text(response[0]);
-                console.log("좋아요 성공"+response[1])
-                if(response[1]==10){
-                    $("#postlikeimg").attr("src","/img/빨간하트png.png")
-                }else{
-                    $("#postlikeimg").attr("src","/img/빈하트.png")
+        if(userCheck==0){alert("로그인 후 사용가능합니다")}else {
+            $.ajax({
+                url: `/view/like/${postId}`,
+                method: "POST",
+                success: function (response) {
+                    $(".postlikecount").text(response[0]);
+                    console.log("좋아요 성공" + response[1])
+                    if (response[1] == 10) {
+                        $("#postlikeimg").attr("src", "/img/빨간하트png.png")
+                    } else {
+                        $("#postlikeimg").attr("src", "/img/빈하트.png")
+                    }
+
+                },
+                error: function () {
+                    console.log("좋아요 실패")
                 }
 
-            },
-            error:function (){
-                console.log("좋아요 실패")
-            }
+            })
+        }
+    })
+    //리뷰 좋아요
+    $("body").on("click",".reviewlikebtn",function (){
+        if(userCheck==0){alert("로그인 후 사용가능합니다")}else {
+            let par = $(this).closest(".reviewPar");
+            let like = $(this).closest(".reviewlike")
+            let num = par.data("num");
+            $.ajax({
+                url: `/review/like/${num}`,
+                method: "POST",
+                success: function (response) {
+                    par.find(".reviewlikenum").text(response[0]);
+                    if (response[1] == 10) {
+                        like.find(".reviewlikeimg").attr("src", "/img/agood.png")
+                    } else {
+                        like.find(".reviewlikeimg").attr("src", "/img/bgood.png")
+                    }
 
-        })
+                },
+                error: function () {
+
+                }
+            })
+        }
     })
 </script>
 

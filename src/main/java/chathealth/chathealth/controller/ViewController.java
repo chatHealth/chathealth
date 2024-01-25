@@ -27,6 +27,11 @@ public class ViewController {
     public String viewPage(@PathVariable long id, Model model,@AuthenticationPrincipal CustomUserDetails userid){
         //post정보
         PostResponseDetails post=postService.getAllView(id);
+        if(userid==null){
+            model.addAttribute("userCheck",0);
+        }else {
+            model.addAttribute("userCheck",1);
+        }
         model.addAttribute("postUserLike",postService.postLikeCheck(id,userid));
         model.addAttribute("postList",post);
         return "view/view";

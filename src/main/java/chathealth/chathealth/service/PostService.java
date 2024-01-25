@@ -6,6 +6,7 @@ import chathealth.chathealth.dto.request.PostWriteDto;
 import chathealth.chathealth.dto.request.ReviewDto;
 import chathealth.chathealth.dto.request.ReviewModDto;
 import chathealth.chathealth.dto.response.*;
+import chathealth.chathealth.entity.Helpful;
 import chathealth.chathealth.entity.PictureReView;
 import chathealth.chathealth.entity.Review;
 import chathealth.chathealth.entity.member.Ent;
@@ -43,6 +44,41 @@ public class PostService {
     private final PictureReviewRepository pictureReviewRepository;
     private final ReViewRepository reViewRepository;
     private final PostLikeRepository postLikeRepository;
+    private final HelpfulRepository helpfulRepository;
+
+
+
+    public Long reviewLikeCheck(long num,CustomUserDetails id){
+        if (id!=null){
+            if(helpfulRepository.findByMemberIdAndReviewId(id.getLoggedMember().getId(),num)==null){
+                return Long.valueOf(5);
+            }else {
+                return Long.valueOf(10);
+            }
+        }else {
+            return Long.valueOf(5);
+        }
+    }
+
+    @Transactional
+    public List<Long> reviewLike(long num,CustomUserDetails userId){
+        List<Long> likeset=new ArrayList<>();
+        Long addM;
+        if(helpfulRepository.findByMemberIdAndReviewId(userId.getLoggedMember().getId(),num)==null){
+            Helpful helpful=Helpful.builder()
+                    .member(memberRepository.findById(userId.getLoggedMember().getId()).orElseThrow())
+                    .review(reViewRepository.findById(num).orElseThrow())
+                    .build();
+            helpfulRepository.save(helpful);
+            addM= Long.valueOf(10);
+        }else {
+            helpfulRepository.deleteByMemberIdAndReviewId(userId.getLoggedMember().getId(),num);
+            addM= Long.valueOf(5);
+        }
+        likeset.add(helpfulRepository.countByReviewId(num));
+        likeset.add(addM);
+        return likeset;
+    }
 
     public Integer postLikeCheck(long postId,CustomUserDetails id){
         if (id!=null){
@@ -52,7 +88,7 @@ public class PostService {
                 return 10;
             }
         }else {
-            return 10;
+            return 5;
         }
     }
 
@@ -121,6 +157,8 @@ public class PostService {
                             .score(Review.getScore())
                             .nickName(user.getNickname())
                             .profile(profiles)
+                            .helpful(helpfulRepository.countByReviewId(Review.getId()))
+                            .helpfulCheck(reviewLikeCheck(Review.getId(),login))
                             .same(userCheck.sameclass(user.getId(),login))
                             .pictureReView(Review.getPictureReList().stream().map(PictureReView::getPictureUrl).toList())
                             .createdDate(Review.getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))

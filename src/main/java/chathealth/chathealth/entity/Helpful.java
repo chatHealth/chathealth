@@ -3,12 +3,16 @@ package chathealth.chathealth.entity;
 import chathealth.chathealth.entity.member.Member;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 import static jakarta.persistence.FetchType.*;
 import static jakarta.persistence.GenerationType.*;
 
 @Entity
 @Getter
+@SuperBuilder
+@NoArgsConstructor
 public class Helpful {
 
     @Id
