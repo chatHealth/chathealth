@@ -32,6 +32,8 @@ public class ReViewSelectDto {
     private double score;
     private String createdDate;
     private List<String> pictureReView;
+    private Long helpful;
+    private Long helpfulCheck;
 
     private Integer same;
     public Integer sameclass(Long member,CustomUserDetails login){

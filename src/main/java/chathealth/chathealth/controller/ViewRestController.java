@@ -48,6 +48,10 @@ public class ViewRestController {
     }
 
 
+    @PostMapping("/like/{num}")
+    public List<Long> reviewlike(@PathVariable long num,@AuthenticationPrincipal CustomUserDetails userId){
+        return postService.reviewLike(num,userId);
+    }
 }
 
 
