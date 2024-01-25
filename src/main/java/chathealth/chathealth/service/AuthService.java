@@ -32,13 +32,18 @@ import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 import java.util.UUID;
 
-import static chathealth.chathealth.constants.Role.ROLE_USER;
-import static chathealth.chathealth.constants.Role.ROLE_WAITING_ENT;
+import static chathealth.chathealth.constants.Role.*;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class AuthService implements UserDetailsService {
+
+    private final String domain = "profile";
+
+    private final MemberRepository memberRepository;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final ImageUpload imageUpload;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -49,16 +54,9 @@ public class AuthService implements UserDetailsService {
     }
 
 
-    @Value("${file.path}")
-    private String path;
-    private String domain = "profile";
-    private final MemberRepository memberRepository;
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
-    private final ImageUpload imageUpload;
-
     @Transactional
     public void userJoin(@Valid UserJoinDto userJoinDto) { //개인 회원가입
-        String rename = domain+imageUpload.uploadImage(userJoinDto.getProfile(),domain);
+        String rename = domain+File.separator+imageUpload.uploadImage(userJoinDto.getProfile(),domain);
 
         Member dbJoinUser = Users.builder()
                 .id(userJoinDto.getId())
@@ -79,7 +77,7 @@ public class AuthService implements UserDetailsService {
     @Transactional
     public void entJoin(@Valid EntJoinDto entJoinDto) {
         // 사업자 회원가입
-        String rename = domain+imageUpload.uploadImage(entJoinDto.getProfile(),domain);
+        String rename = domain+File.separator+imageUpload.uploadImage(entJoinDto.getProfile(),domain);
 
         Member dbJoinEnt = Ent.builder()
                 .id(entJoinDto.getId())
@@ -109,9 +107,10 @@ public class AuthService implements UserDetailsService {
 
     public void memberWithdraw(Long id) {
         Optional<Member> optionalMember = memberRepository.findById(id);
-        if(optionalMember.isPresent()){
+        if (optionalMember.isPresent()) {
             Member findMember = optionalMember.get();
             findMember.withdraw(LocalDateTime.now());
+            findMember.changeRole(ROLE_WITHDRAW_MEMBER);
         }
     }
 
@@ -119,4 +118,5 @@ public class AuthService implements UserDetailsService {
         boolean isExists = memberRepository.existsByEmail(email);
         return isExists;
     }
+
 }
