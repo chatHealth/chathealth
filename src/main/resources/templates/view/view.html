@@ -319,24 +319,30 @@
     }
     //댓글 작성
     $("body").on("click",".commentBtn",function (){
-        let com = $(this).closest(".recomment");
-        let num = com.data("num");
-        let content = com.find(".commentContent").val();
+        if(userCheck==0){alert("로그인 후 사용가능합니다")}else {
+            let com = $(this).closest(".recomment");
+            let num = com.data("num");
+            let content = com.find(".commentContent").val();
+            if (content.replace(/\s/g, '') == "") {
+                alert("내용을 입력해주세요.")
+            } else {
 
-        $.ajax({
-            url:`/comment/write/${num}`,
-            contentType: 'application/json',
-            data:JSON.stringify({"content":content}),
-            method:"POST",
-            success:function (){
-                console.log("댓글 성공")
-                reViewList()
-            },
-            error:function (){
-                console.log("댓글 실패")
+                $.ajax({
+                    url: `/comment/write/${num}`,
+                    contentType: 'application/json',
+                    data: JSON.stringify({"content": content}),
+                    method: "POST",
+                    success: function () {
+                        console.log("댓글 성공")
+                        reViewList()
+                    },
+                    error: function () {
+                        console.log("댓글 실패")
+                    }
+
+                })
             }
-
-        })
+        }
     })
 
     //댓글삭제
