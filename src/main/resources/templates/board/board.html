@@ -144,7 +144,7 @@
                                         url: '/board/' + boardId,
                                         type: 'DELETE',
                                         success: function (data) {
-                                            alert('삭제되었습니다.')
+                                            sendInfoMessage("삭제되었습니다.");
                                             location.href = '/board'
                                         },
                                         error: function (error) {
@@ -167,7 +167,7 @@
                     url: '/board/' + boardId,
                     type: 'DELETE',
                     success: function (data) {
-                        alert('삭제되었습니다.')
+                        sendInfoMessage('삭제되었습니다.')
                         location.href = '/board'
                     },
                     error: function (error) {
@@ -216,7 +216,6 @@
                                 document.getElementById("commentInput").focus();
                             }
                         } else {
-                            console.log(errorResult);
                             alert(errorResult.message);
                         }
                     }

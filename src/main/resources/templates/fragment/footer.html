@@ -86,10 +86,10 @@
                         if (errorResult.validation !== undefined) {
                             if (errorResult.validation.title !== undefined) {
                                 document.getElementById('message-subject').placeholder = errorResult.validation.title;
-                                alert(errorResult.validation.title);
+                                sendWarnMessage(errorResult.validation.title);
                             }else if (errorResult.validation.content !== undefined) {
                                 document.getElementById('message-text').placeholder = errorResult.validation.content;
-                                alert(errorResult.validation.content);
+                                sendWarnMessage(errorResult.validation.content);
                             }
                         } else {
                             alert(errorResult.message);
@@ -101,6 +101,10 @@
             })
         }
 
+        function sendWarnMessage(message) {
+            console.log(message);
+            toastr.warning(message);
+        }
 
     </script>
 </div>

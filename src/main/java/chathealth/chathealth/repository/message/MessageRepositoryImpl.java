@@ -83,7 +83,7 @@ public class MessageRepositoryImpl implements MessageRepositoryCustom {
                 .from(message)
                 .where(message.receiver.eq(member), message.isRead.eq(0))
                 .fetchOne();
-
+        
         return getMessageReceiveResponses(pageable, fetch, count);
     }
 
@@ -94,6 +94,8 @@ public class MessageRepositoryImpl implements MessageRepositoryCustom {
                     Users sender = (Users) message.getSender();
                     return MessageReceiveResponse.get(message, sender);
                 }).toList();
+
+        System.out.println("list.size() = " + list.size());
 
         return new PageImpl<>(list, pageable, count == null ? 0 : count);
     }
