@@ -14,6 +14,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -100,6 +101,7 @@ public class AuthService implements UserDetailsService {
         memberRepository.save(dbJoinEnt);
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_WAITING_ENT','ROLE_PERMITTED_ENT','ROLE_REJECTED_ENT','ROLE_USER')")
     @Transactional
     public void updatePw(Long id, String pw){
         String newPw = bCryptPasswordEncoder.encode(pw);
@@ -110,6 +112,7 @@ public class AuthService implements UserDetailsService {
         }
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_WAITING_ENT','ROLE_PERMITTED_ENT','ROLE_REJECTED_ENT','ROLE_USER')")
     @Transactional
     public void memberWithdraw(Long id) {
         Optional<Member> optionalMember = memberRepository.findById(id);

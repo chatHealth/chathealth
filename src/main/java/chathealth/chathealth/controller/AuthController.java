@@ -116,7 +116,7 @@ public class AuthController {
         return "auth/admin-manage-user";
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/admin")
     public String admin(Model model) {
         return "auth/";

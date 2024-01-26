@@ -13,6 +13,7 @@ import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
@@ -33,7 +34,7 @@ public class MemberController {
     private final AuthService authService;
     private final MailService mailService;
 
-    //@PreAuthorize("hasRole('USER')") //USER 롤 가지고 있는 사람만 메서드 실행 가능
+    @PreAuthorize("hasRole('ROLE_USER')") //USER 롤 가지고 있는 사람만 메서드 실행 가능
     @GetMapping("/user/{id}")  //개인 마이페이지로 이동
     public String goUserInfo(@PathVariable Long id, Model model) {
         UserInfoDto userInfoDto = memberService.getUserInfo(id);
@@ -42,6 +43,7 @@ public class MemberController {
 
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_WAITING_ENT','ROLE_PERMITTED_ENT','ROLE_REJECTED_ENT')")
     @GetMapping("/ent/{id}")  //사업자 마이페이지로 이동
     public String goEntInfo(@PathVariable Long id,Model model) {
         EntInfoDto entInfoDto = memberService.getEntInfo(id);
@@ -50,6 +52,7 @@ public class MemberController {
         return "member/ent-info";
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_WAITING_ENT','ROLE_PERMITTED_ENT','ROLE_REJECTED_ENT','ROLE_USER')")
     @Transactional
     @ResponseBody
     @PatchMapping("/user/{id}") //개인도 사업자도 프로필은 여기서 바꾼다
@@ -62,6 +65,7 @@ public class MemberController {
     }
 
 
+    @PreAuthorize("hasRole('ROLE_USER')")
     @Transactional
     @ResponseBody
     @PatchMapping("/user/updateInfo/{id}")
@@ -79,6 +83,7 @@ public class MemberController {
         return resultMap;
         }
 
+    @PreAuthorize("hasAnyRole('ROLE_WAITING_ENT','ROLE_PERMITTED_ENT','ROLE_REJECTED_ENT')")
     @Transactional
     @ResponseBody
     @PatchMapping("/ent/updateInfo/{id}")
@@ -96,12 +101,14 @@ public class MemberController {
         return resultMap;
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_WAITING_ENT','ROLE_PERMITTED_ENT','ROLE_REJECTED_ENT','ROLE_USER')")
     @ResponseBody
     @PostMapping("/emails/verification-request")
     public String sendMail(String email) throws MessagingException{
         return mailService.sendEmail(email);
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_WAITING_ENT','ROLE_PERMITTED_ENT','ROLE_REJECTED_ENT','ROLE_USER')")
     @PatchMapping("/update-pw/{id}")
     @ResponseBody
     public Map<String,String> updateUserPw(@PathVariable Long id, String pw){
