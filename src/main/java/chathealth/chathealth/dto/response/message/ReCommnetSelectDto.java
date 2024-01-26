@@ -24,4 +24,5 @@ public class ReCommnetSelectDto {
     private String content;
 
     private String createDate;
+    private boolean checkUser;
 }

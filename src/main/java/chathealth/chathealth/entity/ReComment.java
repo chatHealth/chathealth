@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.SQLDelete;
 
 import java.time.LocalDateTime;
 
@@ -16,6 +17,7 @@ import static lombok.AccessLevel.PROTECTED;
 @Getter
 @NoArgsConstructor(access = PROTECTED)
 @SuperBuilder
+@SQLDelete(sql = "UPDATE Re_Comment SET deleted_date = CURRENT_TIMESTAMP where recomment_id = ?")
 public class ReComment extends BaseEntity {
 
     @Id

@@ -51,7 +51,23 @@ public class PostService {
     private final ReCommentRepository reCommentRepository;
     private final EntityManager em;
 
-    public List<ReCommnetSelectDto> selectComment(long id) {
+
+    public void deleteComment(long num){
+        reCommentRepository.deleteById(num);
+    }
+
+    public boolean checkUserRe(long id,CustomUserDetails userid){
+        if (null != userid) {
+            if(id==userid.getLoggedMember().getId()){
+                return true;
+            }else {
+                return false;
+            }
+        }return false;
+    }
+
+
+    public List<ReCommnetSelectDto> selectComment(long id,CustomUserDetails userid) {
         Review review = reViewRepository.findById(id).orElseThrow();
         em.clear();
         List<ReComment> rec = reCommentRepository.findAllByReview(review);
@@ -69,6 +85,7 @@ public class PostService {
                             .profile(profiles)
                             .nickName(user.getNickname())
                             .content(ReComment.getContent())
+                            .checkUser(checkUserRe(user.getId(), userid))
                             .createDate(ReComment.getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")))
                             .build();
                 })

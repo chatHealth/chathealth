@@ -256,15 +256,12 @@
                                         <div style="" class="commentlist" >`;
 
 
-
-                        console.log(val.id)
                     $.ajax({
                         url:`/comment/${val.id}`,
                         async: false,
                         success:function (data) {
-                                console.log(data)
                             $.each(data, function (key, value) {
-                                ht += `<div style="display: flex">
+                                ht += `<div style="display: flex" class="comdata" data-num="${value.id}">
                              <div style="width: 30px;height: 60px;">ㄴ</div>
                              <div style="background: lightgray;width: 100%">
                                 <div class="recomInfo" style="display: flex;">
@@ -272,7 +269,15 @@
                                         <img src="${value.profile}" style="width: 100%;height: 100%;object-fit: cover">
                                     </div>
                                     <span>${value.nickName}</span>
-                                    <div style="margin-left: auto">${value.createDate}</div>
+                                    <div style="margin-left: auto">${value.createDate}`;
+                                        if(value.checkUser==true) {
+                                            ht += `|
+                                        <button class="commentDel" style="border: none">
+                                        <span style="font-weight: bold">X</span>
+                                        </button>`
+                                        }
+
+                                    ht+=`</div>
                                 </div>
                                 <div class="recomCon"><p>${value.content}</p></div>
                              </div>
@@ -284,17 +289,6 @@
                             console.log("댓글출력 실패")
                         }
                     })
-
-
-
-
-
-
-
-
-
-
-
 
 
                                         ht+=`</div>
@@ -345,6 +339,21 @@
         })
     })
 
+    //댓글삭제
+    $("body").on("click",".commentDel",function (){
+        let num=$(this).closest(".comdata").data("num");
+        $.ajax({
+            url:`/comment/delete/${num}`,
+            method:"DELETE",
+            success:function (){
+                console.log("댓글삭제 성공")
+                reViewList()
+            },
+            error:function (){
+                console.log("댓글삭제 실패")
+            }
+        })
+    })
 
     // 리뷰이미지등록
     let countRe=0;
