@@ -20,6 +20,7 @@ public class ChatMessage {
     @Column(name = "chat_message_id")
     private Long id;
 
+    @Column(length = 1000)
     private String message;
 
     @ManyToOne(fetch = FetchType.LAZY)

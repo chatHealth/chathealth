@@ -48,7 +48,10 @@ public class ChatService {
         String email = userDetails.getLoggedMember().getEmail();
         Member member = memberRepository.findByEmail(email).orElseThrow(UserNotFound::new);
 
-        String roomImage = imageUpload.uploadImage(image, "chat");
+        String roomImage = null;
+        if(image != null && !image.isEmpty()) {
+            roomImage = imageUpload.uploadImage(image, "chat");
+        }
         ChatRoom chatRoom = ChatRoom.createChatRoom(createChatRoom, member, roomImage);
 
         ChatRoomMember chatRoomMember = ChatRoomMember.enterChatRoomMember(createChatRoom.getNickname(), chatRoom, member);

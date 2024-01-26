@@ -1,11 +1,13 @@
 package chathealth.chathealth.controller;
 
 import chathealth.chathealth.constants.ChatSearchCondition;
+import chathealth.chathealth.dto.request.ChatRoomEntrance;
 import chathealth.chathealth.dto.response.ChatMessageResponse;
 import chathealth.chathealth.dto.response.ChatRoomInner;
 import chathealth.chathealth.dto.response.ChatRoomResponse;
 import chathealth.chathealth.dto.response.CustomUserDetails;
 import chathealth.chathealth.service.ChatService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -55,11 +57,10 @@ public class ChatRoomController {
 
     //채팅방 입장
     @ResponseBody
-    @PostMapping("/chat/room/{id}")
+    @PostMapping("/chat/room/enter")
     public Long enterRoom(@AuthenticationPrincipal CustomUserDetails userDetails,
-                          @PathVariable Long id,
-                          @RequestParam String nickname) {
-        Long senderId = chatService.enterChatRoom(id, userDetails.getLoggedMember().getEmail(), nickname);
+                          @Valid @RequestBody ChatRoomEntrance chatRoomEntrance) {
+        Long senderId = chatService.enterChatRoom(chatRoomEntrance.getRoomId(), userDetails.getLoggedMember().getEmail(), chatRoomEntrance.getNickname());
 
         return senderId;
     }

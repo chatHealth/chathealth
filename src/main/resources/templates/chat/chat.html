@@ -30,7 +30,7 @@
             <li th:each="chatRoom : ${chatRooms}"
                 class="list-group-item d-flex align-items-center justify-content-between">
                 <div class="d-flex align-items-center">
-                    <img th:src="@{|/chat/${chatRoom.image}|}" class="img-fluid rounded-circle mr-3"
+                    <img th:src="${chatRoom.image} != null ? @{|/chat/${chatRoom.image}|} : @{/img/logo.png}" class="img-fluid rounded-circle mr-3"
                          style="width: 60px; height: 60px;" alt="Room Image"/>
                     <div>
                         <h5 class="mb-0" th:text="${chatRoom.name}">Chat Room Name</h5>
@@ -93,15 +93,15 @@
                     <div class="modal-body">
                         <div class="mb-3">
                             <label for="chatRoomName" class="form-label">채팅방 이름</label>
-                            <input type="text" class="form-control" id="chatRoomName" required>
+                            <input type="text" class="form-control" id="chatRoomName" >
                         </div>
                         <div class="mb-3">
                             <label for="chatRoomNickName" class="form-label">채팅에서 쓸 닉네임</label>
-                            <input type="text" class="form-control" id="chatRoomNickName" required>
+                            <input type="text" class="form-control" id="chatRoomNickName" >
                         </div>
                         <div class="mb-3">
                             <label for="chatRoomDescription" class="form-label">설명</label>
-                            <textarea class="form-control" id="chatRoomDescription" required></textarea>
+                            <textarea class="form-control" id="chatRoomDescription" ></textarea>
                         </div>
                         <div class="mb-3">
                             <label for="chatRoomImage" class="form-label">대표 사진</label>
@@ -128,8 +128,8 @@
                 <form id="chatJoinForm">
                     <div class="modal-body">
                         <div class="mb-3">
-                            <label for="chatRoomNickName" class="form-label">채팅에서 쓸 닉네임</label>
-                            <input type="text" class="form-control" id="chatNickName" required>
+                            <label for="chatNickName" class="form-label">채팅에서 쓸 닉네임</label>
+                            <input type="text" class="form-control" id="chatNickName">
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -166,15 +166,19 @@
 
                 function joinChatRoom(roomId) {
                     let nickname = $("#chatNickName").val();
-                    console.log(nickname);
-                    console.log(roomId);
+
+                    const data = JSON.stringify({
+                        nickname: nickname,
+                        roomId: roomId
+                    });
+
 
                     $.ajax({
-                        url: "/chat/room/" + roomId + "?nickname=" + nickname,
+                        url: "/chat/room/enter",
                         type: "POST",
-                        // data: formData,
+                        data: data,
                         processData: false,
-                        contentType: false,
+                        contentType: "application/json",
                         success: function (data) {
                             toastr.info("채팅방 입장");
                             $("#chatJoinModal").modal("hide");
@@ -202,13 +206,21 @@
                         error:
                             function (e) {
                                 e = JSON.parse(e.responseText);
+                                if(e.code == "400"){
+                                    if(e.validation.nickname != null){
+                                        console.log(e.validation);
+                                        toastr.error(e.validation.nickname);
+                                        $("#chatNickName").attr("placeholder", e.validation.nickname);
+                                        $("#chatNickName").focus();
+                                    }
+                                    return;
+                                }
                                 toastr.error("채팅방 입장 실패");
                             }
                     });
                 }
             }
-        )
-        ;
+        );
 
         function createChatRoom() {
             let formData = new FormData();
@@ -220,7 +232,6 @@
                     })],
                     {type: "application/json"}));
             formData.append("image", $("#chatRoomImage")[0].files[0]);
-            console.log(formData);
 
             $.ajax({
                 url: "/chat/room",
@@ -237,8 +248,24 @@
                 },
                 error: function (e) {
                     e = JSON.parse(e.responseText);
+                    // validation 오류
+                    if (e.code == "400") {
+                        if(e.validation.name != null){
+                            toastr.error(e.validation.name);
+                            $("#chatRoomName").attr("placeholder", e.validation.name);
+                            $("#chatRoomName").focus();
+                        }else if(e.validation.nickname != null){
+                            toastr.error(e.validation.nickname);
+                            $("#chatRoomNickName").attr("placeholder", e.validation.nickname);
+                            $("#chatRoomNickName").focus();
+                        } else if(e.validation.description != null) {
+                            toastr.error(e.validation.description);
+                            $("#chatRoomDescription").attr("placeholder", e.validation.description);
+                            $("#chatRoomDescription").focus();
+                        }
+                        return;
+                    }
                     toastr.error("채팅방 개설에 실패하였습니다.");
-                    console.log(e);
                 }
             });
         }

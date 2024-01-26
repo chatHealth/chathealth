@@ -5,6 +5,7 @@ import chathealth.chathealth.dto.request.CreateChatRoom;
 import chathealth.chathealth.dto.response.ChatMessageResponse;
 import chathealth.chathealth.dto.response.CustomUserDetails;
 import chathealth.chathealth.service.ChatService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
@@ -24,15 +25,15 @@ public class ChatMessageController {
     private final SimpMessageSendingOperations messagingTemplate;
 
     @MessageMapping("/chat/message")
-    public void message(ChatMessageDto messageDto, Principal principal) {
+    public void message(@Valid ChatMessageDto messageDto, Principal principal) {
 
         ChatMessageResponse response = chatService.sendChatMessage(messageDto, principal.getName());
         messagingTemplate.convertAndSend("/sub/chat/" + messageDto.getRoomId(), response);
     }
 
     @PostMapping("/chat/room")
-    public Long chat(@RequestPart CreateChatRoom createChatRoom,
-                     @RequestPart MultipartFile image,
+    public Long createChat(@Valid @RequestPart CreateChatRoom createChatRoom,
+                     @RequestPart(required = false) MultipartFile image,
                      @AuthenticationPrincipal CustomUserDetails userDetails) {
 
         Long chatRoomId = chatService.createChatRoom(userDetails, createChatRoom, image);
