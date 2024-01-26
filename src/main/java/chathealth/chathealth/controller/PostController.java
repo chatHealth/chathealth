@@ -46,18 +46,6 @@ public class PostController {
         return "post/write";
     }
 
-    // 1. insert
-//    @PostMapping("/write")
-//    public void postWriteProcess(@RequestBody PostWriteDto postWriteDto,
-//                                 @AuthenticationPrincipal CustomUserDetails ent,
-//                                 @RequestParam("symptom") Long symptomId,
-//                                 @RequestParam("material") List<Long> selectMaterial,
-//                                 @RequestParam List<String> postImg){
-//        log.info("postWriteDto==={}", postWriteDto);
-//
-//        postService.createPost(postWriteDto, ent,symptomId, selectMaterial,postImg);
-//
-//    }
 
     @PostMapping("/write")
     @ResponseBody
@@ -66,6 +54,15 @@ public class PostController {
     }
 
 
+    @GetMapping("/modify")
+    public String postModifyProcess(@RequestParam long postId,Model model){
+        List<SymptomDto> symptom=postService.getSymptomList();
+        model.addAttribute("symptom",symptom);
+        List<MaterialDto> material=postService.getMaterialList();
+        model.addAttribute("material",material);
+        model.addAttribute("postList",postService.getAllViewMod(postId));
+        return "post/modify";
+    }
 
 
 

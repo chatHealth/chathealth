@@ -11,6 +11,18 @@
             crossorigin="anonymous"></script>
 </head>
 <body>
+<div style="float: right" class="postcontroller">
+    <div th:hidden="${postList.memberId!=userId}">
+        <form action="/post/modify" method="get">
+            <input type="hidden" th:name="postId" th:value="${postList.id}">
+            <button class="modifyPost">글 수정</button>
+        </form>
+        <form action="/post/delete">
+            <input type="hidden" th:name="postId" th:value="${postList.id}">
+            <button class="modifyPost">글 삭제</button>
+        </form>
+    </div>
+</div>
 <div class="productBox">
     <div class="imgBox">
         <div id="carouselExampleAutoplaying" class="carousel slide" data-bs-ride="carousel">
@@ -123,6 +135,8 @@
     const postId= [[${postList.id}]];
     const postLike=[[${postUserLike}]];
     let userCheck=[[${userCheck}]];
+    const loginUserId=[[${userId}]];
+    const postWriteUser=[[${postList.memberId}]]
 
     reViewList()
     addClassName()
@@ -137,48 +151,13 @@
         if(postLike==10){
             $("#postlikeimg").attr("src","/img/빨간하트png.png");
         }
+        // if(postWriteUser==loginUserId){
+        //     let btn=`<button class="modifyPost">글 수정</button>
+        // <button class="deletePost">글 삭제</button>`;
+        //     $(".postcontroller").append(btn)
+        // }
 
     }
-    //대댓글 조회
-    // function ReComment(id){
-    //
-    //     $.ajax({
-    //         url:`/comment/${id}`,
-    //         success:function (data) {
-    //             console.log(id)
-    //             let ht = "";
-    //
-    //             $.each(data, function (key, val) {
-    //
-    //                 ht += `<div style="display: flex">
-    //                          <div style="width: 30px;height: 60px;">ㄴ</div>
-    //                          <div style="background: lightgray;width: 100%">
-    //                             <div class="recomInfo" style="display: flex;">
-    //                                 <div style="width:25px;height: 25px ">
-    //                                     <img src="${val.profile}" style="width: 100%;height: 100%;object-fit: cover">
-    //                                 </div>
-    //                                 <span>${val.nickName}</span>
-    //                                 <div style="margin-left: auto">${val.createDate}</div>
-    //                             </div>
-    //                             <div class="recomCon"><p>${val.content}</p></div>
-    //                          </div>
-    //                       </div>`;
-    //
-    //             });
-    //             resolve(ht);
-    //         },
-    //         error:function (){
-    //             console.log("댓글출력 실패")
-    //         }
-    //     })
-    // }
-
-
-
-
-
-
-
 
     // 리뷰목록조회
     function reViewList() {
@@ -643,6 +622,26 @@
             })
         }
     })
+
+
+    //post수정버튼
+    // $("body").on("click",".modifyPost",function (){
+    //     console.log("당연히되지")
+    //     $.ajax({
+    //         url:`/post/modify/${postId}`,
+    //         method:"GET",
+    //         success:function (response){
+    //             console.log(response)
+    //             window.location.href = response;
+    //         },
+    //         error:function (){
+    //
+    //         }
+    //
+    //     })
+    // })
+
+
 </script>
 
 </body>

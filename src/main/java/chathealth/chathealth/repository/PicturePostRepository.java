@@ -10,4 +10,6 @@ public interface PicturePostRepository extends JpaRepository<PicturePost, Long> 
 
     public List<PicturePost> findAllByPostIdOrderByOrders(Long postId);
     public List<PicturePost> findAllByPostId(Long postId);
+    public List<PicturePost> findAllByPostIdAndOrders(Long postId,Integer order);
+    public String findByPostIdAndOrders(long postId,Integer order);
 }

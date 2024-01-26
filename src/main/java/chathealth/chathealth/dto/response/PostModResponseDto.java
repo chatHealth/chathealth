@@ -17,13 +17,14 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @Builder
 @ToString
-public class PostResponseDetails {
+public class PostModResponseDto {
     private Long id;
     private Long memberId;
     private String title;
     private String content;
 
-    private List<String> picturePost;
+    private String picturePostMain;
+    private List<String> picturePostSer;
 
     private String company;
 

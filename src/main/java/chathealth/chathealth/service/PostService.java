@@ -248,11 +248,27 @@ public class PostService {
         Post post = postRepository.findById(id).orElseThrow();
         return PostResponseDetails.builder()
                 .id(post.getId())
+                .memberId(post.getMember().getId())
                 .company(post.getMember().getCompany())
                 .title(post.getTitle())
                 .likeCount(postLikeRepository.countByPostId(post.getId()))
                 .content(post.getContent())
                 .picturePost(picturePostRepository.findAllByPostId(id).stream().map(PicturePost::getPictureUrl).toList())
+                .material(PostResponseDetails.extractMaterialNames(post.getMaterialList()))
+                .build();
+    }
+
+    public PostModResponseDto getAllViewMod(long id) {
+        Post post = postRepository.findById(id).orElseThrow();
+        return PostModResponseDto.builder()
+                .id(post.getId())
+                .memberId(post.getMember().getId())
+                .company(post.getMember().getCompany())
+                .title(post.getTitle())
+                .likeCount(postLikeRepository.countByPostId(post.getId()))
+                .content(post.getContent())
+                .picturePostMain(picturePostRepository.findByPostIdAndOrders(id,1))
+                .picturePostSer(picturePostRepository.findAllByPostIdAndOrders(id,2).stream().map(PicturePost::getPictureUrl).toList())
                 .material(PostResponseDetails.extractMaterialNames(post.getMaterialList()))
                 .build();
     }
