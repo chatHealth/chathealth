@@ -8,9 +8,12 @@ import chathealth.chathealth.entity.member.Address;
 import chathealth.chathealth.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,6 +41,7 @@ public class AuthController {
         return "auth/login";
     }
 
+    //@Secured("hasAnyRole('ROLE_USER','ROLE_WAITING_ENT','ROLE_PERMITTED_ENT','ROLE_REJECTED_ENT','ROLE_ADMIN')")
     @PostMapping("/login")
     public String loginProcess() {
         return "redirect:/";
@@ -98,9 +102,15 @@ public class AuthController {
         return "redirect:/auth/ent-join";
     }
 
+    @Transactional
+    @DeleteMapping("/withdraw/{id}")
+    public void memberWithdraw(@PathVariable Long id){
+        authService.memberWithdraw(id);
+    }
+
 
     //관리자페이지
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/admin")
     public String adminMain(Model model) {
         return "auth/admin-manage-user";
