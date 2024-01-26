@@ -1,5 +1,6 @@
 package chathealth.chathealth.service;
 
+import chathealth.chathealth.controller.NotificationController;
 import chathealth.chathealth.dto.request.SendMessageDto;
 import chathealth.chathealth.dto.response.*;
 import chathealth.chathealth.dto.response.message.MessageReceiveResponse;
@@ -10,6 +11,7 @@ import chathealth.chathealth.entity.Message;
 import chathealth.chathealth.entity.member.Member;
 import chathealth.chathealth.entity.member.Users;
 import chathealth.chathealth.exception.MessageNotFound;
+import chathealth.chathealth.exception.NotPermitted;
 import chathealth.chathealth.exception.UserNotFound;
 import chathealth.chathealth.repository.MemberRepository;
 import chathealth.chathealth.repository.message.MessageRepository;
@@ -26,15 +28,32 @@ public class MessageService {
 
     private final MessageRepository messageRepository;
     private final MemberRepository memberRepository;
+    private final NotificationController notificationController;
 
     //쪽지 보내기
     public void sendMessage(CustomUserDetails customUserDetails, Long receiverId, SendMessageDto sendMessageDto) {
 
-        Member sender = memberRepository.findByEmail(customUserDetails.getLoggedMember().getEmail())
+
+        Member member = memberRepository.findByEmail(customUserDetails.getLoggedMember().getEmail())
                 .orElseThrow(UserNotFound::new);
+
+        Users sender;
+        if(!(member instanceof Users)){
+            throw new NotPermitted("개인회원만 쪽지를 보낼 수 있습니다.");
+        }else {
+            sender = (Users) member;
+        }
+
+        if(customUserDetails.getLoggedMember().getId().equals(receiverId)){
+            throw new NotPermitted("자기 자신에게 쪽지를 보낼 수 없습니다.");
+        }
+
         Member receiver = memberRepository.findById(receiverId).orElseThrow(UserNotFound::new);
 
-        messageRepository.save(sendMessageDto.toEntity(sender, receiver));
+        messageRepository.save(sendMessageDto.toEntity(member, receiver));
+
+        notificationController.dispatchNewMessage(receiver.getEmail(),
+                (sender.getNickname()!=null? sender.getNickname() : sender.getName()) + "님에게 새로운 쪽지가 도착했습니다.");
     }
 
     //받은 쪽지함
@@ -63,7 +82,7 @@ public class MessageService {
     //보낸 쪽지 읽기
 
     public MessageSendResponseDetail getSendMessage(Long messageId) {
-        Message message = messageRepository.findFetchById(messageId).orElseThrow(MessageNotFound::new);
+        Message message = messageRepository.findReceiverFetchById(messageId).orElseThrow(MessageNotFound::new);
 
         Users receiver;
         if (message.getReceiver() instanceof Users) {
