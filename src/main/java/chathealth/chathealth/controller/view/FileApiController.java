@@ -1,4 +1,4 @@
-package chathealth.chathealth.controller;
+package chathealth.chathealth.controller.view;
 
 import chathealth.chathealth.exception.NotExistFile;
 import chathealth.chathealth.exception.NotPermitted;

@@ -8,11 +8,12 @@ import lombok.experimental.SuperBuilder;
 
 import static jakarta.persistence.FetchType.*;
 import static jakarta.persistence.GenerationType.*;
+import static lombok.AccessLevel.PROTECTED;
 
 @Entity
 @Getter
 @SuperBuilder
-@NoArgsConstructor
+@NoArgsConstructor(access = PROTECTED)
 public class Helpful {
 
     @Id

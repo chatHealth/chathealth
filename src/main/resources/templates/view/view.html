@@ -126,6 +126,7 @@
 
     reViewList()
     addClassName()
+    toggleRecomment()
     function addClassName(){
         let imgbox=$(".carousel-inner > div:first-child");
         imgbox.remove("carousel-item").addClass("carousel-item active");
@@ -138,20 +139,59 @@
         }
 
     }
+    //대댓글 조회
+    // function ReComment(id){
+    //
+    //     $.ajax({
+    //         url:`/comment/${id}`,
+    //         success:function (data) {
+    //             console.log(id)
+    //             let ht = "";
+    //
+    //             $.each(data, function (key, val) {
+    //
+    //                 ht += `<div style="display: flex">
+    //                          <div style="width: 30px;height: 60px;">ㄴ</div>
+    //                          <div style="background: lightgray;width: 100%">
+    //                             <div class="recomInfo" style="display: flex;">
+    //                                 <div style="width:25px;height: 25px ">
+    //                                     <img src="${val.profile}" style="width: 100%;height: 100%;object-fit: cover">
+    //                                 </div>
+    //                                 <span>${val.nickName}</span>
+    //                                 <div style="margin-left: auto">${val.createDate}</div>
+    //                             </div>
+    //                             <div class="recomCon"><p>${val.content}</p></div>
+    //                          </div>
+    //                       </div>`;
+    //
+    //             });
+    //             resolve(ht);
+    //         },
+    //         error:function (){
+    //             console.log("댓글출력 실패")
+    //         }
+    //     })
+    // }
+
+
+
+
+
+
+
 
     // 리뷰목록조회
-    function reViewList(){
+    function reViewList() {
         $.ajax({
-            url:`/review/${postId}`,
-            success: function (data){
-                let ht="";
+            url: `/review/${postId}`,
+            success: function (data) {
+                let ht = "";
 
-                $.each(data,function (key,val){
-                    console.log(val.helpfulCheck)
-                    ht+=`<div class="row">
+                $.each(data, function (key, val) {
+                    ht += `<div class="row">
                             <div class="col-md-12">
                                 <div class="reviewBox" >
-                                    <div class="reviewPar"data-num="${val.id}" data-content="${val.content}" data-picture="${val.pictureReView}">
+                                    <div class="reviewPar" data-num="${val.id}" data-content="${val.content}" data-picture="${val.pictureReView}" style="margin-bottom: 3px">
                                         <div class="userinfo">
                                             <div style="width: 60px; height: 60px; display: flex">
                                                 <img src="${val.profile}" style="object-fit: cover; width: 100%; height: 100%;">
@@ -162,23 +202,23 @@
                                             </div>
                                             <div class="secondinfo" style="float: right">
                                                 <div class="btnset">`;
-                    if(val.same==5){
-                        ht+=`<button type="button" class="deleteBtn">삭제</button>
+                    if (val.same == 5) {
+                        ht += `<button type="button" class="deleteBtn">삭제</button>
                                                         <button type="button" class="modifyBtn">수정</button>`;
                     }
 
 
-                                            ht+=`</div>
+                    ht += `</div>
                                                    <div class="reviewlike" style="display: flex">
                                                          <div style="display: flex;width: 30px;height: 30px;position: relative;">`;
 
-                                                            if(val.helpfulCheck==5){
-                                                            ht+=`<img src="/img/bgood.png" style="object-fit: cover;width: 100%;height: 100%" class="reviewlikeimg">`;
-                                                                }else {
-                                                                ht+=`<img src="/img/agood.png" style="object-fit: cover;width: 100%;height: 100%" class="reviewlikeimg">`;
-                                                            }
+                    if (val.helpfulCheck == 5) {
+                        ht += `<img src="/img/bgood.png" style="object-fit: cover;width: 100%;height: 100%" class="reviewlikeimg">`;
+                    } else {
+                        ht += `<img src="/img/agood.png" style="object-fit: cover;width: 100%;height: 100%" class="reviewlikeimg">`;
+                    }
 
-                                                                ht+= `<button class="reviewlikebtn" style="position: absolute;width: 80%;height: 80%;background: none;border: none"></button>
+                    ht += `<button class="reviewlikebtn" style="position: absolute;width: 80%;height: 80%;background: none;border: none"></button>
                                                          </div>
                                                         <span style="margin-left: 3px" class="reviewlikenum">${val.helpful}</span>
                                                     </div>
@@ -187,9 +227,9 @@
                                                 </div>
                                             </div>
                                         </div>`;
-                    if(val.pictureReView.length!==0) {
+                    if (val.pictureReView.length !== 0) {
 
-                        ht+=`<hr>
+                        ht += `<hr>
                                                      <div class="reviewImglistmg">`;
 
                         for (let i = 0; i < val.pictureReView.length; i++) {
@@ -197,18 +237,61 @@
                                                         <img src="/profile/${val.pictureReView[i]}" style="object-fit: cover; width: 100%; height: 100%;">
                                                             </div>`;
                         }
-                        ht+=`</div>`;
+                        ht += `</div>`;
                     }
-                    ht+=`
+                    ht += `
                                         <hr>
                                         <div class="reviewContent" style="padding: 10px">
                                             <p>${val.content}</p>
                                         </div>
-
+                                        <div style="text-align: right;margin-bottom: 10px">
+                                            <button class="toggleBtn" style="border: none;width: 50px;height: 30px;font-size: 10px">댓글</button>
+                                        </div>
                                     </div>
-                                    <div class="recomment">
-                                        <div class="recomInfo"><p>대댓글 유저정보</p></div>
-                                        <div class="recomCon"><p>대댓글 내용</p></div>
+                                    <div class="recomment" data-num="${val.id}">
+                                        <div style="display: flex">
+                                            <input type="text" style="width: 90%;margin-left: 30px" class="commentContent">
+                                            <button class="commentBtn" style="font-size: 12px;width: 8%">등록</button>
+                                        </div>
+                                        <div style="" class="commentlist" >`;
+
+
+                    $.ajax({
+                        url:`/comment/${val.id}`,
+                        async: false,
+                        success:function (data) {
+                            $.each(data, function (key, value) {
+                                ht += `<div style="display: flex" class="comdata" data-num="${value.id}">
+                             <div style="width: 30px;height: 60px;">ㄴ</div>
+                             <div style="background: lightgray;width: 100%">
+                                <div class="recomInfo" style="display: flex;">
+                                    <div style="width:25px;height: 25px ">
+                                        <img src="${value.profile}" style="width: 100%;height: 100%;object-fit: cover">
+                                    </div>
+                                    <span>${value.nickName}</span>
+                                    <div style="margin-left: auto">${value.createDate}`;
+                                        if(value.checkUser==true) {
+                                            ht += `|
+                                        <button class="commentDel" style="border: none">
+                                        <span style="font-weight: bold">X</span>
+                                        </button>`
+                                        }
+
+                                    ht+=`</div>
+                                </div>
+                                <div class="recomCon"><p>${value.content}</p></div>
+                             </div>
+                          </div>`;
+
+                            });
+                        },
+                        error:function (){
+                            console.log("댓글출력 실패")
+                        }
+                    })
+
+
+                                        ht+=`</div>
                                     </div>
                                 </div>
                             </div>
@@ -220,19 +303,65 @@
 
 
             },
-            error(error){
+            error(error) {
                 console.log("listSelectError")
             }
         })
     }
-    // 리뷰작성
 
 
 
+    //댓글 토글버튼
+    function toggleRecomment() {
+        $(".container").on("click", ".toggleBtn", function () {
+            $(this).closest(".reviewBox").find(".recomment").toggle();
+        });
+    }
+    //댓글 작성
+    $("body").on("click",".commentBtn",function (){
+        if(userCheck==0){alert("로그인 후 사용가능합니다")}else {
+            let com = $(this).closest(".recomment");
+            let num = com.data("num");
+            let content = com.find(".commentContent").val();
+            if (content.replace(/\s/g, '') == "") {
+                alert("내용을 입력해주세요.")
+            } else {
 
+                $.ajax({
+                    url: `/comment/write/${num}`,
+                    contentType: 'application/json',
+                    data: JSON.stringify({"content": content}),
+                    method: "POST",
+                    success: function () {
+                        console.log("댓글 성공")
+                        reViewList()
+                    },
+                    error: function () {
+                        console.log("댓글 실패")
+                    }
 
+                })
+            }
+        }
+    })
 
-    <!--리뷰이미지등록-->
+    //댓글삭제
+    $("body").on("click",".commentDel",function (){
+        let num=$(this).closest(".comdata").data("num");
+        $.ajax({
+            url:`/comment/delete/${num}`,
+            method:"DELETE",
+            success:function (){
+                console.log("댓글삭제 성공")
+                reViewList()
+            },
+            error:function (){
+                console.log("댓글삭제 실패")
+            }
+        })
+    })
+
+    // 리뷰이미지등록
     let countRe=0;
     let reImgName=[];
     $(document).ready(function() {
@@ -445,9 +574,9 @@
     }
     $("body").on("click", ".endBtn", function () {
         let par = $(this).closest(".reviewPar");
+        let num = par.data("num");
         let content = par.find(".reContent").val();
         let score = par.find("#star").val();
-        let num = par.data("num");
         let pictureReList=modImgName
         modifyReview(num, content, pictureReList,score);
     });
