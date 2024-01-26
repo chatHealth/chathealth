@@ -9,6 +9,7 @@ import java.util.Set;
 @RequiredArgsConstructor
 public enum Role {
     ROLE_USER("유저"),
+    ROLE_WITHDRAW_MEMBER("탈퇴한 회원"),
     ROLE_WAITING_ENT("승인 대기중 사업자"),
     ROLE_PERMITTED_ENT("승인 완료 사업자"),
     ROLE_REJECTED_ENT("승인 거절 사업자"),

@@ -11,6 +11,7 @@ spring:
   output:
     ansi:
       enabled: always
+  ##Mail Settings
 
   jpa:
     open-in-view: true

@@ -14,10 +14,13 @@ public enum Constants {
     MESSAGE_NOT_FOUND("존재하지 않는 메세지입니다."),
     UNAUTHORIZED("로그인이 필요합니다."),
     ROOM_NOT_FOUND("존재하지 않는 채팅방입니다."),
-
+  
     //채팅
     ENTER_MESSAGE("님이 입장하셨습니다."),
-    QUIT_MESSAGE("님이 퇴장하셨습니다.");
+    QUIT_MESSAGE("님이 퇴장하셨습니다."),
+  
+    //세션
+    EXPIRED_SESSION("세션이 만료되었습니다. 다시 로그인해주세요.");
 
     private final String message;
 

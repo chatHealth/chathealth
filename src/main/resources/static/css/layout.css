@@ -45,32 +45,78 @@
 .contentBox{
     width: 800%;
 }
+.prrLike{
+    width: 40px;
+    height: 40px;
+    position: relative;
+
+}
+.prrLike > img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.prrlikebtn{
+    position: absolute;
+    width: 90%;
+    height: 90%;
+    margin-top: 4px;
+    margin-left: 4px;
+    background: none;
+    border: none;
+}
+.postlikecount{
+    position: absolute;
+    margin-top: 20%;
+    margin-left: 35%;
+
+}
 
 /*뷰 리뷰*/
-.reviewBox{
-    border: solid;
-    margin: 20px;
+.reviewBox {
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    margin-bottom: 20px;
 }
-.reWrite{
-    border: solid;
-    margin: 20px;
+
+.reviewPar {
+    padding: 15px;
 }
-.reviewPar{
-    border: solid;
+
+.userinfo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
-.imginsert{
+
+.userinfo img {
+    border-radius: 50%;
+    margin-right: 10px;
+}
+.reviewImglistmg{
     display: flex;
 }
-.recomment{
-    padding-left: 20px;
-    padding-right: 20px;
-    padding-top: 5px;
-    padding-bottom: 5px;
+
+.reviewImglistmg img {
+    margin-right: 10px;
+    margin-bottom: 10px;
 }
-.recomInfo{
+
+.recomment {
+    margin-top: 20px;
+    padding: 15px;
+    border-top: 1px solid #ccc;
 }
-.recomCon{
+
+.recomInfo, .recomCon {
+    margin-bottom: 10px;
 }
+
+
+
+
+
+
 
 
 .input-file-button{
@@ -104,7 +150,7 @@
 }
 
 .card-img-top:hover, .card-title:hover{
-        font-weight: bold;
+    font-weight: bold;
 }
 
 #card-container {

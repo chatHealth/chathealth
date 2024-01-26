@@ -3,9 +3,13 @@ package chathealth.chathealth.entity.post;
 import chathealth.chathealth.entity.member.Member;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 @Entity
 @Getter
+@NoArgsConstructor
+@SuperBuilder
 public class PostLike {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)

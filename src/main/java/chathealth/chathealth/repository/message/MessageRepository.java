@@ -13,4 +13,7 @@ public interface MessageRepository extends JpaRepository<Message, Long>, Message
 
     @Query("select m from Message m join fetch m.sender where m.id = :id")
     Optional<Message> findFetchById(Long id);
+
+    @Query("select m from Message m join fetch m.receiver where m.id = :id")
+    Optional<Message> findReceiverFetchById(Long id);
 }

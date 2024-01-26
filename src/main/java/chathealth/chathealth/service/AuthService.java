@@ -2,7 +2,6 @@ package chathealth.chathealth.service;
 
 
 import chathealth.chathealth.constants.Grade;
-import chathealth.chathealth.constants.Role;
 
 import chathealth.chathealth.dto.request.EntJoinDto;
 import chathealth.chathealth.dto.request.UserJoinDto;
@@ -10,6 +9,8 @@ import chathealth.chathealth.dto.response.CustomUserDetails;
 import chathealth.chathealth.entity.member.*;
 import chathealth.chathealth.exception.NotPermitted;
 import chathealth.chathealth.repository.MemberRepository;
+import chathealth.chathealth.util.ImageUpload;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,52 +27,41 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Optional;
 import java.util.UUID;
 
-import static chathealth.chathealth.constants.Role.ROLE_USER;
-import static chathealth.chathealth.constants.Role.ROLE_WAITING_ENT;
+import static chathealth.chathealth.constants.Role.*;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class AuthService implements UserDetailsService {
 
+    private final String domain = "profile";
+
+    private final MemberRepository memberRepository;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final ImageUpload imageUpload;
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Member member = memberRepository.findByEmail(username).orElseThrow(
                 () -> new UsernameNotFoundException("사용자가 존재하지 않습니다.")
         );
+        log.info("member.getRole()====="+member.getRole());
+        if(member.getRole().equals(ROLE_WITHDRAW_MEMBER)) {
+            log.info("탈퇴한 이메일로 재가입할 수 없습니다.");
+            throw new UsernameNotFoundException("탈퇴한 사용자입니다.");
+        }
         return new CustomUserDetails(member);
     }
 
 
-    @Value("${file.path}")
-    private String path;
-    private String domain = "profile"+ File.separator;
-    private final MemberRepository memberRepository;
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
-
     @Transactional
-    public void userJoin(UserJoinDto userJoinDto) { //개인 회원가입
-        String originalFileName = userJoinDto.getProfile().getOriginalFilename(); //원본 파일 네임
-        UUID uuid = UUID.randomUUID(); //난수 발생
-        String uploadMon = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMM")) + File.separator;
-        String rename = domain+uploadMon+uuid+"_"+originalFileName; //변경할 이름
-        Path filePath = Paths.get(path+rename); //저장할 실제경로
-        File checkPath = new File(path+domain+uploadMon); //월별 파일 있는지 체크용도
-
-        if (!checkPath.exists()) {
-            boolean created = checkPath.mkdirs();
-            if (!created) {
-                throw new NotPermitted("디렉터리 생성에 실패했습니다.");
-            }
-        }
-        try {
-            Files.write(filePath,userJoinDto.getProfile().getBytes());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+    public void userJoin(@Valid UserJoinDto userJoinDto) { //개인 회원가입
+        String rename = domain+File.separator+imageUpload.uploadImage(userJoinDto.getProfile(),domain);
 
         Member dbJoinUser = Users.builder()
                 .id(userJoinDto.getId())
@@ -90,19 +80,9 @@ public class AuthService implements UserDetailsService {
     }
 
     @Transactional
-    public void entJoin(EntJoinDto entJoinDto) {
+    public void entJoin(@Valid EntJoinDto entJoinDto) {
         // 사업자 회원가입
-        String originalFileName = entJoinDto.getProfile().getOriginalFilename(); //원본 파일 네임
-        UUID uuid = UUID.randomUUID(); //난수 발생
-        String uploadMon = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMM")) + File.separator;
-        String rename = domain+File.separator+uploadMon+uuid+"_"+originalFileName; //변경할 이름
-        Path filePath = Paths.get(path+rename); //저장할 경로
-        try {
-            Files.write(filePath,entJoinDto.getProfile().getBytes());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
+        String rename = domain+File.separator+imageUpload.uploadImage(entJoinDto.getProfile(),domain);
 
         Member dbJoinEnt = Ent.builder()
                 .id(entJoinDto.getId())
@@ -120,10 +100,29 @@ public class AuthService implements UserDetailsService {
         memberRepository.save(dbJoinEnt);
     }
 
+    @Transactional
+    public void updatePw(Long id, String pw){
+        String newPw = bCryptPasswordEncoder.encode(pw);
+        Optional<Member> optionalMember = memberRepository.findById(id);
+        if(optionalMember.isPresent()){
+            Member findMember = optionalMember.get();
+            findMember.updatePw(newPw);
+        }
+    }
+
+    @Transactional
+    public void memberWithdraw(Long id) {
+        Optional<Member> optionalMember = memberRepository.findById(id);
+        if (optionalMember.isPresent()) {
+            Member findMember = optionalMember.get();
+            findMember.withdraw(LocalDateTime.now());
+            findMember.changeRole(ROLE_WITHDRAW_MEMBER);
+        }
+    }
+
     public boolean confirmEmail(String email) {
         boolean isExists = memberRepository.existsByEmail(email);
         return isExists;
     }
-
 
 }
