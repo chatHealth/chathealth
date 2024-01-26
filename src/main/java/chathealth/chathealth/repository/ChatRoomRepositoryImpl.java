@@ -1,7 +1,10 @@
 package chathealth.chathealth.repository;
 
+import chathealth.chathealth.constants.ChatSearchCondition;
 import chathealth.chathealth.entity.chatRoom.ChatRoom;
 import chathealth.chathealth.entity.chatRoom.QChatRoom;
+import chathealth.chathealth.entity.member.Member;
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -19,11 +22,18 @@ public class ChatRoomRepositoryImpl implements ChatRoomRepositoryCustom{
 
     private final JPAQueryFactory queryFactory;
     @Override
-    public Page<ChatRoom> findAllByOrderByCreatedDateDesc(Pageable pageable) {
+    public Page<ChatRoom> getChatRooms(Pageable pageable, Member member, ChatSearchCondition condition) {
+
+        BooleanBuilder whereClause = new BooleanBuilder(chatRoomMember.deletedDate.isNull());
+
+        if (condition == ChatSearchCondition.JOINED) {
+            whereClause.and(chatRoomMember.member.eq(member));
+        }
+
         List<ChatRoom> chatRooms = queryFactory.selectFrom(chatRoom)
                 .leftJoin(chatRoom.chatRoomMembers, chatRoomMember)
-                .where(chatRoomMember.deletedDate.isNull())
                 .fetchJoin()
+                .where(whereClause)
                 .orderBy(chatRoom.createdDate.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
@@ -31,9 +41,21 @@ public class ChatRoomRepositoryImpl implements ChatRoomRepositoryCustom{
 
         Long count = queryFactory.select(chatRoom.count())
                 .from(chatRoom)
+                .leftJoin(chatRoom.chatRoomMembers, chatRoomMember)
+                .where(whereClause)
                 .fetchOne();
 
         return new PageImpl<>(chatRooms, pageable, count == null ? 0 : count);
+    }
+
+    @Override
+    public List<Long> joinedChatRoomIds(Member member){
+        return queryFactory.select(chatRoom.id)
+                .from(chatRoom)
+                .leftJoin(chatRoom.chatRoomMembers, chatRoomMember)
+                .where(chatRoomMember.member.eq(member),
+                        chatRoomMember.deletedDate.isNull())
+                .fetch();
     }
 
     @Override

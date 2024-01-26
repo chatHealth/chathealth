@@ -1,5 +1,6 @@
 package chathealth.chathealth.service;
 
+import chathealth.chathealth.constants.ChatSearchCondition;
 import chathealth.chathealth.dto.request.ChatMessageDto;
 import chathealth.chathealth.dto.request.ChatMessageType;
 import chathealth.chathealth.dto.request.CreateChatRoom;
@@ -128,14 +129,20 @@ public class ChatService {
         return savedRoomMember.getId();
     }
 
-    public Page<ChatRoomResponse> getChatRooms(Principal principal, Pageable pageable) {
+    public Page<ChatRoomResponse> getChatRooms(Principal principal, Pageable pageable, ChatSearchCondition condition) {
+
+        if(condition == null) {
+            condition = ChatSearchCondition.ALL;
+        }
 
         Member member = memberRepository.findByEmail(principal.getName()).orElseThrow(UserNotFound::new);
 
-        Page<ChatRoom> chatRoomPage = chatRoomRepository.findAllByOrderByCreatedDateDesc(pageable);
+        Page<ChatRoom> chatRoomPage = chatRoomRepository.getChatRooms(pageable, member, condition);
+
+        List<Long> joinedChatRoomIds = chatRoomRepository.joinedChatRoomIds(member);
 
         List<ChatRoomResponse> list = chatRoomPage.getContent().stream().map(chatRoom -> {
-            boolean isJoined = chatRoomMemberRepository.existsByChatRoomAndMemberAndDeletedDateIsNull(chatRoom, member);
+            boolean isJoined = joinedChatRoomIds.contains(chatRoom.getId());
 
             return ChatRoomResponse.builder()
                     .id(chatRoom.getId())
@@ -147,7 +154,7 @@ public class ChatService {
                     .build();
         }).toList();
 
-        return new PageImpl<>(list, pageable, chatRoomPage.getTotalElements());
+        return new PageImpl<>(list, chatRoomPage.getPageable(), chatRoomPage.getTotalElements());
     }
 
     public ChatRoomInner getChatRoom(Long id, CustomUserDetails userDetails) {

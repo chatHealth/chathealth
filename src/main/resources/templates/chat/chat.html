@@ -11,6 +11,21 @@
         <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#chatRoomModal">채팅방
             개설
         </button>
+<!--        전체 채팅방 or 내가 참여중인 채팅방-->
+        <ul class="nav nav-tabs mb-3">
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{|/chat?condition=ALL|}"
+                   th:classappend="${condition == null || condition.toString() == 'ALL'} ? 'active' : ''">
+                    <i class="fas fa-comments"></i> 전체 채팅방
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{|/chat?condition=JOINED|}"
+                   th:classappend="${condition != null && condition.toString() == 'JOINED'} ? 'active' : ''">
+                    <i class="fas fa-user-friends"></i> 참여중인 채팅방
+                </a>
+            </li>
+        </ul>
         <ul class="list-group">
             <li th:each="chatRoom : ${chatRooms}"
                 class="list-group-item d-flex align-items-center justify-content-between">
@@ -39,7 +54,7 @@
             <ul class='pagination'>
                 <li class="page-item" th:class="${chatRooms.pageable.pageNumber < 10} ? 'disabled' : ''">
                     <a class="page-link"
-                       th:href="@{|/chat?page=${(chatRooms.pageable.pageNumber/10 - 1)*10}|}" aria-label="Previous">
+                       th:href="@{|/chat?condition=${condition}&page=${(chatRooms.pageable.pageNumber/10 - 1)*10}|}" aria-label="Previous">
                         &lsaquo;
                     </a>
                 </li>
@@ -49,13 +64,13 @@
                 ((chatRooms.totalPages - 1) < (chatRooms.pageable.pageNumber/10 * 10 + 9 ) ?
                 chatRooms.totalPages -1 : chatRooms.pageable.pageNumber/10 * 10 + 9 ) )}"
                     th:class="${page  == chatRooms.pageable.pageNumber} ? 'page-item active' : 'page-item'">
-                    <a class="page-link" th:href="@{|/chat?page=${page}|}" th:text="${page + 1}"></a>
+                    <a class="page-link" th:href="@{|/chat?condition=${condition}&page=${page}|}" th:text="${page + 1}"></a>
                 </li>
 
                 <!-- 다음 페이지 버튼 -->
                 <li class="page-item" th:class="${chatRooms.pageable.pageNumber/10 * 10 + 9 >= chatRooms.totalPages} ? 'disabled' : ''">
                     <a class="page-link"
-                       th:href="@{|/board?page=${chatRooms.pageable.pageNumber/10 * 10 + 10}|}"
+                       th:href="@{|/chat?condition=${condition}&page=${chatRooms.pageable.pageNumber/10 * 10 + 10}|}"
                        aria-label="Next">
                         &rsaquo;
                     </a>

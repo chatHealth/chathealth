@@ -1,5 +1,6 @@
 package chathealth.chathealth.controller;
 
+import chathealth.chathealth.constants.ChatSearchCondition;
 import chathealth.chathealth.dto.response.ChatMessageResponse;
 import chathealth.chathealth.dto.response.ChatRoomInner;
 import chathealth.chathealth.dto.response.ChatRoomResponse;
@@ -25,9 +26,10 @@ public class ChatRoomController {
 
     // 채팅방 목록
     @GetMapping("/chat")
-    public String chat(Model model, Principal principal, Pageable pageable) {
-        Page<ChatRoomResponse> chatRooms = chatService.getChatRooms(principal, pageable);
+    public String chat(Model model, Principal principal, Pageable pageable, ChatSearchCondition condition) {
+        Page<ChatRoomResponse> chatRooms = chatService.getChatRooms(principal, pageable, condition);
         model.addAttribute("chatRooms", chatRooms);
+        model.addAttribute("condition", condition);
 
         return "chat/chat";
     }
