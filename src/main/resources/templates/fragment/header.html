@@ -1,7 +1,6 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
->
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <div class="container" th:fragment="headerFragment">
     <header>
@@ -43,6 +42,7 @@
                             <li class="nav-item" sec:authorize="hasRole('ROLE_PERMITTED_ENT')"><a href="" th:href="@{|/member/ent/${#authentication.principal.loggedMember.id}|}" class="nav-link">마이 페이지</a></li>
                             <li class="nav-item" sec:authorize="hasRole('ROLE_WAITING_ENT')"><a href="" th:href="@{|/member/ent/${#authentication.principal.loggedMember.id}|}" class="nav-link">마이 페이지</a></li>
                             <li class="nav-item" sec:authorize="hasRole('ROLE_REJECTED_ENT')"><a href="" th:href="@{|/member/ent/${#authentication.principal.loggedMember.id}|}" class="nav-link">마이 페이지</a></li>
+                            <li class="nav-item" sec:authorize="hasRole('ROLE_ADMIN')"><a href="" th:href="@{/member/admin}" class="nav-link">관리자페이지</a></li>
                             <li class="nav-item"><a href="" th:href="@{/auth/logout}" class="nav-link">로그아웃</a></li>
                         </ul>
                     </th:block>

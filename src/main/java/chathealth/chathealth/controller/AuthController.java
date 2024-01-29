@@ -8,9 +8,6 @@ import chathealth.chathealth.entity.member.Address;
 import chathealth.chathealth.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.access.annotation.Secured;
-import org.springframework.security.access.prepost.PostAuthorize;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -72,7 +69,6 @@ public class AuthController {
                 .address(userJoinDto.getFrontAddress())
                 .addressDetail(userJoinDto.getAddressDetail())
                 .build();
-        log.info(userJoinDto.getPostcode());
 
         //service에 던질 DTO 빌드
         userJoinDto.setAddress(addressEntity);
@@ -106,20 +102,6 @@ public class AuthController {
     @DeleteMapping("/withdraw/{id}")
     public void memberWithdraw(@PathVariable Long id){
         authService.memberWithdraw(id);
-    }
-
-
-    //관리자페이지
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @GetMapping("/admin")
-    public String adminMain(Model model) {
-        return "auth/admin-manage-user";
-    }
-
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @PostMapping("/admin")
-    public String admin(Model model) {
-        return "auth/";
     }
 
     @PostMapping("/confirmEmail") //아이디 중복체크

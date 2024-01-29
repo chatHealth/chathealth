@@ -3,7 +3,6 @@ package chathealth.chathealth.service;
 
 import chathealth.chathealth.dto.response.CustomUserDetails;
 import chathealth.chathealth.entity.member.Member;
-import chathealth.chathealth.constants.Role;
 import chathealth.chathealth.entity.member.Users;
 import chathealth.chathealth.repository.MemberRepository;
 import chathealth.chathealth.social.KakaoUserInfo;
@@ -17,7 +16,6 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
