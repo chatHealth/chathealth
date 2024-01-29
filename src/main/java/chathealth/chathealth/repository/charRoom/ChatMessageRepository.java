@@ -1,4 +1,4 @@
-package chathealth.chathealth.repository;
+package chathealth.chathealth.repository.charRoom;
 
 import chathealth.chathealth.entity.ChatMessage;
 import chathealth.chathealth.entity.chatRoom.ChatRoom;
