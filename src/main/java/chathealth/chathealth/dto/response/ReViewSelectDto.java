@@ -1,20 +1,9 @@
 package chathealth.chathealth.dto.response;
 
-import chathealth.chathealth.entity.Helpful;
-import chathealth.chathealth.entity.PictureReView;
-import chathealth.chathealth.entity.ReComment;
-import chathealth.chathealth.entity.member.Member;
-import chathealth.chathealth.entity.post.Post;
-import jakarta.persistence.*;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
-
-import static jakarta.persistence.FetchType.LAZY;
-import static jakarta.persistence.GenerationType.SEQUENCE;
 
 @Getter
 @Setter
@@ -27,6 +16,7 @@ public class ReViewSelectDto {
     private Long id;
     private Long member;
     private String nickName;
+    private String name;
     private String profile;
     private String content;
     private double score;

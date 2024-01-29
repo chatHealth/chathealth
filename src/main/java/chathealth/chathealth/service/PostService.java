@@ -15,20 +15,16 @@ import chathealth.chathealth.entity.post.*;
 import chathealth.chathealth.exception.BoardNotFoundException;
 import chathealth.chathealth.exception.UserNotFound;
 import chathealth.chathealth.repository.*;
-import chathealth.chathealth.repository.PicturePostRepository;
 import chathealth.chathealth.repository.post.PostRepository;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.Hibernate;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Formatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -84,6 +80,7 @@ public class PostService {
                             .id(ReComment.getId())
                             .profile(profiles)
                             .nickName(user.getNickname())
+                            .name(user.getName())
                             .content(ReComment.getContent())
                             .checkUser(checkUserRe(user.getId(), userid))
                             .createDate(ReComment.getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")))
@@ -213,6 +210,7 @@ public class PostService {
                             .score(Review.getScore())
                             .nickName(user.getNickname())
                             .profile(profiles)
+                            .name(user.getName())
                             .helpful(helpfulRepository.countByReviewId(Review.getId()))
                             .helpfulCheck(reviewLikeCheck(Review.getId(), login))
                             .same(userCheck.sameclass(user.getId(), login))

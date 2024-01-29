@@ -195,9 +195,13 @@
                                         <div class="userinfo">
                                             <div style="width: 60px; height: 60px; display: flex">
                                                 <img src="${val.profile}" style="object-fit: cover; width: 100%; height: 100%;">
-                                                <div>
-                                                    <div>${val.nickName}</div>
-                                                    <div style="width:120px ">${val.createdDate}</div>
+                                                <div>`;
+                    if(val.nickName==null){
+                        ht += `<div>${val.name}</div>`;
+                    }else {
+                        ht += `<div>${val.nickName}</div>`;
+                    }
+                                                    ht+=`<div style="width:120px ">${val.createdDate}</div>
                                                 </div>
                                             </div>
                                             <div class="secondinfo" style="float: right">
@@ -267,9 +271,12 @@
                                 <div class="recomInfo" style="display: flex;">
                                     <div style="width:25px;height: 25px ">
                                         <img src="${value.profile}" style="width: 100%;height: 100%;object-fit: cover">
-                                    </div>
-                                    <span>${value.nickName}</span>
-                                    <div style="margin-left: auto">${value.createDate}`;
+                                    </div>`;
+                                if(value.nickName==null){
+                                    ht+=`<span>${value.name}</span>`;
+                                }else{
+                                    ht+=`<span>${value.nickName}</span>`;}
+                                    ht+=`<div style="margin-left: auto">${value.createDate}`;
                                         if(value.checkUser==true) {
                                             ht += `|
                                         <button class="commentDel" style="border: none">
