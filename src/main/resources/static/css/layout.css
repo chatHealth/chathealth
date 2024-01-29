@@ -466,3 +466,12 @@ footer {
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
 }
+
+.board-contents{
+    max-width: 800px;
+    margin: auto;
+}
+
+.board-contents span p img {
+    max-width: 100%;
+}
