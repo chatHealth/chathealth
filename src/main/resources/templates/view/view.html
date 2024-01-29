@@ -102,8 +102,23 @@
         </div>
     </div>
 </div>
-
-
+<!--삭제 확인 모달-->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content" style="width: 400px">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">삭제 확인</h5>
+            </div>
+            <div class="modal-body">
+                <p>정말 삭제하시겠습니까?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="btn-delete-cancel" data-dismiss="modal">취소</button>
+                <button type="button" class="btn btn-primary" id="btn-delete-confirm">삭제</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 
 
@@ -123,6 +138,8 @@
     const postId= [[${postList.id}]];
     const postLike=[[${postUserLike}]];
     let userCheck=[[${userCheck}]];
+
+
 
     reViewList()
     addClassName()
@@ -355,17 +372,26 @@
     //댓글삭제
     $("body").on("click",".commentDel",function (){
         let num=$(this).closest(".comdata").data("num");
-        $.ajax({
-            url:`/comment/delete/${num}`,
-            method:"DELETE",
-            success:function (){
-                console.log("댓글삭제 성공")
-                reViewList()
-            },
-            error:function (){
-                console.log("댓글삭제 실패")
-            }
-        })
+        //댓글 삭제 확인 모달
+        $("#deleteModal").modal("show");
+        //취소 버튼 누르면 모달 닫기
+        $("#btn-delete-cancel").on("click",function (){
+            $("#deleteModal").modal("hide");
+        });
+        $("#btn-delete-confirm").on("click",function (){
+            $.ajax({
+                url:`/comment/delete/${num}`,
+                method:"DELETE",
+                success:function (){
+                    console.log("댓글 삭제")
+                    $("#deleteModal").modal("hide");
+                    reViewList()
+                },
+                error:function (){
+                    console.log("댓글 삭제 실패")
+                }
+            });
+        });
     })
 
     // 리뷰이미지등록
@@ -591,15 +617,26 @@
     //리뷰 삭제
     $("body").on("click",".deleteBtn",function () {
         let num = $(this).closest(".reviewPar").data("num");
-        $.ajax({
-            url: `/review/delete/${num}`,
-            method: "DELETE",
-            success: function (response) {
-                console.log("리뷰 삭제")
-                reViewList()
-            }
-        })
-
+        //삭제 확인 모달
+        $("#deleteModal").modal("show");
+        //취소 버튼 누르면 모달 닫기
+        $("#btn-delete-cancel").on("click",function (){
+            $("#deleteModal").modal("hide");
+        });
+        $("#btn-delete-confirm").on("click",function (){
+            $.ajax({
+                url:`/review/delete/${num}`,
+                method:"DELETE",
+                success:function (){
+                    console.log("리뷰 삭제")
+                    $("#deleteModal").modal("hide");
+                    reViewList()
+                },
+                error:function (){
+                    console.log("리뷰 삭제 실패")
+                }
+            });
+        });
     })
 
     //post좋아요버튼
