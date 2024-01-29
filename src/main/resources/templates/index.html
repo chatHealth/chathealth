@@ -73,7 +73,7 @@
                                 </div>
                                 <a sec:authorize="hasRole('ROLE_USER')" th:href="@{|/member/user/${#authentication.principal.loggedMember.id}|}" class="btn btn-primary" style="width:100%">내정보 보기</a>
                                 <a sec:authorize="hasAnyRole('ROLE_WAITING_ENT','ROLE_PERMITTED_ENT','ROLE_REJECTED_ENT')" th:href="@{|/member/ent/${#authentication.principal.loggedMember.id}|}" class="btn btn-primary" style="width:100%">내정보 보기</a>
-                                <a sec:authorize="hasRole('ROLE_ADMIN')" th:href="@{/auth/admin}" class="btn btn-primary" style="width:100%">관리 페이지</a>
+                                <a sec:authorize="hasRole('ROLE_ADMIN')" th:href="@{/member/admin}" class="btn btn-primary" style="width:100%">관리 페이지</a>
                             </div>
                         </div>
                     </th:block>
