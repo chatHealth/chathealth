@@ -35,7 +35,6 @@
           url: `/member/admin/getUserList`,
           type: "GET",
           success: function (response) {
-            console.log(response)
             let container = "";
 
             if(response.length === 0){
@@ -78,7 +77,6 @@
         });
 
         $('body').on("click","#withdrawUserBtn",function (){
-          console.log("강퇴 누름")
           const id= $(this).parent().parent().find(".email").data("id");
           confirm("탈퇴 후 계정을 원복할 수 없습니다. 진짜 탈퇴시키시겠습니까?")
           $.ajax({
@@ -102,7 +100,6 @@
           url: `/member/admin/getEntList`,
           type: "GET",
           success: function (response) {
-            console.log(response)
             let container = "";
 
             if(response.length === 0){
@@ -113,12 +110,12 @@
                           <table class='table table-hover'>
                             <thead>
                               <tr style='color:#198754;'>
-                                <td style='color:#198754;'> </td>
-                                <td style='color:#198754;'>이메일</td>
-                                <td style='color:#198754;'>업체명</td>
-                                <td style='color:#198754;'>대표자명</td>
-                                <td style='color:#198754;'>사업자 번호</td>
-                                <td style='color:#198754;'>상태</td>
+                                <th style='color:#198754;'> </th>
+                                <th style='color:#198754;'>이메일</th>
+                                <th style='color:#198754;'>업체명</th>
+                                <th style='color:#198754;'>대표자명</th>
+                                <th styhe='color:#198754;'>사업자 번호</th>
+                                <th style='color:#198754;'>상태</th>
                               </tr>
                             </thead>
                             <tbody>
