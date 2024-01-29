@@ -19,4 +19,7 @@ public enum Role {
     public static Set<Role> getEntRoles() {
         return Set.of(ROLE_WAITING_ENT, ROLE_PERMITTED_ENT, ROLE_REJECTED_ENT);
     }
+    public static Set<Role> getUserRoles() {
+        return Set.of(ROLE_USER);
+    }
 }
