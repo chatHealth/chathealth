@@ -1,20 +1,10 @@
 package chathealth.chathealth.dto.response;
 
-import chathealth.chathealth.entity.Helpful;
-import chathealth.chathealth.entity.PictureReView;
-import chathealth.chathealth.entity.ReComment;
-import chathealth.chathealth.entity.member.Member;
-import chathealth.chathealth.entity.post.Post;
-import jakarta.persistence.*;
+import chathealth.chathealth.dto.response.member.CustomUserDetails;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
-
-import static jakarta.persistence.FetchType.LAZY;
-import static jakarta.persistence.GenerationType.SEQUENCE;
 
 @Getter
 @Setter
@@ -36,7 +26,7 @@ public class ReViewSelectDto {
     private Long helpfulCheck;
 
     private Integer same;
-    public Integer sameclass(Long member,CustomUserDetails login){
+    public Integer sameclass(Long member, CustomUserDetails login){
         if(login!=null){
             if(member.equals(login.getLoggedMember().getId())){
                 return 5;

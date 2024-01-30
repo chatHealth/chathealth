@@ -2,7 +2,7 @@ package chathealth.chathealth.controller;
 
 
 import chathealth.chathealth.dto.request.PostWriteDto;
-import chathealth.chathealth.dto.response.CustomUserDetails;
+import chathealth.chathealth.dto.response.member.CustomUserDetails;
 import chathealth.chathealth.dto.response.MaterialDto;
 import chathealth.chathealth.dto.response.SymptomDto;
 import chathealth.chathealth.service.PostService;

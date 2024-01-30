@@ -1,6 +1,6 @@
 
 
-package chathealth.chathealth.dto.request;
+package chathealth.chathealth.dto.request.member;
 
 import chathealth.chathealth.entity.member.Address;
 import jakarta.validation.constraints.NotBlank;

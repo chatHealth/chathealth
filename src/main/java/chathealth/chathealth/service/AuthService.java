@@ -3,9 +3,9 @@ package chathealth.chathealth.service;
 
 import chathealth.chathealth.constants.Grade;
 
-import chathealth.chathealth.dto.request.EntJoinDto;
-import chathealth.chathealth.dto.request.UserJoinDto;
-import chathealth.chathealth.dto.response.CustomUserDetails;
+import chathealth.chathealth.dto.request.member.EntJoinDto;
+import chathealth.chathealth.dto.request.member.UserJoinDto;
+import chathealth.chathealth.dto.response.member.CustomUserDetails;
 import chathealth.chathealth.entity.member.*;
 import chathealth.chathealth.repository.MemberRepository;
 import chathealth.chathealth.util.ImageUpload;

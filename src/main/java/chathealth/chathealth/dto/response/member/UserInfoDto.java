@@ -1,4 +1,4 @@
-package chathealth.chathealth.dto.response;
+package chathealth.chathealth.dto.response.member;
 
 import chathealth.chathealth.constants.Grade;
 import chathealth.chathealth.constants.Role;

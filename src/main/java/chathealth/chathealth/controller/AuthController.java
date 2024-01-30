@@ -1,9 +1,9 @@
 package chathealth.chathealth.controller;
 
 import chathealth.chathealth.constants.Role;
-import chathealth.chathealth.dto.request.EntJoinDto;
-import chathealth.chathealth.dto.request.UserJoinDto;
-import chathealth.chathealth.dto.response.CustomUserDetails;
+import chathealth.chathealth.dto.request.member.EntJoinDto;
+import chathealth.chathealth.dto.request.member.UserJoinDto;
+import chathealth.chathealth.dto.response.member.CustomUserDetails;
 import chathealth.chathealth.entity.member.Address;
 import chathealth.chathealth.service.AuthService;
 import lombok.RequiredArgsConstructor;

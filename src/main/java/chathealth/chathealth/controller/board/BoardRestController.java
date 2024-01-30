@@ -3,7 +3,7 @@ package chathealth.chathealth.controller.board;
 import chathealth.chathealth.dto.request.BoardCreateDto;
 import chathealth.chathealth.dto.request.BoardEditDto;
 import chathealth.chathealth.dto.response.BoardResponse;
-import chathealth.chathealth.dto.response.CustomUserDetails;
+import chathealth.chathealth.dto.response.member.CustomUserDetails;
 import chathealth.chathealth.entity.board.Category;
 import chathealth.chathealth.service.BoardService;
 import jakarta.validation.Valid;

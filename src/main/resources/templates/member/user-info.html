@@ -58,8 +58,8 @@
         $(document).ready(function () {
             const id = [[${userInfo.id}]];
             const email = [[${userInfo.email}]];
+            let address;
 
-            $('#myinfoBtn').click();
             //내정보 버튼
             $('#myinfoBtn').click(function () {
                 $.ajax({
@@ -67,7 +67,7 @@
                     type: "GET",
                     data: id,
                     success: function (response) {
-                        displayUserInfo(response);
+                        console.log("내정보 버튼 눌림 눌림");
                     },
                     error: function (error) {
                         alert(JSON.stringify(error));
@@ -77,24 +77,27 @@
                 });
             });
             $('#myinfoBtn').click();
-            function displayUserInfo(userInfo) {
+            function displayUserInfo(response) {
                 const container = $('<div>').addClass('user-info-container');
                 container.append('<h2 class="mb-4" style="color:#198754;"><b>내 정보</b></h2>');
 
                 const table = $('<table>').addClass('table');
 
-                table.append('<tr><th style="color:#198754;">별명</th><td id="#originalNickname">' + userInfo.nickname + '</td></tr>');
-                table.append('<tr><th style="color:#198754;">이름</th><td>' + userInfo.name + '</td></tr>');
-                table.append('<tr><th style="color:#198754;">이메일(아이디)</th><td>' + userInfo.email + '</td></tr>');
-                table.append('<tr><th style="color:#198754;">주소</th><td id="#originalAddress">' + userInfo.address.address + '</td></tr>');
-                table.append('<tr><th style="color:#198754;">상세 주소</th><td id="#originalAddressDetail">' + userInfo.address.addressDetail + '</td></tr>');
-                table.append('<tr><th style="color:#198754;">생년월일</th><td>' + userInfo.birth + '</td></tr>');
 
-                container.append(table);
-                container.append("<button class='btn btn-success' id='updateInfoBtn'>정보 수정</button>");
+                    if(response.address !=null){
+                            table.append('<tr><th style="color:#198754;">별명</th><td id="#originalNickname">' + response.nickname + '</td></tr>');
+                            table.append('<tr><th style="color:#198754;">이름</th><td>' + response.name + '</td></tr>');
+                            table.append('<tr><th style="color:#198754;">이메일(아이디)</th><td>' + response.email + '</td></tr>');
+                            table.append('<tr><th style="color:#198754;">주소</th><td id="#originalAddress">' + response.address.address + '</td></tr>');
+                            table.append('<tr><th style="color:#198754;">상세 주소</th><td id="#originalAddressDetail">' + response.address.addressDetail + '</td></tr>');
+                            table.append('<tr><th style="color:#198754;">생년월일</th><td>' + response.birth + '</td></tr>');
+                    }
 
-                $('#mp-content').empty();
-                $('#mp-content').html(container);
+                    container.append(table);
+                    container.append("<button class='btn btn-success' id='updateInfoBtn'>정보 수정</button>");
+
+                    $('#mp-content').empty();
+                    $('#mp-content').html(container);
 
                 $('#updateInfoBtn').on("click",function (){
                     const originalNickname = [[${userInfo.nickname}]];
@@ -147,11 +150,13 @@
 
             //관심상품 버튼
             $('#postlikeBtn').click(function () {
+                $('#changepwBtn').enable();
                 $.ajax({
                     url: `/member/post-like/${id}`,
                     type: "GET",
                     dataType: "JSON",
                     success: function (response) {
+                        console.log(response);
                         let html = "";
                         if (response.length === 0) {
                             html += "<h3 style='color:#198754;'>관심 상품이 없습니다.</h3>"
@@ -161,10 +166,7 @@
                         $.each(response, function (index, item) {
                             html += "<tr>";
                             html += '<th>' + i + '</th>'; // "
-                            html += '<td><a th:href="/view/"' + item.postId + item.title + '</td>';
-                            //조회수 이모티콘 + 조회수
-                            html += '<td><botton><i class="bi bi-heart-fill"></i></botton>></td>';
-                            // 행 종료: 현재 인덱스가 4의 배수이고 마지막 요소가 아닐 때
+                            html += `<td><a href="http://localhost:8091/view/`+item.postId+`">`+item.title+`</a></td>`;
                             html += "</tr>";
                             i++;
                         });
@@ -249,6 +251,9 @@
                         $('body').on("click","#cancelBtn",function (){
                             $('#myinfoBtn').click();
                         });
+                    }else {
+                        $('#confirmAuthcode').text("인증코드가 일치하지 않습니다").css('color','red');
+                        return false;
                     }
                 });
             });
@@ -303,6 +308,7 @@
                 container.append('<p class="mb-1">회원님의 이메일로 인증코드 6자리를 보내드렸습니다.</p>');
                 container.append('<p class="mb-5">인증코드를 확인하시고 10분 이내에 입력해주시기 바랍니다.</p>');
                 container.append('<input type="text" class="form-control mb-1" style="width: 203px;" id="authcode">');
+                container.append('<span style="width: 203px;" id="confirmAuthcode"></span>');
                 container.append('<p class="mb-5">메일 발송까지 약간의 시간이 소요될 수 있습니다.</p>');
                 container.append('<button class="btn btn-success" id="checkAuthcodeBtn">인증하기</button>');
                 $('#mp-content').html(container);

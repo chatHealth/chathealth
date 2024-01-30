@@ -1,7 +1,7 @@
 package chathealth.chathealth.controller;
 
 import chathealth.chathealth.dto.request.PostSearch;
-import chathealth.chathealth.dto.response.CustomUserDetails;
+import chathealth.chathealth.dto.response.member.CustomUserDetails;
 import chathealth.chathealth.dto.response.PostResponse;
 import chathealth.chathealth.service.PostService;
 import lombok.RequiredArgsConstructor;

@@ -1,11 +1,8 @@
 package chathealth.chathealth.controller;
 
 
-import chathealth.chathealth.dto.request.ReviewDto;
-import chathealth.chathealth.dto.response.CustomUserDetails;
-import chathealth.chathealth.dto.response.PostResponse;
+import chathealth.chathealth.dto.response.member.CustomUserDetails;
 import chathealth.chathealth.dto.response.PostResponseDetails;
-import chathealth.chathealth.dto.response.ReViewSelectDto;
 import chathealth.chathealth.service.PostService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

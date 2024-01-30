@@ -1,7 +1,7 @@
 package chathealth.chathealth.controller;
 
 import chathealth.chathealth.dto.request.SendMessageDto;
-import chathealth.chathealth.dto.response.CustomUserDetails;
+import chathealth.chathealth.dto.response.member.CustomUserDetails;
 import chathealth.chathealth.dto.response.message.MessageReceiveResponse;
 import chathealth.chathealth.dto.response.message.MessageReceiveResponseDetail;
 import chathealth.chathealth.dto.response.message.MessageSendResponse;

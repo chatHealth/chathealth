@@ -6,6 +6,7 @@ import chathealth.chathealth.dto.request.PostWriteDto;
 import chathealth.chathealth.dto.request.ReviewDto;
 import chathealth.chathealth.dto.request.ReviewModDto;
 import chathealth.chathealth.dto.response.*;
+import chathealth.chathealth.dto.response.member.CustomUserDetails;
 import chathealth.chathealth.entity.Helpful;
 import chathealth.chathealth.entity.PictureReView;
 import chathealth.chathealth.entity.Review;
@@ -48,7 +49,7 @@ public class PostService {
 
 
 
-    public Long reviewLikeCheck(long num,CustomUserDetails id){
+    public Long reviewLikeCheck(long num, CustomUserDetails id){
         if (id!=null){
             if(helpfulRepository.findByMemberIdAndReviewId(id.getLoggedMember().getId(),num)==null){
                 return Long.valueOf(5);
