@@ -52,10 +52,16 @@ public class PostService {
     private final EntityManager em;
 
 
+    public void deletePost(long id){
+        postRepository.deleteById(id);
+    }
+
+
+
     @Transactional
     public void modifyPost(PostWriteDto postWriteDto) {
         Post post = postRepository.findById(postWriteDto.getId()).orElseThrow();
-        Symptom symptom=symptomRepository.findById(post.getId()).orElseThrow();
+        Symptom symptom=symptomRepository.findById(postWriteDto.getSymptom()).orElseThrow();
         post.update(postWriteDto,symptom);
         picturePostRepository.deleteByPost(post);
         for (int i = 0; i < postWriteDto.getPostImgList().size(); i++) {

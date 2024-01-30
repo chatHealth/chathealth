@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.SQLDelete;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -26,7 +27,7 @@ import static lombok.AccessLevel.PROTECTED;
 
 @NoArgsConstructor(access = PROTECTED)
 @DynamicUpdate
-
+@SQLDelete(sql = "UPDATE post SET deleted_date = CURRENT_TIMESTAMP where post_id = ?")
 @Table(name = "Post")
 public class Post extends BaseEntity {
 

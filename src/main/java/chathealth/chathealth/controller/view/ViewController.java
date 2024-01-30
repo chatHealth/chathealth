@@ -29,7 +29,6 @@ public class ViewController {
         PostResponseDetails post=postService.getAllView(id);
         if(userid==null){
             model.addAttribute("userCheck",0);
-            model.addAttribute("userId",userid.getLoggedMember().getId());
         }else {
             model.addAttribute("userCheck",1);
             model.addAttribute("userId",userid.getLoggedMember().getId());

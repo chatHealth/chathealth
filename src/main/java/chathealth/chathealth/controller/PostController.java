@@ -70,6 +70,14 @@ public class PostController {
     @ResponseBody
     public String postModifyWrite(@RequestBody PostWriteDto postWriteDto){
         postService.modifyPost(postWriteDto);
+        log.info("postWWWWW======={}",postWriteDto);
+        return "post";
+    }
+
+    @DeleteMapping("/delete/{postId}")
+    @ResponseBody
+    public String deletePost(@PathVariable long postId){
+        postService.deletePost(postId);
         return "post";
     }
 }
