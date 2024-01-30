@@ -78,6 +78,7 @@ public class PostService {
                     }
                     return ReCommnetSelectDto.builder()
                             .id(ReComment.getId())
+                            .memberId(user.getId())
                             .profile(profiles)
                             .nickName(user.getNickname())
                             .name(user.getName())
