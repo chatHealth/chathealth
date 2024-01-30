@@ -271,7 +271,7 @@ public class PostService {
                     String representativeImg = null;
                     if(post.getPostImgList() != null && !post.getPostImgList().isEmpty()){
                         representativeImg = post.getPostImgList().stream()
-                                .filter(img -> img.getOrders() == 0)
+                                .filter(img -> img.getOrders() == 1)
                                 .findFirst()
                                 .map(PicturePost::getPictureUrl)
                                 .orElse(null);
