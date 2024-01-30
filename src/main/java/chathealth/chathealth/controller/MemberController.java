@@ -82,7 +82,7 @@ public class MemberController {
 
         resultMap.put("isUpdated","isUpdated");
         return resultMap;
-        }
+    }
 
     @PreAuthorize("hasAnyRole('ROLE_WAITING_ENT','ROLE_PERMITTED_ENT','ROLE_REJECTED_ENT')")
     @Transactional
@@ -115,7 +115,6 @@ public class MemberController {
     public Map<String,String> updateUserPw(@PathVariable Long id, String pw){  //비밀번호 변경
         authService.updatePw(id,pw);
         Map<String, String> resultMap = new HashMap<>();
-
         resultMap.put("isUpdated","isUpdated");
         return resultMap;
     }
