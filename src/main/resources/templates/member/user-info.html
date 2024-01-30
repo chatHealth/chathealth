@@ -10,7 +10,7 @@
             <ul class="list-group list-group-flush">
                 <li class="list-group-item text-center">
                     <button id="editprofilebtn" class="btn edit-profile">
-                        <img th:src="@{|/profile/${userInfo.profile}|}" alt="프로필사진" id="profile" style="width: 130px; height: 130px; border-radius: 50%; overflow: hidden; object-fit: cover;" ></br>
+                        <img th:src="@{|/profile/${userInfo.profile}|}" alt="프로필사진" id="profile" style="width: 130px; height: 130px; border-radius: 50%; overflow: hidden; object-fit: cover;" onerror="this.src='/img/basic_user.png'"></br>
                         <p>프로필 수정</p>
                     </button>
                 </li>
@@ -58,7 +58,6 @@
         $(document).ready(function () {
             const id = [[${userInfo.id}]];
             const email = [[${userInfo.email}]];
-            let address;
 
             //내정보 버튼
             $('#myinfoBtn').click(function () {
@@ -150,13 +149,11 @@
 
             //관심상품 버튼
             $('#postlikeBtn').click(function () {
-                $('#changepwBtn').enable();
                 $.ajax({
                     url: `/member/post-like/${id}`,
                     type: "GET",
                     dataType: "JSON",
                     success: function (response) {
-                        console.log(response);
                         let html = "";
                         if (response.length === 0) {
                             html += "<h3 style='color:#198754;'>관심 상품이 없습니다.</h3>"
@@ -182,9 +179,51 @@
                 })
             });
 
+            //내 리뷰 버튼
+            $('#myreviewBtn').click(function (){
+                    $.ajax({
+                        url: `/member/myReview/${id}`,
+                        method: "GET",
+                        data: {id:id},
+                        success: function (response){
+                            let html = "";
+                            if (response.length === 0) {
+                                html = `<div class="user-info-container"><h3 style='color:#198754;'>활동중인 개인 회원이 없습니다.</h3></div>`
+                            } else{
+                            let i = 1;
+                            html = `<div class="user-info-container">
+                              <table class='table table-hover'>
+                                <thead>
+                                  <tr>
+                                    <td> </td>
+                                    <td style='color:#198754;'> 제목 </td>
+                                    <td style='color:#198754;'> 작성일 </td>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                `
+                            $.each(response, function (index, item) {
+                                html += `<tr>
+                                            <th style="color:#198754;"> ${i}</th>
+                                            <td><a href="http://localhost:8091/view/${item.postId}"></a>${item.title}</td>
+                                            <td>${item.createdDate}</td>
+                                         </tr>`
+                                i++;
+                            });
+                            html += "</table>";
+                            }
+                            $('#mp-content').empty();
+                            $('.mp-content').html(html);
+                        }
+                    });
+            });
+
             //비밀번호 변경
             $('#changepwBtn').click(function(){
                 let responseCode;
+                if(email.toString().includes("kakao")){
+                    alert("카카오 로그인 회원은 카카오 홈페이지에서 비밀번호찾기를 진행해주시기 바랍니다");
+                } else{
                     $('#mp-content').empty();
                     mailVerifyingLayout();
                         //이메일 인증메일 보내기
@@ -202,6 +241,7 @@
                             complete: function () {
                             }
                         });
+                }
 
 
                 //비밀번호 변경 입력

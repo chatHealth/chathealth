@@ -60,6 +60,7 @@ public class OAuth2DetailsService extends DefaultOAuth2UserService{
                     .pw(password)
                     .role(ROLE_USER)
                     .name(name)
+                    .nickname(name)
                     .email(email)
                     .grade(BRONZE)
                     .build();
