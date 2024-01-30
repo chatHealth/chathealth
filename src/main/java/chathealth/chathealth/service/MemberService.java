@@ -3,10 +3,7 @@ package chathealth.chathealth.service;
 import chathealth.chathealth.constants.Role;
 import chathealth.chathealth.dto.request.member.EntEditDto;
 import chathealth.chathealth.dto.request.member.UserEditDto;
-import chathealth.chathealth.dto.response.member.EntInfoDto;
-import chathealth.chathealth.dto.response.member.MyReviewDto;
-import chathealth.chathealth.dto.response.member.PostLikeDto;
-import chathealth.chathealth.dto.response.member.UserInfoDto;
+import chathealth.chathealth.dto.response.member.*;
 import chathealth.chathealth.entity.member.Ent;
 import chathealth.chathealth.entity.member.Member;
 import chathealth.chathealth.entity.member.Users;
@@ -14,6 +11,7 @@ import chathealth.chathealth.exception.UserNotFound;
 import chathealth.chathealth.repository.MemberRepository;
 import chathealth.chathealth.repository.PostLikeRepository;
 import chathealth.chathealth.repository.ReViewRepository;
+import chathealth.chathealth.repository.post.PostRepository;
 import chathealth.chathealth.util.ImageUpload;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,6 +34,7 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final PostLikeRepository postLikeRepository;
+    private final PostRepository postRepository;
     private final ReViewRepository reviewRepository;
     private final ImageUpload imageUpload;
 
@@ -123,7 +122,7 @@ public class MemberService {
     }
 
     public List<MyReviewDto> getMyReview(Long id){
-        List<MyReviewDto> dto = reviewRepository.findByMemberId(id).stream()
+        return reviewRepository.findByMemberId(id).stream()
                 .map(myReview -> MyReviewDto.builder()
                         .memberId(myReview.getMember().getId())
                         .postId(myReview.getPost().getId())
@@ -131,8 +130,17 @@ public class MemberService {
                         .createdDate(myReview.getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
                         .build())
                 .toList();
-        log.info(dto.toString());
-        return dto;
+    }
+
+    public List<MyPostDto> getMyPost(Long id) {
+        return postRepository.findByMemberId(id).stream()
+                .map(myPost-> MyPostDto.builder()
+                        .memberId(myPost.getMember().getId())
+                        .postId(myPost.getId())
+                        .title(myPost.getTitle())
+                        .createdDate(myPost.getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+                        .build())
+                .toList();
     }
     public List<UserInfoDto> getUserList() {
 

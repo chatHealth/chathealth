@@ -49,7 +49,7 @@
 
         </div>
         <!--  컨텐츠 -->
-        <div class="mp-content col-md-6 ms-md-auto" id="mp-content">
+        <div class="mp-content col-md-7 ms-md-auto" id="mp-content">
 
         </div>
     </div>
@@ -79,11 +79,11 @@
                 if(entInfo.role === "ROLE_WAITING_ENT"){
                     role = "<td><span style=\"color:white; border-style: double; font-size: 11px;border-color: #137AE8;background: #137AE8\">승인 대기중</span></td>"
                 }else if(entInfo.role === "ROLE_PERMITTED_ENT"){
-                    role = "<td><span style=\"color:white; border-style: double; font-size: 11px;border-color: #65EA4A;background: #65EA4A\">승인 완료</span>></td>"
+                    role = "<td><span style=\"color:white; border-style: double; font-size: 11px;border-color: #65EA4A;background: #65EA4A\">승인 완료</span></td>"
                 }else if(entInfo.role === "ROLE_REJECTED_ENT"){
                     role = "<td><span style=\"color:white; border-style: double; font-size: 11px;border-color: #EA564E;background: #EA564E\">승인 거절</span></td>"
                 }
-                const container = $('<div>').addClass('ent-info-container');
+                let container = $('<div>').addClass('ent-info-container');
                 container.append('<h2 class="mb-4" style="color:#198754;"><b>내 정보</b></h2>');
 
                 const table = $('<table>').addClass('table');
@@ -150,6 +150,46 @@
                     $('#myinfoBtn').click();
                 });
             }
+
+            //내 상품 모아보기
+            $('#mypostBtn').on("click",function (){
+                $('#mp-content').empty();
+                $.ajax({
+                    url: `/member/myPost/${id}`,
+                    method: "GET",
+                    success: function (response){
+                        let html = "";
+                        if (response.length === 0) {
+                            html = `<div class="user-info-container"><h3 style='color:#198754;'>작성한 상품 소개글이 없습니다.</h3></div>`
+                        } else{
+                            let i = 1;
+                            html = `<div class="user-info-container">
+                              <h2 class="mb-3" style="color:#198754;"><b>내 상품</b></h2>
+                              <table class='table table-hover'>
+                                <thead>
+                                  <tr>
+                                    <td> </td>
+                                    <td style='color:#198754;'> <b>제목</b> </td>
+                                    <td style='color:#198754;'> <b>작성일</b> </td>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                `
+                            $.each(response, function (index, item) {
+                                html += `<tr>
+                                            <th style="color:#198754;"> ${i}</th>
+                                            <td><a href="http://localhost:8091/view/${item.postId}">${item.title}</a></td>
+                                            <td>${item.createdDate}</td>
+                                         </tr>`
+                                i++;
+                            });
+                            html += "</table>";
+                        }
+                        $('#mp-content').empty();
+                        $('.mp-content').html(html);
+                    }
+                });
+            });
 
             //비밀번호 변경
             $('#changepwBtn').click(function(){
