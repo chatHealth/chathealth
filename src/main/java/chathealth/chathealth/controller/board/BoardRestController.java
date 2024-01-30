@@ -21,8 +21,8 @@ public class BoardRestController {
 
 
     @PostMapping(value = "/board")
-    public void createBoard(@RequestBody @Valid BoardCreateDto boardCreateDto, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
-        boardService.createBoard(boardCreateDto, customUserDetails.getLoggedMember().getId());
+    public Long createBoard(@RequestBody @Valid BoardCreateDto boardCreateDto, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        return boardService.createBoard(boardCreateDto, customUserDetails.getLoggedMember().getId()).getId();
     }
 
     @PatchMapping("/board/{id}")

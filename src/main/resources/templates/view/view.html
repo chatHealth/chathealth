@@ -1,245 +1,261 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <link rel="stylesheet" href="/css/layout.css">
-    <script src="/js/jquery-3.7.1.min.js"></script>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
-          integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
-            integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm"
-            crossorigin="anonymous"></script>
-</head>
-<body>
-<div class="productBox">
-    <div class="imgBox">
-        <div id="carouselExampleAutoplaying" class="carousel slide" data-bs-ride="carousel">
-            <div class="carousel-inner">
-                <th:block th:each="item : ${postList.picturePost}">
-                    <div class="carousel-item">
-                        <img th:src="@{|/profile/${item}|}" class="d-block w-100" alt="...">
-                    </div>
-                </th:block>
-            </div>
-            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleAutoplaying" data-bs-slide="prev">
-                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Previous</span>
-            </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleAutoplaying" data-bs-slide="next">
-                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Next</span>
-            </button>
-        </div>
-    </div>
-    <div class="infoBox">
-        <div>
-            <h2 th:text="${postList.title}"></h2>
-        </div>
-        <div>
-            <ul class="list-group list-group-flush">
-                <li class="list-group-item" th:text="${postList.company}"></li>
-                <li class="list-group-item" th:text="${postList.material}"></li>
-                <li class="list-group-item" ></li>
-                <li class="list-group-item">A fourth item</li>
-                <li class="list-group-item">And a fifth one</li>
-            </ul>
-        </div>
-        <div class="prr">
-            <div class="prrLike">
-                <button class="prrlikebtn"></button>
-                <span class="postlikecount" th:text="${postList.likeCount}"></span>
-                <img src="/img/빈하트.png" id="postlikeimg">
-            </div>
-        </div>
-    </div>
-</div>
+<html lang="en"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}"
+>
 
-<div class="mainpagebox">
-    <div th:utext="${postList.content}" class="contentBox"></div>
-
-</div>
-
-
-
-
-<!--리뷰-->
-<div>
-    <div class="reviewHeader">
-        <h2>상품리뷰</h2>
-    </div>
-
-
+<div layout:fragment="content" class="main">
     <div class="container">
-
-    </div>
-
-    <div class="reWrite">
-        <div class="imginsert">
-            <div>
-                <input type="file" class="postimg" id="reImg"
-                       placeholder="대표이미지" name=""
-                       accept="image/gif, image/jpeg, image/png" multiple="multiple">
-                <label class="input-file-button" for="reImg">
-                    이미지 등록<br><p class="reImgCount">0</p>
-                </label>
+        <div class="productBox">
+            <div class="imgBox" >
+                <div id="carouselExampleAutoplaying" class="carousel slide" data-bs-ride="carousel" >
+                    <div class="carousel-inner" >
+                        <th:block th:each="item : ${postList.picturePost}">
+                            <div class="carousel-item">
+                                <img th:src="@{|/profile/${item}|}" class="d-block w-100" alt="...">
+                            </div>
+                        </th:block>
+                    </div>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleAutoplaying"
+                            data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleAutoplaying"
+                            data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
+                </div>
             </div>
-            <div class="col-3 mt-3">
-                <select id="star" name=""
-                        data-placeholder="별점"
-                        class=""
-                        aria-label="Small select example" data-style="btn-primary">
-                    <option th:value="5.0"><span>★★★★★</span></option>
-                    <option th:value="4.0"><span>★★★★☆</span></option>
-                    <option th:value="3.0"><span>★★★☆☆</span></option>
-                    <option th:value="2.0"><span>★★☆☆☆</span></option>
-                    <option th:value="1.0"><span>★☆☆☆☆</span></option>
-                </select>
+            <div class="infoBox" >
+                <div>
+                    <h2 th:text="${postList.title}"></h2>
+                </div>
+                <div>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item" th:text="${postList.company}"></li>
+                        <li class="list-group-item" th:text="${postList.material}"></li>
+                        <li class="list-group-item"></li>
+                        <li class="list-group-item">A fourth item</li>
+                        <li class="list-group-item">And a fifth one</li>
+                    </ul>
+                </div>
+                <div class="prr">
+                    <div class="prrLike">
+                        <button class="prrlikebtn"></button>
+                        <span class="postlikecount" th:text="${postList.likeCount}"></span>
+                        <img src="/img/빈하트.png" id="postlikeimg">
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="reContent">
-            <textarea class="reContent"></textarea>
-            <button type="submit" onclick=insertRe()>등록</button>
+
+        <div class="mainpagebox" >
+            <div th:utext="${postList.content}" class="contentBox"></div>
+
         </div>
-    </div>
-</div>
 
 
+        <!--리뷰-->
+        <div>
+            <div class="reviewHeader">
+                <h2>상품리뷰</h2>
+            </div>
 
 
+            <div class="post-view">
+
+            </div>
+
+            <div class="reWrite">
+                <div class="imginsert">
+                    <div>
+                        <input type="file" class="postimg" id="reImg"
+                               placeholder="대표이미지" name=""
+                               accept="image/gif, image/jpeg, image/png" multiple="multiple">
+                        <label class="input-file-button" for="reImg">
+                            이미지 등록<br>
+                            <p class="reImgCount">0</p>
+                        </label>
+                    </div>
+                    <div class="col-3 mt-3">
+                        <select id="star" name=""
+                                data-placeholder="별점"
+                                class=""
+                                aria-label="Small select example" data-style="btn-primary">
+                            <option th:value="5.0"><span>★★★★★</span></option>
+                            <option th:value="4.0"><span>★★★★☆</span></option>
+                            <option th:value="3.0"><span>★★★☆☆</span></option>
+                            <option th:value="2.0"><span>★★☆☆☆</span></option>
+                            <option th:value="1.0"><span>★☆☆☆☆</span></option>
+                        </select>
+                    </div>
+                </div>
+                <div class="reContent">
+                    <textarea class="reContent"></textarea>
+                    <button type="submit" onclick=insertRe()>등록</button>
+                </div>
+            </div>
+        </div>
+        <!--삭제 확인 모달-->
+        <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content" style="width: 400px">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="deleteModalLabel">삭제 확인</h5>
+                    </div>
+                    <div class="modal-body">
+                        <p>정말 삭제하시겠습니까?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" id="btn-delete-cancel" data-dismiss="modal">취소
+                        </button>
+                        <button type="button" class="btn btn-primary" id="btn-delete-confirm">삭제</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
 
+        <script th:inline="javascript">
+            const postId = [[${postList.id}]];
+            const postLike = [[${postUserLike}]];
+            let userCheck = [[${userCheck}]];
 
 
+            reViewList()
+            addClassName()
+            toggleRecomment()
+
+            function addClassName() {
+                let imgbox = $(".carousel-inner > div:first-child");
+                imgbox.remove("carousel-item").addClass("carousel-item active");
+
+                let contentBox = $(".contentBox > p > img");
+                contentBox.css("object-fit", "cover");
+
+                if (postLike == 10) {
+                    $("#postlikeimg").attr("src", "/img/빨간하트png.png");
+                }
+
+            }
+
+            //대댓글 조회
+            // function ReComment(id){
+            //
+            //     $.ajax({
+            //         url:`/comment/${id}`,
+            //         success:function (data) {
+            //             console.log(id)
+            //             let ht = "";
+            //
+            //             $.each(data, function (key, val) {
+            //
+            //                 ht += `<div style="display: flex">
+            //                          <div style="width: 30px;height: 60px;">ㄴ</div>
+            //                          <div style="background: lightgray;width: 100%">
+            //                             <div class="recomInfo" style="display: flex;">
+            //                                 <div style="width:25px;height: 25px ">
+            //                                     <img src="${val.profile}" style="width: 100%;height: 100%;object-fit: cover">
+            //                                 </div>
+            //                                 <span>${val.nickName}</span>
+            //                                 <div style="margin-left: auto">${val.createDate}</div>
+            //                             </div>
+            //                             <div class="recomCon"><p>${val.content}</p></div>
+            //                          </div>
+            //                       </div>`;
+            //
+            //             });
+            //             resolve(ht);
+            //         },
+            //         error:function (){
+            //             console.log("댓글출력 실패")
+            //         }
+            //     })
+            // }
 
 
+            // 리뷰목록조회
+            function reViewList() {
+                $.ajax({
+                    url: `/review/${postId}`,
+                    success: function (data) {
+                        let ht = "";
 
+                        $.each(data, function (key, val) {
+                            let nickName;
+                            val.nickName === null ? nickName = val.name : nickName = val.nickName;
 
-
-
-
-
-
-<script th:inline="javascript">
-    const postId= [[${postList.id}]];
-    const postLike=[[${postUserLike}]];
-    let userCheck=[[${userCheck}]];
-
-    reViewList()
-    addClassName()
-    toggleRecomment()
-    function addClassName(){
-        let imgbox=$(".carousel-inner > div:first-child");
-        imgbox.remove("carousel-item").addClass("carousel-item active");
-
-        let contentBox=$(".contentBox > p > img");
-        contentBox.css("object-fit","cover");
-
-        if(postLike==10){
-            $("#postlikeimg").attr("src","/img/빨간하트png.png");
-        }
-
-    }
-    //대댓글 조회
-    // function ReComment(id){
-    //
-    //     $.ajax({
-    //         url:`/comment/${id}`,
-    //         success:function (data) {
-    //             console.log(id)
-    //             let ht = "";
-    //
-    //             $.each(data, function (key, val) {
-    //
-    //                 ht += `<div style="display: flex">
-    //                          <div style="width: 30px;height: 60px;">ㄴ</div>
-    //                          <div style="background: lightgray;width: 100%">
-    //                             <div class="recomInfo" style="display: flex;">
-    //                                 <div style="width:25px;height: 25px ">
-    //                                     <img src="${val.profile}" style="width: 100%;height: 100%;object-fit: cover">
-    //                                 </div>
-    //                                 <span>${val.nickName}</span>
-    //                                 <div style="margin-left: auto">${val.createDate}</div>
-    //                             </div>
-    //                             <div class="recomCon"><p>${val.content}</p></div>
-    //                          </div>
-    //                       </div>`;
-    //
-    //             });
-    //             resolve(ht);
-    //         },
-    //         error:function (){
-    //             console.log("댓글출력 실패")
-    //         }
-    //     })
-    // }
-
-
-
-
-
-
-
-
-    // 리뷰목록조회
-    function reViewList() {
-        $.ajax({
-            url: `/review/${postId}`,
-            success: function (data) {
-                let ht = "";
-
-                $.each(data, function (key, val) {
-                    ht += `<div class="row">
+                            ht += `<div class="row">
                             <div class="col-md-12">
                                 <div class="reviewBox" >
                                     <div class="reviewPar" data-num="${val.id}" data-content="${val.content}" data-picture="${val.pictureReView}" style="margin-bottom: 3px">
                                         <div class="userinfo">
                                             <div style="width: 60px; height: 60px; display: flex">
                                                 <img src="${val.profile}" style="object-fit: cover; width: 100%; height: 100%;">
-                                                <div>
-                                                    <div>${val.nickName}</div>
-                                                    <div style="width:120px ">${val.createdDate}</div>
+                                                <div><div>`;
+                            ht += "<span onClick='toggleContextMenu(event)' style='cursor: pointer'>";
+                            ht += `${val.nickName}`;
+                            ht += `</span>
+                           <div class='context-menu'>
+                                <a href='#' class='send-message-link' data-member-id='${val.member}' data-member-name='${val.nickName}'>쪽지 보내기</a>
+                                <a href='/member/user/${val.member}'>유저 정보 보기</a>
+                            </div>`;
+                            ht += `</div><div style="width:120px ">${val.createdDate}</div>
                                                 </div>
                                             </div>
                                             <div class="secondinfo" style="float: right">
                                                 <div class="btnset">`;
-                    if (val.same == 5) {
-                        ht += `<button type="button" class="deleteBtn">삭제</button>
-                                                        <button type="button" class="modifyBtn">수정</button>`;
-                    }
+                            if (val.same == 5) {
+                                ht += `<button type="button" class="deleteBtn">삭제</button>
+                                                        <button type="button" class="mo정difyBtn">수정</button>`;
+                            }
 
 
-                    ht += `</div>
+                            ht += `</div>
                                                    <div class="reviewlike" style="display: flex">
                                                          <div style="display: flex;width: 30px;height: 30px;position: relative;">`;
 
-                    if (val.helpfulCheck == 5) {
-                        ht += `<img src="/img/bgood.png" style="object-fit: cover;width: 100%;height: 100%" class="reviewlikeimg">`;
-                    } else {
-                        ht += `<img src="/img/agood.png" style="object-fit: cover;width: 100%;height: 100%" class="reviewlikeimg">`;
-                    }
+                            if (val.helpfulCheck == 5) {
+                                ht += `<img src="/img/bgood.png" style="object-fit: cover;width: 100%;height: 100%" class="reviewlikeimg">`;
+                            } else {
+                                ht += `<img src="/img/agood.png" style="object-fit: cover;width: 100%;height: 100%" class="reviewlikeimg">`;
+                            }
 
-                    ht += `<button class="reviewlikebtn" style="position: absolute;width: 80%;height: 80%;background: none;border: none"></button>
+                            ht += `<button class="reviewlikebtn" style="position: absolute;width: 80%;height: 80%;background: none;border: none"></button>
                                                          </div>
                                                         <span style="margin-left: 3px" class="reviewlikenum">${val.helpful}</span>
                                                     </div>
-                                                <div class="starscore">
-                                                    <span>별점 : </span><span>${val.score}</span>
-                                                </div>
+                                                <div class="starscore">`;
+
+                            //별점
+                            const fullStar = `<span><i class="fas fa-star" style="color: #FFD43B;"></i></span>`;
+                            const emptyStar = `<span><i class="far fa-star" style="color: #FFD43B;"></i></span>`;
+                            for (let i = 0; i < val.score; i++) {
+                                ht += fullStar;
+                            }
+                            for (let i = 0; i < 5 - val.score; i++) {
+                                ht += emptyStar;
+                            }
+                            // ht+=`<span>별점 : </span><span>${val.score}</span>`;
+
+                            ht += `</div>
                                             </div>
                                         </div>`;
-                    if (val.pictureReView.length !== 0) {
+                            if (val.pictureReView.length !== 0) {
 
-                        ht += `<hr>
+                                ht += `<hr>
                                                      <div class="reviewImglistmg">`;
 
-                        for (let i = 0; i < val.pictureReView.length; i++) {
-                            ht += `<div style="width: 100px; height: 100px" class="imgBBox">
+                                for (let i = 0; i < val.pictureReView.length; i++) {
+                                    ht += `<div style="width: 100px; height: 100px" class="imgBBox">
                                                         <img src="/profile/${val.pictureReView[i]}" style="object-fit: cover; width: 100%; height: 100%;">
                                                             </div>`;
-                        }
-                        ht += `</div>`;
-                    }
-                    ht += `
+                                }
+                                ht += `</div>`;
+                            }
+                            ht += `
                                         <hr>
                                         <div class="reviewContent" style="padding: 10px">
                                             <p>${val.content}</p>
@@ -256,201 +272,225 @@
                                         <div style="" class="commentlist" >`;
 
 
-                    $.ajax({
-                        url:`/comment/${val.id}`,
-                        async: false,
-                        success:function (data) {
-                            $.each(data, function (key, value) {
-                                ht += `<div style="display: flex" class="comdata" data-num="${value.id}">
+                            $.ajax({
+                                url: `/comment/${val.id}`,
+                                async: false,
+                                success: function (data) {
+                                    $.each(data, function (key, value) {
+                                        let nickName;
+                                        value.nickName === null ? nickName = value.name : nickName = value.nickName;
+
+                                        ht += `<div style="display: flex" class="comdata" data-num="${value.id}">
                              <div style="width: 30px;height: 60px;">ㄴ</div>
                              <div style="background: lightgray;width: 100%">
                                 <div class="recomInfo" style="display: flex;">
                                     <div style="width:25px;height: 25px ">
                                         <img src="${value.profile}" style="width: 100%;height: 100%;object-fit: cover">
-                                    </div>
-                                    <span>${value.nickName}</span>
-                                    <div style="margin-left: auto">${value.createDate}`;
-                                        if(value.checkUser==true) {
+                                    </div><div>`;
+
+                                        ht += "<span onClick='toggleContextMenu(event)' style='cursor: pointer'>";
+                                        ht += `${nickName}`;
+                                        ht += `</span>
+                           <div class='context-menu'>
+                                <a href='#' class='send-message-link' data-member-id='${value.memberId}' data-member-name='${value.nickName}'>쪽지 보내기</a>
+                                <a href='/member/user/${value.memberId}'>유저 정보 보기</a>
+                            </div></div>`;
+
+                                        ht += `<div style="margin-left: auto">${value.createDate}`;
+                                        if (value.checkUser == true) {
                                             ht += `|
                                         <button class="commentDel" style="border: none">
                                         <span style="font-weight: bold">X</span>
                                         </button>`
                                         }
 
-                                    ht+=`</div>
+                                        ht += `</div>
                                 </div>
                                 <div class="recomCon"><p>${value.content}</p></div>
                              </div>
                           </div>`;
 
-                            });
-                        },
-                        error:function (){
-                            console.log("댓글출력 실패")
-                        }
-                    })
+                                    });
+                                },
+                                error: function () {
+                                    console.log("댓글출력 실패")
+                                }
+                            })
 
 
-                                        ht+=`</div>
+                            ht += `</div>
                                     </div>
                                 </div>
                             </div>
                          </div>`;
 
-                })
+                        })
 
-                $(".container").html(ht);
-
-
-            },
-            error(error) {
-                console.log("listSelectError")
-            }
-        })
-    }
+                        $(".post-view").html(ht);
 
 
-
-    //댓글 토글버튼
-    function toggleRecomment() {
-        $(".container").on("click", ".toggleBtn", function () {
-            $(this).closest(".reviewBox").find(".recomment").toggle();
-        });
-    }
-    //댓글 작성
-    $("body").on("click",".commentBtn",function (){
-        if(userCheck==0){alert("로그인 후 사용가능합니다")}else {
-            let com = $(this).closest(".recomment");
-            let num = com.data("num");
-            let content = com.find(".commentContent").val();
-            if (content.replace(/\s/g, '') == "") {
-                alert("내용을 입력해주세요.")
-            } else {
-
-                $.ajax({
-                    url: `/comment/write/${num}`,
-                    contentType: 'application/json',
-                    data: JSON.stringify({"content": content}),
-                    method: "POST",
-                    success: function () {
-                        console.log("댓글 성공")
-                        reViewList()
                     },
-                    error: function () {
-                        console.log("댓글 실패")
+                    error(error) {
+                        console.log("listSelectError")
                     }
-
                 })
             }
-        }
-    })
 
-    //댓글삭제
-    $("body").on("click",".commentDel",function (){
-        let num=$(this).closest(".comdata").data("num");
-        $.ajax({
-            url:`/comment/delete/${num}`,
-            method:"DELETE",
-            success:function (){
-                console.log("댓글삭제 성공")
-                reViewList()
-            },
-            error:function (){
-                console.log("댓글삭제 실패")
+
+            //댓글 토글버튼
+            function toggleRecomment() {
+                $(".post-view").on("click", ".toggleBtn", function () {
+                    $(this).closest(".reviewBox").find(".recomment").toggle();
+                });
             }
-        })
-    })
 
-    // 리뷰이미지등록
-    let countRe=0;
-    let reImgName=[];
-    $(document).ready(function() {
-        $('#reImg').change(function() {
-            let fileInput = document.getElementById("reImg");
-            let file = fileInput.files[0];
+            //댓글 작성
+            $("body").on("click", ".commentBtn", function () {
+                if (userCheck == 0) {
+                    alert("로그인 후 사용가능합니다")
+                } else {
+                    let com = $(this).closest(".recomment");
+                    let num = com.data("num");
+                    let content = com.find(".commentContent").val();
+                    if (content.replace(/\s/g, '') == "") {
+                        alert("내용을 입력해주세요.")
+                    } else {
 
-            if(fileInput.files.length>3){
-                $(".reImgCount").text(0);
-                alert("이미지는 3개까지 등록할 수 있습니다");
-                fileInput.files=[];
-            } else {
-                if (file) {
-                    let formData = new FormData();
-                    for (let i = 0; i < fileInput.files.length; i++) {
-                        formData.append('serveImg', fileInput.files[i]);
-                    }
-                    $.ajax({
-                        url: '/post-img/uploadServe',
-                        type: 'POST',
-                        data: formData,
-                        processData: false,
-                        contentType: false,
-                        success: function (response) {
-                            // 파일 업로드가 성공한 경우의 처리
-                            for (let i = 0; i < response.length; i++) {
-                                reImgName.push(response[i])
-
+                        $.ajax({
+                            url: `/comment/write/${num}`,
+                            contentType: 'application/json',
+                            data: JSON.stringify({"content": content}),
+                            method: "POST",
+                            success: function () {
+                                console.log("댓글 성공")
+                                reViewList()
+                            },
+                            error: function () {
+                                console.log("댓글 실패")
                             }
-                            countRe=response.length;
-                            $(".reImgCount").text(countRe);
+
+                        })
+                    }
+                }
+            })
+
+            //댓글삭제
+            $("body").on("click", ".commentDel", function () {
+                let num = $(this).closest(".comdata").data("num");
+                //댓글 삭제 확인 모달
+                $("#deleteModal").modal("show");
+                //취소 버튼 누르면 모달 닫기
+                $("#btn-delete-cancel").on("click", function () {
+                    $("#deleteModal").modal("hide");
+                });
+                $("#btn-delete-confirm").on("click", function () {
+                    $.ajax({
+                        url: `/comment/delete/${num}`,
+                        method: "DELETE",
+                        success: function () {
+                            console.log("댓글 삭제")
+                            $("#deleteModal").modal("hide");
+                            reViewList()
                         },
-                        error: function (error) {
-                            console.log('Error:', error);
+                        error: function () {
+                            console.log("댓글 삭제 실패")
                         }
                     });
-                } else {
-                    alert('파일을 선택하세요.');
-                }
-            }
-        });
-    });
+                });
+            })
 
-    // 리뷰등록
-    function insertRe(){
-        let reContentValue = document.querySelector(".reContent textarea").value.trim();
-        if(userCheck==0){alert("로그인 후 사용가능합니다")}else {
+            // 리뷰이미지등록
+            let countRe = 0;
+            let reImgName = [];
+            $(document).ready(function () {
+                $('#reImg').change(function () {
+                    let fileInput = document.getElementById("reImg");
+                    let file = fileInput.files[0];
 
-            if (reContentValue.replace(/\s/g, '') == "") {
-                alert("내용을 입력해주세요.")
-            } else {
-                const date = {
-                    "content": reContentValue,
-                    "score": $("#star").val(),
-                    "pictureReList": reImgName,
-                    "post": postId
-                }
-                $.ajax({
-                    method: "POST",
-                    url: "/review/write",
-                    contentType: 'application/json',
-                    data: JSON.stringify(date),
-                    success: function (response) {
-                        console.log("리뷰작성 완")
-                        $(".reContent textarea").val("");
-                        reImgName = [];
+                    if (fileInput.files.length > 3) {
                         $(".reImgCount").text(0);
-                        reViewList()
-                    },
-                    error: function () {
-                        console.log("리뷰작성 실패")
+                        alert("이미지는 3개까지 등록할 수 있습니다");
+                        fileInput.files = [];
+                    } else {
+                        if (file) {
+                            let formData = new FormData();
+                            for (let i = 0; i < fileInput.files.length; i++) {
+                                formData.append('serveImg', fileInput.files[i]);
+                            }
+                            $.ajax({
+                                url: '/post-img/uploadServe',
+                                type: 'POST',
+                                data: formData,
+                                processData: false,
+                                contentType: false,
+                                success: function (response) {
+                                    // 파일 업로드가 성공한 경우의 처리
+                                    for (let i = 0; i < response.length; i++) {
+                                        reImgName.push(response[i])
+
+                                    }
+                                    countRe = response.length;
+                                    $(".reImgCount").text(countRe);
+                                },
+                                error: function (error) {
+                                    console.log('Error:', error);
+                                }
+                            });
+                        } else {
+                            alert('파일을 선택하세요.');
+                        }
                     }
+                });
+            });
 
-                })
+            // 리뷰등록
+            function insertRe() {
+                let reContentValue = document.querySelector(".reContent textarea").value.trim();
+                if (userCheck == 0) {
+                    alert("로그인 후 사용가능합니다")
+                } else {
+
+                    if (reContentValue.replace(/\s/g, '') == "") {
+                        alert("내용을 입력해주세요.")
+                    } else {
+                        const date = {
+                            "content": reContentValue,
+                            "score": $("#star").val(),
+                            "pictureReList": reImgName,
+                            "post": postId
+                        }
+                        $.ajax({
+                            method: "POST",
+                            url: "/review/write",
+                            contentType: 'application/json',
+                            data: JSON.stringify(date),
+                            success: function (response) {
+                                console.log("리뷰작성 완")
+                                $(".reContent textarea").val("");
+                                reImgName = [];
+                                $(".reImgCount").text(0);
+                                reViewList()
+                            },
+                            error: function () {
+                                console.log("리뷰작성 실패")
+                            }
+
+                        })
+                    }
+                }
             }
-        }
-    }
 
-    // 리뷰 수정
-    $("body").on("click",".modifyBtn",function (){
-        let par=(this).closest(".reviewPar");
-        let content=par.dataset.content;
-        let picture=par.dataset.picture;
-        let imgcount=picture.split(",");
+            // 리뷰 수정
+            $("body").on("click", ".modifyBtn", function () {
+                let par = (this).closest(".reviewPar");
+                let content = par.dataset.content;
+                let picture = par.dataset.picture;
+                let imgcount = picture.split(",");
 
 
-        let btnset=`<button type="button" class="deleteBtn">삭제</button>
+                let btnset = `<button type="button" class="deleteBtn">삭제</button>
                     <button type="button" class="endBtn" >수정완료</button>`;
-        let scorelist=`<div class="col-3 mt-3">
+                let scorelist = `<div class="col-3 mt-3">
                     <select id="star" name=""
                         data-placeholder="별점"
                         class="star"
@@ -462,7 +502,7 @@
                     <option value="1.0"><span>★☆☆☆☆</span></option>
                 </select>
                 </div>`;
-        let Imglist=`<div>
+                let Imglist = `<div>
                 <input type="file" class="postimg" id="modImg"
                        placeholder="대표이미지" name=""
                        accept="image/gif, image/jpeg, image/png" multiple="multiple">
@@ -470,7 +510,7 @@
                     이미지 등록<br><p class="modImgCount" >${imgcount.length}</p>
                 </label>
             </div>`;
-        let Imglistno=`<hr>
+                let Imglistno = `<hr>
              <div class="reviewImglistmg">
                         <div>
                 <input type="file" class="postimg" id="modImg"
@@ -481,169 +521,203 @@
                 </label>
             </div>
             </div>`;
-        let contentBox=`<input class="reContent" value="${content}"></input>`;
+                let contentBox = `<input class="reContent" value="${content}"></input>`;
 
 
+                let reviewBox = $(this).closest(".reviewBox");
+                $(this).closest(".btnset").html(btnset);
+                reviewBox.find(".starscore").html(scorelist);
+                if (reviewBox.find(".reviewImglistmg").length > 0) {
+                    reviewBox.find(".reviewImglistmg").html(Imglist);
+                } else {
+                    reviewBox.find(".userinfo").next().html(Imglistno);
+                }
+                reviewBox.find(".reviewContent").html(contentBox);
+            })
 
-        let reviewBox = $(this).closest(".reviewBox");
-        $(this).closest(".btnset").html(btnset);
-        reviewBox.find(".starscore").html(scorelist);
-        if (reviewBox.find(".reviewImglistmg").length > 0) {
-            reviewBox.find(".reviewImglistmg").html(Imglist);
-        }else {
-            reviewBox.find(".userinfo").next().html(Imglistno);
-        }
-        reviewBox.find(".reviewContent").html(contentBox);
-    })
-
-    //리뷰 수정 이미지 입력
-    let modImgName=[];
+            //리뷰 수정 이미지 입력
+            let modImgName = [];
 
 
-    $(document).ready(function() {
-        $(".container").on("change","#modImg",function() {
-            let fileInput = document.getElementById("modImg");
-            let file = fileInput.files[0];
-            if(fileInput.files.length>3){
-                $(".modImgCount").text(0);
-                alert("이미지는 3개까지 등록할 수 있습니다");
-                fileInput.files=[];
-            } else {
-                if (file) {
-                    let formData = new FormData();
-                    for (let i = 0; i < fileInput.files.length; i++) {
-                        formData.append('serveImg', fileInput.files[i]);
-                    }
-                    $.ajax({
-                        url: '/post-img/uploadServe',
-                        type: 'POST',
-                        data: formData,
-                        processData: false,
-                        contentType: false,
-                        success: function (response) {
-                            // 파일 업로드가 성공한 경우의 처리
-                            for (let i = 0; i < response.length; i++) {
-                                modImgName.push(response[i])
+            $(document).ready(function () {
+                $(".post-view").on("change", "#modImg", function () {
+                    let fileInput = document.getElementById("modImg");
+                    let file = fileInput.files[0];
+                    if (fileInput.files.length > 3) {
+                        $(".modImgCount").text(0);
+                        alert("이미지는 3개까지 등록할 수 있습니다");
+                        fileInput.files = [];
+                    } else {
+                        if (file) {
+                            let formData = new FormData();
+                            for (let i = 0; i < fileInput.files.length; i++) {
+                                formData.append('serveImg', fileInput.files[i]);
                             }
-                            console.log(modImgName);
-                            countmod=response.length;
-                            $(".modImgCount").text(countmod);
+                            $.ajax({
+                                url: '/post-img/uploadServe',
+                                type: 'POST',
+                                data: formData,
+                                processData: false,
+                                contentType: false,
+                                success: function (response) {
+                                    // 파일 업로드가 성공한 경우의 처리
+                                    for (let i = 0; i < response.length; i++) {
+                                        modImgName.push(response[i])
+                                    }
+                                    console.log(modImgName);
+                                    countmod = response.length;
+                                    $(".modImgCount").text(countmod);
+                                },
+                                error: function (error) {
+                                    console.log('Error:', error);
+                                }
+                            });
+                        } else {
+                            alert('파일을 선택하세요.');
+                        }
+                    }
+                });
+            });
+
+
+            //리뷰 수정 완료
+            function modifyReview(num, content, pictureReList, score) {
+
+                if (content.replace(/\s/g, '') == "") {
+                    alert("내용을 입력해주세요.")
+                } else {
+
+
+                    const date = {
+                        "content": content,
+                        "score": score,
+                        "pictureReList": pictureReList,
+                    };
+                    $.ajax({
+                        method: "POST",
+                        url: `/review/mod/${num}`,
+                        contentType: 'application/json',
+                        data: JSON.stringify(date),
+                        success: function () {
+                            console.log("리뷰 수정 완료");
+                            reViewList(); // 수정 후 리뷰 목록을 새로고침합니다.
                         },
-                        error: function (error) {
-                            console.log('Error:', error);
+                        error: function (xhr, status, error) {
+                            console.log("리뷰 수정 실패");
+
                         }
                     });
-                } else {
-                    alert('파일을 선택하세요.');
                 }
             }
-        });
-    });
 
-
-
-
-    //리뷰 수정 완료
-    function modifyReview(num, content, pictureReList, score) {
-
-        if(content.replace(/\s/g, '')=="") {
-            alert("내용을 입력해주세요.")
-        }else {
-
-
-            const date = {
-                "content": content,
-                "score": score,
-                "pictureReList": pictureReList,
-            };
-            $.ajax({
-                method: "POST",
-                url: `/review/mod/${num}`,
-                contentType: 'application/json',
-                data: JSON.stringify(date),
-                success: function () {
-                    console.log("리뷰 수정 완료");
-                    reViewList(); // 수정 후 리뷰 목록을 새로고침합니다.
-                },
-                error: function (xhr, status, error) {
-                    console.log("리뷰 수정 실패");
-
-                }
+            $("body").on("click", ".endBtn", function () {
+                let par = $(this).closest(".reviewPar");
+                let num = par.data("num");
+                let content = par.find(".reContent").val();
+                let score = par.find("#star").val();
+                let pictureReList = modImgName
+                modifyReview(num, content, pictureReList, score);
             });
-        }
-    }
-    $("body").on("click", ".endBtn", function () {
-        let par = $(this).closest(".reviewPar");
-        let num = par.data("num");
-        let content = par.find(".reContent").val();
-        let score = par.find("#star").val();
-        let pictureReList=modImgName
-        modifyReview(num, content, pictureReList,score);
-    });
 
-    //리뷰 삭제
-    $("body").on("click",".deleteBtn",function () {
-        let num = $(this).closest(".reviewPar").data("num");
-        $.ajax({
-            url: `/review/delete/${num}`,
-            method: "DELETE",
-            success: function (response) {
-                console.log("리뷰 삭제")
-                reViewList()
+            //리뷰 삭제
+            $("body").on("click", ".deleteBtn", function () {
+                let num = $(this).closest(".reviewPar").data("num");
+                //삭제 확인 모달
+                $("#deleteModal").modal("show");
+                //취소 버튼 누르면 모달 닫기
+                $("#btn-delete-cancel").on("click", function () {
+                    $("#deleteModal").modal("hide");
+                });
+                $("#btn-delete-confirm").on("click", function () {
+                    $.ajax({
+                        url: `/review/delete/${num}`,
+                        method: "DELETE",
+                        success: function () {
+                            console.log("리뷰 삭제")
+                            $("#deleteModal").modal("hide");
+                            reViewList()
+                        },
+                        error: function () {
+                            console.log("리뷰 삭제 실패")
+                        }
+                    });
+                });
+            })
+
+            //post좋아요버튼
+
+            $("body").on("click", ".prrlikebtn", function () {
+                if (userCheck == 0) {
+                    alert("로그인 후 사용가능합니다")
+                } else {
+                    $.ajax({
+                        url: `/view/like/${postId}`,
+                        method: "POST",
+                        success: function (response) {
+                            $(".postlikecount").text(response[0]);
+                            console.log("좋아요 성공" + response[1])
+                            if (response[1] == 10) {
+                                $("#postlikeimg").attr("src", "/img/빨간하트png.png")
+                            } else {
+                                $("#postlikeimg").attr("src", "/img/빈하트.png")
+                            }
+
+                        },
+                        error: function () {
+                            console.log("좋아요 실패")
+                        }
+
+                    })
+                }
+            })
+            //리뷰 좋아요
+            $("body").on("click", ".reviewlikebtn", function () {
+                if (userCheck == 0) {
+                    alert("로그인 후 사용가능합니다")
+                } else {
+                    let par = $(this).closest(".reviewPar");
+                    let like = $(this).closest(".reviewlike")
+                    let num = par.data("num");
+                    $.ajax({
+                        url: `/review/like/${num}`,
+                        method: "POST",
+                        success: function (response) {
+                            par.find(".reviewlikenum").text(response[0]);
+                            if (response[1] == 10) {
+                                like.find(".reviewlikeimg").attr("src", "/img/agood.png")
+                            } else {
+                                like.find(".reviewlikeimg").attr("src", "/img/bgood.png")
+                            }
+
+                        },
+                        error: function () {
+
+                        }
+                    })
+                }
+            })
+        </script>
+
+        <script>
+            function toggleContextMenu(event) {
+                contextClose();
+                event.stopPropagation();
+                let contextMenu = event.currentTarget.nextElementSibling;
+                contextMenu.style.display = contextMenu.style.display === 'block' ? 'none' : 'block';
             }
-        })
 
-    })
+            function contextClose() {
+                const contextMenus = document.querySelectorAll('.context-menu');
+                contextMenus.forEach(function (menu) {
+                    menu.style.display = 'none';
+                });
+            }
 
-    //post좋아요버튼
-
-    $("body").on("click",".prrlikebtn",function (){
-        if(userCheck==0){alert("로그인 후 사용가능합니다")}else {
-            $.ajax({
-                url: `/view/like/${postId}`,
-                method: "POST",
-                success: function (response) {
-                    $(".postlikecount").text(response[0]);
-                    console.log("좋아요 성공" + response[1])
-                    if (response[1] == 10) {
-                        $("#postlikeimg").attr("src", "/img/빨간하트png.png")
-                    } else {
-                        $("#postlikeimg").attr("src", "/img/빈하트.png")
-                    }
-
-                },
-                error: function () {
-                    console.log("좋아요 실패")
-                }
-
-            })
-        }
-    })
-    //리뷰 좋아요
-    $("body").on("click",".reviewlikebtn",function (){
-        if(userCheck==0){alert("로그인 후 사용가능합니다")}else {
-            let par = $(this).closest(".reviewPar");
-            let like = $(this).closest(".reviewlike")
-            let num = par.data("num");
-            $.ajax({
-                url: `/review/like/${num}`,
-                method: "POST",
-                success: function (response) {
-                    par.find(".reviewlikenum").text(response[0]);
-                    if (response[1] == 10) {
-                        like.find(".reviewlikeimg").attr("src", "/img/agood.png")
-                    } else {
-                        like.find(".reviewlikeimg").attr("src", "/img/bgood.png")
-                    }
-
-                },
-                error: function () {
-
-                }
-            })
-        }
-    })
-</script>
-
-</body>
+            // 페이지의 다른 곳을 클릭하면 메뉴 닫기
+            window.onclick = function (event) {
+                contextClose();
+            }
+        </script>
+    </div>
+</div>
 </html>

@@ -16,7 +16,7 @@ public enum SymptomType {
     ANTIOXIDANT("항산화건강"),
     BLOOD("혈행건강"),
     VITALITY("활력건강"),
-    DIET("다이어트"),;
+    DIET("다이어트");
 
     private final String symptomName;
 }

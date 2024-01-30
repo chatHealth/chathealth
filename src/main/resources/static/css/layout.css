@@ -43,7 +43,7 @@
     margin-top: 200px;
 }
 .contentBox{
-    width: 800%;
+    max-width: 800px;
 }
 .prrLike{
     width: 40px;
@@ -465,4 +465,13 @@ footer {
 .send-message-btn {
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
+}
+
+.board-contents{
+    max-width: 800px;
+    margin: auto;
+}
+
+.board-contents span p img {
+    max-width: 100%;
 }

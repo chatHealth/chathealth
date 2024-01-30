@@ -93,7 +93,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
                 .where(post.deletedDate.isNull(),
                         postHit.member.eq(member))
                 .rightJoin(postHit).on(postHit.post.eq(post))
-                .orderBy(postHit.createdDate.desc())
+                .orderBy(postHit.modifiedDate.desc())
                 .limit(5)
                 .fetch();
     }
