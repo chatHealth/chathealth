@@ -49,7 +49,7 @@
 
         </div>
         <!--  컨텐츠 -->
-        <div class="mp-content col-md-6 ms-md-auto" id="mp-content">
+        <div class="mp-content col-md-7 ms-md-auto" id="mp-content">
 
         </div>
     </div>
@@ -79,11 +79,11 @@
                 if(entInfo.role === "ROLE_WAITING_ENT"){
                     role = "<td><span style=\"color:white; border-style: double; font-size: 11px;border-color: #137AE8;background: #137AE8\">승인 대기중</span></td>"
                 }else if(entInfo.role === "ROLE_PERMITTED_ENT"){
-                    role = "<td><span style=\"color:white; border-style: double; font-size: 11px;border-color: #65EA4A;background: #65EA4A\">승인 완료</span>></td>"
+                    role = "<td><span style=\"color:white; border-style: double; font-size: 11px;border-color: #65EA4A;background: #65EA4A\">승인 완료</span></td>"
                 }else if(entInfo.role === "ROLE_REJECTED_ENT"){
                     role = "<td><span style=\"color:white; border-style: double; font-size: 11px;border-color: #EA564E;background: #EA564E\">승인 거절</span></td>"
                 }
-                const container = $('<div>').addClass('ent-info-container');
+                let container = $('<div>').addClass('ent-info-container');
                 container.append('<h2 class="mb-4" style="color:#198754;"><b>내 정보</b></h2>');
 
                 const table = $('<table>').addClass('table');
@@ -150,6 +150,48 @@
                     $('#myinfoBtn').click();
                 });
             }
+
+            //내 상품 모아보기
+            $('#mypostBtn').on("click",function (){
+                $('#mp-content').empty();
+                $.ajax({
+                    url: `/member/myPost/${id}`,
+                    method: "GET",
+                    success: function (response){
+                        let html = "";
+                        if (response.length === 0) {
+                            html = `<div class="user-info-container">
+                                    <h2 class="mb-3" style="color:#198754;"><b>내 상품</b></h2>
+                                    <h3 style='color:#00AB7B;'>작성한 상품 소개글이 없습니다.</h3></div>`
+                        } else{
+                            let i = 1;
+                            html = `<div class="user-info-container">
+                              <h2 class="mb-3" style="color:#198754;"><b>내 상품</b></h2>
+                              <table class='table table-hover'>
+                                <thead>
+                                  <tr>
+                                    <td> </td>
+                                    <td style='color:#198754;'> <b>제목</b> </td>
+                                    <td style='color:#198754;'> <b>작성일</b> </td>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                `
+                            $.each(response, function (index, item) {
+                                html += `<tr>
+                                            <th style="color:#198754;"> ${i}</th>
+                                            <td><a href="/view/${item.postId}">${item.title}</a></td>
+                                            <td>${item.createdDate}</td>
+                                         </tr>`
+                                i++;
+                            });
+                            html += "</table>";
+                        }
+                        $('#mp-content').empty();
+                        $('.mp-content').html(html);
+                    }
+                });
+            });
 
             //비밀번호 변경
             $('#changepwBtn').click(function(){
@@ -220,7 +262,14 @@
                         $('body').on("click","#cancelBtn",function (){
                             $('#myinfoBtn').click();
                         });
+                    } else {
+                        $('#confirmAuthcode').text("인증코드가 일치하지 않습니다").css('color','red');
+                        return false;
                     }
+                });
+                $('body').on("click", "#cancelBtn", function () {
+                    alert("초기화면으로 돌아갑니다.");
+                    $('#myinfoBtn').click();
                 });
             });
 
@@ -229,6 +278,7 @@
                 if(confirm("한번 탈퇴하면 동일한 이메일로 재가입할 수 없습니다. 정말 탈퇴하시겠습니까?")===true){
                 }else{return false;}
                 let responseCode;
+                const email = [[${entInfo.email}]];
 
                 $('#mp-content').empty();
                 mailVerifyingLayout();
@@ -250,19 +300,27 @@
 
                 $('body').on("click","#checkAuthcodeBtn",function (){
                     if (responseCode===$('#authcode').val()){
-                        console.log(id);
                         $('#mp-content').empty();
                         const container = $('<div>').addClass('member-withdraw-container');
-                        container.append("이용해주셔서 감사합니다. 다시 만날 날을 기다리고 있습니다.")
                         $('#mp-content').html(container);
 
                             $.ajax({
                                 url: `/auth/withdraw/${id}`,
                                 type: 'DELETE',
-                                success: function () {
+                                success: function (response) {
+                                    if(response.isDone===1){
+                                        container.append("이용해주셔서 감사합니다. 다시 만날 날을 기다리고 있습니다.");
+                                        setTimeout(function() {
+                                            location.href="/auth/logout"
+                                        },2500);
+                                    }else {
+                                        alert("알 수 없는 서버 오류가 발생했습니다. 관리자에게 문의해주시기 바랍니다.");
+                                    }
                                 }
                             });
-
+                    }else {
+                        $('#confirmAuthcode').text("인증코드가 일치하지 않습니다").css('color','red');
+                        return false;
                     }
                 });
 
@@ -278,6 +336,7 @@
                 container.append('<input type="text" class="form-control mb-1" style="width: 203px;" id="authcode">');
                 container.append('<p class="mb-5">메일 발송까지 약간의 시간이 소요될 수 있습니다.</p>');
                 container.append('<button class="btn btn-success" id="checkAuthcodeBtn">인증하기</button>');
+                container.append('<button class="btn btn-secondary" id="cancelBtn">취소</button>');
                 $('#mp-content').html(container);
             }
         });
@@ -287,7 +346,6 @@
         const id = [[${entInfo.id}]];
         $('#editbtn').click(function (e) {
             e.preventDefault();
-            console.log("버튼은 눌림");
             $('#editModal').modal("show");
         });
 
