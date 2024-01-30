@@ -9,6 +9,7 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Getter
@@ -17,17 +18,19 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @Builder
 @ToString
-public class PostResponseDetails {
+public class PostModResponseDto {
     private Long id;
     private Long memberId;
     private String title;
     private String content;
 
-    private List<String> picturePost;
+    private String picturePostMain;
+    private List<String> picturePostSer;
 
     private String company;
 
-    private List<String> material;
+    private Long symptom;
+    private List<Long> materialId;
 
     // yyyy-MM-dd 변환
     private String createdAt;
@@ -41,6 +44,7 @@ public class PostResponseDetails {
                 .map(materialPost -> materialPost.getMaterial().getMaterialName())
                 .collect(Collectors.toList());
     }
+
 
 
 }

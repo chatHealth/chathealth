@@ -39,24 +39,12 @@ public class PostController {
     @GetMapping("/write")
     public String write(Model model) {
         List<SymptomDto> symptom=postService.getSymptomList();
-        model.addAttribute("symptom",symptom);
         List<MaterialDto> material=postService.getMaterialList();
+        model.addAttribute("symptom",symptom);
         model.addAttribute("material",material);
         return "post/write";
     }
 
-    // 1. insert
-//    @PostMapping("/write")
-//    public void postWriteProcess(@RequestBody PostWriteDto postWriteDto,
-//                                 @AuthenticationPrincipal CustomUserDetails ent,
-//                                 @RequestParam("symptom") Long symptomId,
-//                                 @RequestParam("material") List<Long> selectMaterial,
-//                                 @RequestParam List<String> postImg){
-//        log.info("postWriteDto==={}", postWriteDto);
-//
-//        postService.createPost(postWriteDto, ent,symptomId, selectMaterial,postImg);
-//
-//    }
 
     @Secured({"ROLE_ADMIN","ROLE_PERMITTED_ENT"})
     @PostMapping("/write")
@@ -66,7 +54,30 @@ public class PostController {
     }
 
 
+    @GetMapping("/modify")
+    public String postModifyProcess(@RequestParam long postId,Model model){
+        List<SymptomDto> symptom=postService.getSymptomList();
+        List<MaterialDto> material=postService.getMaterialList();
+        model.addAttribute("symptom",symptom);
+        model.addAttribute("material",material);
+        model.addAttribute("postList",postService.getAllViewMod(postId));
+        log.info("postListtttt======{}",postService.getAllViewMod(postId));
+        return "post/modify";
+    }
 
 
+    @PostMapping("/modWrite")
+    @ResponseBody
+    public String postModifyWrite(@RequestBody PostWriteDto postWriteDto){
+        postService.modifyPost(postWriteDto);
+        log.info("postWWWWW======={}",postWriteDto);
+        return "post";
+    }
 
+    @DeleteMapping("/delete/{postId}")
+    @ResponseBody
+    public String deletePost(@PathVariable long postId){
+        postService.deletePost(postId);
+        return "post";
+    }
 }

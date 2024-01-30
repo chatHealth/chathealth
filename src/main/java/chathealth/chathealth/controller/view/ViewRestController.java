@@ -40,7 +40,6 @@ public class ViewRestController {
 
     @DeleteMapping("/delete/{num}")
     public void deleteRe(@PathVariable long num){
-        log.info("nuuuuuuum====={}",num);
         postService.deleteRe(num);
     }
 

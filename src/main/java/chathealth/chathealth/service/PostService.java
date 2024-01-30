@@ -49,6 +49,51 @@ public class PostService {
     private final EntityManager em;
 
 
+    public void deletePost(long id){
+        postRepository.deleteById(id);
+    }
+
+
+
+    @Transactional
+    public void modifyPost(PostWriteDto postWriteDto) {
+        Post post = postRepository.findById(postWriteDto.getId()).orElseThrow();
+        Symptom symptom=symptomRepository.findById(postWriteDto.getSymptom()).orElseThrow();
+        post.update(postWriteDto,symptom);
+        picturePostRepository.deleteByPost(post);
+        for (int i = 0; i < postWriteDto.getPostImgList().size(); i++) {
+            if (i == 0) {
+                PicturePost picturePost = PicturePost.builder()
+                        .pictureUrl(postWriteDto.getPostImgList().get(i))
+                        .orders(1)
+                        .post(post)
+                        .build();
+                picturePostRepository.save(picturePost);
+            } else {
+                PicturePost picturePost = PicturePost.builder()
+                        .pictureUrl(postWriteDto.getPostImgList().get(i))
+                        .orders(2)
+                        .post(post)
+                        .build();
+                picturePostRepository.save(picturePost);
+            }
+        }
+        materialPostRepository.deleteAllByPost(post);
+        for (int i = 0; i < postWriteDto.getMaterialList().size(); i++) {
+            MaterialPost materialPost = MaterialPost.builder()
+                    .post(post)
+                    .material(materialRepository.findById(postWriteDto.getMaterialList().get(i)).orElseThrow(RuntimeException::new))
+                    .build();
+            materialPostRepository.save(materialPost);
+        }
+
+
+
+    }
+
+
+
+
     public void deleteComment(long num){
         reCommentRepository.deleteById(num);
     }
@@ -248,12 +293,31 @@ public class PostService {
         Post post = postRepository.findById(id).orElseThrow();
         return PostResponseDetails.builder()
                 .id(post.getId())
+                .memberId(post.getMember().getId())
                 .company(post.getMember().getCompany())
                 .title(post.getTitle())
                 .likeCount(postLikeRepository.countByPostId(post.getId()))
                 .content(post.getContent())
                 .picturePost(picturePostRepository.findAllByPostId(id).stream().map(PicturePost::getPictureUrl).toList())
                 .material(PostResponseDetails.extractMaterialNames(post.getMaterialList()))
+                .build();
+    }
+
+    public PostModResponseDto getAllViewMod(long id) {
+        Post post = postRepository.findById(id).orElseThrow();
+
+        List<Material> materialId= materialPostRepository.findAllByPost(post).stream().map(MaterialPost::getMaterial).toList();
+        List<Long> materialLong=materialId.stream().map(Material::getId).toList();
+
+        return PostModResponseDto.builder()
+                .id(post.getId())
+                .memberId(post.getMember().getId())
+                .title(post.getTitle())
+                .content(post.getContent())
+                .symptom(post.getSymptom().getId())
+                .picturePostMain(picturePostRepository.findByPostIdAndOrders(id,1).getPictureUrl())
+                .picturePostSer(picturePostRepository.findAllByPostIdAndOrders(id,2).stream().map(PicturePost::getPictureUrl).toList())
+                .materialId(materialLong)
                 .build();
     }
 

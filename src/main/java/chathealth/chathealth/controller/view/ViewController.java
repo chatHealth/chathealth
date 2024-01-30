@@ -28,6 +28,7 @@ public class ViewController {
             model.addAttribute("userCheck",0);
         }else {
             model.addAttribute("userCheck",1);
+            model.addAttribute("userId",userid.getLoggedMember().getId());
         }
         model.addAttribute("postUserLike",postService.postLikeCheck(id,userid));
         model.addAttribute("postList",post);

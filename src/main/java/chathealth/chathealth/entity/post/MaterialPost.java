@@ -1,5 +1,6 @@
 package chathealth.chathealth.entity.post;
 
+import chathealth.chathealth.dto.request.PostWriteDto;
 import chathealth.chathealth.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Builder;

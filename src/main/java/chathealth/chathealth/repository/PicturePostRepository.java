@@ -1,6 +1,7 @@
 package chathealth.chathealth.repository;
 
 import chathealth.chathealth.entity.post.PicturePost;
+import chathealth.chathealth.entity.post.Post;
 import groovy.lang.Tuple;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -10,4 +11,7 @@ public interface PicturePostRepository extends JpaRepository<PicturePost, Long> 
 
     public List<PicturePost> findAllByPostIdOrderByOrders(Long postId);
     public List<PicturePost> findAllByPostId(Long postId);
+    public List<PicturePost> findAllByPostIdAndOrders(Long postId,Integer order);
+    public PicturePost findByPostIdAndOrders(long postId,Integer order);
+    public void deleteByPost(Post postId);
 }
