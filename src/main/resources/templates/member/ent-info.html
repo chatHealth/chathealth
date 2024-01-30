@@ -220,7 +220,14 @@
                         $('body').on("click","#cancelBtn",function (){
                             $('#myinfoBtn').click();
                         });
+                    } else {
+                        $('#confirmAuthcode').text("인증코드가 일치하지 않습니다").css('color','red');
+                        return false;
                     }
+                });
+                $('body').on("click", "#cancelBtn", function () {
+                    alert("초기화면으로 돌아갑니다.");
+                    $('#myinfoBtn').click();
                 });
             });
 
@@ -229,6 +236,7 @@
                 if(confirm("한번 탈퇴하면 동일한 이메일로 재가입할 수 없습니다. 정말 탈퇴하시겠습니까?")===true){
                 }else{return false;}
                 let responseCode;
+                const email = [[${entInfo.email}]];
 
                 $('#mp-content').empty();
                 mailVerifyingLayout();
@@ -253,16 +261,25 @@
                         console.log(id);
                         $('#mp-content').empty();
                         const container = $('<div>').addClass('member-withdraw-container');
-                        container.append("이용해주셔서 감사합니다. 다시 만날 날을 기다리고 있습니다.")
                         $('#mp-content').html(container);
 
                             $.ajax({
                                 url: `/auth/withdraw/${id}`,
                                 type: 'DELETE',
-                                success: function () {
+                                success: function (response) {
+                                    if(response.isDone===1){
+                                        container.append("이용해주셔서 감사합니다. 다시 만날 날을 기다리고 있습니다.");
+                                        setTimeout(function() {
+                                            location.href="/auth/logout"
+                                        },2500);
+                                    }else {
+                                        alert("알 수 없는 서버 오류가 발생했습니다. 관리자에게 문의해주시기 바랍니다.");
+                                    }
                                 }
                             });
-
+                    }else {
+                        $('#confirmAuthcode').text("인증코드가 일치하지 않습니다").css('color','red');
+                        return false;
                     }
                 });
 
@@ -278,6 +295,7 @@
                 container.append('<input type="text" class="form-control mb-1" style="width: 203px;" id="authcode">');
                 container.append('<p class="mb-5">메일 발송까지 약간의 시간이 소요될 수 있습니다.</p>');
                 container.append('<button class="btn btn-success" id="checkAuthcodeBtn">인증하기</button>');
+                container.append('<button class="btn btn-secondary" id="cancelBtn">취소</button>');
                 $('#mp-content').html(container);
             }
         });

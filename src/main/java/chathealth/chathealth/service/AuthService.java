@@ -13,6 +13,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -43,7 +44,6 @@ public class AuthService implements UserDetailsService {
                 () -> new UsernameNotFoundException("사용자가 존재하지 않습니다.")
         );
         if(member.getRole().equals(ROLE_WITHDRAW_MEMBER)) {
-            log.info("탈퇴한 이메일로 재가입할 수 없습니다.");
             throw new UsernameNotFoundException("탈퇴한 사용자입니다.");
         }
         return new CustomUserDetails(member);
@@ -71,8 +71,7 @@ public class AuthService implements UserDetailsService {
     }
 
     @Transactional
-    public void entJoin(@Valid EntJoinDto entJoinDto) {
-        // 사업자 회원가입
+    public void entJoin(@Valid EntJoinDto entJoinDto) {  // 사업자 회원가입
         String rename = domain+File.separator+imageUpload.uploadImage(entJoinDto.getProfile(),domain);
 
         Member dbJoinEnt = Ent.builder()
@@ -104,13 +103,16 @@ public class AuthService implements UserDetailsService {
 
     @PreAuthorize("hasAnyRole('ROLE_WAITING_ENT','ROLE_PERMITTED_ENT','ROLE_REJECTED_ENT','ROLE_USER','ROLE_ADMIN')")
     @Transactional
-    public void memberWithdraw(Long id) {
+    public Integer memberWithdraw(Long id) {
         Optional<Member> optionalMember = memberRepository.findById(id);
         if (optionalMember.isPresent()) {
             Member findMember = optionalMember.get();
             findMember.withdraw(LocalDateTime.now());
             findMember.changeRole(ROLE_WITHDRAW_MEMBER);
+            // SecurityContextHolder.clearContext();   세션 죽이는 앤데 작동 안함. 사유 확인 필요
+            return 1;
         }
+        return 0;
     }
 
     public boolean confirmEmail(String email) {

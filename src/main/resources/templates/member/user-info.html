@@ -98,11 +98,11 @@
                 }
                 table.append('<tr><th style="color:#198754;">생년월일</th><td>' + birth + '</td></tr>');
 
-                    container.append(table);
-                    container.append("<button class='btn btn-success' id='updateInfoBtn'>정보 수정</button>");
+                container.append(table);
+                container.append("<button class='btn btn-success' id='updateInfoBtn'>정보 수정</button>");
 
-                    $('#mp-content').empty();
-                    $('#mp-content').html(container);
+                $('#mp-content').empty();
+                $('#mp-content').html(container);
 
                 $('#updateInfoBtn').on("click", function () {
                     const originalNickname = nickname;
@@ -178,7 +178,17 @@
                             html += "<h3 style='color:#198754;'>관심 상품이 없습니다.</h3>"
                         }
                         let i = 1;
-                        html += "<table class=\"table table-hover\">";
+                        html = `<div class="post-like-container">
+                              <h2 class="mb-3" style="color:#198754;"><b>관심 상품</b></h2>
+                              <table class='table table-hover'>
+                                <thead>
+                                  <tr>
+                                    <td> </td>
+                                    <td style='color:#198754;'> <b>제목</b> </td>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                `;
                         $.each(response, function (index, item) {
                             html += "<tr>";
                             html += '<th>' + i + '</th>'; // "
@@ -200,23 +210,24 @@
 
             //내 리뷰 버튼
             $('#myreviewBtn').click(function (){
-                    $.ajax({
-                        url: `/member/myReview/${id}`,
-                        method: "GET",
-                        data: {id:id},
-                        success: function (response){
-                            let html = "";
-                            if (response.length === 0) {
-                                html = `<div class="user-info-container"><h3 style='color:#198754;'>활동중인 개인 회원이 없습니다.</h3></div>`
-                            } else{
+                $.ajax({
+                    url: `/member/myReview/${id}`,
+                    method: "GET",
+                    data: {id:id},
+                    success: function (response){
+                        let html = "";
+                        if (response.length === 0) {
+                            html = `<div class="user-info-container"><h3 style='color:#198754;'>작성한 리뷰가 없습니다.</h3></div>`
+                        } else{
                             let i = 1;
                             html = `<div class="user-info-container">
+                              <h2 class="mb-3" style="color:#198754;"><b>내 리뷰</b></h2>
                               <table class='table table-hover'>
                                 <thead>
                                   <tr>
                                     <td> </td>
-                                    <td style='color:#198754;'> 제목 </td>
-                                    <td style='color:#198754;'> 작성일 </td>
+                                    <td style='color:#198754;'> <b>제목</b> </td>
+                                    <td style='color:#198754;'> <b>작성일</b> </td>
                                   </tr>
                                 </thead>
                                 <tbody>
@@ -224,42 +235,43 @@
                             $.each(response, function (index, item) {
                                 html += `<tr>
                                             <th style="color:#198754;"> ${i}</th>
-                                            <td><a href="http://localhost:8091/view/${item.postId}"></a>${item.title}</td>
+                                            <td><a href="http://localhost:8091/view/${item.postId}">${item.title}</a></td>
                                             <td>${item.createdDate}</td>
                                          </tr>`
                                 i++;
                             });
                             html += "</table>";
-                            }
-                            $('#mp-content').empty();
-                            $('.mp-content').html(html);
                         }
-                    });
+                        $('#mp-content').empty();
+                        $('.mp-content').html(html);
+                    }
+                });
             });
 
             //비밀번호 변경
             $('#changepwBtn').click(function () {
+                const email = [[${userInfo.email}]];
                 let responseCode;
                 if(email.toString().includes("kakao")){
                     alert("카카오 로그인 회원은 카카오 홈페이지에서 비밀번호찾기를 진행해주시기 바랍니다");
                 } else{
                     $('#mp-content').empty();
                     mailVerifyingLayout();
-                        //이메일 인증메일 보내기
-                        $.ajax({
-                            url: `/member/emails/verification-request`,
-                            type: "POST",
-                            async: false,
-                            data:{email:email},
-                            success: function (response) {
-                                responseCode = response;
-                            },
-                            error: function (error) {
-                                alert(JSON.stringify(error));
-                            },
-                            complete: function () {
-                            }
-                        });
+                    //이메일 인증메일 보내기
+                    $.ajax({
+                        url: `/member/emails/verification-request`,
+                        type: "POST",
+                        async: false,
+                        data:{email:email},
+                        success: function (response) {
+                            responseCode = response;
+                        },
+                        error: function (error) {
+                            alert(JSON.stringify(error));
+                        },
+                        complete: function () {
+                        }
+                    });
                 }
 
 
@@ -315,6 +327,10 @@
                         return false;
                     }
                 });
+                $('body').on("click", "#cancelBtn", function () {
+                    alert("초기화면으로 돌아갑니다.");
+                    $('#myinfoBtn').click();
+                });
             });
 
             //회원 탈퇴
@@ -324,6 +340,7 @@
                     return false;
                 }
                 let responseCode;
+                const email = [[${userInfo.email}]];
 
                 $('#mp-content').empty();
                 mailVerifyingLayout();
@@ -347,17 +364,25 @@
                     if (responseCode === $('#authcode').val()) {
                         $('#mp-content').empty();
                         const container = $('<div>').addClass('member-withdraw-container');
-                        container.append("이용해주셔서 감사합니다. 다시 만날 날을 기다리고 있습니다.")
                         $('#mp-content').html(container);
 
                         $.ajax({
                             url: `/auth/withdraw/${id}`,
                             type: 'DELETE',
-                            success: function () {
-
+                            success: function (response) {
+                                if(response.isDone===1){
+                                    container.append("이용해주셔서 감사합니다. 다시 만날 날을 기다리고 있습니다.");
+                                    setTimeout(function() {
+                                        location.href="/auth/logout"
+                                    },2500);
+                                }else {
+                                    alert("알 수 없는 서버 오류가 발생했습니다. 관리자에게 문의해주시기 바랍니다.");
+                                }
                             }
                         });
-
+                    }else {
+                        $('#confirmAuthcode').text("인증코드가 일치하지 않습니다").css('color','red');
+                        return false;
                     }
                 });
 
@@ -371,7 +396,8 @@
                 container.append('<input type="text" class="form-control mb-1" style="width: 203px;" id="authcode">');
                 container.append('<span style="width: 203px;" id="confirmAuthcode"></span>');
                 container.append('<p class="mb-5">메일 발송까지 약간의 시간이 소요될 수 있습니다.</p>');
-                container.append('<button class="btn btn-success" id="checkAuthcodeBtn">인증하기</button>');
+                container.append('<button class="btn btn-success m-1" id="checkAuthcodeBtn">인증하기</button>');
+                container.append('<button class="btn btn-secondary" id="cancelBtn">취소</button>');
                 $('#mp-content').html(container);
             }
         });
