@@ -208,7 +208,6 @@
                                 e = JSON.parse(e.responseText);
                                 if(e.code == "400"){
                                     if(e.validation.nickname != null){
-                                        console.log(e.validation);
                                         toastr.error(e.validation.nickname);
                                         $("#chatNickName").attr("placeholder", e.validation.nickname);
                                         $("#chatNickName").focus();

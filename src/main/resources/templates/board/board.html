@@ -148,7 +148,7 @@
                                             location.href = '/board'
                                         },
                                         error: function (error) {
-                                            alert(error.message);
+                                            toastr.error(error.message);
                                         }
                                     });
                                 });
@@ -171,7 +171,7 @@
                         location.href = '/board'
                     },
                     error: function (error) {
-                        alert(error.message);
+                        toastr.error(error.message);
                     }
                 });
             });
@@ -216,7 +216,7 @@
                                 document.getElementById("commentInput").focus();
                             }
                         } else {
-                            alert(errorResult.message);
+                            toastr.error(errorResult.message);
                         }
                     }
                 })
@@ -304,7 +304,7 @@
                     document.getElementById("total-comments").innerHTML = html2;
                 },
                 error: function (error) {
-                    alert(error.message);
+                    toastr.error(error.message);
                 }
             });
 
@@ -357,7 +357,7 @@
                         loadComments(); // 현재 페이지 번호를 넘겨주거나 다시 최신 상태로 로드할 수 있음
                     },
                     error: function (error) {
-                        alert(error.message);
+                        toastr.error(error.message);
                     }
                 });
             });

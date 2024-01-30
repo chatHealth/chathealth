@@ -196,7 +196,7 @@
                     $("#list").append(html);
                 },
                 error: function (response) {
-                    console.log(response);
+                    toastr.error('공지사항을 불러오는데 실패했습니다.');
                 }
             });
             $.ajax({
@@ -225,7 +225,7 @@
                     $("#list").append(html);
                 },
                 error: function (response) {
-                    console.log(response);
+                    toastr.error('뉴스를 불러오는데 실패했습니다.');
                 }
             });
         })
