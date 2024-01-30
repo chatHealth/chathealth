@@ -23,10 +23,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -46,6 +49,7 @@ public class PostService {
     private final PostLikeRepository postLikeRepository;
     private final HelpfulRepository helpfulRepository;
     private final ReCommentRepository reCommentRepository;
+    private final PostHitRepository postHitRepository;
     private final EntityManager em;
 
 
@@ -53,6 +57,32 @@ public class PostService {
         postRepository.deleteById(id);
     }
 
+
+    @Transactional
+    public void countPostHit(PostHitCountDto postHitCountDto){
+
+        Member member = memberRepository.findById(postHitCountDto.getMember()).orElseThrow();
+        Post post = postRepository.findById(postHitCountDto.getPost()).orElseThrow();
+        List<PostHit> byMemberAndPost = postHitRepository.findByMemberAndPost(member, post);
+
+        PostHit postHit=PostHit.builder()
+                .post(post)
+                .member(member)
+                .createdDate(LocalDateTime.now())
+                .build();
+
+        if(byMemberAndPost.isEmpty()){
+                postHitRepository.save(postHit);
+        }else {
+            System.out.println("여기아님");
+            List<Optional<PostHit>> CreatePostHit=postHitRepository.findTopByMemberAndPostOrderByCreateDateDesc(member,post);
+            LocalDateTime nowTime=LocalDateTime.now();
+            long minutes= ChronoUnit.MINUTES.between(CreatePostHit.get(0).orElseThrow().getCreatedDate(),nowTime);
+            if(minutes>720){
+                postHitRepository.save(postHit);
+            }
+        }
+    }
 
 
     @Transactional

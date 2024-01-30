@@ -92,7 +92,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
         return queryFactory.selectFrom(post)
                 .where(post.deletedDate.isNull(),
                         postHit.member.eq(member))
-                .rightJoin(postHit).on(postHit.post.eq(post))
+                .leftJoin(postHit).on(postHit.post.eq(post))
                 .orderBy(postHit.modifiedDate.desc())
                 .limit(5)
                 .fetch();
