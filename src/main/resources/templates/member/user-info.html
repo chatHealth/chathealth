@@ -175,8 +175,10 @@
                     success: function (response) {
                         let html = "";
                         if (response.length === 0) {
-                            html += "<h3 style='color:#198754;'>관심 상품이 없습니다.</h3>"
-                        }
+                            html = `<div class=\"user-info-container\">
+                                    <h2 class=\"mb-5\" style=\"color:#198754;\"><b>관심 상품</b></h2>
+                                    <h3 style='color:#00AB7B;'>관심 상품이 없습니다.</h3>`
+                        } else{
                         let i = 1;
                         html = `<div class="post-like-container">
                               <h2 class="mb-3" style="color:#198754;"><b>관심 상품</b></h2>
@@ -193,9 +195,10 @@
                             html += "<tr>";
                             html += '<th>' + i + '</th>'; // "
                             html += `<td><a href="/view/`+item.postId+`">`+item.title+`</a></td>`;
-                            html += "</tr>";
+                            html += "</tr></div>";
                             i++;
                         });
+                        }
                         html += "</table>";
                         $('#mp-content').empty();
                         $('.mp-content').html(html);
@@ -217,7 +220,9 @@
                     success: function (response){
                         let html = "";
                         if (response.length === 0) {
-                            html = `<div class="user-info-container"><h3 style='color:#198754;'>작성한 리뷰가 없습니다.</h3></div>`
+                            html = `<div class="user-info-container">
+                                    <h2 class="mb-5" style="color:#198754;"><b>내 리뷰</b></h2>
+                                    <h3 style='color:#00AB7B;'>작성한 리뷰가 없습니다.</h3></div>`
                         } else{
                             let i = 1;
                             html = `<div class="user-info-container">
@@ -281,9 +286,9 @@
                         $('#mp-content').empty();
                         const container = $('<div>').addClass('password-change-container');
                         const table = $('<table>').addClass('table')
-                        table.append(`<tr><th style="color:#198754;">새 비밀번호</th><td><input type="text" class="form-control new" id="newPw"></td></tr>`);
+                        table.append(`<tr><th style="color:#198754;">새 비밀번호</th><td><input type="password" class="form-control new" id="newPw"></td></tr>`);
                         table.append(`<tr><th> </th><td><span style="color: #999999;">비밀번호는 8~15자리이고 영문, 숫자, 특수문자([!@#$%^*+=-)를 포함해야 합니다.</span></td></tr>`);
-                        table.append(`<tr><th style="color:#198754;">비밀번호 확인</th><td><input type="text" class="form-control new" id="checkNewPw"></td></tr>`);
+                        table.append(`<tr><th style="color:#198754;">비밀번호 확인</th><td><input type="password" class="form-control new" id="checkNewPw"></td></tr>`);
                         table.append(`<tr><td><span id="confirmPw"></span></td></tr>`);
                         table.append(`<td><button class="btn btn-success" id="changePwSubmitBtn" style="width:100%;">비밀번호 변경</button></td><td><button class="btn btn-secondary" id="cancelBtn">취소</button></td>`);
 

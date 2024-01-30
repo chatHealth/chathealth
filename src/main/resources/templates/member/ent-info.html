@@ -160,7 +160,9 @@
                     success: function (response){
                         let html = "";
                         if (response.length === 0) {
-                            html = `<div class="user-info-container"><h3 style='color:#198754;'>작성한 상품 소개글이 없습니다.</h3></div>`
+                            html = `<div class="user-info-container">
+                                    <h2 class="mb-3" style="color:#198754;"><b>내 상품</b></h2>
+                                    <h3 style='color:#00AB7B;'>작성한 상품 소개글이 없습니다.</h3></div>`
                         } else{
                             let i = 1;
                             html = `<div class="user-info-container">
