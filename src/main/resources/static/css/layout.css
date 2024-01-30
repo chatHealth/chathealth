@@ -43,7 +43,7 @@
     margin-top: 200px;
 }
 .contentBox{
-    width: 800%;
+    max-width: 800px;
 }
 .prrLike{
     width: 40px;
@@ -331,10 +331,6 @@ footer {
     text-align: right; /* 버튼을 우측 정렬 */
 }
 
-.more-button {
-    /* 여기에 버튼 스타일을 추가하세요 (예: 패딩, 배경색, 글꼴 등) */
-}
-
 .profile-image {
     height: 150px;
     width: 150px;
@@ -399,4 +395,83 @@ footer {
 .input-scroll{
     max-height: 150px; /* 최대 높이 설정 */
     resize: none;
+}
+/* 내가 보낸 메시지에 대한 스타일 */
+.my-message-box {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    margin-bottom: 10px;
+}
+
+.my-message-box .message-content {
+    background-color: #DCF8C6;
+    padding: 10px;
+    border-radius: 10px;
+    max-width: 60%;
+    word-break: break-word;
+}
+
+.my-message-box .nickname {
+    font-size: 0.8em;
+    color: #888;
+    margin-bottom: 3px;
+}
+
+.my-message-box .timestamp {
+    font-size: 0.8em;
+    color: #888;
+    margin-top: 3px;
+}
+
+/* 다른 사람이 보낸 메시지에 대한 스타일 */
+.other-message-box {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 10px;
+}
+
+.other-message-box .message-content {
+    background-color: #ECECEC;
+    padding: 10px;
+    border-radius: 10px;
+    max-width: 60%;
+    word-break: break-word;
+}
+
+.other-message-box .nickname {
+    font-size: 0.8em;
+    color: #888;
+    margin-bottom: 3px;
+}
+
+.other-message-box .timestamp {
+    font-size: 0.8em;
+    color: #888;
+    margin-top: 3px;
+}
+.message-input-container {
+    display: flex;
+    margin-top: 10px;
+}
+
+#messageInput {
+    flex-grow: 1; /* 입력창이 가용 공간을 채움 */
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.send-message-btn {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+.board-contents{
+    max-width: 800px;
+    margin: auto;
+}
+
+.board-contents span p img {
+    max-width: 100%;
 }

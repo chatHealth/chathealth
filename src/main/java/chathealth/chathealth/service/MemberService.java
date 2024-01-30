@@ -1,37 +1,30 @@
 package chathealth.chathealth.service;
 
-import chathealth.chathealth.dto.request.EntEditDto;
-import chathealth.chathealth.dto.request.UserEditDto;
-import chathealth.chathealth.dto.response.EntInfoDto;
-import chathealth.chathealth.dto.response.PostLikeDto;
-import chathealth.chathealth.dto.response.UserInfoDto;
+import chathealth.chathealth.constants.Role;
+import chathealth.chathealth.dto.request.member.EntEditDto;
+import chathealth.chathealth.dto.request.member.UserEditDto;
+import chathealth.chathealth.dto.response.member.EntInfoDto;
+import chathealth.chathealth.dto.response.member.MyReviewDto;
+import chathealth.chathealth.dto.response.member.PostLikeDto;
+import chathealth.chathealth.dto.response.member.UserInfoDto;
 import chathealth.chathealth.entity.member.Ent;
 import chathealth.chathealth.entity.member.Member;
-import chathealth.chathealth.constants.Role;
 import chathealth.chathealth.entity.member.Users;
-import chathealth.chathealth.entity.post.PostLike;
-import chathealth.chathealth.exception.NotPermitted;
 import chathealth.chathealth.exception.UserNotFound;
 import chathealth.chathealth.repository.MemberRepository;
 import chathealth.chathealth.repository.PostLikeRepository;
-import chathealth.chathealth.repository.post.PostRepository;
+import chathealth.chathealth.repository.ReViewRepository;
 import chathealth.chathealth.util.ImageUpload;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 import static chathealth.chathealth.constants.Role.*;
 
@@ -43,12 +36,8 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final PostLikeRepository postLikeRepository;
+    private final ReViewRepository reviewRepository;
     private final ImageUpload imageUpload;
-
-
-    @Value("${file.path}")
-    private String path;
-    private String domain = "profile";
 
 
     public UserInfoDto getUserInfo(Long id) {
@@ -112,7 +101,8 @@ public class MemberService {
     }
 
     public void updateProfile(Long id, MultipartFile changeProfile) {
-        String newProfile = domain+File.separator+imageUpload.uploadImage(changeProfile,domain);
+        String domain = "profile";
+        String newProfile = domain +File.separator+imageUpload.uploadImage(changeProfile, domain);
         Optional<Member> optionalMember = memberRepository.findById(id);
         if(optionalMember.isPresent()){
             Member findMember = optionalMember.get();
@@ -132,26 +122,60 @@ public class MemberService {
         return dto;
     }
 
-    public List<EntInfoDto> getEntInfoList(Long id) {
-        Ent findEnt = (Ent) memberRepository.findById(id).orElseThrow(
+    public List<MyReviewDto> getMyReview(Long id){
+        List<MyReviewDto> dto = reviewRepository.findByMemberId(id).stream()
+                .map(myReview -> MyReviewDto.builder()
+                        .memberId(myReview.getMember().getId())
+                        .postId(myReview.getPost().getId())
+                        .title(myReview.getPost().getTitle())
+                        .createdDate(myReview.getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+                        .build())
+                .toList();
+        log.info(dto.toString());
+        return dto;
+    }
+    public List<UserInfoDto> getUserList() {
+
+        return memberRepository.findByDeletedDateIsNullAndRoleInOrderByRole(getUserRoles()).stream().filter(test -> test instanceof Users).map(
+                test -> {
+                    Users users = (Users) test;
+                    return UserInfoDto.builder()
+                            .nickname(users.getNickname())
+                            .name(users.getName())
+                            .email(users.getEmail())
+                            .grade(users.getGrade())
+                            .address(users.getAddress())
+                            .id(users.getId())
+                            .role(users.getRole())
+                            .build();
+                }
+        ).toList();
+    }
+
+    public List<EntInfoDto> getEntList() {
+
+        return memberRepository.findByDeletedDateIsNullAndRoleInOrderByRole(getEntRoles()).stream().filter(test -> test instanceof Ent).map(
+                test -> {
+                    Ent ent = (Ent) test;
+                    return EntInfoDto.builder()
+                            .company(ent.getCompany())
+                            .ceo(ent.getCeo())
+                            .email(ent.getEmail())
+                            .entNo(ent.getEntNo())
+                            .id(ent.getId())
+                            .role(ent.getRole())
+                            .build();
+                }
+        ).toList();
+    }
+
+    @Transactional
+    public void changeEntRoles(Long id, Role role){
+        Member member = memberRepository.findById(id).orElseThrow(
                 UserNotFound::new
         );
-        return memberRepository.findByEmail(findEnt.getEmail()).stream()
-                .map(u->EntInfoDto.builder()
-                        .id(findEnt.getId())
-                        .email(findEnt.getEmail())
-                        .address(findEnt.getAddress())
-                        .birth(findEnt.getBirth())
-                        .profile(findEnt.getProfile())
-                        .deletedDate(findEnt.getDeletedDate())
-                        .role(findEnt.getRole())
-                        .ceo(findEnt.getCeo())
-                        .company(findEnt.getCompany())
-                        .entNo(findEnt.getEntNo())
-                        .build()
-                )
-                .toList();
-
+        Ent findMember = toEnt(member);
+        findMember.changeRole(role);
     }
 
     private static Users toUser(Member member) {

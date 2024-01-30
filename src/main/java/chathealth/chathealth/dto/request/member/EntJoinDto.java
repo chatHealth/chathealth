@@ -1,7 +1,6 @@
-package chathealth.chathealth.dto.request;
+package chathealth.chathealth.dto.request.member;
 
 import chathealth.chathealth.entity.member.Address;
-import chathealth.chathealth.constants.Grade;
 import chathealth.chathealth.constants.Role;
 import jakarta.validation.constraints.Pattern;
 import lombok.Builder;
@@ -17,7 +16,7 @@ import java.time.LocalDateTime;
 @Setter
 @Builder
 @ToString
-public class UserJoinDto {
+public class EntJoinDto {
     private Long id;
 
     @Pattern(regexp = "^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,15}$",message = "비밀번호는 8~15자리이고 영문, 숫자, 기호를 포함하고 있어야 합니다.")
@@ -27,11 +26,12 @@ public class UserJoinDto {
     private String postcode;
     private String frontAddress;
     private String addressDetail;
-    private String name;
-    private String nickname;
-    private LocalDate birth;
+    private String company;
+    private String ceo;
+    private String entNo;
     private MultipartFile profile;
     private Role role;
-    private Grade grade;
-    private LocalDateTime createDate;
+    private LocalDateTime createdDate;
+    private LocalDate birth;
 }
+

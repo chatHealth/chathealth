@@ -1,8 +1,8 @@
 package chathealth.chathealth.controller;
 
 import chathealth.chathealth.constants.Grade;
-import chathealth.chathealth.dto.request.EntEditDto;
-import chathealth.chathealth.dto.request.UserEditDto;
+import chathealth.chathealth.dto.request.member.EntEditDto;
+import chathealth.chathealth.dto.request.member.UserEditDto;
 import chathealth.chathealth.entity.member.Address;
 import chathealth.chathealth.entity.member.Ent;
 import chathealth.chathealth.entity.member.Users;

@@ -3,6 +3,7 @@ package chathealth.chathealth.service;
 
 import chathealth.chathealth.dto.request.*;
 import chathealth.chathealth.dto.response.*;
+import chathealth.chathealth.dto.response.member.CustomUserDetails;
 import chathealth.chathealth.dto.response.message.ReCommnetSelectDto;
 import chathealth.chathealth.entity.Helpful;
 import chathealth.chathealth.entity.PictureReView;
@@ -15,20 +16,16 @@ import chathealth.chathealth.entity.post.*;
 import chathealth.chathealth.exception.BoardNotFoundException;
 import chathealth.chathealth.exception.UserNotFound;
 import chathealth.chathealth.repository.*;
-import chathealth.chathealth.repository.PicturePostRepository;
 import chathealth.chathealth.repository.post.PostRepository;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.Hibernate;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Formatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -112,7 +109,7 @@ public class PostService {
     }
 
 
-    public List<ReCommnetSelectDto> selectComment(long id,CustomUserDetails userid) {
+    public List<ReCommnetSelectDto> selectComment(long id, CustomUserDetails userid) {
         Review review = reViewRepository.findById(id).orElseThrow();
         em.clear();
         List<ReComment> rec = reCommentRepository.findAllByReview(review);
@@ -127,8 +124,10 @@ public class PostService {
                     }
                     return ReCommnetSelectDto.builder()
                             .id(ReComment.getId())
+                            .memberId(user.getId())
                             .profile(profiles)
                             .nickName(user.getNickname())
+                            .name(user.getName())
                             .content(ReComment.getContent())
                             .checkUser(checkUserRe(user.getId(), userid))
                             .createDate(ReComment.getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")))
@@ -258,6 +257,7 @@ public class PostService {
                             .score(Review.getScore())
                             .nickName(user.getNickname())
                             .profile(profiles)
+                            .name(user.getName())
                             .helpful(helpfulRepository.countByReviewId(Review.getId()))
                             .helpfulCheck(reviewLikeCheck(Review.getId(), login))
                             .same(userCheck.sameclass(user.getId(), login))
@@ -331,9 +331,9 @@ public class PostService {
             postSearch.setPage((int) (count / postSearch.getSize()));
         }
         return postRepository.getPosts(postSearch).stream()
-                .map(post -> {
+                .map(post ->{
                     String representativeImg = null;
-                    if (post.getPostImgList() != null && !post.getPostImgList().isEmpty()) {
+                    if(post.getPostImgList() != null && !post.getPostImgList().isEmpty()){
                         representativeImg = post.getPostImgList().stream()
                                 .filter(img -> img.getOrders() == 0)
                                 .findFirst()
@@ -351,8 +351,7 @@ public class PostService {
                             .hitCount(post.getPostHitCount())
                             .likeCount(post.getPostLikeCount())
                             .reviewCount(post.getReviewCount())
-                            .build();
-                })
+                            .build();})
                 .toList();
     }
 
@@ -422,22 +421,22 @@ public class PostService {
                 .symptom(symptomRepository.findById(postWriteDto.getSymptom()).orElseThrow())
                 .build();
         Post savedpost = postRepository.save(postInfo);
-        for (int i = 0; i < postWriteDto.getMaterialList().size(); i++) {
+        for (int i=0;i<postWriteDto.getMaterialList().size();i++) {
             MaterialPost materialPost = MaterialPost.builder()
                     .post(savedpost)
                     .material(materialRepository.findById(postWriteDto.getMaterialList().get(i)).orElseThrow(RuntimeException::new))
                     .build();
             materialPostRepository.save(materialPost);
         }
-        for (int i = 0; i < postWriteDto.getPostImgList().size(); i++) {
-            if (i == 0) {
+        for(int i=0;i<postWriteDto.getPostImgList().size();i++) {
+            if(i==0) {
                 PicturePost picturePost = PicturePost.builder()
                         .pictureUrl(postWriteDto.getPostImgList().get(i))
                         .orders(1)
                         .post(savedpost)
                         .build();
                 picturePostRepository.save(picturePost);
-            } else {
+            }else {
                 PicturePost picturePost = PicturePost.builder()
                         .pictureUrl(postWriteDto.getPostImgList().get(i))
                         .orders(2)

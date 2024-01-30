@@ -1,7 +1,7 @@
 package chathealth.chathealth.repository.boardComment;
 
 import chathealth.chathealth.dto.response.BoardCommentResponse;
-import chathealth.chathealth.dto.response.CustomUserDetails;
+import chathealth.chathealth.dto.response.member.CustomUserDetails;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

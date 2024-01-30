@@ -3,7 +3,7 @@ package chathealth.chathealth.controller.board;
 import chathealth.chathealth.dto.request.BoardCreateDto;
 import chathealth.chathealth.dto.request.BoardEditDto;
 import chathealth.chathealth.dto.response.BoardResponse;
-import chathealth.chathealth.dto.response.CustomUserDetails;
+import chathealth.chathealth.dto.response.member.CustomUserDetails;
 import chathealth.chathealth.entity.board.Category;
 import chathealth.chathealth.service.BoardService;
 import jakarta.validation.Valid;
@@ -21,8 +21,8 @@ public class BoardRestController {
 
 
     @PostMapping(value = "/board")
-    public void createBoard(@RequestBody @Valid BoardCreateDto boardCreateDto, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
-        boardService.createBoard(boardCreateDto, customUserDetails.getLoggedMember().getId());
+    public Long createBoard(@RequestBody @Valid BoardCreateDto boardCreateDto, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        return boardService.createBoard(boardCreateDto, customUserDetails.getLoggedMember().getId()).getId();
     }
 
     @PatchMapping("/board/{id}")

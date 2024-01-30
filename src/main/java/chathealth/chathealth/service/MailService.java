@@ -4,12 +4,10 @@ import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
-import java.io.UnsupportedEncodingException;
 import java.util.Random;
 
 @Slf4j
@@ -18,7 +16,6 @@ import java.util.Random;
 public class MailService {
 
     private final JavaMailSender mailSender;
-    private String authNum;
 
     //인증번호 6자리
     public String createCode(){
@@ -44,10 +41,9 @@ public class MailService {
     }
 
     // 이메일 발신
-    public String sendEmail(String email) throws MessagingException {
+    public String sendVerificationEmail(String email) throws MessagingException {
         String authcode = createCode();
         String setFrom = "baechanyongdev@gmail.com";
-        String toEmail = email;
         String title = "[Chat Health] 본인인증을 위한 인증번호입니다.";
 
         MimeMessage message = mailSender.createMimeMessage();
@@ -69,11 +65,35 @@ public class MailService {
 
         mailHelper.setSubject(title);        // 제목 설정
         mailHelper.setFrom(setFrom);        // 보내는 사람 설정
-        mailHelper.setTo(toEmail);          // 받는 사람 설정
+        mailHelper.setTo(email);          // 받는 사람 설정
         mailHelper.setText(msgOfEmail, true);  //메일 내용 설정, HTML여부
 
         mailSender.send(message);
         return authcode;
+    }
+
+    public void sendNoticeRoleEmail(String email) throws MessagingException {
+        String setFrom = "baechanyongdev@gmail.com";
+        String title = "[Chat Health] 본인인증을 위한 인증번호입니다.";
+
+        MimeMessage message = mailSender.createMimeMessage();
+        MimeMessageHelper mailHelper = new MimeMessageHelper(message, "UTF-8");
+
+        // 메일 내용
+        String msgOfEmail = "";
+        msgOfEmail += "<div style='margin:20px;'>";
+        msgOfEmail += "<h1> 안녕하세요 Chat Health 입니다.</h1>";
+        msgOfEmail += "<br>";
+        msgOfEmail += "<p>회원님의 권한이 변경되었습니다. 페이지에 접속하시어 확인해주시기 바랍니다.<p>";
+        msgOfEmail += "<br>";
+        msgOfEmail += "</div>";
+
+        mailHelper.setSubject(title);        // 제목 설정
+        mailHelper.setFrom(setFrom);        // 보내는 사람 설정
+        mailHelper.setTo(email);          // 받는 사람 설정
+        mailHelper.setText(msgOfEmail, true);  //메일 내용 설정, HTML여부
+
+        mailSender.send(message);
     }
 
 

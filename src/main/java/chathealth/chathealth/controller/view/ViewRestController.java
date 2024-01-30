@@ -3,18 +3,15 @@ package chathealth.chathealth.controller.view;
 
 import chathealth.chathealth.dto.request.ReviewDto;
 import chathealth.chathealth.dto.request.ReviewModDto;
-import chathealth.chathealth.dto.response.CustomUserDetails;
+import chathealth.chathealth.dto.response.member.CustomUserDetails;
 import chathealth.chathealth.dto.response.ReViewSelectDto;
-import chathealth.chathealth.entity.Review;
 import chathealth.chathealth.service.PostService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/review")

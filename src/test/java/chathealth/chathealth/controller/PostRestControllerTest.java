@@ -4,6 +4,7 @@ import chathealth.chathealth.dto.request.PostSearch;
 import chathealth.chathealth.entity.member.Ent;
 import chathealth.chathealth.entity.post.*;
 import chathealth.chathealth.repository.*;
+import chathealth.chathealth.repository.MemberRepository;
 import chathealth.chathealth.repository.post.PostRepository;
 import chathealth.chathealth.service.PostService;
 import com.fasterxml.jackson.databind.ObjectMapper;

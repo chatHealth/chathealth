@@ -1,4 +1,4 @@
-package chathealth.chathealth.repository.BoardHit;
+package chathealth.chathealth.repository.boardHit;
 
 import chathealth.chathealth.entity.board.Board;
 import chathealth.chathealth.entity.member.Member;
