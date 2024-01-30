@@ -57,10 +57,8 @@
     <script th:inline="javascript">
         $(document).ready(function () {
             const id = [[${entInfo.id}]];
-            console.log(id);
-
             //내정보 버튼
-            $('#myinfoBtn').click(function () {
+            $('#myinfoBtn').on("click",function () {
                 $.ajax({
                     url: `/member/ent/getinfo/${id}`,
                     type: "GET",
@@ -75,14 +73,22 @@
                     }
                 });
             });
-            $('#myinfoBtn').click();
+
             function displayEntInfo(entInfo) {
+                let role;
+                if(entInfo.role === "ROLE_WAITING_ENT"){
+                    role = "<td><span style=\"color:white; border-style: double; font-size: 11px;border-color: #137AE8;background: #137AE8\">승인 대기중</span></td>"
+                }else if(entInfo.role === "ROLE_PERMITTED_ENT"){
+                    role = "<td><span style=\"color:white; border-style: double; font-size: 11px;border-color: #65EA4A;background: #65EA4A\">승인 완료</span>></td>"
+                }else if(entInfo.role === "ROLE_REJECTED_ENT"){
+                    role = "<td><span style=\"color:white; border-style: double; font-size: 11px;border-color: #EA564E;background: #EA564E\">승인 거절</span></td>"
+                }
                 const container = $('<div>').addClass('ent-info-container');
                 container.append('<h2 class="mb-4" style="color:#198754;"><b>내 정보</b></h2>');
 
                 const table = $('<table>').addClass('table');
 
-                table.append('<tr><th style="color:#198754;">법인명</th><td>' + entInfo.company + '</td></tr>');
+                table.append('<tr><th style="color:#198754;">법인명</th><td>' + entInfo.company + '</td>'+role+'</tr>');
                 table.append('<tr><th style="color:#198754;">대표자</th><td>' + entInfo.ceo + '</td></tr>');
                 table.append('<tr><th style="color:#198754;">이메일(아이디)</th><td>' + entInfo.email + '</td></tr>');
                 table.append('<tr><th style="color:#198754;">주소</th><td>' + entInfo.address.address + '</td></tr>');
@@ -118,7 +124,7 @@
                     table.append('<tr><th style="color:#198754;">개업연월일</th><td>' + entInfo.birth + '</td></tr>');
 
                     container.append(table);
-                    container.append('<button class="btn btn-success" id="updateSubmitBtn">정보 저장</button><button class="btn btn-secondary" id="cancelBtn" style="width:100%;">취소</button>');
+                    container.append('<button class="btn btn-success" id="updateSubmitBtn">정보 저장</button><button class="btn btn-secondary" id="cancelBtn"">취소</button>');
                     $('#mp-content').html(container);
                 });
 
@@ -219,7 +225,6 @@
             });
 
             //회원 탈퇴
-            /회원 탈퇴
             $('#withdrawBtn').click(function (){
                 if(confirm("한번 탈퇴하면 동일한 이메일로 재가입할 수 없습니다. 정말 탈퇴하시겠습니까?")===true){
                 }else{return false;}
@@ -263,6 +268,8 @@
 
             });
 
+            $('#myinfoBtn').trigger("click");
+
             function mailVerifyingLayout(){
                 const container = $('<div>').addClass('email-verifying-container');
                 container.append('<h2 class="mb-4" style="color:#198754;"><b>이메일 인증</b></h2>');
@@ -273,8 +280,6 @@
                 container.append('<button class="btn btn-success" id="checkAuthcodeBtn">인증하기</button>');
                 $('#mp-content').html(container);
             }
-
-
         });
     </script>
     <!-- 프로필사진 변경 스크립트 -->

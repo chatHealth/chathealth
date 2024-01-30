@@ -5,7 +5,7 @@ import chathealth.chathealth.dto.request.BoardCreateDto;
 import chathealth.chathealth.dto.request.BoardEditDto;
 import chathealth.chathealth.dto.request.BoardSearchDto;
 import chathealth.chathealth.dto.response.BoardResponse;
-import chathealth.chathealth.dto.response.CustomUserDetails;
+import chathealth.chathealth.dto.response.member.CustomUserDetails;
 import chathealth.chathealth.dto.response.PageResponse;
 import chathealth.chathealth.entity.BoardHit;
 import chathealth.chathealth.entity.board.Board;

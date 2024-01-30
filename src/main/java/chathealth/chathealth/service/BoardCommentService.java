@@ -1,7 +1,7 @@
 package chathealth.chathealth.service;
 
 import chathealth.chathealth.dto.response.BoardCommentResponse;
-import chathealth.chathealth.dto.response.CustomUserDetails;
+import chathealth.chathealth.dto.response.member.CustomUserDetails;
 import chathealth.chathealth.entity.BoardComment;
 import chathealth.chathealth.exception.BoardNotFoundException;
 import chathealth.chathealth.exception.UserNotFound;

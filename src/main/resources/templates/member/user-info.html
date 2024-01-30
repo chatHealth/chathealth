@@ -10,30 +10,19 @@
             <ul class="list-group list-group-flush">
                 <li class="list-group-item text-center">
                     <button id="editprofilebtn" class="btn edit-profile">
-                        <img th:src="@{|/profile/${userInfo.profile}|}" alt="프로필사진" id="profile"
-                             style="width: 130px; height: 130px; border-radius: 50%; overflow: hidden; object-fit: cover;"></br>
+                        <img th:src="@{|/profile/${userInfo.profile}|}" alt="프로필사진" id="profile" style="width: 130px; height: 130px; border-radius: 50%; overflow: hidden; object-fit: cover;" onerror="this.src='/img/basic_user.png'"></br>
                         <p>프로필 수정</p>
                     </button>
                 </li>
-                <li th:text="|안녕하세요, ${userInfo.nickname}씌|" class="list-group-item">닉네임 안들어왔당</li>
+                <li th:text="|안녕하세요, [ ${userInfo.nickname} ]님|" class="list-group-item">닉네임 안들어왔당</li>
             </ul>
             <span style="border-top: 1px solid #ccc; display: block; margin: 10px 13px;"></span>
             <ul class="list-group list-group-flush">
-                <li class="list-group-item list-group-item-action">
-                    <button type="button" class="btn" id="myinfoBtn">내 정보</button>
-                </li>
-                <li class="list-group-item list-group-item-action">
-                    <button type="button" class="btn" id="postlikeBtn">관심 상품</button>
-                </li>
-                <li class="list-group-item list-group-item-action">
-                    <button type="button" class="btn" id="myreviewBtn">내 리뷰</button>
-                </li>
-                <li class="list-group-item list-group-item-action">
-                    <button type="button" class="btn" id="changepwBtn">비밀번호 변경</button>
-                </li>
-                <li class="list-group-item list-group-item-action">
-                    <button type="button" class="btn" id="withdrawBtn">회원 탈퇴</button>
-                </li>
+                <li class="list-group-item list-group-item-action"><button type="button" class="btn" id="myinfoBtn">내 정보</button></li>
+                <li class="list-group-item list-group-item-action"><button type="button" class="btn" id="postlikeBtn">관심 상품</button></li>
+                <li class="list-group-item list-group-item-action"><button type="button" class="btn" id="myreviewBtn">내 리뷰</button></li>
+                <li class="list-group-item list-group-item-action"><button type="button" class="btn" id="changepwBtn">비밀번호 변경</button></li>
+                <li class="list-group-item list-group-item-action"><button type="button" class="btn" id="withdrawBtn">회원 탈퇴</button></li>
             </ul>
             <!-- 프로필사진 변경 모달 -->
             <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -62,7 +51,7 @@
 
         </div>
         <!--  컨텐츠 -->
-        <div class="mp-content col-md-6 ms-md-auto" id="mp-content">
+        <div class="mp-content col-md-8 ms-md-auto" id="mp-content">
 
         </div>
     </div>
@@ -109,11 +98,11 @@
                 }
                 table.append('<tr><th style="color:#198754;">생년월일</th><td>' + birth + '</td></tr>');
 
-                container.append(table);
-                container.append("<button class='btn btn-success' id='updateInfoBtn'>정보 수정</button>");
+                    container.append(table);
+                    container.append("<button class='btn btn-success' id='updateInfoBtn'>정보 수정</button>");
 
-                $('#mp-content').empty();
-                $('#mp-content').html(container);
+                    $('#mp-content').empty();
+                    $('#mp-content').html(container);
 
                 $('#updateInfoBtn').on("click", function () {
                     const originalNickname = nickname;
@@ -193,10 +182,7 @@
                         $.each(response, function (index, item) {
                             html += "<tr>";
                             html += '<th>' + i + '</th>'; // "
-                            html += '<td><a th:href="/view/"' + item.postId + item.title + '</td>';
-                            //조회수 이모티콘 + 조회수
-                            html += '<td><botton><i class="bi bi-heart-fill"></i></botton>></td>';
-                            // 행 종료: 현재 인덱스가 4의 배수이고 마지막 요소가 아닐 때
+                            html += `<td><a href="http://localhost:8091/view/`+item.postId+`">`+item.title+`</a></td>`;
                             html += "</tr>";
                             i++;
                         });
@@ -212,26 +198,69 @@
                 })
             });
 
+            //내 리뷰 버튼
+            $('#myreviewBtn').click(function (){
+                    $.ajax({
+                        url: `/member/myReview/${id}`,
+                        method: "GET",
+                        data: {id:id},
+                        success: function (response){
+                            let html = "";
+                            if (response.length === 0) {
+                                html = `<div class="user-info-container"><h3 style='color:#198754;'>활동중인 개인 회원이 없습니다.</h3></div>`
+                            } else{
+                            let i = 1;
+                            html = `<div class="user-info-container">
+                              <table class='table table-hover'>
+                                <thead>
+                                  <tr>
+                                    <td> </td>
+                                    <td style='color:#198754;'> 제목 </td>
+                                    <td style='color:#198754;'> 작성일 </td>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                `
+                            $.each(response, function (index, item) {
+                                html += `<tr>
+                                            <th style="color:#198754;"> ${i}</th>
+                                            <td><a href="http://localhost:8091/view/${item.postId}"></a>${item.title}</td>
+                                            <td>${item.createdDate}</td>
+                                         </tr>`
+                                i++;
+                            });
+                            html += "</table>";
+                            }
+                            $('#mp-content').empty();
+                            $('.mp-content').html(html);
+                        }
+                    });
+            });
+
             //비밀번호 변경
             $('#changepwBtn').click(function () {
                 let responseCode;
-                $('#mp-content').empty();
-                mailVerifyingLayout();
-                //이메일 인증메일 보내기
-                $.ajax({
-                    url: `/member/emails/verification-request`,
-                    type: "POST",
-                    async: false,
-                    data: {email: email},
-                    success: function (response) {
-                        responseCode = response;
-                    },
-                    error: function (error) {
-                        alert(JSON.stringify(error));
-                    },
-                    complete: function () {
-                    }
-                });
+                if(email.toString().includes("kakao")){
+                    alert("카카오 로그인 회원은 카카오 홈페이지에서 비밀번호찾기를 진행해주시기 바랍니다");
+                } else{
+                    $('#mp-content').empty();
+                    mailVerifyingLayout();
+                        //이메일 인증메일 보내기
+                        $.ajax({
+                            url: `/member/emails/verification-request`,
+                            type: "POST",
+                            async: false,
+                            data:{email:email},
+                            success: function (response) {
+                                responseCode = response;
+                            },
+                            error: function (error) {
+                                alert(JSON.stringify(error));
+                            },
+                            complete: function () {
+                            }
+                        });
+                }
 
 
                 //비밀번호 변경 입력
@@ -281,6 +310,9 @@
                         $('body').on("click", "#cancelBtn", function () {
                             $('#myinfoBtn').click();
                         });
+                    }else {
+                        $('#confirmAuthcode').text("인증코드가 일치하지 않습니다").css('color','red');
+                        return false;
                     }
                 });
             });
@@ -337,6 +369,7 @@
                 container.append('<p class="mb-1">회원님의 이메일로 인증코드 6자리를 보내드렸습니다.</p>');
                 container.append('<p class="mb-5">인증코드를 확인하시고 10분 이내에 입력해주시기 바랍니다.</p>');
                 container.append('<input type="text" class="form-control mb-1" style="width: 203px;" id="authcode">');
+                container.append('<span style="width: 203px;" id="confirmAuthcode"></span>');
                 container.append('<p class="mb-5">메일 발송까지 약간의 시간이 소요될 수 있습니다.</p>');
                 container.append('<button class="btn btn-success" id="checkAuthcodeBtn">인증하기</button>');
                 $('#mp-content').html(container);

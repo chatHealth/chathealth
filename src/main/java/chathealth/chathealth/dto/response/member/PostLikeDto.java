@@ -1,4 +1,4 @@
-package chathealth.chathealth.dto.response;
+package chathealth.chathealth.dto.response.member;
 
 import lombok.Builder;
 import lombok.Getter;

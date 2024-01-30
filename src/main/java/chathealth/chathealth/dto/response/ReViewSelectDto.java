@@ -1,5 +1,6 @@
 package chathealth.chathealth.dto.response;
 
+import chathealth.chathealth.dto.response.member.CustomUserDetails;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 
@@ -26,7 +27,7 @@ public class ReViewSelectDto {
     private Long helpfulCheck;
 
     private Integer same;
-    public Integer sameclass(Long member,CustomUserDetails login){
+    public Integer sameclass(Long member, CustomUserDetails login){
         if(login!=null){
             if(member.equals(login.getLoggedMember().getId())){
                 return 5;

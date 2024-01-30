@@ -1,7 +1,7 @@
 package chathealth.chathealth.service;
 
 import chathealth.chathealth.dto.request.SendMessageDto;
-import chathealth.chathealth.dto.response.CustomUserDetails;
+import chathealth.chathealth.dto.response.member.CustomUserDetails;
 import chathealth.chathealth.entity.member.Users;
 import chathealth.chathealth.repository.MemberRepository;
 import chathealth.chathealth.repository.message.MessageRepository;

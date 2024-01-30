@@ -3,6 +3,7 @@ package chathealth.chathealth.service;
 
 import chathealth.chathealth.dto.request.*;
 import chathealth.chathealth.dto.response.*;
+import chathealth.chathealth.dto.response.member.CustomUserDetails;
 import chathealth.chathealth.dto.response.message.ReCommnetSelectDto;
 import chathealth.chathealth.entity.Helpful;
 import chathealth.chathealth.entity.PictureReView;
@@ -63,7 +64,7 @@ public class PostService {
     }
 
 
-    public List<ReCommnetSelectDto> selectComment(long id,CustomUserDetails userid) {
+    public List<ReCommnetSelectDto> selectComment(long id, CustomUserDetails userid) {
         Review review = reViewRepository.findById(id).orElseThrow();
         em.clear();
         List<ReComment> rec = reCommentRepository.findAllByReview(review);
@@ -266,9 +267,9 @@ public class PostService {
             postSearch.setPage((int) (count / postSearch.getSize()));
         }
         return postRepository.getPosts(postSearch).stream()
-                .map(post -> {
+                .map(post ->{
                     String representativeImg = null;
-                    if (post.getPostImgList() != null && !post.getPostImgList().isEmpty()) {
+                    if(post.getPostImgList() != null && !post.getPostImgList().isEmpty()){
                         representativeImg = post.getPostImgList().stream()
                                 .filter(img -> img.getOrders() == 0)
                                 .findFirst()
@@ -286,8 +287,7 @@ public class PostService {
                             .hitCount(post.getPostHitCount())
                             .likeCount(post.getPostLikeCount())
                             .reviewCount(post.getReviewCount())
-                            .build();
-                })
+                            .build();})
                 .toList();
     }
 
@@ -357,22 +357,22 @@ public class PostService {
                 .symptom(symptomRepository.findById(postWriteDto.getSymptom()).orElseThrow())
                 .build();
         Post savedpost = postRepository.save(postInfo);
-        for (int i = 0; i < postWriteDto.getMaterialList().size(); i++) {
+        for (int i=0;i<postWriteDto.getMaterialList().size();i++) {
             MaterialPost materialPost = MaterialPost.builder()
                     .post(savedpost)
                     .material(materialRepository.findById(postWriteDto.getMaterialList().get(i)).orElseThrow(RuntimeException::new))
                     .build();
             materialPostRepository.save(materialPost);
         }
-        for (int i = 0; i < postWriteDto.getPostImgList().size(); i++) {
-            if (i == 0) {
+        for(int i=0;i<postWriteDto.getPostImgList().size();i++) {
+            if(i==0) {
                 PicturePost picturePost = PicturePost.builder()
                         .pictureUrl(postWriteDto.getPostImgList().get(i))
                         .orders(1)
                         .post(savedpost)
                         .build();
                 picturePostRepository.save(picturePost);
-            } else {
+            }else {
                 PicturePost picturePost = PicturePost.builder()
                         .pictureUrl(postWriteDto.getPostImgList().get(i))
                         .orders(2)

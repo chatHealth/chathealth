@@ -2,7 +2,7 @@ package chathealth.chathealth.controller;
 
 import chathealth.chathealth.dto.request.BoardCommentRequest;
 import chathealth.chathealth.dto.response.BoardCommentResponse;
-import chathealth.chathealth.dto.response.CustomUserDetails;
+import chathealth.chathealth.dto.response.member.CustomUserDetails;
 import chathealth.chathealth.service.BoardCommentService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

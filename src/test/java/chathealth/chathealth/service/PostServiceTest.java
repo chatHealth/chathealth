@@ -7,6 +7,7 @@ import chathealth.chathealth.entity.member.Ent;
 import chathealth.chathealth.entity.member.Users;
 import chathealth.chathealth.entity.post.*;
 import chathealth.chathealth.repository.*;
+import chathealth.chathealth.repository.MemberRepository;
 import chathealth.chathealth.repository.post.PostRepository;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.DisplayName;
