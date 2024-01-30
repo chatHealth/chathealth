@@ -40,8 +40,8 @@ public class PostController {
     @GetMapping("/write")
     public String write(Model model) {
         List<SymptomDto> symptom=postService.getSymptomList();
-        model.addAttribute("symptom",symptom);
         List<MaterialDto> material=postService.getMaterialList();
+        model.addAttribute("symptom",symptom);
         model.addAttribute("material",material);
         return "post/write";
     }
@@ -57,13 +57,19 @@ public class PostController {
     @GetMapping("/modify")
     public String postModifyProcess(@RequestParam long postId,Model model){
         List<SymptomDto> symptom=postService.getSymptomList();
-        model.addAttribute("symptom",symptom);
         List<MaterialDto> material=postService.getMaterialList();
+        model.addAttribute("symptom",symptom);
         model.addAttribute("material",material);
         model.addAttribute("postList",postService.getAllViewMod(postId));
+        log.info("postListtttt======{}",postService.getAllViewMod(postId));
         return "post/modify";
     }
 
 
-
+    @PostMapping("/modWrite")
+    @ResponseBody
+    public String postModifyWrite(@RequestBody PostWriteDto postWriteDto){
+        postService.modifyPost(postWriteDto);
+        return "post";
+    }
 }

@@ -9,6 +9,7 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Getter
@@ -28,7 +29,8 @@ public class PostModResponseDto {
 
     private String company;
 
-    private List<String> material;
+    private Long symptom;
+    private List<Long> materialId;
 
     // yyyy-MM-dd 변환
     private String createdAt;
@@ -42,6 +44,7 @@ public class PostModResponseDto {
                 .map(materialPost -> materialPost.getMaterial().getMaterialName())
                 .collect(Collectors.toList());
     }
+
 
 
 }

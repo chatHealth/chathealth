@@ -1,5 +1,8 @@
 package chathealth.chathealth.entity.post;
 
+import chathealth.chathealth.dto.request.PostWriteDto;
+import chathealth.chathealth.dto.request.ReviewModDto;
+import chathealth.chathealth.dto.response.PostModResponseDto;
 import chathealth.chathealth.entity.BaseEntity;
 import chathealth.chathealth.entity.Review;
 import chathealth.chathealth.entity.member.Ent;
@@ -81,5 +84,11 @@ public class Post extends BaseEntity {
     public Integer getReviewCount() {
         if(reviewList == null) return 0;
         return reviewList.size();
+    }
+
+    public void update(PostWriteDto postWriteDto,Symptom symptom) {
+        this.content = postWriteDto.getContent();
+        this.title = postWriteDto.getTitle();
+        this.symptom=symptom;
     }
 }

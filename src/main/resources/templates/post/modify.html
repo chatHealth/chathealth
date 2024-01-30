@@ -22,25 +22,25 @@
 <!--<form action="/post/write" method="post">-->
 <div>
     <div>
-        <input type="text" placeholder="제목" class="inpTitle" id="title" th:text="${postList.title}">
+        <input type="text" placeholder="제목" class="inpTitle" id="title" th:value="${postList.title}">
     </div>
     <div style="height: 500px">
-        <div id="content" th:text="${postList.content}"></div>
+        <div id="content"></div>
         <!--        <textarea class="postWriteContent" id="editor" name="content"></textarea>-->
     </div>
 </div>
 <div class="underBox">
     <div class="filebox">
-        <input type="file" id="mainImg"  class="postimg" th:value="${postList.picturePostMain}">
+        <input type="file" id="mainImg"  class="postimg" >
         <label class="input-file-button" for="mainImg">
             대표이미지 등록<br><p class="mainImgCount">1</p>
         </label>
 
         <input type="file" class="postimg" id="serveImg"
                placeholder="대표이미지" name=""
-               accept="image/gif, image/jpeg, image/png" multiple="multiple" th:value="${postList.picturePostSer}">
+               accept="image/gif, image/jpeg, image/png" multiple="multiple">
         <label class="input-file-button" for="serveImg">
-            서브이미지 등록<br><p class="serveImgCount" th:text="${postList.picturePostSer.size()}">0</p>
+            서브이미지 등록<br><p class="serveImgCount" th:text="${postList.picturePostSer.size()}"></p>
         </label>
     </div>
     <div class="col-3 mt-3">
@@ -73,9 +73,25 @@
 
 <!--</form>-->
 </body>
-<script>
+<script th:inline="javascript">
     let mainImgName="";
     let serveImgName=[];
+    let postId=[[${postList.id}]];
+
+
+
+
+
+
+    //material에 값 세팅
+    const selectedMaterialList = [[${postList.materialId}]];
+    const selectedSymptomList = [[${postList.symptom}]];
+    const symptomOptions = $("#symptom");
+    symptomOptions.val(selectedSymptomList).trigger('change');
+    const materialOptions = $("#material");
+    materialOptions.val(selectedMaterialList).trigger('change');
+
+
 
     //multi
     $('#symptom').select2({
@@ -212,6 +228,16 @@
             }
         }
     });
+
+
+
+
+    const contentVal=[[${postList.content}]];
+    editor.setMarkdown(contentVal);
+
+    const mainImgVal=[[${postList.picturePostMain}]];
+    const serveImgValues = [[${postList.picturePostSer}]];
+
     //data 전송해보자자자
     async function savePost() {
         // title 입력 필수
@@ -222,56 +248,71 @@
         }
 
         // 2. url, parameter 세팅
-        const url = '/post/write';
+        const url = '/post/modWrite';
         let imgArr=[];
-        if(!(mainImgName==="")) {
-            imgArr.push(mainImgName)
-        }
-        for(let i=0;i<serveImgName.length;i++){
-            imgArr.push(serveImgName[i]);
-        }
 
+        if((mainImgName==="")&&serveImgName.length===0){
+            imgArr.push(mainImgVal);
+            for(let i=0;i<serveImgValues.length;i++){
+                imgArr.push(serveImgValues[i]);
+            }
+        }else if((mainImgName==="")&&serveImgName.length>0){
+            imgArr.push(mainImgVal)
+            for(let i=0;i<serveImgName.length;i++){
+                imgArr.push(serveImgName[i]);
+            }
+        }else if(!(mainImgName==="")>0&&serveImgName.length===0){
+            imgArr.push(mainImgName)
+            for(let i=0;i<serveImgValues.length;i++){
+                imgArr.push(serveImgValues[i]);
+            }
+        }else {
+            imgArr.push(mainImgName)
+            for(let i=0;i<serveImgName.length;i++){
+                imgArr.push(serveImgName[i]);
+            }
+        }
 
         const params = {
+            id:postId,
             title: $("#title").val(),
             symptom: $("#symptom").val(),
             content: editor.getHTML(),
             materialList:$("#material").val(),
             postImgList:imgArr
         }
-        console.log(params)
         // 3. API 호출
-        // let titleStr=params.title.replace(/ /g,"");
-        //
-        // if(titleStr===""){
-        //     alert("제목을입력해주세요.");
-        // }else if(params.materialList.length===0){
-        //     alert("성분을 선택해주세요")
-        // }else if(params.postImgList.length===0){
-        //     alert("대표이미지를 선택해주세요")
-        // }else
-        // {
-        //     try {
-        //         const response = await fetch(url, {
-        //             method: 'POST',
-        //             headers: {
-        //                 'Content-Type': 'application/json',
-        //             },
-        //             body: JSON.stringify(params),
-        //         });
-        //
-        //         if (!response.ok) {
-        //             throw new Error('서버에 문제가 있습니다. 잠시 후 다시 시도해 주세요.');
-        //         }
-        //
-        //         alert('게시글이 저장되었습니다');
-        //         location.href = '/post';
-        //
-        //     } catch (error) {
-        //         alert(error.message);
-        //         console.error('저장 실패 : ', error);
-        //     }
-        // }
+        let titleStr=params.title.replace(/ /g,"");
+
+        if(titleStr===""){
+            alert("제목을입력해주세요.");
+        }else if(params.materialList.length===0){
+            alert("성분을 선택해주세요")
+        }else if(params.postImgList.length===0){
+            alert("대표이미지를 선택해주세요")
+        }else
+        {
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(params),
+                });
+
+                if (!response.ok) {
+                    throw new Error('서버에 문제가 있습니다. 잠시 후 다시 시도해 주세요.');
+                }
+
+                alert('게시글이 저장되었습니다');
+                location.href = '/post';
+
+            } catch (error) {
+                alert(error.message);
+                console.error('저장 실패 : ', error);
+            }
+        }
     }
 
 </script>

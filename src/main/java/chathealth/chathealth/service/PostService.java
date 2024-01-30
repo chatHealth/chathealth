@@ -52,6 +52,45 @@ public class PostService {
     private final EntityManager em;
 
 
+    @Transactional
+    public void modifyPost(PostWriteDto postWriteDto) {
+        Post post = postRepository.findById(postWriteDto.getId()).orElseThrow();
+        Symptom symptom=symptomRepository.findById(post.getId()).orElseThrow();
+        post.update(postWriteDto,symptom);
+        picturePostRepository.deleteByPost(post);
+        for (int i = 0; i < postWriteDto.getPostImgList().size(); i++) {
+            if (i == 0) {
+                PicturePost picturePost = PicturePost.builder()
+                        .pictureUrl(postWriteDto.getPostImgList().get(i))
+                        .orders(1)
+                        .post(post)
+                        .build();
+                picturePostRepository.save(picturePost);
+            } else {
+                PicturePost picturePost = PicturePost.builder()
+                        .pictureUrl(postWriteDto.getPostImgList().get(i))
+                        .orders(2)
+                        .post(post)
+                        .build();
+                picturePostRepository.save(picturePost);
+            }
+        }
+        materialPostRepository.deleteAllByPost(post);
+        for (int i = 0; i < postWriteDto.getMaterialList().size(); i++) {
+            MaterialPost materialPost = MaterialPost.builder()
+                    .post(post)
+                    .material(materialRepository.findById(postWriteDto.getMaterialList().get(i)).orElseThrow(RuntimeException::new))
+                    .build();
+            materialPostRepository.save(materialPost);
+        }
+
+
+
+    }
+
+
+
+
     public void deleteComment(long num){
         reCommentRepository.deleteById(num);
     }
@@ -260,16 +299,19 @@ public class PostService {
 
     public PostModResponseDto getAllViewMod(long id) {
         Post post = postRepository.findById(id).orElseThrow();
+
+        List<Material> materialId= materialPostRepository.findAllByPost(post).stream().map(MaterialPost::getMaterial).toList();
+        List<Long> materialLong=materialId.stream().map(Material::getId).toList();
+
         return PostModResponseDto.builder()
                 .id(post.getId())
                 .memberId(post.getMember().getId())
-                .company(post.getMember().getCompany())
                 .title(post.getTitle())
-                .likeCount(postLikeRepository.countByPostId(post.getId()))
                 .content(post.getContent())
-                .picturePostMain(picturePostRepository.findByPostIdAndOrders(id,1))
+                .symptom(post.getSymptom().getId())
+                .picturePostMain(picturePostRepository.findByPostIdAndOrders(id,1).getPictureUrl())
                 .picturePostSer(picturePostRepository.findAllByPostIdAndOrders(id,2).stream().map(PicturePost::getPictureUrl).toList())
-                .material(PostResponseDetails.extractMaterialNames(post.getMaterialList()))
+                .materialId(materialLong)
                 .build();
     }
 
