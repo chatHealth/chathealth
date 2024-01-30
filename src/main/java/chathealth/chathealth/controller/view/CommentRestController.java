@@ -2,7 +2,7 @@ package chathealth.chathealth.controller.view;
 
 
 import chathealth.chathealth.dto.request.CommentWriteDto;
-import chathealth.chathealth.dto.response.CustomUserDetails;
+import chathealth.chathealth.dto.response.member.CustomUserDetails;
 import chathealth.chathealth.dto.response.message.ReCommnetSelectDto;
 import chathealth.chathealth.service.PostService;
 import lombok.RequiredArgsConstructor;
