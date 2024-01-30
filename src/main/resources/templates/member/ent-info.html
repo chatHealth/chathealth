@@ -300,7 +300,6 @@
 
                 $('body').on("click","#checkAuthcodeBtn",function (){
                     if (responseCode===$('#authcode').val()){
-                        console.log(id);
                         $('#mp-content').empty();
                         const container = $('<div>').addClass('member-withdraw-container');
                         $('#mp-content').html(container);
@@ -347,7 +346,6 @@
         const id = [[${entInfo.id}]];
         $('#editbtn').click(function (e) {
             e.preventDefault();
-            console.log("버튼은 눌림");
             $('#editModal').modal("show");
         });
 
