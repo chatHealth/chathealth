@@ -99,6 +99,7 @@ public class AuthController {
     }
 
     @Transactional
+    @ResponseBody
     @DeleteMapping("/withdraw/{id}")
     public Map<String,Integer> memberWithdraw(@PathVariable Long id){
         Integer result = authService.memberWithdraw(id);
