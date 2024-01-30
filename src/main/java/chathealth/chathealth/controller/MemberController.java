@@ -1,11 +1,12 @@
 package chathealth.chathealth.controller;
 
 import chathealth.chathealth.constants.Role;
-import chathealth.chathealth.dto.request.EntEditDto;
-import chathealth.chathealth.dto.request.UserEditDto;
-import chathealth.chathealth.dto.response.EntInfoDto;
-import chathealth.chathealth.dto.response.PostLikeDto;
-import chathealth.chathealth.dto.response.UserInfoDto;
+import chathealth.chathealth.dto.request.member.EntEditDto;
+import chathealth.chathealth.dto.request.member.UserEditDto;
+import chathealth.chathealth.dto.response.member.EntInfoDto;
+import chathealth.chathealth.dto.response.member.MyReviewDto;
+import chathealth.chathealth.dto.response.member.PostLikeDto;
+import chathealth.chathealth.dto.response.member.UserInfoDto;
 import chathealth.chathealth.entity.member.Address;
 import chathealth.chathealth.service.AuthService;
 import chathealth.chathealth.service.MailService;
@@ -123,6 +124,11 @@ public class MemberController {
     @ResponseBody
     public List<PostLikeDto> getPostLike(@PathVariable Long id){  //관심상품 가져오기
         return memberService.getPostLike(id);}
+
+    @GetMapping("/myReview/{id}")
+    @ResponseBody
+    public List<MyReviewDto> getMyReview(@PathVariable Long id){  //내 리뷰 가져오기
+        return memberService.getMyReview(id);}
 
 
     @GetMapping("/user/getinfo/{id}")

@@ -1,17 +1,19 @@
 package chathealth.chathealth.service;
 
 import chathealth.chathealth.constants.Role;
-import chathealth.chathealth.dto.request.EntEditDto;
-import chathealth.chathealth.dto.request.UserEditDto;
-import chathealth.chathealth.dto.response.EntInfoDto;
-import chathealth.chathealth.dto.response.PostLikeDto;
-import chathealth.chathealth.dto.response.UserInfoDto;
+import chathealth.chathealth.dto.request.member.EntEditDto;
+import chathealth.chathealth.dto.request.member.UserEditDto;
+import chathealth.chathealth.dto.response.member.EntInfoDto;
+import chathealth.chathealth.dto.response.member.MyReviewDto;
+import chathealth.chathealth.dto.response.member.PostLikeDto;
+import chathealth.chathealth.dto.response.member.UserInfoDto;
 import chathealth.chathealth.entity.member.Ent;
 import chathealth.chathealth.entity.member.Member;
 import chathealth.chathealth.entity.member.Users;
 import chathealth.chathealth.exception.UserNotFound;
 import chathealth.chathealth.repository.MemberRepository;
 import chathealth.chathealth.repository.PostLikeRepository;
+import chathealth.chathealth.repository.ReViewRepository;
 import chathealth.chathealth.util.ImageUpload;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,6 +36,7 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final PostLikeRepository postLikeRepository;
+    private final ReViewRepository reviewRepository;
     private final ImageUpload imageUpload;
 
 
@@ -51,7 +55,6 @@ public class MemberService {
                 .profile(findUser.getProfile())
                 .birth(findUser.getBirth())
                 .deletedDate(findUser.getDeletedDate())
-                .createdDate(findUser.getCreatedDate())
                 .grade(findUser.getGrade())
                 .role(findUser.getRole())
                 .address(findUser.getAddress())
@@ -116,6 +119,19 @@ public class MemberService {
                         .company(postLike.getPost().getMember().getCompany())
                         .build())
                 .toList();
+        return dto;
+    }
+
+    public List<MyReviewDto> getMyReview(Long id){
+        List<MyReviewDto> dto = reviewRepository.findByMember(id).stream()
+                .map(myReview -> MyReviewDto.builder()
+                        .memberId(myReview.getMember().getId())
+                        .postId(myReview.getPost().getId())
+                        .title(myReview.getPost().getTitle())
+                        .createdDate(myReview.getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+                        .build())
+                .toList();
+        log.info(dto.toString());
         return dto;
     }
     public List<UserInfoDto> getUserList() {
