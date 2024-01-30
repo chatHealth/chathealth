@@ -43,7 +43,6 @@ public class AuthService implements UserDetailsService {
                 () -> new UsernameNotFoundException("사용자가 존재하지 않습니다.")
         );
         if(member.getRole().equals(ROLE_WITHDRAW_MEMBER)) {
-            log.info("탈퇴한 이메일로 재가입할 수 없습니다.");
             throw new UsernameNotFoundException("탈퇴한 사용자입니다.");
         }
         return new CustomUserDetails(member);
