@@ -88,9 +88,8 @@
                         const message = JSON.parse(event.data);
                         checkUnreadMessages();
                         toastr.info(message.message);
-                        console.log('새로운 메시지:', message);
                     } catch (e) {
-                        console.log('JSON파싱 오류:', e);
+                        toastr.error(e);
                     }
                 };
 
@@ -112,7 +111,7 @@
                             $("#messageCount").hide();
                         }
                     }, error: function (response) {
-                        alert("로그인 상태 확인 중 에러 발생");
+                        toastr.error("로그인 상태 확인 중 에러 발생");
                     }
                 })
             }
@@ -127,7 +126,7 @@
                             noty(response);
                         }
                     }, error: function (response) {
-                        alert("이메일 상태 확인 중 에러 발생");
+                        toastr.error("이메일 상태 확인 중 에러 발생");
                     }
                 })
             }
@@ -151,7 +150,7 @@
                             window.location.href = "/auth/login";
                         }
                         else{
-                            alert(response.message)
+                            toastr.error(response.message);
                         }
                     }
                 });
@@ -199,7 +198,7 @@
                     $("#messageModal").modal('show');
                 },
                 error: function (error) {
-                    console.log('쪽지 로드 중 오류 발생', error);
+                    toastr.error(error);
                 }
             });
         }
@@ -278,7 +277,7 @@
                     $("#messageModal").modal('show');
                 },
                 error: function (error) {
-                    console.log('쪽지 로드 중 오류 발생', error);
+                    toastr.error(error);
                 }
             });
         }
@@ -357,7 +356,7 @@
                     $("#messageModal").modal('show');
                 },
                 error: function (error) {
-                    console.log('쪽지 로드 중 오류 발생', error);
+                    toastr.error(error);
                 }
             });
         }
@@ -462,7 +461,7 @@
                 },
                 error: function (response) {
                     response = JSON.parse(response.responseText);
-                    console.log(response.message);
+                    toastr.error(response.message);
                 }
                 });
             }
@@ -510,7 +509,7 @@
                 },
                 error: function (xhr) {
                     let errorResult = JSON.parse(xhr.responseText);
-                    console.log(errorResult);
+                    toastr.error(errorResult);
                     if (errorResult.code === "400") {
                         if (errorResult.validation !== undefined) {
                             if (errorResult.validation.title !== undefined) {
@@ -541,7 +540,7 @@
                 },
                 error: function (response) {
                     response = JSON.parse(response.responseText);
-                    console.log(response.message);
+                    toastr.error(response.message);
                 }
             });
         }
@@ -557,7 +556,7 @@
                 },
                 error: function (response) {
                     response = JSON.parse(response.responseText);
-                    console.log(response.message);
+                    toastr.error(response.message);
                 }
             });
         }

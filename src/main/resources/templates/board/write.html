@@ -75,8 +75,7 @@
                         callback(imageUrl, 'image alt attribute');
 
                     } catch (error) {
-                        alert(error.message);
-                        console.error('업로드 실패 : ', error);
+                        toastr.error(error.message);
                     }
                 }
             }
