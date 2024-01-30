@@ -90,14 +90,10 @@
 
         // 게시글 저장
         async function savePost() {
-            // title 입력 필수
-            if (document.querySelector('input[name="title"]').value.length < 1) {
-                alert('제목을 입력해 주세요.');
-                throw new Error('title content is required!');
-            }
 
             if (editor.getMarkdown().length < 1) {
-                alert('내용을 입력해 주세요.');
+                toastr.error('내용을 입력해 주세요.');
+                $('textarea[name="content"]').focus();
                 throw new Error('content content is required!');
             }
 
@@ -117,13 +113,29 @@
                 data: JSON.stringify(params),
                 success: function(response) {
                     // 성공 시 처리
-                    alert('게시글이 수정되었습니다. 게시글 제목: ' + params.title);
+                    toastr.success('게시글이 수정되었습니다. 게시글 제목: ' + params.title);
                     location.href = '/board/' + boardId;
                 },
                 error: function(error) {
                     // 에러 처리
-                    alert('게시글 수정 중 오류가 발생했습니다.');
-                    console.error(error.message);
+                    let e = error.responseJSON;
+
+                    if (e.code === "400") {
+                        if(e.validation.title != null) {
+                            toastr.error(e.validation.title);
+                            $('input[name="title"]').focus();
+                        } else if(e.validation.content != null) {
+                            toastr.error(e.validation.content);
+                            editor.focus();
+                        }else if(e.validation.category != null) {
+                            toastr.error(e.validation.category);
+                            $('select[name="category"]').focus();
+                        } else {
+                            toastr.error(e.message);
+                        }
+                        return;
+                    }
+                    toastr.error(e.message);
                 }
             });
         }

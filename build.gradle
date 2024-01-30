@@ -62,6 +62,8 @@ dependencies {
     // apache commons text
     implementation 'org.apache.commons:commons-text:1.11.0'
 
+    // websocket
+    implementation 'org.springframework.boot:spring-boot-starter-websocket'
 }
 
 tasks.named('test') {

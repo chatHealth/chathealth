@@ -75,7 +75,7 @@
                 contentType: 'application/json',
                 data: JSON.stringify(data),
                 success: function (response) {
-                    alert('쪽지를 보냈습니다.');
+                    toastr.success('쪽지를 보냈습니다.');
                     $('#sendMessageModal').modal('hide');
                     document.getElementById('message-subject').value = '';
                     document.getElementById('message-text').value = '';
@@ -86,21 +86,25 @@
                         if (errorResult.validation !== undefined) {
                             if (errorResult.validation.title !== undefined) {
                                 document.getElementById('message-subject').placeholder = errorResult.validation.title;
-                                alert(errorResult.validation.title);
+                                sendWarnMessage(errorResult.validation.title);
                             }else if (errorResult.validation.content !== undefined) {
                                 document.getElementById('message-text').placeholder = errorResult.validation.content;
-                                alert(errorResult.validation.content);
+                                sendWarnMessage(errorResult.validation.content);
                             }
                         } else {
-                            alert(errorResult.message);
+                            toastr.error(errorResult.message);
                         }
                     } else {
-                        alert(errorResult.message);
+                        toastr.error(errorResult.message);
                     }
                 }
             })
         }
 
+        function sendWarnMessage(message) {
+            console.log(message);
+            toastr.warning(message);
+        }
 
     </script>
 </div>

@@ -17,6 +17,7 @@ public class ReViewSelectDto {
     private Long id;
     private Long member;
     private String nickName;
+    private String name;
     private String profile;
     private String content;
     private double score;

@@ -15,7 +15,7 @@ import chathealth.chathealth.entity.member.Users;
 import chathealth.chathealth.exception.BoardNotFoundException;
 import chathealth.chathealth.exception.NotPermitted;
 import chathealth.chathealth.exception.UserNotFound;
-import chathealth.chathealth.repository.BoardHit.BoardHitRepository;
+import chathealth.chathealth.repository.boardHit.BoardHitRepository;
 import chathealth.chathealth.repository.MemberRepository;
 import chathealth.chathealth.repository.board.BoardRepository;
 import lombok.RequiredArgsConstructor;
