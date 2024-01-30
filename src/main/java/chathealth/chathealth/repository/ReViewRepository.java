@@ -13,6 +13,6 @@ public interface ReViewRepository extends JpaRepository<Review,Long> {
     List<Review> findAllByPost(Post post);
 
     List<Review> findAllById(long id);
-    List<Review> findByMember(long id);
+    List<Review> findByMemberId(Long id);
 
 }

@@ -123,7 +123,7 @@ public class MemberService {
     }
 
     public List<MyReviewDto> getMyReview(Long id){
-        List<MyReviewDto> dto = reviewRepository.findByMember(id).stream()
+        List<MyReviewDto> dto = reviewRepository.findByMemberId(id).stream()
                 .map(myReview -> MyReviewDto.builder()
                         .memberId(myReview.getMember().getId())
                         .postId(myReview.getPost().getId())
