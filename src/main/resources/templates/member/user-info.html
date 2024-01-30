@@ -51,7 +51,7 @@
 
         </div>
         <!--  컨텐츠 -->
-        <div class="mp-content col-md-8 ms-md-auto" id="mp-content">
+        <div class="mp-content col-md-7 ms-md-auto" id="mp-content">
 
         </div>
     </div>
@@ -192,7 +192,7 @@
                         $.each(response, function (index, item) {
                             html += "<tr>";
                             html += '<th>' + i + '</th>'; // "
-                            html += `<td><a href="http://localhost:8091/view/`+item.postId+`">`+item.title+`</a></td>`;
+                            html += `<td><a href="/view/`+item.postId+`">`+item.title+`</a></td>`;
                             html += "</tr>";
                             i++;
                         });
@@ -235,7 +235,7 @@
                             $.each(response, function (index, item) {
                                 html += `<tr>
                                             <th style="color:#198754;"> ${i}</th>
-                                            <td><a href="http://localhost:8091/view/${item.postId}">${item.title}</a></td>
+                                            <td><a href="/view/${item.postId}">${item.title}</a></td>
                                             <td>${item.createdDate}</td>
                                          </tr>`
                                 i++;
