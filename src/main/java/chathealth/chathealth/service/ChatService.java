@@ -7,7 +7,7 @@ import chathealth.chathealth.dto.request.CreateChatRoom;
 import chathealth.chathealth.dto.response.ChatMessageResponse;
 import chathealth.chathealth.dto.response.ChatRoomInner;
 import chathealth.chathealth.dto.response.ChatRoomResponse;
-import chathealth.chathealth.dto.response.CustomUserDetails;
+import chathealth.chathealth.dto.response.member.CustomUserDetails;
 import chathealth.chathealth.entity.ChatMessage;
 import chathealth.chathealth.entity.ChatRoomMember;
 import chathealth.chathealth.entity.chatRoom.ChatRoom;

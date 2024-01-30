@@ -5,7 +5,7 @@ import chathealth.chathealth.dto.request.ChatRoomEntrance;
 import chathealth.chathealth.dto.response.ChatMessageResponse;
 import chathealth.chathealth.dto.response.ChatRoomInner;
 import chathealth.chathealth.dto.response.ChatRoomResponse;
-import chathealth.chathealth.dto.response.CustomUserDetails;
+import chathealth.chathealth.dto.response.member.CustomUserDetails;
 import chathealth.chathealth.service.ChatService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
