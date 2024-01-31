@@ -153,19 +153,21 @@ public class MemberController {
         return "auth/admin";
     }
 
-    //@PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @ResponseBody
     @GetMapping("/admin/getEntList")
     public List<EntInfoDto> getEntList() {
         return memberService.getEntList();
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @ResponseBody
     @GetMapping("/admin/getUserList")
     public List<UserInfoDto> getUserList() {
         return memberService.getUserList();
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @ResponseBody
     @PatchMapping("/admin/changeEntRoles/{id}")
     public void changeEntRoles(@PathVariable Long id, String email, Role role) {
