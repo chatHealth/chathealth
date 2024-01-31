@@ -16,7 +16,7 @@ import java.util.Map;
 @Setter
 @ToString
 public class CustomUserDetails implements UserDetails, OAuth2User {
-    //private String id;
+    private Long id;
     private String email;
     private String pw;
     private String nickname;

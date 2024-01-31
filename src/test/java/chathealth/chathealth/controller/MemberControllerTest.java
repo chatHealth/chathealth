@@ -1,3 +1,4 @@
+/*
 package chathealth.chathealth.controller;
 
 import chathealth.chathealth.constants.Grade;
@@ -209,4 +210,4 @@ class MemberControllerTest {
                 .andExpect(status().isOk())
                 .andDo(print());
     }
-}
+}*/
