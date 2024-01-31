@@ -148,7 +148,7 @@
                     $('#chatMessages').scrollTop(newScrollHeight - oldScrollHeight);
                 },
                 error: function (error) {
-                    console.error("메시지 로드 중 오류 발생", error);
+                    toastr.error('채팅 메시지를 불러오는 중 오류가 발생했습니다.');
                 },
                 complete: function () {
                     isLoading = false;
@@ -215,7 +215,6 @@
                     senderEmail: userEmail,
                     senderId: senderId
                 };
-                console.log(chatMessage);
                 stompClient.send("/pub/chat/message", {}, JSON.stringify(chatMessage));
             }
             $.ajax({
@@ -226,7 +225,7 @@
                     window.location.href = '/chat';
                 },
                 error: function (error) {
-                    console.error("채팅방 나가기 중 오류 발생", error);
+                    toastr.error('채팅방 나가기 중 오류가 발생했습니다.');
                 }
             })
         })
@@ -241,7 +240,7 @@
                     window.location.href = '/chat';
                 },
                 error: function (error) {
-                    console.error("채팅방 삭제 중 오류 발생", error);
+                    toastr.error('채팅방 삭제 중 오류가 발생했습니다.');
                 }
             })
         })

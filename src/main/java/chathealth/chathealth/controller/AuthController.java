@@ -99,9 +99,13 @@ public class AuthController {
     }
 
     @Transactional
+    @ResponseBody
     @DeleteMapping("/withdraw/{id}")
-    public void memberWithdraw(@PathVariable Long id){
-        authService.memberWithdraw(id);
+    public Map<String,Integer> memberWithdraw(@PathVariable Long id){
+        Integer result = authService.memberWithdraw(id);
+        Map<String,Integer> resultmap = new HashMap<>();
+        resultmap.put("isDone",result);
+        return resultmap;
     }
 
     @PostMapping("/confirmEmail") //아이디 중복체크

@@ -28,7 +28,8 @@ public class ChatRoomController {
 
     // 채팅방 목록
     @GetMapping("/chat")
-    public String chat(Model model, Principal principal, Pageable pageable, ChatSearchCondition condition) {
+    public String chat(Model model, Principal principal, Pageable pageable,
+                       @RequestParam(defaultValue = "ALL") ChatSearchCondition condition) {
         Page<ChatRoomResponse> chatRooms = chatService.getChatRooms(principal, pageable, condition);
         model.addAttribute("chatRooms", chatRooms);
         model.addAttribute("condition", condition);

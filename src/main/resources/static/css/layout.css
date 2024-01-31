@@ -194,7 +194,7 @@ body {
 #ca{
     /*세로로 가운데 배치*/
     margin: 0 auto;
-    width: 1300px;
+    /*width: 1300px;*/
     position: relative;
     display: flex;
 }
@@ -211,7 +211,7 @@ body {
 .right-box {
     position: absolute; /* 고정 위치 */
     top: 180px; /* 상단에서 50px 아래에 위치 */
-    right: 20px; /* 우측에서 10px 떨어진 곳에 위치 */
+    right: 10px; /* 우측에서 10px 떨어진 곳에 위치 */
     width: 200px; /* 너비 */
     border: 1px solid #dee2e6; /* 경계선 */
     /*box-shadow: 0 4px 8px rgba(0,0,0,0.1); !* 그림자 효과 *!*/
@@ -223,7 +223,7 @@ body {
     }
 
 }
-@media screen and (max-width: 1200px) {
+@media screen and (max-width: 1290px) {
     .left-box {
         display: none;
     }
@@ -474,4 +474,10 @@ footer {
 
 .board-contents span p img {
     max-width: 100%;
+}
+
+.postListImg {
+    width: 200px; /* 원하는 너비로 설정 */
+    height: 200px; /* 원하는 높이로 설정 */
+    object-fit: cover; /* 이미지를 비율을 유지하면서 크롭 */
 }

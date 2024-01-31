@@ -3,10 +3,7 @@ package chathealth.chathealth.controller;
 import chathealth.chathealth.constants.Role;
 import chathealth.chathealth.dto.request.member.EntEditDto;
 import chathealth.chathealth.dto.request.member.UserEditDto;
-import chathealth.chathealth.dto.response.member.EntInfoDto;
-import chathealth.chathealth.dto.response.member.MyReviewDto;
-import chathealth.chathealth.dto.response.member.PostLikeDto;
-import chathealth.chathealth.dto.response.member.UserInfoDto;
+import chathealth.chathealth.dto.response.member.*;
 import chathealth.chathealth.entity.member.Address;
 import chathealth.chathealth.service.AuthService;
 import chathealth.chathealth.service.MailService;
@@ -82,7 +79,7 @@ public class MemberController {
 
         resultMap.put("isUpdated","isUpdated");
         return resultMap;
-        }
+    }
 
     @PreAuthorize("hasAnyRole('ROLE_WAITING_ENT','ROLE_PERMITTED_ENT','ROLE_REJECTED_ENT')")
     @Transactional
@@ -115,7 +112,6 @@ public class MemberController {
     public Map<String,String> updateUserPw(@PathVariable Long id, String pw){  //비밀번호 변경
         authService.updatePw(id,pw);
         Map<String, String> resultMap = new HashMap<>();
-
         resultMap.put("isUpdated","isUpdated");
         return resultMap;
     }
@@ -129,6 +125,11 @@ public class MemberController {
     @ResponseBody
     public List<MyReviewDto> getMyReview(@PathVariable Long id){  //내 리뷰 가져오기
         return memberService.getMyReview(id);}
+
+    @GetMapping("/myPost/{id}")
+    @ResponseBody
+    public List<MyPostDto> getMyPost(@PathVariable Long id){  //내 상품 가져오기
+        return memberService.getMyPost(id);}
 
 
     @GetMapping("/user/getinfo/{id}")

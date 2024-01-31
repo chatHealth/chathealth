@@ -23,10 +23,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -46,7 +49,79 @@ public class PostService {
     private final PostLikeRepository postLikeRepository;
     private final HelpfulRepository helpfulRepository;
     private final ReCommentRepository reCommentRepository;
+    private final PostHitRepository postHitRepository;
     private final EntityManager em;
+
+
+    public void deletePost(long id){
+        postRepository.deleteById(id);
+    }
+
+
+    @Transactional
+    public void countPostHit(PostHitCountDto postHitCountDto){
+
+        Member member = memberRepository.findById(postHitCountDto.getMember()).orElseThrow();
+        Post post = postRepository.findById(postHitCountDto.getPost()).orElseThrow();
+        List<PostHit> byMemberAndPost = postHitRepository.findByMemberAndPost(member, post);
+
+        PostHit postHit=PostHit.builder()
+                .post(post)
+                .member(member)
+                .createdDate(LocalDateTime.now())
+                .build();
+
+        if(byMemberAndPost.isEmpty()){
+                postHitRepository.save(postHit);
+        }else {
+            System.out.println("여기아님");
+            List<Optional<PostHit>> CreatePostHit=postHitRepository.findTopByMemberAndPostOrderByCreateDateDesc(member,post);
+            LocalDateTime nowTime=LocalDateTime.now();
+            long minutes= ChronoUnit.MINUTES.between(CreatePostHit.get(0).orElseThrow().getCreatedDate(),nowTime);
+            if(minutes>720){
+                postHitRepository.save(postHit);
+            }
+        }
+    }
+
+
+    @Transactional
+    public void modifyPost(PostWriteDto postWriteDto) {
+        Post post = postRepository.findById(postWriteDto.getId()).orElseThrow();
+        Symptom symptom=symptomRepository.findById(postWriteDto.getSymptom()).orElseThrow();
+        post.update(postWriteDto,symptom);
+        picturePostRepository.deleteByPost(post);
+        for (int i = 0; i < postWriteDto.getPostImgList().size(); i++) {
+            if (i == 0) {
+                PicturePost picturePost = PicturePost.builder()
+                        .pictureUrl(postWriteDto.getPostImgList().get(i))
+                        .orders(1)
+                        .post(post)
+                        .build();
+                picturePostRepository.save(picturePost);
+            } else {
+                PicturePost picturePost = PicturePost.builder()
+                        .pictureUrl(postWriteDto.getPostImgList().get(i))
+                        .orders(2)
+                        .post(post)
+                        .build();
+                picturePostRepository.save(picturePost);
+            }
+        }
+        materialPostRepository.deleteAllByPost(post);
+        for (int i = 0; i < postWriteDto.getMaterialList().size(); i++) {
+            MaterialPost materialPost = MaterialPost.builder()
+                    .post(post)
+                    .material(materialRepository.findById(postWriteDto.getMaterialList().get(i)).orElseThrow(RuntimeException::new))
+                    .build();
+            materialPostRepository.save(materialPost);
+        }
+
+
+
+    }
+
+
 
 
     public void deleteComment(long num){
@@ -248,12 +323,31 @@ public class PostService {
         Post post = postRepository.findById(id).orElseThrow();
         return PostResponseDetails.builder()
                 .id(post.getId())
+                .memberId(post.getMember().getId())
                 .company(post.getMember().getCompany())
                 .title(post.getTitle())
                 .likeCount(postLikeRepository.countByPostId(post.getId()))
                 .content(post.getContent())
                 .picturePost(picturePostRepository.findAllByPostId(id).stream().map(PicturePost::getPictureUrl).toList())
                 .material(PostResponseDetails.extractMaterialNames(post.getMaterialList()))
+                .build();
+    }
+
+    public PostModResponseDto getAllViewMod(long id) {
+        Post post = postRepository.findById(id).orElseThrow();
+
+        List<Material> materialId= materialPostRepository.findAllByPost(post).stream().map(MaterialPost::getMaterial).toList();
+        List<Long> materialLong=materialId.stream().map(Material::getId).toList();
+
+        return PostModResponseDto.builder()
+                .id(post.getId())
+                .memberId(post.getMember().getId())
+                .title(post.getTitle())
+                .content(post.getContent())
+                .symptom(post.getSymptom().getId())
+                .picturePostMain(picturePostRepository.findByPostIdAndOrders(id,1).getPictureUrl())
+                .picturePostSer(picturePostRepository.findAllByPostIdAndOrders(id,2).stream().map(PicturePost::getPictureUrl).toList())
+                .materialId(materialLong)
                 .build();
     }
 
@@ -271,7 +365,7 @@ public class PostService {
                     String representativeImg = null;
                     if(post.getPostImgList() != null && !post.getPostImgList().isEmpty()){
                         representativeImg = post.getPostImgList().stream()
-                                .filter(img -> img.getOrders() == 0)
+                                .filter(img -> img.getOrders() == 1)
                                 .findFirst()
                                 .map(PicturePost::getPictureUrl)
                                 .orElse(null);

@@ -1,23 +1,18 @@
 package chathealth.chathealth.dto.request;
 
 
-import chathealth.chathealth.entity.member.Ent;
-import chathealth.chathealth.entity.post.*;
 import jakarta.validation.constraints.NotBlank;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
-@ToString
-public class PostWriteDto {
-    private Long id;
-    //private Ent member;
+public class PostModWrite {
     @NotBlank(message = "title입력")
     private String title;
     @NotBlank(message = "content입력")

@@ -48,7 +48,6 @@
             $('body').on('click', '.send-message-link', function (event) {
                 event.preventDefault();
                 receiverId = $(this).data('member-id');
-                console.log(receiverId);
                 // 수신자 ID와 이름을 모달의 입력 필드에 설정
                 $('#recipient-name').val($(this).data('member-name'));
                 // 모달 표시
@@ -102,7 +101,6 @@
         }
 
         function sendWarnMessage(message) {
-            console.log(message);
             toastr.warning(message);
         }
 

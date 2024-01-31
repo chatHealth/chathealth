@@ -1,6 +1,7 @@
 package chathealth.chathealth.controller.view;
 
 
+import chathealth.chathealth.dto.request.PostHitCountDto;
 import chathealth.chathealth.dto.response.member.CustomUserDetails;
 import chathealth.chathealth.dto.response.PostResponseDetails;
 import chathealth.chathealth.service.PostService;
@@ -21,13 +22,19 @@ public class ViewController {
 
     private final PostService postService;
     @GetMapping("/{id}")
-    public String viewPage(@PathVariable long id, Model model,@AuthenticationPrincipal CustomUserDetails userid){
+    public String viewPage(@PathVariable long id, Model model, @AuthenticationPrincipal CustomUserDetails userid){
         //post정보
         PostResponseDetails post=postService.getAllView(id);
         if(userid==null){
             model.addAttribute("userCheck",0);
         }else {
+            PostHitCountDto postHitCountDto=PostHitCountDto.builder()
+                    .post(id)
+                    .member(userid.getLoggedMember().getId())
+                    .build();
+            postService.countPostHit(postHitCountDto);
             model.addAttribute("userCheck",1);
+            model.addAttribute("userId",userid.getLoggedMember().getId());
         }
         model.addAttribute("postUserLike",postService.postLikeCheck(id,userid));
         model.addAttribute("postList",post);

@@ -256,8 +256,8 @@
 
                         <!-- 검색 조건(제목, 회사) -->
                         <div>
-                            <label for="title">상품명</label><input type="text" id="title" name="title" placeholder="상품명">
-                            <label for="company">회사</label><input type="text" id="company" name="company"
+                            <label for="title"></label><input type="text" id="title" name="title" placeholder="상품명">
+                            <label for="company"></label><input type="text" id="company" name="company"
                                                                   placeholder="상호명">
                             <!--                        <button id="searchBtn">검색</button>-->
                         </div>
@@ -471,7 +471,7 @@
                         html += '<div class="col-lg-3 col-sm-6 mb-4">';
                         html += '    <div class="card h-100 shadow-sm bg-light"> <!-- Original background color -->';
                         html += '        <a href="'+ "view/" + item.id + '" style="text-decoration: none; color: inherit;">';
-                        html += '            <img src="' + item.representativeImg + '" class="card-img-top rounded" alt="Image of ' + item.title + '" onError="this.onerror=null; this.src=\'/img/basic_post.svg\'">';
+                        html += '            <img src="/profile/' + item.representativeImg + '" class="card-img-top rounded" alt="Image of ' + item.title + '" onError="this.onerror=null; this.src=\'/img/basic_post.svg\'" style="height: 193px; object-fit: cover;">';
                         html += '            <h5 class="card-title font-weight-bold text-center" style="margin-top: 10px;">' + item.title + '</h5>';
                         html += '        </a>';
                         html += '        <div class="card-body">';

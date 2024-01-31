@@ -138,7 +138,7 @@ public class FileApiController {
 
     @PostMapping("/uploadServe")
     public List<String> uploadServeImage(@RequestParam("serveImg") final List<MultipartFile> serveImg) {
-        log.info("serveImg========={}",serveImg);
+
         List<String> imgArr=new ArrayList<>();
 
         for(int i=0;i<serveImg.size();i++) {
