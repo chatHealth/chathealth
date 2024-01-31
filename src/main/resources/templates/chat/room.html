@@ -21,7 +21,7 @@
 
         <div class="card">
             <div class="card-header">
-                <img th:src="${room.image} != null ? @{|/chat/${room.image}|} : @{/img/logo}" alt="image"
+                <img th:src="${room.image} != null ? @{|/chat/${room.image}|} : @{/img/logo.png}" alt="image"
                      class="img-fluid rounded-circle mr-3" style="width: 30px; height: 30px;"/>
                 <span th:text="${room.name}">채팅방 이름</span><span class="badge bg-secondary"
                                                                 th:text="${room.userCount} + ' members'"></span>

@@ -73,7 +73,6 @@ public class PostService {
         if (byMemberAndPost.isEmpty()) {
             postHitRepository.save(postHit);
         } else {
-            System.out.println("여기아님");
             List<Optional<PostHit>> CreatePostHit = postHitRepository.findTopByMemberAndPostOrderByCreateDateDesc(member, post);
             LocalDateTime nowTime = LocalDateTime.now();
             long minutes = ChronoUnit.MINUTES.between(CreatePostHit.get(0).orElseThrow().getCreatedDate(), nowTime);
@@ -403,15 +402,6 @@ public class PostService {
                         .build())
                 .toList();
     }
-
-    private String getRepresentativeImg(Post post) {
-        List<PicturePost> pictures = picturePostRepository.findAllByPostIdOrderByOrders(post.getId());
-        if (pictures.isEmpty()) {
-            return null;
-        }
-        return pictures.get(0).getPictureUrl();
-    }
-
 
     public List<SymptomDto> getSymptomList() {
         List<Symptom> symptoms = symptomRepository.findAll();

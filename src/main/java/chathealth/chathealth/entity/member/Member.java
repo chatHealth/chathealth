@@ -7,8 +7,6 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -53,17 +51,8 @@ public abstract class Member extends BaseEntity {
     @OneToMany(mappedBy = "receiver")
     private final List<Message> receiverMessages = new ArrayList<>();
 
-    @OneToMany(mappedBy = "follower")
-    private final List<Subscription> followers = new ArrayList<>();
-
-    @OneToMany(mappedBy = "following")
-    private final List<Subscription> followings = new ArrayList<>();
-
     @OneToMany(mappedBy = "member")
     private final List<Review> reviews = new ArrayList<>();
-
-    @OneToMany(mappedBy = "member")
-    private final List<Question> questions = new ArrayList<>();
 
     protected void update(Address address) {if(address != null) this.address = address;}
     public void updateProfile(String profile) {if(profile != null) this.profile = profile;}
