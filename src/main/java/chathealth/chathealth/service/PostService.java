@@ -60,7 +60,6 @@ public class PostService {
 
     @Transactional
     public void countPostHit(PostHitCountDto postHitCountDto){
-
         Member member = memberRepository.findById(postHitCountDto.getMember()).orElseThrow();
         Post post = postRepository.findById(postHitCountDto.getPost()).orElseThrow();
         List<PostHit> byMemberAndPost = postHitRepository.findByMemberAndPost(member, post);
@@ -77,9 +76,12 @@ public class PostService {
             System.out.println("여기아님");
             List<Optional<PostHit>> CreatePostHit=postHitRepository.findTopByMemberAndPostOrderByCreateDateDesc(member,post);
             LocalDateTime nowTime=LocalDateTime.now();
-            long minutes= ChronoUnit.MINUTES.between(CreatePostHit.get(0).orElseThrow().getCreatedDate(),nowTime);
+            PostHit recentHit = CreatePostHit.get(0).orElseThrow();
+            long minutes= ChronoUnit.MINUTES.between(recentHit.getCreatedDate(),nowTime);
             if(minutes>720){
                 postHitRepository.save(postHit);
+            }else {
+                recentHit.update();
             }
         }
     }
@@ -321,6 +323,9 @@ public class PostService {
 
     public PostResponseDetails getAllView(long id) {
         Post post = postRepository.findById(id).orElseThrow();
+        double score=reViewRepository.findAverageScoreByPostIdAndDeletedDateIsNull(id);
+        double num = (Math.round(score * 10));
+        double nnumm=num/10;
         return PostResponseDetails.builder()
                 .id(post.getId())
                 .memberId(post.getMember().getId())
@@ -328,8 +333,11 @@ public class PostService {
                 .title(post.getTitle())
                 .likeCount(postLikeRepository.countByPostId(post.getId()))
                 .content(post.getContent())
+                .score(nnumm)
+                .reviewCount(reViewRepository.countByPostIdAndDeletedDateIsNull(id))
                 .picturePost(picturePostRepository.findAllByPostId(id).stream().map(PicturePost::getPictureUrl).toList())
                 .material(PostResponseDetails.extractMaterialNames(post.getMaterialList()))
+                .materialInfo(PostResponseDetails.extractMaterialNames(post.getMaterialList()))
                 .build();
     }
 
@@ -349,6 +357,15 @@ public class PostService {
                 .picturePostSer(picturePostRepository.findAllByPostIdAndOrders(id,2).stream().map(PicturePost::getPictureUrl).toList())
                 .materialId(materialLong)
                 .build();
+    }
+
+    public List<MaterialDto> getMaterialByPost(long id){
+        Post post=postRepository.findById(id).orElseThrow();
+        List<MaterialPost> materialPosts=materialPostRepository.findAllByPost(post);
+        return materialPosts.stream().map(materialPost -> MaterialDto.builder()
+                .materialName(materialPost.getMaterial().getMaterialName())
+                .functions(materialPost.getMaterial().getFunctions())
+                .build()).collect(Collectors.toList());
     }
 
     // 포스트 목록 조회
