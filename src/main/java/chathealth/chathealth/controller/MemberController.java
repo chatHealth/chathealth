@@ -103,16 +103,21 @@ public class MemberController {
     @ResponseBody
     @PostMapping("/emails/verification-request")  //이메일 인증
     public String sendMail(String email) throws MessagingException{
-        return mailService.sendVerificationEmail(email);
+        return mailService.sendVerification(email);
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_WAITING_ENT','ROLE_PERMITTED_ENT','ROLE_REJECTED_ENT','ROLE_USER')")
+    @PreAuthorize("hasAnyRole('ROLE_WAITING_ENT','ROLE_PERMITTED_ENT','ROLE_USER')")
     @PatchMapping("/update-pw/{id}")
     @ResponseBody
-    public Map<String,String> updateUserPw(@PathVariable Long id, String pw){  //비밀번호 변경
+    public Map<String,String> updateUserPw(@PathVariable Long id, String pw, String email){  //비밀번호 변경
         authService.updatePw(id,pw);
         Map<String, String> resultMap = new HashMap<>();
         resultMap.put("isUpdated","isUpdated");
+        try {
+            mailService.sendNoticePwChanged(email);
+        } catch (MessagingException e) {
+            throw new RuntimeException(e);
+        }
         return resultMap;
     }
 
@@ -173,7 +178,7 @@ public class MemberController {
     public void changeEntRoles(@PathVariable Long id, String email, Role role) {
         memberService.changeEntRoles(id, role);
         try {
-            mailService.sendNoticeRoleEmail(email);
+            mailService.sendNoticeRole(email);
         } catch (MessagingException e) {
             throw new RuntimeException(e);
         }

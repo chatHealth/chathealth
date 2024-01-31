@@ -6,6 +6,8 @@ import chathealth.chathealth.dto.request.member.UserJoinDto;
 import chathealth.chathealth.dto.response.member.CustomUserDetails;
 import chathealth.chathealth.entity.member.Address;
 import chathealth.chathealth.service.AuthService;
+import chathealth.chathealth.service.MailService;
+import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -26,6 +28,7 @@ import static chathealth.chathealth.constants.Role.ROLE_USER;
 public class AuthController {
 
     private final AuthService authService;
+    private final MailService mailService;
 
     //로그인
     @GetMapping("/login")
@@ -101,10 +104,15 @@ public class AuthController {
     @Transactional
     @ResponseBody
     @DeleteMapping("/withdraw/{id}")
-    public Map<String,Integer> memberWithdraw(@PathVariable Long id){
+    public Map<String,Integer> memberWithdraw(@PathVariable Long id,String email){
         Integer result = authService.memberWithdraw(id);
         Map<String,Integer> resultmap = new HashMap<>();
         resultmap.put("isDone",result);
+        try {
+            mailService.sendWithdraw(email);
+        } catch (MessagingException e) {
+            throw new RuntimeException(e);
+        }
         return resultmap;
     }
 

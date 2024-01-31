@@ -193,7 +193,7 @@
           $.ajax({
             url: `/auth/withdraw/${id}`,
             method: "DELETE",
-            data: {id:id},
+            data: {id:id,email:email},
             success:function(){
               alert("강제탈퇴 완료되었습니다.")
             },
