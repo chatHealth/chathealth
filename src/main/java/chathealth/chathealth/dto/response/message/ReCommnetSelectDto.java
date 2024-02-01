@@ -2,6 +2,8 @@ package chathealth.chathealth.dto.response.message;
 
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 
 @Getter
 @Setter
@@ -17,6 +19,6 @@ public class ReCommnetSelectDto {
 
     private String content;
 
-    private String createDate;
+    private LocalDateTime createDate;
     private boolean checkUser;
 }

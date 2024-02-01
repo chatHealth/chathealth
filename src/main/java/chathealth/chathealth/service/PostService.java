@@ -24,7 +24,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
@@ -169,7 +168,7 @@ public class PostService {
                             .name(user.getName())
                             .content(ReComment.getContent())
                             .checkUser(checkUserRe(user.getId(), userid))
-                            .createDate(ReComment.getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")))
+                            .createDate(ReComment.getCreatedDate())
                             .build();
                 })
                 .collect(Collectors.toList());
