@@ -52,6 +52,17 @@ public class PostService {
     private final EntityManager em;
 
 
+
+    public List<MaterialSeletDto> getMaterialBySym(long id){
+        List<Material> materials=materialRepository.findAllBySymptomId(id);
+        return materials.stream().map(material -> MaterialSeletDto.builder()
+                .id(material.getId())
+                .materialName(material.getMaterialName())
+                .build()).collect(Collectors.toList());
+    }
+
+
+
     public void deletePost(long id) {
         postRepository.deleteById(id);
     }
@@ -62,7 +73,7 @@ public class PostService {
         Member member = memberRepository.findById(postHitCountDto.getMember()).orElseThrow();
         Post post = postRepository.findById(postHitCountDto.getPost()).orElseThrow();
         List<PostHit> byMemberAndPost = postHitRepository.findByMemberAndPost(member, post);
-
+      
         PostHit postHit = PostHit.builder()
                 .post(post)
                 .member(member)
@@ -74,8 +85,8 @@ public class PostService {
         } else {
             List<Optional<PostHit>> CreatePostHit = postHitRepository.findTopByMemberAndPostOrderByCreateDateDesc(member, post);
             LocalDateTime nowTime = LocalDateTime.now();
-            PostHit recentHit = CreatePostHit.get(0).orElseThrow();
-            long minutes = ChronoUnit.MINUTES.between(CreatePostHit.get(0).orElseThrow().getCreatedDate(), nowTime);
+            PostHit recentHit =CreatePostHit.get(0).orElseThrow();
+            long minutes = ChronoUnit.MINUTES.between(recentHit.getCreatedDate(), nowTime);
             if (minutes > 720) {
                 postHitRepository.save(postHit);
             }else {
@@ -319,9 +330,12 @@ public class PostService {
 
     public PostResponseDetails getAllView(long id) {
         Post post = postRepository.findById(id).orElseThrow();
-        double score=reViewRepository.findAverageScoreByPostIdAndDeletedDateIsNull(id);
-        double num = (Math.round(score * 10));
-        double nnumm=num/10;
+        double nnumm=0.0;
+        if(reViewRepository.countByPostIdAndDeletedDateIsNull(id)>0) {
+            double score = reViewRepository.findAverageScoreByPostIdAndDeletedDateIsNull(id);
+            double num = (Math.round(score * 10));
+            nnumm = num / 10;
+        }
         return PostResponseDetails.builder()
                 .id(post.getId())
                 .memberId(post.getMember().getId())

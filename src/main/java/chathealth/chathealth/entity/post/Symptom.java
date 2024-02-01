@@ -27,4 +27,10 @@ public class Symptom{
 
     @OneToMany(mappedBy = "symptom")
     private List<Post> postList;
+
+
+    @OneToMany(mappedBy = "symptom")
+    private List<Material> materialList;
+
+
 }
