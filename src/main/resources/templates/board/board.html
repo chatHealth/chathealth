@@ -36,7 +36,7 @@
                         <span th:text="${board.title}">제목</span>
                     </div>
                     <div>
-                        <span th:text="|작성일: ${board.createdDate}|">작성일</span>
+                        <span>작성:</span><span th:text="${board.createdDate}" class="format-date">작성일</span>
                     </div>
                 </div>
                 <div class="col-auto" style="display: flex; align-items: center; justify-content: space-between;">
@@ -66,7 +66,7 @@
 
                     </div>
                     <div>
-                        <span th:if="${board.modifiedDate != null}" th:text="|수정일: ${board.modifiedDate}|">수정일</span>
+                        <span>수정:</span><span th:if="${board.modifiedDate != null}" th:text="${board.modifiedDate}" class="format-date">수정일</span>
                     </div>
                 </div>
             </div>
@@ -285,7 +285,7 @@
                             html += "<span class='badge bg-dark bg-opacity-50 rounded-pill'>작성자</span>";
                         }
                         html += "</strong>";
-                        html += "<small class='text-muted'>" + item.createdDate + "</small>";
+                        html += "<small class='text-muted format-date'>" + item.createdDate + "</small>";
                         html += "</div>";
                         html += "<div class='card-body'>";
                         html += "<p class='card-text'>" + item.content + "</p>";
@@ -302,6 +302,8 @@
                     let html2 = "";
                     html2 += "<span>" + "댓글:" + response.totalElements + "</span>";
                     document.getElementById("total-comments").innerHTML = html2;
+                    setTimeZoneAndFormat();
+
                 },
                 error: function (error) {
                     toastr.error(error.message);

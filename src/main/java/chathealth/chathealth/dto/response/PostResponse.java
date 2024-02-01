@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.time.LocalDateTime;
+
 @Getter
 @ToString
 @Setter
@@ -17,8 +19,7 @@ public class PostResponse {
 
     private String company;
 
-    // yyyy-MM-dd 변환
-    private String createdAt;
+    private LocalDateTime createdAt;
 
     private Long count;
 
@@ -27,7 +28,7 @@ public class PostResponse {
     private Integer reviewCount;
 
     @Builder
-    public PostResponse(Long id, String title, String representativeImg, String company, String createdAt, Long count, Integer hitCount, Integer likeCount, Integer reviewCount) {
+    public PostResponse(Long id, String title, String representativeImg, String company, LocalDateTime createdAt, Long count, Integer hitCount, Integer likeCount, Integer reviewCount) {
         this.id = id;
         this.title = title;
         this.representativeImg = representativeImg;

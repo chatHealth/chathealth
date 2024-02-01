@@ -74,6 +74,7 @@ public class PostService {
         } else {
             List<Optional<PostHit>> CreatePostHit = postHitRepository.findTopByMemberAndPostOrderByCreateDateDesc(member, post);
             LocalDateTime nowTime = LocalDateTime.now();
+            PostHit recentHit = CreatePostHit.get(0).orElseThrow();
             long minutes = ChronoUnit.MINUTES.between(CreatePostHit.get(0).orElseThrow().getCreatedDate(), nowTime);
             if (minutes > 720) {
                 postHitRepository.save(postHit);
@@ -289,7 +290,7 @@ public class PostService {
                             .helpfulCheck(reviewLikeCheck(Review.getId(), login))
                             .same(userCheck.sameclass(user.getId(), login))
                             .pictureReView(Review.getPictureReList().stream().map(PictureReView::getPictureUrl).toList())
-                            .createdDate(Review.getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+                            .createdDate(Review.getCreatedDate())
                             .build();
                 }).collect(Collectors.toList());
 
@@ -389,7 +390,7 @@ public class PostService {
                             .company(post.getMember().getCompany())
                             .representativeImg(representativeImg)
                             .count(count)
-                            .createdAt(post.getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+                            .createdAt(post.getCreatedDate())
                             .hitCount(post.getPostHitCount())
                             .likeCount(post.getPostLikeCount())
                             .reviewCount(post.getReviewCount())

@@ -332,6 +332,8 @@
         $(document).ready(function () {
             // 초기 데이터 로드
             loadData(null, null, null, null, null, null, null);
+            setTimeZoneAndFormat();
+
 
             // 일간 최다 조회
             $.ajax({
@@ -483,7 +485,7 @@
                         html += '        </div>';
                         html += '        <div class="card-footer bg-white">';
                         html += '           <span><i class="fas fa-pen"></i> ' + item.reviewCount + '</span>';
-                        html += '            <span class="card-text text-muted small text-right">' + item.createdAt + '</span>';
+                        html += '            <span class="card-text text-muted small text-right format-date">' + item.createdAt + '</span>';
                         html += '        </div>';
                         html += '    </div>';
                         html += '</div>';
@@ -513,6 +515,8 @@
                 },
                 complete: function () {
                     $('#loadingOverlay').hide(); // complete에서는 숨기기
+                    setTimeZoneAndFormat();
+
                 }
             });
         }
@@ -536,6 +540,7 @@
 
             // 페이지 데이터 로드
             loadData(title, company, symptomType, orderCondition, page, null, materialList);
+            setTimeZoneAndFormat();
         });
 
         $('#searchCondition').on('change', function () {
@@ -575,6 +580,8 @@
             });
             // 초기 데이터 로드
             loadData(title, company, symptomType, orderCondition, null, null, materialList);
+            setTimeZoneAndFormat();
+
         }
 
         function createPagination(currentPage, totalPages) {
