@@ -8,8 +8,6 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 import static jakarta.persistence.FetchType.LAZY;
 import static jakarta.persistence.GenerationType.SEQUENCE;
@@ -39,8 +37,5 @@ public class BoardComment extends BaseEntity {
 
 
     private LocalDateTime deletedDate;
-
-    @OneToMany(mappedBy = "boardComment")
-    private List<Likes> likeList = new ArrayList<>();
 
 }
