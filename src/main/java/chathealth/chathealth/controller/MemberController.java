@@ -5,6 +5,7 @@ import chathealth.chathealth.dto.request.member.EntEditDto;
 import chathealth.chathealth.dto.request.member.UserEditDto;
 import chathealth.chathealth.dto.response.member.*;
 import chathealth.chathealth.entity.member.Address;
+import chathealth.chathealth.exception.NotPermitted;
 import chathealth.chathealth.service.AuthService;
 import chathealth.chathealth.service.MailService;
 import chathealth.chathealth.service.MemberService;
@@ -13,6 +14,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
@@ -35,11 +37,14 @@ public class MemberController {
 
     @PreAuthorize("hasRole('ROLE_USER')") //USER 롤 가지고 있는 사람만 메서드 실행 가능
     @GetMapping("/user/{id}")  //개인 마이페이지로 이동
-    public String goUserInfo(@PathVariable Long id, Model model) {
+    public String goUserInfo(@PathVariable Long id, @AuthenticationPrincipal CustomUserDetails user , Model model) {
+        if(!user.getLoggedMember().getId().equals(id)) {
+            throw new NotPermitted("권한이 없습니다");
+        }
+
         UserInfoDto userInfoDto = memberService.getUserInfo(id);
         model.addAttribute("userInfo", userInfoDto);
         return "member/user-info";
-
     }
 
     @PreAuthorize("hasAnyRole('ROLE_WAITING_ENT','ROLE_PERMITTED_ENT','ROLE_REJECTED_ENT')")
@@ -103,16 +108,21 @@ public class MemberController {
     @ResponseBody
     @PostMapping("/emails/verification-request")  //이메일 인증
     public String sendMail(String email) throws MessagingException{
-        return mailService.sendVerificationEmail(email);
+        return mailService.sendVerification(email);
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_WAITING_ENT','ROLE_PERMITTED_ENT','ROLE_REJECTED_ENT','ROLE_USER')")
+    @PreAuthorize("hasAnyRole('ROLE_WAITING_ENT','ROLE_PERMITTED_ENT','ROLE_USER')")
     @PatchMapping("/update-pw/{id}")
     @ResponseBody
-    public Map<String,String> updateUserPw(@PathVariable Long id, String pw){  //비밀번호 변경
+    public Map<String,String> updateUserPw(@PathVariable Long id, String pw, String email){  //비밀번호 변경
         authService.updatePw(id,pw);
         Map<String, String> resultMap = new HashMap<>();
         resultMap.put("isUpdated","isUpdated");
+        try {
+            mailService.sendNoticePwChanged(email);
+        } catch (MessagingException e) {
+            throw new RuntimeException(e);
+        }
         return resultMap;
     }
 
@@ -153,25 +163,27 @@ public class MemberController {
         return "auth/admin";
     }
 
-    //@PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @ResponseBody
     @GetMapping("/admin/getEntList")
     public List<EntInfoDto> getEntList() {
         return memberService.getEntList();
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @ResponseBody
     @GetMapping("/admin/getUserList")
     public List<UserInfoDto> getUserList() {
         return memberService.getUserList();
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @ResponseBody
     @PatchMapping("/admin/changeEntRoles/{id}")
     public void changeEntRoles(@PathVariable Long id, String email, Role role) {
         memberService.changeEntRoles(id, role);
         try {
-            mailService.sendNoticeRoleEmail(email);
+            mailService.sendNoticeRole(email);
         } catch (MessagingException e) {
             throw new RuntimeException(e);
         }
