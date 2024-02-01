@@ -29,7 +29,7 @@ public class Material{
     @OneToMany(mappedBy = "material")
     private List<MaterialPost> materialList;
 
-    public void typechange(long id){
-        this.id= id;
-    }
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "symptom_id")
+    private Symptom symptom;
 }
