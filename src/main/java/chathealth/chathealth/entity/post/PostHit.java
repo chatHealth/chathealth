@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import java.lang.management.MemoryManagerMXBean;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -29,5 +30,7 @@ public class PostHit extends BaseEntity {
     @JoinColumn(name = "member_id")
     private Member member;
 
-
+    public void update(){
+        super.modifiedDate= LocalDateTime.now();
+    }
 }

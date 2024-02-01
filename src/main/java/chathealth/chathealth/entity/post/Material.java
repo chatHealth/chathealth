@@ -28,4 +28,8 @@ public class Material{
     // N:M conenct
     @OneToMany(mappedBy = "material")
     private List<MaterialPost> materialList;
+
+    public void typechange(long id){
+        this.id= id;
+    }
 }

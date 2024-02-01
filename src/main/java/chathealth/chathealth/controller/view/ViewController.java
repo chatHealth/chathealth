@@ -36,6 +36,7 @@ public class ViewController {
             model.addAttribute("userCheck",1);
             model.addAttribute("userId",userid.getLoggedMember().getId());
         }
+        model.addAttribute("material",postService.getMaterialByPost(id));
         model.addAttribute("postUserLike",postService.postLikeCheck(id,userid));
         model.addAttribute("postList",post);
         return "view/view";

@@ -47,12 +47,19 @@
                 </div>
                 <div>
                     <ul class="list-group list-group-flush">
-                        <li class="list-group-item" th:text="${postList.company}"></li>
-                        <li class="list-group-item" th:text="${postList.material}"></li>
-                        <li class="list-group-item"></li>
-                        <li class="list-group-item">A fourth item</li>
-                        <li class="list-group-item">And a fifth one</li>
+                        <li class="list-group-item"><span><i class="fas fa-star" style="color: #FFD43B;"></i></span><span th:text="${postList.score}">2.1</span></li>
+                        <li class="list-group-item" th:text="@{| 리뷰  (${postList.reviewCount})|}"></li>
+                        <li class="list-group-item" th:text="@{|사업자 : ${postList.company}|}"></li>
                     </ul>
+                </div>
+                <div class="materialBox">
+                    <h6>주요성분</h6>
+                    <th:block th:each="item : ${material}">
+                        <button type="button" class="btn btn-secondary" data-bs-container="body"
+                                data-bs-toggle="popover" data-bs-placement="bottom"
+                                th:data-bs-content="${item.functions}" th:text="${item.materialName}">
+                        </button>
+                    </th:block>
                 </div>
                 <div class="prr">
                     <div class="prrLike">
@@ -63,7 +70,7 @@
                 </div>
             </div>
         </div>
-
+        <hr>
         <div class="mainpagebox">
             <div th:utext="${postList.content}" class="contentBox"></div>
 
@@ -72,8 +79,8 @@
 
         <!--리뷰-->
         <div>
-            <div class="reviewHeader">
-                <h2>상품리뷰</h2>
+            <div class="reviewHeader" style="">
+                <h2 style="text-align: center">상품리뷰</h2>
             </div>
 
 
@@ -82,20 +89,21 @@
             </div>
 
             <div class="reWrite">
-                <div class="imginsert">
+                <div class="insertHeader">
                     <div>
                         <input type="file" class="postimg" id="reImg"
                                placeholder="대표이미지" name=""
                                accept="image/gif, image/jpeg, image/png" multiple="multiple">
-                        <label class="input-file-button" for="reImg">
+                        <label class="input-file-button" for="reImg"
+                               style="border: none; margin-left: 15px;margin-bottom: 3px">
                             이미지 등록<br>
                             <p class="reImgCount">0</p>
                         </label>
                     </div>
-                    <div class="col-3 mt-3">
+                    <div class="col-3 mt-3" style="float: right">
                         <select id="star" name=""
                                 data-placeholder="별점"
-                                class=""
+                                class="starselect"
                                 aria-label="Small select example" data-style="btn-primary">
                             <option th:value="5.0"><span>★★★★★</span></option>
                             <option th:value="4.0"><span>★★★★☆</span></option>
@@ -105,9 +113,9 @@
                         </select>
                     </div>
                 </div>
-                <div class="reContent">
+                <div class="reContentbox">
                     <textarea class="reContent"></textarea>
-                    <button type="submit" onclick=insertRe()>등록</button>
+                    <button class="reviewbtn" type="submit" onclick=insertRe()>리뷰등록</button>
                 </div>
             </div>
         </div>
@@ -141,6 +149,9 @@
             addClassName()
             toggleRecomment()
 
+
+            const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
+            const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
             function addClassName() {
                 let imgbox = $(".carousel-inner > div:first-child");
                 imgbox.remove("carousel-item").addClass("carousel-item active");
@@ -152,7 +163,6 @@
                     $("#postlikeimg").attr("src", "/img/빨간하트png.png");
                 }
             }
-
 
 
             function addClassName() {
@@ -437,7 +447,7 @@
 
             // 리뷰등록
             function insertRe() {
-                let reContentValue = document.querySelector(".reContent textarea").value.trim();
+                let reContentValue = document.querySelector(".reContentbox textarea").value.trim();
                 if (userCheck == 0) {
                     alert("로그인 후 사용가능합니다")
                 } else {

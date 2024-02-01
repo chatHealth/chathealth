@@ -1,5 +1,6 @@
 package chathealth.chathealth.repository.post;
 
+import chathealth.chathealth.entity.post.MaterialPost;
 import chathealth.chathealth.entity.post.Post;
 import org.springframework.data.jpa.repository.JpaRepository;
 

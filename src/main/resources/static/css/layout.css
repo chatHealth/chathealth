@@ -26,6 +26,9 @@
 
 
 /*뷰페이지*/
+.infoBox{
+    margin-left: 15px;
+}
 .productBox{
     display: flex;
 }
@@ -68,7 +71,7 @@
 .postlikecount{
     position: absolute;
     margin-top: 20%;
-    margin-left: 35%;
+    margin-left: 40%;
 
 }
 
@@ -110,6 +113,31 @@
 
 .recomInfo, .recomCon {
     margin-bottom: 10px;
+}
+.insertHeader{
+    display: flex;
+    justify-content: space-between;
+}
+.reWrite{
+    border-style: solid;
+    /*border-width: ;*/
+    border-radius: 3px;
+    border-color: lightgreen;
+}
+
+.reContent{
+    width: 90%;
+    height: 80px;
+}
+.starselect{
+    float: right;
+}
+.materialBox{
+    padding: 10px;
+    margin: 10px;
+    border-style: solid;
+    border-width: thin;
+    border-color: rgb(87, 243, 9);
 }
 
 
