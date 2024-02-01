@@ -60,13 +60,14 @@
                 </li>
 
                 <!-- 페이지 번호 -->
-                <li th:each="page : ${#numbers.sequence(chatRooms.pageable.pageNumber/10 * 10 ,
-                ((chatRooms.totalPages - 1) < (chatRooms.pageable.pageNumber/10 * 10 + 9 ) ?
-                chatRooms.totalPages -1 : chatRooms.pageable.pageNumber/10 * 10 + 9 ) )}"
-                    th:class="${page  == chatRooms.pageable.pageNumber} ? 'page-item active' : 'page-item'">
+                <th:block th:if="${chatRooms.totalPages > 0}">
+                    <li th:each="page : ${#numbers.sequence(chatRooms.pageable.pageNumber/10 * 10 ,
+                        ((chatRooms.totalPages - 1) < (chatRooms.pageable.pageNumber/10 * 10 + 9 ) ?
+                        chatRooms.totalPages -1 : chatRooms.pageable.pageNumber/10 * 10 + 9 ) )}"
+                        th:class="${page  == chatRooms.pageable.pageNumber} ? 'page-item active' : 'page-item'">
                     <a class="page-link" th:href="@{|/chat?condition=${condition}&page=${page}|}" th:text="${page + 1}"></a>
-                </li>
-
+                    </li>
+                </th:block>
                 <!-- 다음 페이지 버튼 -->
                 <li class="page-item" th:class="${chatRooms.pageable.pageNumber/10 * 10 + 9 >= chatRooms.totalPages} ? 'disabled' : ''">
                     <a class="page-link"
