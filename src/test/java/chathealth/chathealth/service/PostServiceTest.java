@@ -1,4 +1,3 @@
-/*
 package chathealth.chathealth.service;
 
 import chathealth.chathealth.controller.PostRestController;
@@ -266,4 +265,4 @@ class PostServiceTest {
         List<PostResponse> bestPostsPerDay = postHitService.getBestPostsPerDay();
         assertThat(bestPostsPerDay.size()).isEqualTo(5);
     }
-}*/
+}
