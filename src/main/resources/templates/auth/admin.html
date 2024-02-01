@@ -17,7 +17,6 @@
       <ul class="list-group list-group-flush">
         <li class="list-group-item list-group-item-action"><button class="btn" id="userManageBtn">개인유저 관리</button></li>
         <li class="list-group-item list-group-item-action"><button class="btn" id="entManageBtn">사업자 유저 관리</button></li>
-        <li class="list-group-item list-group-item-action"><button class="btn" id="changepwBtn">관리자 또 뭐 있을까</button></li>
       </ul>
     </div>
     <!--  컨텐츠 -->
@@ -114,13 +113,33 @@
                                 <th style='color:#198754;'>이메일</th>
                                 <th style='color:#198754;'>업체명</th>
                                 <th style='color:#198754;'>대표자명</th>
-                                <th styhe='color:#198754;'>사업자 번호</th>
+                                <th style='color:#198754;'>사업자 번호</th>
                                 <th style='color:#198754;'>상태</th>
                               </tr>
                             </thead>
                             <tbody>
                             `
+              const roleArray = [
+                { name: "승인", role: "ROLE_PERMITTED_ENT" },
+                { name: "거절", role: "ROLE_REJECTED_ENT" },
+                { name: "대기", role: "ROLE_WAITING_ENT" },
+                { name: "탈퇴", role: "ROLE_WITHDRAW_MEMBER" },
+              ];
+              let optionValue="";
+              roleArray.forEach(function(item,idx) {
+                optionValue+=`<option value=${item.role}>${item.name}</option>`;
+              })
+
               $.each(response,function (index,item){
+                let optionValue;
+
+                const filteredOptionList = roleArray.filter(function (filterItem) {
+                  return filterItem.role !== item.role;
+                });
+                $.each(filteredOptionList, function (index, item) {
+                  optionValue += `<option value=${item.role}>${item.role}</option>`;
+                });
+
                 container += `<tr>
                 <th style="color:#198754;"> ${i}</th>
                 <td class="email" data-id="${item.id}" data-email="${item.email}">${item.email}</td>
@@ -128,9 +147,8 @@
                 <td>${item.ceo}</td>
                 <td>${item.entNo}</td>
                 <td><select class='form-select ' id='changeEntRoleSelect' name="selectBox"">
-                        <option value="ROLE_PERMITTED_ENT">승인</option>
-                        <option value="ROLE_REJECTED_ENT">거절</option>
-                        <option value="ROLE_WAITING_ENT">대기</option>
+                        <option value=${item.role}>${item.role}</option>
+                      ${optionValue}
                     </select></td>
                 </tr>`
                 i++
@@ -155,19 +173,34 @@
         const email= $(this).parent().parent().find(".email").data("email");
 
         let changeRole = $(this).val();
-        $.ajax({
-          url:`/member/admin/changeEntRoles/${id}`,
-          method: "PATCH",
-          data: {id:id, role:changeRole,email:email},
-          success: function(){
+        if(changeRole !== "ROLE_WITHDRAW_MEMBER"){
+          $.ajax({
+            url:`/member/admin/changeEntRoles/${id}`,
+            method: "PATCH",
+            data: {id:id, role:changeRole,email:email},
+            success: function(){
 
-          },
-          error: function(){
-            alert(JSON.stringify(error));
-          },
-          complete: function () {
-          }
-        })
+            },
+            error: function(){
+              alert(JSON.stringify(error));
+            },
+            complete: function () {
+            }
+          })
+        } else if (changeRole === "ROLE_WITHDRAW_MEMBER"){
+          confirm("한번 강제탈퇴 시키면 동일 메일주소로 다시 가입할수 없게 됩니다. 정말 강제탈퇴를 진행하시겠습니까?")
+          $.ajax({
+            url: `/auth/withdraw/${id}`,
+            method: "DELETE",
+            data: {id:id,email:email},
+            success:function(){
+              alert("강제탈퇴 완료되었습니다.")
+            },
+            error: function (){
+              alert(JSON.stringify(error));
+            }
+          })
+        }
       }
     });
     $("body").on("change",function(){

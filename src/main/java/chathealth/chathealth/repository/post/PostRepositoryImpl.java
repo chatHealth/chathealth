@@ -69,7 +69,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
                 .where(post.deletedDate.isNull(),
                         postHit.createdDate.between(LocalDateTime.now().minusDays(1), LocalDateTime.now()))
                 .leftJoin(postHit).on(postHit.post.eq(post))
-                .orderBy(postHit.createdDate.max().desc())
+                .orderBy(postHit.count().desc())
                 .groupBy(post)
                 .limit(5)
                 .fetch();
@@ -81,7 +81,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
                 .where(post.deletedDate.isNull(),
                         postHit.createdDate.between(LocalDateTime.now().minusWeeks(1), LocalDateTime.now()))
                 .leftJoin(postHit).on(postHit.post.eq(post))
-                .orderBy(postHit.createdDate.max().desc())
+                .orderBy(postHit.count().desc())
                 .groupBy(post)
                 .limit(5)
                 .fetch();

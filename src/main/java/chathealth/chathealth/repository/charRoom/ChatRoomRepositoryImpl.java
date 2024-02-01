@@ -39,7 +39,7 @@ public class ChatRoomRepositoryImpl implements ChatRoomRepositoryCustom{
                 .limit(pageable.getPageSize())
                 .fetch();
 
-        Long count = queryFactory.select(chatRoom.count())
+        Long count = queryFactory.select(chatRoom.countDistinct())
                 .from(chatRoom)
                 .leftJoin(chatRoom.chatRoomMembers, chatRoomMember)
                 .where(whereClause)

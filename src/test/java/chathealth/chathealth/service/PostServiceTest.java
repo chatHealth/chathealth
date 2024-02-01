@@ -128,13 +128,13 @@ class PostServiceTest {
             PicturePost picture4 = picturePostRepository.save(PicturePost.builder()
                     .pictureUrl("이미지3")
                     .post(savedPost1)
-                    .orders(0)
+                    .orders(1)
                     .build());
 
             PicturePost picture3 = picturePostRepository.save(PicturePost.builder()
                     .pictureUrl("이미지 유알엘2")
                     .post(savedPost1)
-                    .orders(1)
+                    .orders(2)
                     .build());
             List<PicturePost> pictures1 = new ArrayList<>();
             pictures1.add(picture3);

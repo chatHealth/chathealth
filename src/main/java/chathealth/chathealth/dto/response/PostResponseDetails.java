@@ -28,6 +28,7 @@ public class PostResponseDetails {
     private String company;
 
     private List<String> material;
+    private List<String> materialInfo;
 
     // yyyy-MM-dd 변환
     private String createdAt;
@@ -35,12 +36,17 @@ public class PostResponseDetails {
     private Integer hitCount;
     private Long likeCount;
     private Integer reviewCount;
+    private double score;
 
     public static List<String> extractMaterialNames(List<MaterialPost> materialPosts) {
         return materialPosts.stream()
                 .map(materialPost -> materialPost.getMaterial().getMaterialName())
                 .collect(Collectors.toList());
     }
-
+    public static List<String> extractMaterialInfo(List<MaterialPost> materialPosts) {
+        return materialPosts.stream()
+                .map(materialPost -> materialPost.getMaterial().getFunctions())
+                .collect(Collectors.toList());
+    }
 
 }

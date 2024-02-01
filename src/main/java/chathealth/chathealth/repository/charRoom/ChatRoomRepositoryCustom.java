@@ -11,8 +11,6 @@ import java.util.Optional;
 
 public interface ChatRoomRepositoryCustom {
 
-//    Page<ChatRoom> findAllByOrderByCreatedDateDesc(Pageable pageable);
-
     Page<ChatRoom> getChatRooms(Pageable pageable, Member member, ChatSearchCondition condition);
 
     List<Long> joinedChatRoomIds(Member member);

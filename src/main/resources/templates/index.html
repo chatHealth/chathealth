@@ -143,7 +143,7 @@
                     $.each(response, function (index, item) {
                         html += "<tr>";
                         html += '<th>' + i + '</th>';
-                        html += '<td><img src="' + item.representativeImg + '" class="card-img-top rounded" alt="Image of ' + item.title + '" onError="this.onerror=null; this.src=\'/img/basic_post.svg\'" style="height: 20px"></th>';
+                        html += '<td><img src="/profile/' + item.representativeImg + '" class="card-img-top rounded" alt="Image of ' + item.title + '" onError="this.onerror=null; this.src=\'/img/basic_post.svg\'" style="height: 20px"></th>';
                         html += '<td>' + "<a href='/view/" + item.id + "' style='text-decoration: none; color: inherit'>" + item.title + '</a></td>';
                         //조회수 이모티콘 + 조회수
                         html += '<td><i class=\"fa fa-eye text-secondary\"></i>' + item.hitCount + '</td>';
@@ -174,7 +174,8 @@
                     $.each(response, function (index, item) {
                         html += "<tr>";
                         html += '<th>' + i + '</th>'; // "
-                        html += '<td><img src="' + item.representativeImg + '" class="card-img-top rounded" alt="Image of ' + item.title + '" onError="this.onerror=null; this.src=\'/img/basic_post.svg\'" style="height: 20px"></th>';
+                        html += `<td><img src='/profile/${item.representativeImg}' class="card-img-top rounded" alt="Image of ${item.title}" onError="this.onerror=null; this.src='/img/basic_post.svg'" style="height: 20px"></td>`;
+
                         html += '<td>' + "<a href='/view/" + item.id + "' style='text-decoration: none; color: inherit'>" + item.title + '</a></td>';
                         //조회수 이모티콘 + 조회수
                         html += '<td><i class=\"fa fa-eye text-secondary\"></i>' + item.hitCount + '</td>';
