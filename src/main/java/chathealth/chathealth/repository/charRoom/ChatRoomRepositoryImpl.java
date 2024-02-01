@@ -49,16 +49,6 @@ public class ChatRoomRepositoryImpl implements ChatRoomRepositoryCustom{
     }
 
     @Override
-    public List<Long> joinedChatRoomIds(Member member){
-        return queryFactory.select(chatRoom.id)
-                .from(chatRoom)
-                .leftJoin(chatRoom.chatRoomMembers, chatRoomMember)
-                .where(chatRoomMember.member.eq(member),
-                        chatRoomMember.deletedDate.isNull())
-                .fetch();
-    }
-
-    @Override
     public Optional<ChatRoom> findByIdFetch(Long id) {
         ChatRoom chatRoom = queryFactory.selectFrom(QChatRoom.chatRoom)
                 .leftJoin(QChatRoom.chatRoom.chatRoomMembers, chatRoomMember)
