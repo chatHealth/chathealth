@@ -73,7 +73,7 @@ public class PostService {
         Member member = memberRepository.findById(postHitCountDto.getMember()).orElseThrow();
         Post post = postRepository.findById(postHitCountDto.getPost()).orElseThrow();
         List<PostHit> byMemberAndPost = postHitRepository.findByMemberAndPost(member, post);
-
+      
         PostHit postHit = PostHit.builder()
                 .post(post)
                 .member(member)
@@ -301,7 +301,7 @@ public class PostService {
                             .helpfulCheck(reviewLikeCheck(Review.getId(), login))
                             .same(userCheck.sameclass(user.getId(), login))
                             .pictureReView(Review.getPictureReList().stream().map(PictureReView::getPictureUrl).toList())
-                            .createdDate(Review.getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+                            .createdDate(Review.getCreatedDate())
                             .build();
                 }).collect(Collectors.toList());
 
@@ -404,7 +404,7 @@ public class PostService {
                             .company(post.getMember().getCompany())
                             .representativeImg(representativeImg)
                             .count(count)
-                            .createdAt(post.getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+                            .createdAt(post.getCreatedDate())
                             .hitCount(post.getPostHitCount())
                             .likeCount(post.getPostLikeCount())
                             .reviewCount(post.getReviewCount())

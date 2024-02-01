@@ -5,7 +5,6 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 @Getter
 public class BoardCommentResponse {
@@ -19,7 +18,7 @@ public class BoardCommentResponse {
     private String profile;
     private Grade grade;
 
-    private String createdDate;
+    private LocalDateTime createdDate;
 
     private boolean isWriter;
 
@@ -30,7 +29,7 @@ public class BoardCommentResponse {
         this.memberId = memberId;
         this.memberNickname = memberNickname;
         this.profile = profile;
-        this.createdDate = createdDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        this.createdDate = createdDate;
         this.grade = grade;
         this.isWriter = isWriter;
     }

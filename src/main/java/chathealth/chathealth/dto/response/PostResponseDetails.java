@@ -1,13 +1,10 @@
 package chathealth.chathealth.dto.response;
 
 
-import chathealth.chathealth.entity.post.Material;
 import chathealth.chathealth.entity.post.MaterialPost;
-import chathealth.chathealth.entity.post.PicturePost;
-import chathealth.chathealth.entity.post.SymptomType;
-import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,8 +27,7 @@ public class PostResponseDetails {
     private List<String> material;
     private List<String> materialInfo;
 
-    // yyyy-MM-dd 변환
-    private String createdAt;
+    private LocalDateTime createdAt;
 
     private Integer hitCount;
     private Long likeCount;

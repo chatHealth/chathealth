@@ -95,7 +95,7 @@
                     </td>
                     <td><a th:href="@{/board/{id}(id=${item.boardId})}" th:text="|${item.title}(${item.commentCount})|"
                            style="text-decoration: none; color: inherit">제목</a></td>
-                    <td th:text="${item.createdDate}">작성일</td>
+                    <td th:text="${item.createdDate}" class="format-date"></td>
                     <td>
                         <div class="user-name">
                         <span th:switch="${item.grade?.name()}">
