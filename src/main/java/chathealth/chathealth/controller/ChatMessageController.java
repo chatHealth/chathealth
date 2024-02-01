@@ -7,6 +7,7 @@ import chathealth.chathealth.dto.response.member.CustomUserDetails;
 import chathealth.chathealth.service.ChatService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -17,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.security.Principal;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 public class ChatMessageController {
@@ -27,6 +29,7 @@ public class ChatMessageController {
     @MessageMapping("/chat/message")
     public void message(@Valid ChatMessageDto messageDto, Principal principal) {
 
+        log.info("chatMessage : {}", messageDto);
         ChatMessageResponse response = chatService.sendChatMessage(messageDto, principal.getName());
         messagingTemplate.convertAndSend("/sub/chat/" + messageDto.getRoomId(), response);
     }
