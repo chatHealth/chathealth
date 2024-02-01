@@ -515,7 +515,7 @@
                 contentType: "application/json",
                 data: JSON.stringify(data),
                 success: function (response) {
-                    alert("쪽지를 보냈습니다.");
+                    toastr.success("쪽지를 보냈습니다.");
                     sendMessagePage(0);
                 },
                 error: function (xhr) {
@@ -527,14 +527,14 @@
                                 sendWarnMessage(errorResult.validation.title);
                             }
                             if (errorResult.validation.content !== undefined) {
-                                alert(errorResult.validation.content);
+                                toastr.error(errorResult.validation.content);
                                 sendWarnMessage(errorResult.validation.content);
                             }
                         }else{
-                            alert(errorResult.message);
+                            toastr.error(errorResult.message);
                         }
                     }else {
-                        alert(errorResult.message);
+                        toastr.error(errorResult.message);
                     }
                 }
             });
@@ -546,7 +546,7 @@
                 url: "/api/message/" + messageId,
                 type: "DELETE",
                 success: function (response) {
-                    alert("쪽지를 삭제했습니다.");
+                    toastr.success("쪽지를 삭제했습니다.");
                     sendMessagePage(0);
                 },
                 error: function (response) {
