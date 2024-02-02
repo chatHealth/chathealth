@@ -27,9 +27,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -76,7 +76,7 @@ public class PostService {
         Member member = memberRepository.findById(postHitCountDto.getMember()).orElseThrow();
         Post post = postRepository.findById(postHitCountDto.getPost()).orElseThrow();
         List<PostHit> byMemberAndPost = postHitRepository.findByMemberAndPost(member, post);
-
+      
         PostHit postHit = PostHit.builder()
                 .post(post)
                 .member(member)
@@ -155,29 +155,50 @@ public class PostService {
         Review review = reViewRepository.findById(id).orElseThrow();
         em.clear();
         List<ReComment> rec = reCommentRepository.findAllByReview(review);
+
         List<ReCommnetSelectDto> redto = rec.stream()
-                .filter(ReCommet -> (ReCommet.getMember() instanceof Users))
+                .filter(ReCommet -> (ReCommet.getMember() instanceof Users || ReCommet.getMember() instanceof Ent))
                 .filter(ReCommet -> ReCommet.getDeletedDate() == null)
                 .map(ReComment -> {
-                    Users user = (Users) ReComment.getMember();
-                    String profiles = "/profile/" + user.getProfile();
-                    if (user.getProfile().endsWith("_")) {
+                    Object member = ReComment.getMember();
+                    String profiles = null;
+                    String nickName = null;
+                    String name = null;
+                    String company = null;
+
+                    if (member instanceof Users) {
+                        Users user = (Users) member;
+                        profiles = "/profile/" + user.getProfile();
+                        nickName = user.getNickname();
+                        name = user.getName();
+                    } else if (member instanceof Ent) {
+                        Ent ent = (Ent) member;
+                        profiles = "/profile/" + ent.getProfile();
+                        nickName = null;
+                        name = null;
+                        company = ent.getCompany();
+                    }
+
+                    if (profiles != null && profiles.endsWith("_")) {
                         profiles = "/img/basic_user.png";
                     }
+
                     return ReCommnetSelectDto.builder()
                             .id(ReComment.getId())
-                            .memberId(user.getId())
+                            .memberId((member instanceof Users) ? ((Users) member).getId() : ((Ent) member).getId())
                             .profile(profiles)
-                            .nickName(user.getNickname())
-                            .name(user.getName())
+                            .nickName(nickName)
+                            .name(name)
+                            .company(company)
                             .content(ReComment.getContent())
-                            .checkUser(checkUserRe(user.getId(), userid))
-                            .createDate(ReComment.getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")))
+                            .checkUser(checkUserRe((member instanceof Users) ? ((Users) member).getId() : ((Ent) member).getId(), userid))
+                            .createDate(ReComment.getCreatedDate())
                             .build();
                 })
                 .collect(Collectors.toList());
         return redto;
     }
+
 
     public void writeComment(long num, CustomUserDetails id, CommentWriteDto commentWriteDto) {
         ReComment rec = ReComment.builder()
@@ -305,8 +326,8 @@ public class PostService {
                             .helpful(helpfulRepository.countByReviewId(review.getId()))
                             .helpfulCheck(reviewLikeCheck(review.getId(), login))
                             .same(userCheck.sameclass(user.getId(), login))
-                            .pictureReView(review.getPictureReList().stream().map(PictureReView::getPictureUrl).toList())
-                            .createdDate(review.getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+                            .pictureReView(Review.getPictureReList().stream().map(PictureReView::getPictureUrl).toList())
+                            .createdDate(Review.getCreatedDate())
                             .build();
                 }).collect(Collectors.toList());
 
@@ -409,7 +430,7 @@ public class PostService {
                             .company(post.getMember().getCompany())
                             .representativeImg(representativeImg)
                             .count(count)
-                            .createdAt(post.getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+                            .createdAt(post.getCreatedDate())
                             .hitCount(post.getPostHitCount())
                             .likeCount(post.getPostLikeCount())
                             .reviewCount(post.getReviewCount())
@@ -491,6 +512,23 @@ public class PostService {
                 picturePostRepository.save(picturePost);
             }
         }
+    }
+
+    public List<MaterialSymptomDto> getMaterialBySymptomType(){
+        List<Symptom> symptoms=symptomRepository.findAllFetch();
+
+        List<MaterialSymptomDto> materials=new ArrayList<>();
+
+        for(Symptom symptom:symptoms){
+            List<String> materialName=symptom.getMaterialList().stream().map(Material::getMaterialName).collect(Collectors.toList());
+            MaterialSymptomDto materialSymptomDto=new MaterialSymptomDto(symptom.getSymptomName(),materialName);
+            materials.add(materialSymptomDto);
+        }
+
+        return materials.stream()
+                .sorted(Comparator.comparingInt(o -> SymptomType.valueOf(String.valueOf(o.getSymptomName())).ordinal()))
+                .toList();
+
     }
 
     private PostResponse createRecentPostResponse(Post post) {

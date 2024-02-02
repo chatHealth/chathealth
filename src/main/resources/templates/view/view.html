@@ -168,17 +168,6 @@
             }
 
 
-            function addClassName() {
-                let imgbox = $(".carousel-inner > div:first-child");
-                imgbox.remove("carousel-item").addClass("carousel-item active");
-
-                let contentBox = $(".contentBox > p > img");
-                contentBox.css("object-fit", "cover");
-
-                if (postLike == 10) {
-                    $("#postlikeimg").attr("src", "/img/빨간하트png.png");
-                }
-            }
 
 
             // 리뷰목록조회
@@ -218,7 +207,7 @@
                                 <a href='#' class='send-message-link' data-member-id='${val.member}' data-member-name='${val.nickName}'>쪽지 보내기</a>
                                 <a href='/member/user/${val.member}'>유저 정보 보기</a>
                             </div>`;
-                            ht += `</div><div style="width:120px ">${val.createdDate}</div>
+                            ht += `</div><div style="width:120px " class="format-date">${val.createdDate}</div>
                                                 </div>
                                             </div>
                                             <div class="secondinfo" style="float: right">
@@ -295,7 +284,7 @@
                                     $.each(data, function (key, value) {
                                         let nickName;
                                         value.nickName === null ? nickName = value.name : nickName = value.nickName;
-
+                                        if(value.company !==null){nickName = value.company}
                                         ht += `<div style="display: flex" class="comdata" data-num="${value.id}">
                              <div style="width: 30px;height: 60px;">ㄴ</div>
                              <div style="background: lightgray;width: 100%">
@@ -311,10 +300,9 @@
                                 <a href='#' class='send-message-link' data-member-id='${value.memberId}' data-member-name='${value.nickName}'>쪽지 보내기</a>
                                 <a href='/member/user/${value.memberId}'>유저 정보 보기</a>
                             </div></div>`;
-
-                                        ht += `<div style="margin-left: auto">${value.createDate}`;
+                                        ht += `<div style="margin-left: auto"><span class="format-date">${value.createDate}</span>`;
                                         if (value.checkUser == true) {
-                                            ht += `|
+                                            ht += `
                                         <button class="commentDel" style="border: none">
                                         <span style="font-weight: bold">X</span>
                                         </button>`
@@ -343,6 +331,8 @@
                         })
                         ht+=createPagination(ht, data)
                         $(".post-view").html(ht);
+                        setTimeZoneAndFormat();
+
 
 
                     },
@@ -418,8 +408,17 @@
                                 console.log("댓글 성공")
                                 reViewList()
                             },
-                            error: function () {
-                                console.log("댓글 실패")
+                            error: function (error) {
+                                const errorResult=JSON.parse(error.responseText);
+                                if(errorResult.code==="400"){
+                                    if(errorResult.validation.content!==undefined) {
+                                        toastr.error(errorResult.validation.content)
+                                        return
+                                    }
+                                    toastr.error(errorResult.message);
+                                    return;
+                                }
+                                toastr.error(errorResult.message);
                             }
 
                         })
@@ -524,8 +523,17 @@
                                 $(".reImgCount").text(0);
                                 reViewList()
                             },
-                            error: function () {
-                                console.log("리뷰작성 실패")
+                            error: function (error) {
+                                const errorResult=JSON.parse(error.responseText);
+                                if(errorResult.code==="400"){
+                                    if(errorResult.validation.content!==undefined) {
+                                        toastr.error(errorResult.validation.content)
+                                        return
+                                    }
+                                    toastr.error(errorResult.message);
+                                    return;
+                                }
+                                toastr.error(errorResult.message);
                             }
 
                         })

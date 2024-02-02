@@ -4,6 +4,7 @@ import chathealth.chathealth.dto.response.member.CustomUserDetails;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -21,7 +22,7 @@ public class ReViewSelectDto {
     private String profile;
     private String content;
     private double score;
-    private String createdDate;
+    private LocalDateTime createdDate;
     private List<String> pictureReView;
     private Long helpful;
     private Long helpfulCheck;

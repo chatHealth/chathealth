@@ -159,11 +159,11 @@
 
         document.getElementById('sendMessageButton').addEventListener('click', function () {
             let messageContent = document.getElementById('messageInput').value.trim();
-            if (messageContent.trim() === '' || messageContent.length > 1000) {
-                toastr.error('메시지를 입력해주세요. (최대 1000자)');
-                $('#messageInput').focus();
-                return;
-            }
+            // if (messageContent.trim() === '' || messageContent.length > 1000) {
+            //     toastr.error('메시지를 입력해주세요. (최대 1000자)');
+            //     $('#messageInput').focus();
+            //     return;
+            // }
             if (messageContent && stompClient) {
                 let chatMessage = {
                     roomId: roomId,
@@ -181,7 +181,7 @@
             let messageBox = $('<div></div>').addClass('message-box');
             let messageElement = $('<span></span>').addClass('message-content');
             let nicknameElement = $('<span></span>').addClass('nickname').text(nickname);
-            let timestampElement = $('<span></span>').addClass('timestamp');
+            let timestampElement = $('<span class="format-date"></span>').addClass('timestamp');
 
             messageElement.text(message);
             nicknameElement.text(nickname);
@@ -203,6 +203,8 @@
             } else {
                 $('#chatMessages').prepend(messageBox);
             }
+            setTimeZoneAndFormat();
+
             $('#chatMessages').scrollTop($('#chatMessages')[0].scrollHeight);
         }
 

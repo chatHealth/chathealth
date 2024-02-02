@@ -187,13 +187,16 @@
                     // 쪽지 데이터를 모달에 로드하는 로직
                     let idx = 1;
                     $.each(response.content, function (index, message) {
-                        html += "<tr><td>" + message.senderNickname + "</td><td><a href='#' style='color: inherit' onclick='readReceivedMessage(" + message.id + "); isRead(" + idx + ")'>" + message.title + "</a></td><td>" + message.sendDate + "</td></tr></tr></tbody>";
+                        html += "<tr><td>" + message.senderNickname + "</td><td><a href='#' style='color: inherit' onclick='readReceivedMessage(" + message.id + "); isRead(\"" + idx + "\")'>" + message.title + "</a></td><td class='format-date'>" + message.sendDate + "</td></tr>";
+
                         idx++;
                     });
                     html += "</table>";
 
                     html += createUnreadPagination(html, response);
                     modalBody.append(html);
+                    setTimeZoneAndFormat();
+
                     // 모달 표시
                     $("#messageModal").modal('show');
                 },
@@ -264,15 +267,17 @@
                     // 쪽지 데이터를 모달에 로드하는 로직
                     $.each(response.content, function (index, message) {
                         if(message.read){
-                            html += "<tr class='is-read'><td>" + message.receiverNickname + "</td><td><a href='#' style='color: inherit' onclick='readSendMessage(" + message.id + ")'>" + message.title + "</a></td><td>" + message.sendDate + "</td></tr></tr></tbody>";
+                            html += "<tr class='is-read'><td>" + message.receiverNickname + "</td><td><a href='#' style='color: inherit' onclick='readSendMessage(" + message.id + ")'>" + message.title + "</a></td><td class='format-date'>" + message.sendDate + "</td></tr></tr></tbody>";
                         }else {
-                            html += "<tr><td>" + message.receiverNickname + "</td><td><a href='#' style='color: inherit' onclick='readSendMessage(" + message.id + ")'>" + message.title + "</a></td><td>" + message.sendDate + "</td></tr></tr></tbody>";
+                            html += "<tr><td>" + message.receiverNickname + "</td><td><a href='#' style='color: inherit' onclick='readSendMessage(" + message.id + ")'>" + message.title + "</a></td><td class='format-date'>" + message.sendDate + "</td></tr></tr></tbody>";
                         }
                     });
                     html += "</table>";
 
                     html += createSendPagination(html, response);
                     modalBody.append(html);
+                    setTimeZoneAndFormat();
+
                     // 모달 표시
                     $("#messageModal").modal('show');
                 },
@@ -342,9 +347,9 @@
                     let idx = 1;
                     $.each(response.content, function (index, message) {
                         if (message.read) {
-                            html += "<tr class='is-read'><td>" + message.senderNickname + "</td><td><a href='#' onclick='readReceivedMessage(" + message.id + ")' style='color: inherit'>" + message.title + "</a></td><td>" + message.sendDate + "</td></tr></tr></tbody>";
+                            html += "<tr class='is-read'><td>" + message.senderNickname + "</td><td><a href='#' onclick='readReceivedMessage(" + message.id + ")' style='color: inherit'>" + message.title + "</a></td><td class='format-date'>" + message.sendDate + "</td></tr></tr></tbody>";
                         } else {
-                            html += "<tr><td>" + message.senderNickname + "</td><td><a href='#' style='color: inherit' onclick='readReceivedMessage(" + message.id + "); isRead(" + idx + ")'>" + message.title + "</a></td><td>" + message.sendDate + "</td></tr></tr></tbody>";
+                            html += "<tr><td>" + message.senderNickname + "</td><td><a href='#' style='color: inherit' onclick='readReceivedMessage(" + message.id + "); isRead(" + idx + ")'>" + message.title + "</a></td><td class='format-date'>" + message.sendDate + "</td></tr></tr></tbody>";
                         }
                         idx++;
                     });
@@ -352,6 +357,8 @@
 
                     html += createReceivePagination(html, response);
                     modalBody.append(html);
+                    setTimeZoneAndFormat();
+
                     // 모달 표시
                     $("#messageModal").modal('show');
                 },
@@ -415,7 +422,7 @@
                     html += "<p>From." + response.senderNickname + "</p>"
                     html += "<div class='card'><div class='card-header'><h5 class='card-title'>" + response.title + "</h5></div>";
                     html += "<div class='card-body'><p class='card-text'>" + response.content + "</p></div>";
-                    html += "<div class='card-footer'><small class='text-mu장ted'>" + response.sendDate + "</small></div></div>";
+                    html += "<div class='card-footer'><small class='text-muted  format-date'>" + response.sendDate + "</small></div></div>";
                     //답장 버튼
                     html += "<div class='d-flex justify-content-end'><button type='button' class='btn btn-primary' "
                         + "onclick='replyMessage(" + response.senderId + ", \""
@@ -424,6 +431,8 @@
                         "답장</button></div>";
 
                     messageDetail.append(html);
+                    setTimeZoneAndFormat();
+
                     // 포커스 변경
                     $("#message-detail").focus();
                 }
@@ -453,8 +462,9 @@
                     }
                     html+= "</h5></div>";
                     html += "<div class='card-body'><p class='card-text'>" + response.content + "</p></div>";
-                    html += "<div class='card-footer'><small class='text-muted'>" + response.sendDate + "</small></div></div>";
+                    html += "<div class='card-footer'><small class='text-muted format-date'>" + response.sendDate + "</small></div></div>";
                     messageDetail.append(html);
+                    setTimeZoneAndFormat();
 
                     //포커스 변경
                     $("#message-detail").focus();
@@ -491,6 +501,7 @@
                 "onclick='replyMessageProcess(" + replyReceiverId + ")'>보내기</button></div>";
 
             messageDetail.append(html);
+            setTimeZoneAndFormat();
         }
 
         function replyMessageProcess(replyReceiverId){
@@ -504,7 +515,7 @@
                 contentType: "application/json",
                 data: JSON.stringify(data),
                 success: function (response) {
-                    alert("쪽지를 보냈습니다.");
+                    toastr.success("쪽지를 보냈습니다.");
                     sendMessagePage(0);
                 },
                 error: function (xhr) {
@@ -516,14 +527,14 @@
                                 sendWarnMessage(errorResult.validation.title);
                             }
                             if (errorResult.validation.content !== undefined) {
-                                alert(errorResult.validation.content);
+                                toastr.error(errorResult.validation.content);
                                 sendWarnMessage(errorResult.validation.content);
                             }
                         }else{
-                            alert(errorResult.message);
+                            toastr.error(errorResult.message);
                         }
                     }else {
-                        alert(errorResult.message);
+                        toastr.error(errorResult.message);
                     }
                 }
             });
@@ -535,7 +546,7 @@
                 url: "/api/message/" + messageId,
                 type: "DELETE",
                 success: function (response) {
-                    alert("쪽지를 삭제했습니다.");
+                    toastr.success("쪽지를 삭제했습니다.");
                     sendMessagePage(0);
                 },
                 error: function (response) {
@@ -568,6 +579,31 @@
         function sendErrorMessage(message) {
             toastr.error(message);
         }
+    </script>
+
+
+    <script th:inline="javascript">
+    //타임존 설정(브라우저 기준)
+    function setTimeZone(utcTime) {
+        utcTime = utcTime + "Z";
+        let date = new Date(utcTime);
+        return date.getFullYear() + '-' +
+            String(date.getMonth() + 1).padStart(2, '0') + '-' +
+            String(date.getDate()).padStart(2, '0') + ' ' +
+            String(date.getHours()).padStart(2, '0') + ':' +
+            String(date.getMinutes()).padStart(2, '0');
+    }
+
+    function setTimeZoneAndFormat() {
+        const createdDateElements = $(".format-date:not([data-is-converted='true'])");
+        createdDateElements.each(function () {
+            const createdDateText = $(this).text();
+            $(this).text(setTimeZone(createdDateText)).attr('data-is-converted', 'true');
+        });
+    }
+
+    window.onload = setTimeZoneAndFormat;
+
     </script>
 
 </div>

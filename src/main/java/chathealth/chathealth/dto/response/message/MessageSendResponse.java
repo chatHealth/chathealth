@@ -6,7 +6,6 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 @Getter
 public class MessageSendResponse {
@@ -15,7 +14,7 @@ public class MessageSendResponse {
     private long receiverId;
     private String receiverNickname;
     private String title;
-    private String sendDate;
+    private LocalDateTime sendDate;
     private boolean isRead;
 
     @Builder
@@ -24,7 +23,7 @@ public class MessageSendResponse {
         this.receiverId = receiverId;
         this.receiverNickname = receiverNickname;
         this.title = title;
-        this.sendDate = sendDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+        this.sendDate = sendDate;
         this.isRead = isRead == 1;
     }
 
