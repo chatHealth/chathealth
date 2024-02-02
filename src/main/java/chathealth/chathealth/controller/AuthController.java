@@ -102,7 +102,7 @@ public class AuthController {
 
     @Transactional
     @ResponseBody
-    @DeleteMapping("/withdraw/{id}")
+    @DeleteMapping("/withdraw/{id}")  //탈퇴
     public Map<String,Integer> memberWithdraw(@PathVariable Long id,String email){
         Integer result = authService.memberWithdraw(id);
         Map<String,Integer> resultmap = new HashMap<>();
