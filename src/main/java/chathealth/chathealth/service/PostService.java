@@ -152,29 +152,50 @@ public class PostService {
         Review review = reViewRepository.findById(id).orElseThrow();
         em.clear();
         List<ReComment> rec = reCommentRepository.findAllByReview(review);
+
         List<ReCommnetSelectDto> redto = rec.stream()
-                .filter(ReCommet -> (ReCommet.getMember() instanceof Users))
+                .filter(ReCommet -> (ReCommet.getMember() instanceof Users || ReCommet.getMember() instanceof Ent))
                 .filter(ReCommet -> ReCommet.getDeletedDate() == null)
                 .map(ReComment -> {
-                    Users user = (Users) ReComment.getMember();
-                    String profiles = "/profile/" + user.getProfile();
-                    if (user.getProfile().endsWith("_")) {
+                    Object member = ReComment.getMember();
+                    String profiles = null;
+                    String nickName = null;
+                    String name = null;
+                    String company = null;
+
+                    if (member instanceof Users) {
+                        Users user = (Users) member;
+                        profiles = "/profile/" + user.getProfile();
+                        nickName = user.getNickname();
+                        name = user.getName();
+                    } else if (member instanceof Ent) {
+                        Ent ent = (Ent) member;
+                        profiles = "/profile/" + ent.getProfile();
+                        nickName = null;
+                        name = null;
+                        company = ent.getCompany();
+                    }
+
+                    if (profiles != null && profiles.endsWith("_")) {
                         profiles = "/img/basic_user.png";
                     }
+
                     return ReCommnetSelectDto.builder()
                             .id(ReComment.getId())
-                            .memberId(user.getId())
+                            .memberId((member instanceof Users) ? ((Users) member).getId() : ((Ent) member).getId())
                             .profile(profiles)
-                            .nickName(user.getNickname())
-                            .name(user.getName())
+                            .nickName(nickName)
+                            .name(name)
+                            .company(company)
                             .content(ReComment.getContent())
-                            .checkUser(checkUserRe(user.getId(), userid))
-                            .createDate(ReComment.getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")))
+                            .checkUser(checkUserRe((member instanceof Users) ? ((Users) member).getId() : ((Ent) member).getId(), userid))
+                            .createDate(ReComment.getCreatedDate())
                             .build();
                 })
                 .collect(Collectors.toList());
         return redto;
     }
+
 
     public void writeComment(long num, CustomUserDetails id, CommentWriteDto commentWriteDto) {
         ReComment rec = ReComment.builder()

@@ -165,17 +165,6 @@
             }
 
 
-            function addClassName() {
-                let imgbox = $(".carousel-inner > div:first-child");
-                imgbox.remove("carousel-item").addClass("carousel-item active");
-
-                let contentBox = $(".contentBox > p > img");
-                contentBox.css("object-fit", "cover");
-
-                if (postLike == 10) {
-                    $("#postlikeimg").attr("src", "/img/빨간하트png.png");
-                }
-            }
 
 
             // 리뷰목록조회
@@ -281,7 +270,7 @@
                                     $.each(data, function (key, value) {
                                         let nickName;
                                         value.nickName === null ? nickName = value.name : nickName = value.nickName;
-
+                                        if(value.company !==null){nickName = value.company}
                                         ht += `<div style="display: flex" class="comdata" data-num="${value.id}">
                              <div style="width: 30px;height: 60px;">ㄴ</div>
                              <div style="background: lightgray;width: 100%">
@@ -298,9 +287,9 @@
                                 <a href='/member/user/${value.memberId}'>유저 정보 보기</a>
                             </div></div>`;
 
-                                        ht += `<div style="margin-left: auto" class="format-date">${value.createDate}`;
+                                        ht += `<div style="margin-left: auto"><span class="format-date">${value.createDate}</span>`;
                                         if (value.checkUser == true) {
-                                            ht += `|
+                                            ht += `
                                         <button class="commentDel" style="border: none">
                                         <span style="font-weight: bold">X</span>
                                         </button>`
@@ -369,8 +358,17 @@
                                 console.log("댓글 성공")
                                 reViewList()
                             },
-                            error: function () {
-                                console.log("댓글 실패")
+                            error: function (error) {
+                                const errorResult=JSON.parse(error.responseText);
+                                if(errorResult.code==="400"){
+                                    if(errorResult.validation.content!==undefined) {
+                                        toastr.error(errorResult.validation.content)
+                                        return
+                                    }
+                                    toastr.error(errorResult.message);
+                                    return;
+                                }
+                                toastr.error(errorResult.message);
                             }
 
                         })
@@ -470,13 +468,22 @@
                             data: JSON.stringify(date),
                             success: function (response) {
                                 console.log("리뷰작성 완")
-                                $(".reContent textarea").val("");
+                                $(".reContentbox textarea").val("");
                                 reImgName = [];
                                 $(".reImgCount").text(0);
                                 reViewList()
                             },
-                            error: function () {
-                                console.log("리뷰작성 실패")
+                            error: function (error) {
+                                const errorResult=JSON.parse(error.responseText);
+                                if(errorResult.code==="400"){
+                                    if(errorResult.validation.content!==undefined) {
+                                        toastr.error(errorResult.validation.content)
+                                        return
+                                    }
+                                    toastr.error(errorResult.message);
+                                    return;
+                                }
+                                toastr.error(errorResult.message);
                             }
 
                         })
