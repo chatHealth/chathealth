@@ -141,10 +141,13 @@ public class ChatService {
 
         Page<ChatRoom> chatRoomPage = chatRoomRepository.getChatRooms(pageable, member, condition);
 
-        List<Long> joinedChatRoomIds = chatRoomRepository.joinedChatRoomIds(member);
 
         List<ChatRoomResponse> list = chatRoomPage.getContent().stream().map(chatRoom -> {
-            boolean isJoined = joinedChatRoomIds.contains(chatRoom.getId());
+            boolean isJoined = chatRoom.getChatRoomMembers()
+                    .stream()
+                    .anyMatch(chatRoomMember
+                            -> chatRoomMember
+                            .getMember().equals(member));
 
             return ChatRoomResponse.builder()
                     .id(chatRoom.getId())

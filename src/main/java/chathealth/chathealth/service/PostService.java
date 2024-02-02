@@ -24,9 +24,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -507,6 +507,23 @@ public class PostService {
                 picturePostRepository.save(picturePost);
             }
         }
+    }
+
+    public List<MaterialSymptomDto> getMaterialBySymptomType(){
+        List<Symptom> symptoms=symptomRepository.findAllFetch();
+
+        List<MaterialSymptomDto> materials=new ArrayList<>();
+
+        for(Symptom symptom:symptoms){
+            List<String> materialName=symptom.getMaterialList().stream().map(Material::getMaterialName).collect(Collectors.toList());
+            MaterialSymptomDto materialSymptomDto=new MaterialSymptomDto(symptom.getSymptomName(),materialName);
+            materials.add(materialSymptomDto);
+        }
+
+        return materials.stream()
+                .sorted(Comparator.comparingInt(o -> SymptomType.valueOf(String.valueOf(o.getSymptomName())).ordinal()))
+                .toList();
+
     }
 
     private PostResponse createRecentPostResponse(Post post) {

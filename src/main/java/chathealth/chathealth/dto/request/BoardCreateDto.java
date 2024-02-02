@@ -21,6 +21,9 @@ public class BoardCreateDto {
     @NotNull(message = "카테고리를 선택해주세요.")
     private Category category;
 
+    /**
+     * This constructor is intended for testing purposes only.
+     */
     @Builder
     public BoardCreateDto(String title, String content, Category category) {
         this.title = title;

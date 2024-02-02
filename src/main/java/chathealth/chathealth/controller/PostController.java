@@ -3,6 +3,7 @@ package chathealth.chathealth.controller;
 
 import chathealth.chathealth.dto.request.PostWriteDto;
 import chathealth.chathealth.dto.response.MaterialSeletDto;
+import chathealth.chathealth.dto.response.MaterialSymptomDto;
 import chathealth.chathealth.dto.response.member.CustomUserDetails;
 import chathealth.chathealth.dto.response.MaterialDto;
 import chathealth.chathealth.dto.response.SymptomDto;
@@ -33,6 +34,10 @@ public class PostController {
     public String post(Model model, Authentication authentication) {
         boolean isAuth = authentication != null && authentication.isAuthenticated();
         model.addAttribute("isAuth", isAuth);
+
+        List<MaterialSymptomDto> materialBySymptomType = postService.getMaterialBySymptomType();
+        model.addAttribute("materials", materialBySymptomType);
+
         return "post/post";
     }
 

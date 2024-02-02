@@ -18,6 +18,6 @@ public class ChathealthApplication {
     // timezone 설정
     @PostConstruct
     void started() {
-        TimeZone.setDefault(TimeZone.getTimeZone("Etc/UTC"));
+        TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
     }
 }
