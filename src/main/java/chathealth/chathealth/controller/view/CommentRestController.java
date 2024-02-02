@@ -5,6 +5,7 @@ import chathealth.chathealth.dto.request.CommentWriteDto;
 import chathealth.chathealth.dto.response.member.CustomUserDetails;
 import chathealth.chathealth.dto.response.message.ReCommnetSelectDto;
 import chathealth.chathealth.service.PostService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -27,7 +28,7 @@ public class CommentRestController {
     }
 
     @PostMapping("/write/{num}")
-    public void writeComment(@PathVariable long num, @AuthenticationPrincipal CustomUserDetails id,@RequestBody CommentWriteDto commentWriteDto){
+    public void writeComment(@PathVariable long num, @AuthenticationPrincipal CustomUserDetails id,@Valid @RequestBody CommentWriteDto commentWriteDto){
      postService.writeComment(num,id,commentWriteDto);
     }
 

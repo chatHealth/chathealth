@@ -14,8 +14,10 @@ public class ReCommnetSelectDto {
     private Long id;
     private Long memberId;
     private String profile;
-    private String nickName;
     private String name;
+
+    private String nickName;
+    private String company;
 
     private String content;
 
