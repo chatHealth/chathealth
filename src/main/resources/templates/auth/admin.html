@@ -154,9 +154,9 @@
                 i++
               });
               container += "</tbody></table></div>"
-              $('#mp-content').html("");
-              $('#mp-content').html(container);
             }
+            $('#mp-content').html("");
+            $('#mp-content').html(container);
           },
           error: function (error) {
             alert(JSON.stringify(error));
