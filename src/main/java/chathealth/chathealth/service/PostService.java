@@ -74,7 +74,8 @@ public class PostService {
         } else {
             List<Optional<PostHit>> CreatePostHit = postHitRepository.findTopByMemberAndPostOrderByCreateDateDesc(member, post);
             LocalDateTime nowTime = LocalDateTime.now();
-            long minutes = ChronoUnit.MINUTES.between(CreatePostHit.get(0).orElseThrow().getCreatedDate(), nowTime);
+            PostHit recentHit =CreatePostHit.get(0).orElseThrow();
+            long minutes = ChronoUnit.MINUTES.between(recentHit.getCreatedDate(), nowTime);
             if (minutes > 720) {
                 postHitRepository.save(postHit);
             }else {
