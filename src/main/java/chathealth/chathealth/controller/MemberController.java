@@ -158,28 +158,28 @@ public class MemberController {
 
     //관리자페이지
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @GetMapping("/admin")
+    @GetMapping("/admin")  //관리자페이지 가기
     public String adminMain() {
         return "auth/admin";
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @ResponseBody
-    @GetMapping("/admin/getEntList")
+    @GetMapping("/admin/getEntList")  //사업자 리스트 가져오기
     public List<EntInfoDto> getEntList() {
         return memberService.getEntList();
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @ResponseBody
-    @GetMapping("/admin/getUserList")
+    @GetMapping("/admin/getUserList")  //유저 리스트 가져오기
     public List<UserInfoDto> getUserList() {
         return memberService.getUserList();
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @ResponseBody
-    @PatchMapping("/admin/changeEntRoles/{id}")
+    @PatchMapping("/admin/changeEntRoles/{id}")  //사업자 Role 바꾸기
     public void changeEntRoles(@PathVariable Long id, String email, Role role) {
         memberService.changeEntRoles(id, role);
         try {
