@@ -8,6 +8,8 @@ import chathealth.chathealth.dto.response.ReViewSelectDto;
 import chathealth.chathealth.service.PostService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,8 +24,8 @@ public class ViewRestController {
 
 
     @GetMapping("/{postId}")
-    public List<ReViewSelectDto> selectRe(@PathVariable long postId,@AuthenticationPrincipal CustomUserDetails login){
-        List<ReViewSelectDto> select=postService.getReview(postId,login);
+    public Page<ReViewSelectDto> selectRe(@PathVariable long postId, @AuthenticationPrincipal CustomUserDetails login, Pageable pageable){
+        Page<ReViewSelectDto> select=postService.getReview(postId,login,pageable);
         return select;
     }
 
