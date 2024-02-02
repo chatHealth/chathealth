@@ -298,9 +298,9 @@
                                 <a href='/member/user/${value.memberId}'>유저 정보 보기</a>
                             </div></div>`;
 
-                                        ht += `<div style="margin-left: auto" class="format-date">${value.createDate}`;
+                                        ht += `<div style="margin-left: auto" ><span class="format-date">${value.createDate}</span>`;
                                         if (value.checkUser == true) {
-                                            ht += `|
+                                            ht += `
                                         <button class="commentDel" style="border: none">
                                         <span style="font-weight: bold">X</span>
                                         </button>`

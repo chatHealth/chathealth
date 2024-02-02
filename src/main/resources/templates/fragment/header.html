@@ -595,14 +595,15 @@
     }
 
     function setTimeZoneAndFormat() {
-        const createdDateElements = $(".format-date");
-        createdDateElements.each(function (index, element){
-            const createdDateText = element.textContent;
-            element.textContent = setTimeZone(createdDateText);
+        const createdDateElements = $(".format-date:not([data-is-converted='true'])");
+        createdDateElements.each(function () {
+            const createdDateText = $(this).text();
+            $(this).text(setTimeZone(createdDateText)).attr('data-is-converted', 'true');
         });
     }
 
     window.onload = setTimeZoneAndFormat;
+
     </script>
 
 </div>

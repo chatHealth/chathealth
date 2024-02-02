@@ -91,7 +91,9 @@ public class BoardService {
             boardSearchDto.setPage((int) totalPage - 1);
         }
 
-        return boardRepository.getBoards(boardSearchDto).stream().map(board -> BoardResponse.builder()
+        return boardRepository.getBoards(boardSearchDto).stream().map(board ->
+
+                        BoardResponse.builder()
                         .boardId(board.getId())
                         .title(board.getTitle())
                         .createdDate(board.getCreatedDate())
@@ -136,6 +138,8 @@ public class BoardService {
                 boardHitRepository.save(new BoardHit(board, findMember));
             }
         }
+
+        System.out.println("board.getCreatedDate() = " + board.getCreatedDate());
 
         Users user = board.getUser();
         return BoardResponse.builder()

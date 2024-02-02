@@ -11,6 +11,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.BeanPropertyBindingResult;
+import org.springframework.validation.Errors;
+import org.springframework.validation.Validator;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,9 +28,20 @@ public class ChatMessageController {
 
     private final ChatService chatService;
     private final SimpMessageSendingOperations messagingTemplate;
+    private final Validator validator;
 
     @MessageMapping("/chat/message")
-    public void message(@Valid ChatMessageDto messageDto, Principal principal) {
+    public void message(ChatMessageDto messageDto, Principal principal) {
+        System.out.println("messageDto = " + messageDto);
+        Errors errors = new BeanPropertyBindingResult(messageDto, "messageDto");
+        System.out.println("errors = " + errors);
+        validator.validate(messageDto, errors);
+        System.out.println("validator = " + validator);
+
+        if (errors.hasErrors()) {
+            log.error("validation error : {}", errors);
+            return;
+        }
 
         log.info("chatMessage : {}", messageDto);
         ChatMessageResponse response = chatService.sendChatMessage(messageDto, principal.getName());
