@@ -55,10 +55,8 @@ public class AuthService implements UserDetailsService {
         String rename;
         if(userJoinDto.getProfile().isEmpty()) {
             rename = null;
-            log.info("getProfile===null");
         }else {
             rename = domain + File.separator + imageUpload.uploadImage(userJoinDto.getProfile(), domain);
-            log.info("getProfile==={}",userJoinDto.getProfile());
         }
         Member dbJoinUser = Users.builder()
                 .id(userJoinDto.getId())
@@ -78,7 +76,12 @@ public class AuthService implements UserDetailsService {
 
     @Transactional
     public void entJoin(@Valid EntJoinDto entJoinDto) {  // 사업자 회원가입
-        String rename = domain+File.separator+imageUpload.uploadImage(entJoinDto.getProfile(),domain);
+        String rename;
+        if(entJoinDto.getProfile().isEmpty()) {
+            rename = null;
+        }else {
+            rename = domain + File.separator + imageUpload.uploadImage(entJoinDto.getProfile(), domain);
+        }
 
         Member dbJoinEnt = Ent.builder()
                 .id(entJoinDto.getId())
