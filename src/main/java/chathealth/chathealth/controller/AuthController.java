@@ -72,12 +72,11 @@ public class AuthController {
                 .address(userJoinDto.getFrontAddress())
                 .addressDetail(userJoinDto.getAddressDetail())
                 .build();
-
         //service에 던질 DTO 빌드
         userJoinDto.setAddress(addressEntity);
         authService.userJoin(userJoinDto);
 
-        return "redirect:/auth/user-join";
+        return "redirect:/auth/login";
     }
 
     @GetMapping("/entjoin") //사업자회원가입창 진입

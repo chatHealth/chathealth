@@ -52,8 +52,14 @@ public class AuthService implements UserDetailsService {
 
     @Transactional
     public void userJoin(@Valid UserJoinDto userJoinDto) { //개인 회원가입
-        String rename = domain+File.separator+imageUpload.uploadImage(userJoinDto.getProfile(),domain);
-
+        String rename;
+        if(userJoinDto.getProfile().isEmpty()) {
+            rename = null;
+            log.info("getProfile===null");
+        }else {
+            rename = domain + File.separator + imageUpload.uploadImage(userJoinDto.getProfile(), domain);
+            log.info("getProfile==={}",userJoinDto.getProfile());
+        }
         Member dbJoinUser = Users.builder()
                 .id(userJoinDto.getId())
                 .pw(bCryptPasswordEncoder.encode(userJoinDto.getPw()))
