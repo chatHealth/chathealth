@@ -1,6 +1,7 @@
 package chathealth.chathealth.controller;
 
 import chathealth.chathealth.dto.request.ChatMessageDto;
+import chathealth.chathealth.dto.request.ChatMessageType;
 import chathealth.chathealth.dto.request.CreateChatRoom;
 import chathealth.chathealth.dto.response.ChatMessageResponse;
 import chathealth.chathealth.dto.response.member.CustomUserDetails;
@@ -32,11 +33,15 @@ public class ChatMessageController {
 
     @MessageMapping("/chat/message")
     public void message(ChatMessageDto messageDto, Principal principal) {
-        System.out.println("messageDto = " + messageDto);
+
+        if(messageDto.getType() == ChatMessageType.ENTER) {
+            messageDto.setContent(ChatMessageType.ENTER.getMessage());
+        } else if(messageDto.getType() == ChatMessageType.QUIT) {
+            messageDto.setContent(ChatMessageType.QUIT.getMessage());
+        }
+
         Errors errors = new BeanPropertyBindingResult(messageDto, "messageDto");
-        System.out.println("errors = " + errors);
         validator.validate(messageDto, errors);
-        System.out.println("validator = " + validator);
 
         if (errors.hasErrors()) {
             log.error("validation error : {}", errors);

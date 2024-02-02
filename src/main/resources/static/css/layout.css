@@ -509,3 +509,29 @@ footer {
     height: 200px; /* 원하는 높이로 설정 */
     object-fit: cover; /* 이미지를 비율을 유지하면서 크롭 */
 }
+
+.enter-message{
+    color: #7863d7;
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.quit-message{
+    color: #d03c3c;
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.timestamp-enter{
+    color: #be8181;
+    text-align: center;
+    font-size: 12px;
+}
+
+.timestamp-quit{
+    color: #be8181;
+    text-align: center;
+    font-size: 12px;
+}
