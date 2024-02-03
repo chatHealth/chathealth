@@ -123,9 +123,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
         if(company == null || company.isEmpty()){
             return null;
         }
-        System.out.println("ent.company = " + post.member.company);
         return post.member.company.contains(company);
-//        return ent.company.contains(company);
     }
 
     private static OrderSpecifier<?> getOrderSpecifier(PostSearch postSearch) {

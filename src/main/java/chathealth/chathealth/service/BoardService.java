@@ -139,7 +139,6 @@ public class BoardService {
             }
         }
 
-        System.out.println("board.getCreatedDate() = " + board.getCreatedDate());
 
         Users user = board.getUser();
         return BoardResponse.builder()

@@ -5,6 +5,7 @@ import chathealth.chathealth.entity.chatRoom.ChatRoom;
 import chathealth.chathealth.entity.chatRoom.QChatRoom;
 import chathealth.chathealth.entity.member.Member;
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -27,7 +28,13 @@ public class ChatRoomRepositoryImpl implements ChatRoomRepositoryCustom{
         BooleanBuilder whereClause = new BooleanBuilder(chatRoomMember.deletedDate.isNull());
 
         if (condition == ChatSearchCondition.JOINED) {
-            whereClause.and(chatRoomMember.member.eq(member));
+            whereClause.and(chatRoom.in(
+                    JPAExpressions.select(chatRoomMember.chatRoom)
+                            .from(chatRoomMember)
+                            .where(chatRoomMember.member.eq(member)
+                                    .and(chatRoomMember.deletedDate.isNull())))
+            );
+
         }
 
         List<ChatRoom> chatRooms = queryFactory.selectFrom(chatRoom)

@@ -100,7 +100,6 @@ public class MessageService {
         Message message = messageRepository.findFetchById(messageId).orElseThrow(MessageNotFound::new);
 
         if (message.getIsRead() == 0) {
-            System.out.println("읽지 않은 쪽지 읽음 처리");
             message.readMessage();
         }
 
