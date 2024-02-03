@@ -21,6 +21,9 @@ import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -297,38 +300,40 @@ public class PostService {
     }
 
 
-    public List<ReViewSelectDto> getReview(long id, CustomUserDetails login) {
+    public Page<ReViewSelectDto> getReview(long id, CustomUserDetails login, Pageable pageable) {
         Post post = postRepository.findById(id).orElseThrow(BoardNotFoundException::new);
         ReViewSelectDto userCheck = new ReViewSelectDto();
-        List<Review> re = reViewRepository.findAllByPost(post);
-        List<ReViewSelectDto> dto = re.stream()
+
+        Page<Review> reviewPage = reViewRepository.findAllByPost(post, pageable);
+
+        List<ReViewSelectDto> dtoList = reviewPage.getContent().stream()
                 .filter(review -> (review.getMember() instanceof Users))
                 .filter(review -> review.getDeletedDate() == null)
-                .map(Review -> {
-                    Users user = (Users) Review.getMember();
+                .map(review -> {
+                    Users user = (Users) review.getMember();
                     String profiles = "/profile/" + user.getProfile();
                     if (user.getProfile().endsWith("_")) {
                         profiles = "/img/basic_user.png";
                     }
                     return ReViewSelectDto.builder()
-                            .id(Review.getId())
+                            .id(review.getId())
                             .member(user.getId())
-                            .content(Review.getContent())
-                            .score(Review.getScore())
+                            .content(review.getContent())
+                            .score(review.getScore())
                             .nickName(user.getNickname())
                             .profile(profiles)
                             .name(user.getName())
-                            .helpful(helpfulRepository.countByReviewId(Review.getId()))
-                            .helpfulCheck(reviewLikeCheck(Review.getId(), login))
+                            .helpful(helpfulRepository.countByReviewId(review.getId()))
+                            .helpfulCheck(reviewLikeCheck(review.getId(), login))
                             .same(userCheck.sameclass(user.getId(), login))
                             .pictureReView(Review.getPictureReList().stream().map(PictureReView::getPictureUrl).toList())
                             .createdDate(Review.getCreatedDate())
                             .build();
                 }).collect(Collectors.toList());
 
-
-        return dto;
+        return new PageImpl<>(dtoList, pageable, reviewPage.getTotalElements());
     }
+
 
     public Review insertRe(ReviewDto reviewDto) {
         Review re = Review.builder()

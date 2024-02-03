@@ -47,7 +47,9 @@
                 </div>
                 <div>
                     <ul class="list-group list-group-flush">
-                        <li class="list-group-item"><span><i class="fas fa-star" style="color: #FFD43B;"></i></span><span th:text="${postList.score}">2.1</span></li>
+                        <li class="list-group-item"><span><i class="fas fa-star"
+                                                             style="color: #FFD43B;"></i></span><span
+                                th:text="${postList.score}">2.1</span></li>
                         <li class="list-group-item" th:text="@{| 리뷰  (${postList.reviewCount})|}"></li>
                         <li class="list-group-item" th:text="@{|사업자 : ${postList.company}|}"></li>
                     </ul>
@@ -152,6 +154,7 @@
 
             const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
             const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
+
             function addClassName() {
                 let imgbox = $(".carousel-inner > div:first-child");
                 imgbox.remove("carousel-item").addClass("carousel-item active");
@@ -168,13 +171,24 @@
 
 
             // 리뷰목록조회
-            function reViewList() {
+            function reViewList(num) {
+                if (num === null || num === undefined) {
+                    $.ajax({
+                        url: `/review/${postId}?size=8`,
+                        type: "GET",
+                        success: function (response) {
+                            num = response.totalPages - 1;
+                            reViewList(num);
+                        }
+                    });
+                }
+
                 $.ajax({
-                    url: `/review/${postId}`,
+                    url: `/review/${postId}?size=8&page=${num}`,
                     success: function (data) {
                         let ht = "";
-
-                        $.each(data, function (key, val) {
+                        console.log(data)
+                        $.each(data.content, function (key, val) {
                             let nickName;
                             val.nickName === null ? nickName = val.name : nickName = val.nickName;
 
@@ -315,7 +329,7 @@
                          </div>`;
 
                         })
-
+                        ht+=createPagination(ht, data)
                         $(".post-view").html(ht);
                         setTimeZoneAndFormat();
 
@@ -327,6 +341,43 @@
                     }
                 })
             }
+            //페이지 네이션
+            function createPagination(html, response) {
+                html = "<div class='d-flex justify-content-center'>";
+                html += "<ul class='pagination'>";
+
+                const currentPage = response.pageable.pageNumber; //현재있는 번호
+                const totalPages = response.totalPages;  //총 번호가 몇개있는지
+                const pageGroupSize = 5; // 한 번에 보여줄 페이지 수
+                const currentPageGroup = Math.floor(currentPage / pageGroupSize); // 현재 페이지 그룹
+
+                // "Previous" 버튼
+                if (currentPageGroup > 0) {
+                    html += "<li class='page-item'>";
+                    html += "<a class='page-link' href='#' onclick='reViewList(" + ((currentPageGroup - 1) * pageGroupSize) + ")'>Previous</a>";
+                    html += "</li>";
+                }
+
+                // 페이지 번호
+                for (let i = currentPageGroup * pageGroupSize; i < Math.min((currentPageGroup + 1) * pageGroupSize, totalPages); i++) {
+                    html += "<li class='page-item" + (currentPage === i ? " active" : "") + "'>";
+                    html += "<a class='page-link' href='#' onclick='reViewList(" + i + ")'>" + (i + 1) + "</a>";
+                    html += "</li>";
+                }
+
+                // "Next" 버튼
+                if (currentPageGroup < Math.ceil(totalPages / pageGroupSize) - 1) {
+                    html += "<li class='page-item'>";
+                    html += "<a class='page-link' href='#' onclick='reViewList(" + ((currentPageGroup + 1) * pageGroupSize) + ")'>Next</a>";
+                    html += "</li>";
+                }
+
+                html += "</ul>";
+                html += "</div>";
+                return html;
+            }
+
+
 
 
             //댓글 토글버튼
@@ -465,7 +516,7 @@
                             url: "/review/write",
                             contentType: 'application/json',
                             data: JSON.stringify(date),
-                            success: function (response) {
+                            success: function () {
                                 console.log("리뷰작성 완")
                                 $(".reContentbox textarea").val("");
                                 reImgName = [];
@@ -492,7 +543,7 @@
 
             // 리뷰 수정
             $("body").on("click", ".modifyBtn", function () {
-                console.log("수정클릭완")
+
                 let par = (this).closest(".reviewPar");
                 let content = par.dataset.content;
                 let picture = par.dataset.picture;
