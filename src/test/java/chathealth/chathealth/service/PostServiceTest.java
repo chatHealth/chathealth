@@ -154,9 +154,6 @@ class PostServiceTest {
 
         //when
         List<PostResponse> posts = postService.getPosts(postSearch);
-        for (PostResponse postResponse : posts) {
-            System.out.println("postResponsezzz = " + postResponse);
-        }
 
         //then
         assertThat(posts.size()).isEqualTo(20);
@@ -273,7 +270,6 @@ class PostServiceTest {
         //when
         List<MaterialSymptomDto> materialBySymptomType = postService.getMaterialBySymptomType();
         //then
-        System.out.println("materialBySymptomType = " + materialBySymptomType);
         assertThat(materialBySymptomType.size()).isEqualTo(10);
     }
 }

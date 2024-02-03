@@ -2,7 +2,6 @@ package chathealth.chathealth.service;
 
 import chathealth.chathealth.constants.ChatSearchCondition;
 import chathealth.chathealth.dto.request.ChatMessageDto;
-import chathealth.chathealth.dto.request.ChatMessageType;
 import chathealth.chathealth.dto.request.CreateChatRoom;
 import chathealth.chathealth.dto.response.ChatMessageResponse;
 import chathealth.chathealth.dto.response.ChatRoomInner;
@@ -27,9 +26,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.security.Principal;
 import java.util.List;
-
-import static chathealth.chathealth.constants.Constants.ENTER_MESSAGE;
-import static chathealth.chathealth.constants.Constants.QUIT_MESSAGE;
 
 @Service
 @RequiredArgsConstructor
@@ -82,6 +78,7 @@ public class ChatService {
                             .nickname(chatMessage.getSender().getChatNickname())
                             .timestamp(chatMessage.getTimestamp())
                             .isMine(isMine)
+                            .type(chatMessage.getType())
                             .build();})
                 .toList();
 
@@ -93,12 +90,6 @@ public class ChatService {
         ChatRoom chatRoom = chatRoomRepository.findById(messageDto.getRoomId()).orElseThrow(RoomNotFound::new);
         Member member = memberRepository.findByEmail(senderEmail).orElseThrow(UserNotFound::new);
         ChatRoomMember chatRoomMember = chatRoomMemberRepository.findByChatRoomAndMemberAndDeletedDateIsNull(chatRoom, member).orElseThrow(UserNotFound::new);
-
-        if (messageDto.getType().equals(ChatMessageType.ENTER)) {
-            messageDto.setContent(messageDto.getNickname() + ENTER_MESSAGE.getMessage());
-        } else if (messageDto.getType().equals(ChatMessageType.QUIT)) {
-            messageDto.setContent(chatRoomMember.getChatNickname() + QUIT_MESSAGE.getMessage());
-        }
 
         ChatMessage message = ChatMessage.builder()
                 .chatRoom(chatRoom)
@@ -115,6 +106,7 @@ public class ChatService {
                 .nickname(message.getSender().getChatNickname())
                 .timestamp(message.getTimestamp())
                 .senderId(messageDto.getSenderId())
+                .type(messageDto.getType())
                 .build();
 
     }

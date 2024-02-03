@@ -95,8 +95,6 @@ public class MessageRepositoryImpl implements MessageRepositoryCustom {
                     return MessageReceiveResponse.get(message, sender);
                 }).toList();
 
-        System.out.println("list.size() = " + list.size());
-
         return new PageImpl<>(list, pageable, count == null ? 0 : count);
     }
 }
