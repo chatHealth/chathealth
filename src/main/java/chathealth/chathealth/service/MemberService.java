@@ -122,7 +122,7 @@ public class MemberService {
     }
 
     public List<MyReviewDto> getMyReview(Long id){
-        return reviewRepository.findByMemberId(id).stream()
+        return reviewRepository.findByMemberIdAndDeletedDateIsNull(id).stream()
                 .map(myReview -> MyReviewDto.builder()
                         .memberId(myReview.getMember().getId())
                         .postId(myReview.getPost().getId())

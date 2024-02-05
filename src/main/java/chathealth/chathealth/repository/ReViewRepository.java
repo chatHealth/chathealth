@@ -16,7 +16,7 @@ public interface ReViewRepository extends JpaRepository<Review,Long> {
     Page<Review> findAllByPost(Post post, Pageable pageable);
 
     List<Review> findAllById(long id);
-    List<Review> findByMemberId(Long id);
+    List<Review> findByMemberIdAndDeletedDateIsNull(Long id);
     Integer countByPostIdAndDeletedDateIsNull(long id);
 
     @Query("SELECT AVG(s.score) FROM Review s WHERE s.post.id = :postId AND s.deletedDate IS NULL")
