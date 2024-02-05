@@ -15,7 +15,7 @@
 
 
 > ## 💻 기술 스택
-> ![Tech Stack](https://github.com/chatHealth/chathealth/assets/140994218/3dd24754-181c-419b-a26c-6841128fa614)
+> <img width="1952" alt="tech Stack v2" src="https://github.com/chatHealth/chathealth/assets/140994218/190e49ee-a0f9-4e61-ac54-fd4b4626424b">
 <br>
 
 > ### 🛠️ 협업 툴
