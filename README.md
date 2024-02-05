@@ -18,6 +18,10 @@
 > ![Tech Stack](https://github.com/chatHealth/chathealth/assets/140994218/3dd24754-181c-419b-a26c-6841128fa614)
 <br>
 
+> ### 🛠️ 협업 툴
+> <img width="890" alt="cooperative tools (1)" src="https://github.com/chatHealth/chathealth/assets/140994218/96ffbe1b-84a9-4960-8579-50eda35fb536">
+
+
 
 > ### 🌵 Git Branch 관리
 <pre><code>master
@@ -25,7 +29,4 @@
 │___│___│___feature-main</code></pre>
 
 <br>
-
-> ### 🛠️ 협업 툴
-> <img width="890" alt="cooperative tools (1)" src="https://github.com/chatHealth/chathealth/assets/140994218/96ffbe1b-84a9-4960-8579-50eda35fb536">
 
