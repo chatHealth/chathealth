@@ -2,7 +2,6 @@ package chathealth.chathealth.service;
 
 import chathealth.chathealth.constants.ChatSearchCondition;
 import chathealth.chathealth.dto.request.ChatMessageDto;
-import chathealth.chathealth.dto.request.ChatMessageType;
 import chathealth.chathealth.dto.request.CreateChatRoom;
 import chathealth.chathealth.dto.response.ChatMessageResponse;
 import chathealth.chathealth.dto.response.ChatRoomInner;
@@ -14,10 +13,10 @@ import chathealth.chathealth.entity.chatRoom.ChatRoom;
 import chathealth.chathealth.entity.member.Member;
 import chathealth.chathealth.exception.RoomNotFound;
 import chathealth.chathealth.exception.UserNotFound;
+import chathealth.chathealth.repository.MemberRepository;
 import chathealth.chathealth.repository.charRoom.ChatMessageRepository;
 import chathealth.chathealth.repository.charRoom.ChatRoomMemberRepository;
 import chathealth.chathealth.repository.charRoom.ChatRoomRepository;
-import chathealth.chathealth.repository.MemberRepository;
 import chathealth.chathealth.util.ImageUpload;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
@@ -26,11 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.security.Principal;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
-
-import static chathealth.chathealth.constants.Constants.ENTER_MESSAGE;
-import static chathealth.chathealth.constants.Constants.QUIT_MESSAGE;
 
 @Service
 @RequiredArgsConstructor
@@ -81,8 +76,9 @@ public class ChatService {
                             .message(chatMessage.getMessage())
                             .senderId(chatMessage.getSender().getId())
                             .nickname(chatMessage.getSender().getChatNickname())
-                            .timestamp(chatMessage.getTimestamp().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")))
+                            .timestamp(chatMessage.getTimestamp())
                             .isMine(isMine)
+                            .type(chatMessage.getType())
                             .build();})
                 .toList();
 
@@ -94,12 +90,6 @@ public class ChatService {
         ChatRoom chatRoom = chatRoomRepository.findById(messageDto.getRoomId()).orElseThrow(RoomNotFound::new);
         Member member = memberRepository.findByEmail(senderEmail).orElseThrow(UserNotFound::new);
         ChatRoomMember chatRoomMember = chatRoomMemberRepository.findByChatRoomAndMemberAndDeletedDateIsNull(chatRoom, member).orElseThrow(UserNotFound::new);
-
-        if (messageDto.getType().equals(ChatMessageType.ENTER)) {
-            messageDto.setContent(messageDto.getNickname() + ENTER_MESSAGE.getMessage());
-        } else if (messageDto.getType().equals(ChatMessageType.QUIT)) {
-            messageDto.setContent(chatRoomMember.getChatNickname() + QUIT_MESSAGE.getMessage());
-        }
 
         ChatMessage message = ChatMessage.builder()
                 .chatRoom(chatRoom)
@@ -114,8 +104,9 @@ public class ChatService {
         return ChatMessageResponse.builder()
                 .message(message.getMessage())
                 .nickname(message.getSender().getChatNickname())
-                .timestamp(message.getTimestamp().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")))
+                .timestamp(message.getTimestamp())
                 .senderId(messageDto.getSenderId())
+                .type(messageDto.getType())
                 .build();
 
     }
@@ -142,10 +133,13 @@ public class ChatService {
 
         Page<ChatRoom> chatRoomPage = chatRoomRepository.getChatRooms(pageable, member, condition);
 
-        List<Long> joinedChatRoomIds = chatRoomRepository.joinedChatRoomIds(member);
 
         List<ChatRoomResponse> list = chatRoomPage.getContent().stream().map(chatRoom -> {
-            boolean isJoined = joinedChatRoomIds.contains(chatRoom.getId());
+            boolean isJoined = chatRoom.getChatRoomMembers()
+                    .stream()
+                    .anyMatch(chatRoomMember
+                            -> chatRoomMember
+                            .getMember().equals(member));
 
             return ChatRoomResponse.builder()
                     .id(chatRoom.getId())

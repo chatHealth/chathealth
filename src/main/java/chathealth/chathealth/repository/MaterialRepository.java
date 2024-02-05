@@ -9,4 +9,5 @@ import java.util.List;
 public interface MaterialRepository extends JpaRepository<Material, Long> {
 
     Material findByMaterialName(String name);
+    List<Material> findAllBySymptomId(long id);
 }

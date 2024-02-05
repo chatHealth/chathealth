@@ -2,6 +2,8 @@ package chathealth.chathealth.controller;
 
 
 import chathealth.chathealth.dto.request.PostWriteDto;
+import chathealth.chathealth.dto.response.MaterialSeletDto;
+import chathealth.chathealth.dto.response.MaterialSymptomDto;
 import chathealth.chathealth.dto.response.member.CustomUserDetails;
 import chathealth.chathealth.dto.response.MaterialDto;
 import chathealth.chathealth.dto.response.SymptomDto;
@@ -32,6 +34,10 @@ public class PostController {
     public String post(Model model, Authentication authentication) {
         boolean isAuth = authentication != null && authentication.isAuthenticated();
         model.addAttribute("isAuth", isAuth);
+
+        List<MaterialSymptomDto> materialBySymptomType = postService.getMaterialBySymptomType();
+        model.addAttribute("materials", materialBySymptomType);
+
         return "post/post";
     }
 
@@ -41,7 +47,6 @@ public class PostController {
         List<SymptomDto> symptom=postService.getSymptomList();
         List<MaterialDto> material=postService.getMaterialList();
         model.addAttribute("symptom",symptom);
-        model.addAttribute("material",material);
         return "post/write";
     }
 
@@ -59,9 +64,7 @@ public class PostController {
         List<SymptomDto> symptom=postService.getSymptomList();
         List<MaterialDto> material=postService.getMaterialList();
         model.addAttribute("symptom",symptom);
-        model.addAttribute("material",material);
         model.addAttribute("postList",postService.getAllViewMod(postId));
-        log.info("postListtttt======{}",postService.getAllViewMod(postId));
         return "post/modify";
     }
 
@@ -70,7 +73,6 @@ public class PostController {
     @ResponseBody
     public String postModifyWrite(@RequestBody PostWriteDto postWriteDto){
         postService.modifyPost(postWriteDto);
-        log.info("postWWWWW======={}",postWriteDto);
         return "post";
     }
 
@@ -79,5 +81,11 @@ public class PostController {
     public String deletePost(@PathVariable long postId){
         postService.deletePost(postId);
         return "post";
+    }
+
+    @GetMapping("/symptom/{id}")
+    @ResponseBody
+    public List<MaterialSeletDto> getMaterialBySym(@PathVariable long id){
+        return postService.getMaterialBySym(id);
     }
 }

@@ -83,7 +83,6 @@ class PostRepositoryImplTest {
         //when
         List<Post> posts = postRepository.getPosts(postSearch);
         //then
-//        System.out.println("posts = " + posts);
     }
 
     @Test

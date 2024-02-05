@@ -8,6 +8,7 @@ import chathealth.chathealth.entity.member.Member;
 import chathealth.chathealth.entity.post.PicturePost;
 import chathealth.chathealth.entity.post.Post;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -27,6 +28,7 @@ import static jakarta.persistence.GenerationType.SEQUENCE;
 public class ReviewDto {
     private Long post;
     private Long member;
+    @Size(max=300, message = "내용은 300자 이내로 작성해주세요.")
     private String content;
     private double score;
     private List<String> pictureReList;

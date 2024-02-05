@@ -21,12 +21,15 @@ import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -52,6 +55,17 @@ public class PostService {
     private final EntityManager em;
 
 
+
+    public List<MaterialSeletDto> getMaterialBySym(long id){
+        List<Material> materials=materialRepository.findAllBySymptomId(id);
+        return materials.stream().map(material -> MaterialSeletDto.builder()
+                .id(material.getId())
+                .materialName(material.getMaterialName())
+                .build()).collect(Collectors.toList());
+    }
+
+
+
     public void deletePost(long id) {
         postRepository.deleteById(id);
     }
@@ -62,7 +76,7 @@ public class PostService {
         Member member = memberRepository.findById(postHitCountDto.getMember()).orElseThrow();
         Post post = postRepository.findById(postHitCountDto.getPost()).orElseThrow();
         List<PostHit> byMemberAndPost = postHitRepository.findByMemberAndPost(member, post);
-
+      
         PostHit postHit = PostHit.builder()
                 .post(post)
                 .member(member)
@@ -141,29 +155,50 @@ public class PostService {
         Review review = reViewRepository.findById(id).orElseThrow();
         em.clear();
         List<ReComment> rec = reCommentRepository.findAllByReview(review);
+
         List<ReCommnetSelectDto> redto = rec.stream()
-                .filter(ReCommet -> (ReCommet.getMember() instanceof Users))
+                .filter(ReCommet -> (ReCommet.getMember() instanceof Users || ReCommet.getMember() instanceof Ent))
                 .filter(ReCommet -> ReCommet.getDeletedDate() == null)
                 .map(ReComment -> {
-                    Users user = (Users) ReComment.getMember();
-                    String profiles = "/profile/" + user.getProfile();
-                    if (user.getProfile().endsWith("_")) {
+                    Object member = ReComment.getMember();
+                    String profiles = null;
+                    String nickName = null;
+                    String name = null;
+                    String company = null;
+
+                    if (member instanceof Users) {
+                        Users user = (Users) member;
+                        profiles = "/profile/" + user.getProfile();
+                        nickName = user.getNickname();
+                        name = user.getName();
+                    } else if (member instanceof Ent) {
+                        Ent ent = (Ent) member;
+                        profiles = "/profile/" + ent.getProfile();
+                        nickName = null;
+                        name = null;
+                        company = ent.getCompany();
+                    }
+
+                    if (profiles != null && profiles.endsWith("_")) {
                         profiles = "/img/basic_user.png";
                     }
+
                     return ReCommnetSelectDto.builder()
                             .id(ReComment.getId())
-                            .memberId(user.getId())
+                            .memberId((member instanceof Users) ? ((Users) member).getId() : ((Ent) member).getId())
                             .profile(profiles)
-                            .nickName(user.getNickname())
-                            .name(user.getName())
+                            .nickName(nickName)
+                            .name(name)
+                            .company(company)
                             .content(ReComment.getContent())
-                            .checkUser(checkUserRe(user.getId(), userid))
-                            .createDate(ReComment.getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")))
+                            .checkUser(checkUserRe((member instanceof Users) ? ((Users) member).getId() : ((Ent) member).getId(), userid))
+                            .createDate(ReComment.getCreatedDate())
                             .build();
                 })
                 .collect(Collectors.toList());
         return redto;
     }
+
 
     public void writeComment(long num, CustomUserDetails id, CommentWriteDto commentWriteDto) {
         ReComment rec = ReComment.builder()
@@ -265,38 +300,40 @@ public class PostService {
     }
 
 
-    public List<ReViewSelectDto> getReview(long id, CustomUserDetails login) {
+    public Page<ReViewSelectDto> getReview(long id, CustomUserDetails login, Pageable pageable) {
         Post post = postRepository.findById(id).orElseThrow(BoardNotFoundException::new);
         ReViewSelectDto userCheck = new ReViewSelectDto();
-        List<Review> re = reViewRepository.findAllByPost(post);
-        List<ReViewSelectDto> dto = re.stream()
+
+        Page<Review> reviewPage = reViewRepository.findAllByPost(post, pageable);
+
+        List<ReViewSelectDto> dtoList = reviewPage.getContent().stream()
                 .filter(review -> (review.getMember() instanceof Users))
                 .filter(review -> review.getDeletedDate() == null)
-                .map(Review -> {
-                    Users user = (Users) Review.getMember();
+                .map(review -> {
+                    Users user = (Users) review.getMember();
                     String profiles = "/profile/" + user.getProfile();
                     if (user.getProfile().endsWith("_")) {
                         profiles = "/img/basic_user.png";
                     }
                     return ReViewSelectDto.builder()
-                            .id(Review.getId())
+                            .id(review.getId())
                             .member(user.getId())
-                            .content(Review.getContent())
-                            .score(Review.getScore())
+                            .content(review.getContent())
+                            .score(review.getScore())
                             .nickName(user.getNickname())
                             .profile(profiles)
                             .name(user.getName())
-                            .helpful(helpfulRepository.countByReviewId(Review.getId()))
-                            .helpfulCheck(reviewLikeCheck(Review.getId(), login))
+                            .helpful(helpfulRepository.countByReviewId(review.getId()))
+                            .helpfulCheck(reviewLikeCheck(review.getId(), login))
                             .same(userCheck.sameclass(user.getId(), login))
-                            .pictureReView(Review.getPictureReList().stream().map(PictureReView::getPictureUrl).toList())
-                            .createdDate(Review.getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+                            .pictureReView(review.getPictureReList().stream().map(PictureReView::getPictureUrl).toList())
+                            .createdDate(review.getCreatedDate())
                             .build();
                 }).collect(Collectors.toList());
 
-
-        return dto;
+        return new PageImpl<>(dtoList, pageable, reviewPage.getTotalElements());
     }
+
 
     public Review insertRe(ReviewDto reviewDto) {
         Review re = Review.builder()
@@ -319,9 +356,12 @@ public class PostService {
 
     public PostResponseDetails getAllView(long id) {
         Post post = postRepository.findById(id).orElseThrow();
-        double score=reViewRepository.findAverageScoreByPostIdAndDeletedDateIsNull(id);
-        double num = (Math.round(score * 10));
-        double nnumm=num/10;
+        double nnumm=0.0;
+        if(reViewRepository.countByPostIdAndDeletedDateIsNull(id)>0) {
+            double score = reViewRepository.findAverageScoreByPostIdAndDeletedDateIsNull(id);
+            double num = (Math.round(score * 10));
+            nnumm = num / 10;
+        }
         return PostResponseDetails.builder()
                 .id(post.getId())
                 .memberId(post.getMember().getId())
@@ -390,7 +430,7 @@ public class PostService {
                             .company(post.getMember().getCompany())
                             .representativeImg(representativeImg)
                             .count(count)
-                            .createdAt(post.getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+                            .createdAt(post.getCreatedDate())
                             .hitCount(post.getPostHitCount())
                             .likeCount(post.getPostLikeCount())
                             .reviewCount(post.getReviewCount())
@@ -472,6 +512,23 @@ public class PostService {
                 picturePostRepository.save(picturePost);
             }
         }
+    }
+
+    public List<MaterialSymptomDto> getMaterialBySymptomType(){
+        List<Symptom> symptoms=symptomRepository.findAllFetch();
+
+        List<MaterialSymptomDto> materials=new ArrayList<>();
+
+        for(Symptom symptom:symptoms){
+            List<String> materialName=symptom.getMaterialList().stream().map(Material::getMaterialName).collect(Collectors.toList());
+            MaterialSymptomDto materialSymptomDto=new MaterialSymptomDto(symptom.getSymptomName(),materialName);
+            materials.add(materialSymptomDto);
+        }
+
+        return materials.stream()
+                .sorted(Comparator.comparingInt(o -> SymptomType.valueOf(String.valueOf(o.getSymptomName())).ordinal()))
+                .toList();
+
     }
 
     private PostResponse createRecentPostResponse(Post post) {

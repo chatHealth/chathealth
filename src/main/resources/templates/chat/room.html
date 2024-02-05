@@ -97,7 +97,7 @@
             // 구독 설정
             stompClient.subscribe('/sub/chat/' + roomId, function (message) {
                 let messageBody = JSON.parse(message.body);
-                displayMessage(messageBody.nickname, messageBody.message, messageBody.timestamp, messageBody.senderId === senderId);
+                displayMessage(messageBody.nickname, messageBody.message, messageBody.timestamp, messageBody.senderId === senderId, messageBody.type);
             });
         });
 
@@ -137,7 +137,7 @@
                     currentPage++;
                     // 메시지를 역순으로 반복하여 추가
                     response.content.forEach(message => {
-                        displayMessage(message.nickname, message.message, message.timestamp, message.senderId === senderId);
+                        displayMessage(message.nickname, message.message, message.timestamp, message.senderId === senderId, message.type);
                     });
                     newMessage = true;
 
@@ -177,32 +177,60 @@
             }
         });
 
-        function displayMessage(nickname, message, timestamp, isMine) {
-            let messageBox = $('<div></div>').addClass('message-box');
-            let messageElement = $('<span></span>').addClass('message-content');
-            let nicknameElement = $('<span></span>').addClass('nickname').text(nickname);
-            let timestampElement = $('<span></span>').addClass('timestamp');
+        function displayMessage(nickname, message, timestamp, isMine, type) {
+            switch (type) {
+                case 'TALK':
+                    let messageBox = $('<div></div>').addClass('message-box');
+                    let messageElement = $('<span></span>').addClass('message-content');
+                    let nicknameElement = $('<span></span>').addClass('nickname').text(nickname);
+                    let timestampElement = $('<span class="format-date"></span>').addClass('timestamp');
 
-            messageElement.text(message);
-            nicknameElement.text(nickname);
-            timestampElement.text(timestamp);
+                    messageElement.text(message);
+                    nicknameElement.text(nickname);
+                    timestampElement.text(timestamp);
 
-            if (isMine) {
-                messageBox.addClass('my-message-box');
-                messageElement.addClass('my-message');
-            } else {
-                messageBox.addClass('other-message-box');
-                messageElement.addClass('other-message');
+                    if (isMine) {
+                        messageBox.addClass('my-message-box');
+                        messageElement.addClass('my-message');
+                    } else {
+                        messageBox.addClass('other-message-box');
+                        messageElement.addClass('other-message');
+                    }
+
+                    messageBox.append(nicknameElement);
+                    messageBox.append(messageElement);
+                    messageBox.append(timestampElement);
+                    if (newMessage) {
+                        $('#chatMessages').append(messageBox);
+                    } else {
+                        $('#chatMessages').prepend(messageBox);
+                    }
+                    break;
+                case 'ENTER':
+                    let enterMessage = $('<div></div>').addClass('enter-message').text(nickname + message);
+                    let enterTime = $('<div class="format-date"></div>').text(timestamp).addClass('timestamp-enter');
+                    if(newMessage){
+                        $('#chatMessages').append(enterMessage);
+                        $('#chatMessages').append(enterTime);
+                    }else {
+                        $('#chatMessages').prepend(enterTime);
+                        $('#chatMessages').prepend(enterMessage);
+                    }
+                    break;
+                case 'QUIT':
+                    let quitMessage = $('<div></div>').addClass('quit-message').text(nickname + message);
+                    let quitTime = $('<div class="format-date"></div>').text(timestamp).addClass('timestamp-quit');
+                    if(newMessage){
+                        $('#chatMessages').append(quitMessage);
+                        $('#chatMessages').append(quitTime);
+                    }else {
+                        $('#chatMessages').prepend(quitTime);
+                        $('#chatMessages').prepend(quitMessage);
+                    }
+                    break;
             }
+            setTimeZoneAndFormat();
 
-            messageBox.append(nicknameElement);
-            messageBox.append(messageElement);
-            messageBox.append(timestampElement);
-            if (newMessage) {
-                $('#chatMessages').append(messageBox);
-            } else {
-                $('#chatMessages').prepend(messageBox);
-            }
             $('#chatMessages').scrollTop($('#chatMessages')[0].scrollHeight);
         }
 

@@ -5,8 +5,8 @@ import chathealth.chathealth.dto.request.BoardCreateDto;
 import chathealth.chathealth.dto.request.BoardEditDto;
 import chathealth.chathealth.dto.request.BoardSearchDto;
 import chathealth.chathealth.dto.response.BoardResponse;
-import chathealth.chathealth.dto.response.member.CustomUserDetails;
 import chathealth.chathealth.dto.response.PageResponse;
+import chathealth.chathealth.dto.response.member.CustomUserDetails;
 import chathealth.chathealth.entity.BoardHit;
 import chathealth.chathealth.entity.board.Board;
 import chathealth.chathealth.entity.board.Category;
@@ -15,15 +15,14 @@ import chathealth.chathealth.entity.member.Users;
 import chathealth.chathealth.exception.BoardNotFoundException;
 import chathealth.chathealth.exception.NotPermitted;
 import chathealth.chathealth.exception.UserNotFound;
-import chathealth.chathealth.repository.boardHit.BoardHitRepository;
 import chathealth.chathealth.repository.MemberRepository;
 import chathealth.chathealth.repository.board.BoardRepository;
+import chathealth.chathealth.repository.boardHit.BoardHitRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -92,10 +91,12 @@ public class BoardService {
             boardSearchDto.setPage((int) totalPage - 1);
         }
 
-        return boardRepository.getBoards(boardSearchDto).stream().map(board -> BoardResponse.builder()
+        return boardRepository.getBoards(boardSearchDto).stream().map(board ->
+
+                        BoardResponse.builder()
                         .boardId(board.getId())
                         .title(board.getTitle())
-                        .createdDate(board.getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")))
+                        .createdDate(board.getCreatedDate())
                         .memberId(board.getUser().getId())
                         .nickname(board.getUser().getNickname())
                         .grade(board.getUser().getGrade())
@@ -111,7 +112,7 @@ public class BoardService {
         return boardRepository.getBoardsByCategoryRecent(category).stream().map(board -> BoardResponse.builder()
                         .boardId(board.getId())
                         .title(board.getTitle())
-                        .createdDate(board.getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")))
+                        .createdDate(board.getCreatedDate())
                         .hit(board.getBoardHitList().size())
                         .category(board.getCategory())
                         .build())
@@ -138,14 +139,15 @@ public class BoardService {
             }
         }
 
+
         Users user = board.getUser();
         return BoardResponse.builder()
                 .boardId(board.getId())
                 .title(board.getTitle())
                 .content(board.getContent())
                 .category(board.getCategory())
-                .createdDate(board.getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")))
-                .modifiedDate(board.getModifiedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")))
+                .createdDate(board.getCreatedDate())
+                .modifiedDate(board.getModifiedDate())
                 .memberId(user.getId())
                 .nickname(user.getNickname())
                 .name(user.getName())

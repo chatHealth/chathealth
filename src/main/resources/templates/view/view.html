@@ -47,7 +47,9 @@
                 </div>
                 <div>
                     <ul class="list-group list-group-flush">
-                        <li class="list-group-item"><span><i class="fas fa-star" style="color: #FFD43B;"></i></span><span th:text="${postList.score}">2.1</span></li>
+                        <li class="list-group-item"><span><i class="fas fa-star"
+                                                             style="color: #FFD43B;"></i></span><span
+                                th:text="${postList.score}">2.1</span></li>
                         <li class="list-group-item" th:text="@{| 리뷰  (${postList.reviewCount})|}"></li>
                         <li class="list-group-item" th:text="@{|사업자 : ${postList.company}|}"></li>
                     </ul>
@@ -152,18 +154,6 @@
 
             const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
             const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
-            function addClassName() {
-                let imgbox = $(".carousel-inner > div:first-child");
-                imgbox.remove("carousel-item").addClass("carousel-item active");
-
-                let contentBox = $(".contentBox > p > img");
-                contentBox.css("object-fit", "cover");
-
-                if (postLike == 10) {
-                    $("#postlikeimg").attr("src", "/img/빨간하트png.png");
-                }
-            }
-
 
             function addClassName() {
                 let imgbox = $(".carousel-inner > div:first-child");
@@ -176,16 +166,29 @@
                     $("#postlikeimg").attr("src", "/img/빨간하트png.png");
                 }
             }
+
+
 
 
             // 리뷰목록조회
-            function reViewList() {
+            function reViewList(num) {
+                if (num === null || num === undefined) {
+                    $.ajax({
+                        url: `/review/${postId}?size=8`,
+                        type: "GET",
+                        success: function (response) {
+                            num = response.totalPages - 1;
+                            reViewList(num);
+                        }
+                    });
+                }
+
                 $.ajax({
-                    url: `/review/${postId}`,
+                    url: `/review/${postId}?size=8&page=${num}`,
                     success: function (data) {
                         let ht = "";
-
-                        $.each(data, function (key, val) {
+                        console.log(data)
+                        $.each(data.content, function (key, val) {
                             let nickName;
                             val.nickName === null ? nickName = val.name : nickName = val.nickName;
 
@@ -202,9 +205,8 @@
                             ht += `</span>
                            <div class='context-menu'>
                                 <a href='#' class='send-message-link' data-member-id='${val.member}' data-member-name='${val.nickName}'>쪽지 보내기</a>
-                                <a href='/member/user/${val.member}'>유저 정보 보기</a>
                             </div>`;
-                            ht += `</div><div style="width:120px ">${val.createdDate}</div>
+                            ht += `</div><div style="width:120px " class="format-date">${val.createdDate}</div>
                                                 </div>
                                             </div>
                                             <div class="secondinfo" style="float: right">
@@ -281,7 +283,7 @@
                                     $.each(data, function (key, value) {
                                         let nickName;
                                         value.nickName === null ? nickName = value.name : nickName = value.nickName;
-
+                                        if(value.company !==null){nickName = value.company}
                                         ht += `<div style="display: flex" class="comdata" data-num="${value.id}">
                              <div style="width: 30px;height: 60px;">ㄴ</div>
                              <div style="background: lightgray;width: 100%">
@@ -295,12 +297,10 @@
                                         ht += `</span>
                            <div class='context-menu'>
                                 <a href='#' class='send-message-link' data-member-id='${value.memberId}' data-member-name='${value.nickName}'>쪽지 보내기</a>
-                                <a href='/member/user/${value.memberId}'>유저 정보 보기</a>
                             </div></div>`;
-
-                                        ht += `<div style="margin-left: auto">${value.createDate}`;
+                                        ht += `<div style="margin-left: auto"><span class="format-date">${value.createDate}</span>`;
                                         if (value.checkUser == true) {
-                                            ht += `|
+                                            ht += `
                                         <button class="commentDel" style="border: none">
                                         <span style="font-weight: bold">X</span>
                                         </button>`
@@ -327,8 +327,10 @@
                          </div>`;
 
                         })
-
+                        ht+=createPagination(ht, data)
                         $(".post-view").html(ht);
+                        setTimeZoneAndFormat();
+
 
 
                     },
@@ -337,6 +339,43 @@
                     }
                 })
             }
+            //페이지 네이션
+            function createPagination(html, response) {
+                html = "<div class='d-flex justify-content-center'>";
+                html += "<ul class='pagination'>";
+
+                const currentPage = response.pageable.pageNumber; //현재있는 번호
+                const totalPages = response.totalPages;  //총 번호가 몇개있는지
+                const pageGroupSize = 5; // 한 번에 보여줄 페이지 수
+                const currentPageGroup = Math.floor(currentPage / pageGroupSize); // 현재 페이지 그룹
+
+                // "Previous" 버튼
+                if (currentPageGroup > 0) {
+                    html += "<li class='page-item'>";
+                    html += "<a class='page-link' href='#' onclick='reViewList(" + ((currentPageGroup - 1) * pageGroupSize) + ")'>Previous</a>";
+                    html += "</li>";
+                }
+
+                // 페이지 번호
+                for (let i = currentPageGroup * pageGroupSize; i < Math.min((currentPageGroup + 1) * pageGroupSize, totalPages); i++) {
+                    html += "<li class='page-item" + (currentPage === i ? " active" : "") + "'>";
+                    html += "<a class='page-link' href='#' onclick='reViewList(" + i + ")'>" + (i + 1) + "</a>";
+                    html += "</li>";
+                }
+
+                // "Next" 버튼
+                if (currentPageGroup < Math.ceil(totalPages / pageGroupSize) - 1) {
+                    html += "<li class='page-item'>";
+                    html += "<a class='page-link' href='#' onclick='reViewList(" + ((currentPageGroup + 1) * pageGroupSize) + ")'>Next</a>";
+                    html += "</li>";
+                }
+
+                html += "</ul>";
+                html += "</div>";
+                return html;
+            }
+
+
 
 
             //댓글 토글버튼
@@ -367,8 +406,17 @@
                                 console.log("댓글 성공")
                                 reViewList()
                             },
-                            error: function () {
-                                console.log("댓글 실패")
+                            error: function (error) {
+                                const errorResult=JSON.parse(error.responseText);
+                                if(errorResult.code==="400"){
+                                    if(errorResult.validation.content!==undefined) {
+                                        toastr.error(errorResult.validation.content)
+                                        return
+                                    }
+                                    toastr.error(errorResult.message);
+                                    return;
+                                }
+                                toastr.error(errorResult.message);
                             }
 
                         })
@@ -466,15 +514,24 @@
                             url: "/review/write",
                             contentType: 'application/json',
                             data: JSON.stringify(date),
-                            success: function (response) {
+                            success: function () {
                                 console.log("리뷰작성 완")
-                                $(".reContent textarea").val("");
+                                $(".reContentbox textarea").val("");
                                 reImgName = [];
                                 $(".reImgCount").text(0);
                                 reViewList()
                             },
-                            error: function () {
-                                console.log("리뷰작성 실패")
+                            error: function (error) {
+                                const errorResult=JSON.parse(error.responseText);
+                                if(errorResult.code==="400"){
+                                    if(errorResult.validation.content!==undefined) {
+                                        toastr.error(errorResult.validation.content)
+                                        return
+                                    }
+                                    toastr.error(errorResult.message);
+                                    return;
+                                }
+                                toastr.error(errorResult.message);
                             }
 
                         })
@@ -484,7 +541,7 @@
 
             // 리뷰 수정
             $("body").on("click", ".modifyBtn", function () {
-                console.log("수정클릭완")
+
                 let par = (this).closest(".reviewPar");
                 let content = par.dataset.content;
                 let picture = par.dataset.picture;
