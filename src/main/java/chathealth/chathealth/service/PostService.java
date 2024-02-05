@@ -326,8 +326,8 @@ public class PostService {
                             .helpful(helpfulRepository.countByReviewId(review.getId()))
                             .helpfulCheck(reviewLikeCheck(review.getId(), login))
                             .same(userCheck.sameclass(user.getId(), login))
-                            .pictureReView(Review.getPictureReList().stream().map(PictureReView::getPictureUrl).toList())
-                            .createdDate(Review.getCreatedDate())
+                            .pictureReView(review.getPictureReList().stream().map(PictureReView::getPictureUrl).toList())
+                            .createdDate(review.getCreatedDate())
                             .build();
                 }).collect(Collectors.toList());
 
