@@ -72,12 +72,11 @@ public class AuthController {
                 .address(userJoinDto.getFrontAddress())
                 .addressDetail(userJoinDto.getAddressDetail())
                 .build();
-
         //service에 던질 DTO 빌드
         userJoinDto.setAddress(addressEntity);
         authService.userJoin(userJoinDto);
 
-        return "redirect:/auth/user-join";
+        return "redirect:/auth/login";
     }
 
     @GetMapping("/entjoin") //사업자회원가입창 진입
@@ -103,7 +102,7 @@ public class AuthController {
 
     @Transactional
     @ResponseBody
-    @DeleteMapping("/withdraw/{id}")
+    @DeleteMapping("/withdraw/{id}")  //탈퇴
     public Map<String,Integer> memberWithdraw(@PathVariable Long id,String email){
         Integer result = authService.memberWithdraw(id);
         Map<String,Integer> resultmap = new HashMap<>();
