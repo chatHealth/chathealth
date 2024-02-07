@@ -23,8 +23,8 @@ import static lombok.AccessLevel.PROTECTED;
 @NoArgsConstructor(access = PROTECTED)
 @Getter
 @SuperBuilder
-//@SQLDelete(sql = "UPDATE board SET deleted_date = CURRENT_TIMESTAMP where board_id = ?") // h2
-@SQLDelete(sql = "UPDATE board SET deleted_date = SYSDATE where board_id = ?") // oracle
+@SQLDelete(sql = "UPDATE board SET deleted_date = CURRENT_TIMESTAMP where board_id = ?") // h2
+//@SQLDelete(sql = "UPDATE board SET deleted_date = SYSDATE where board_id = ?") // oracle
 public class Board extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
@@ -37,7 +37,6 @@ public class Board extends BaseEntity {
     @Lob
     private String content;
 
-    //    private Integer report;   //고민 좀 해보고..
     private LocalDateTime deletedDate;
 
     @Enumerated(STRING)
