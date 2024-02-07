@@ -26,6 +26,7 @@ public class ReViewSelectDto {
     private List<String> pictureReView;
     private Long helpful;
     private Long helpfulCheck;
+    private Long reCommentCount;
 
     private Integer same;
     public Integer sameclass(Long member, CustomUserDetails login){

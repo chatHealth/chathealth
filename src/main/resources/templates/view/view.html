@@ -265,7 +265,7 @@
                                             <p>${val.content}</p>
                                         </div>
                                         <div style="text-align: right;margin-bottom: 10px">
-                                            <button class="toggleBtn" style="border: none;width: 50px;height: 30px;font-size: 10px">댓글</button>
+                                            <button class="toggleBtn" style="border: none;width: 50px;height: 30px;font-size: 10px">댓글<span>${val.reCommentCount}</span></button>
                                         </div>
                                     </div>
                                     <div class="recomment" data-num="${val.id}">
@@ -545,7 +545,13 @@
                 let par = (this).closest(".reviewPar");
                 let content = par.dataset.content;
                 let picture = par.dataset.picture;
-                let imgcount = picture.split(",");
+                let imgcount;
+                if(picture==""){
+                    imgcount=0;
+                }else {
+                    imgcount = picture.split(",").length;
+                }
+                console.log(imgcount);
 
 
                 let btnset = `<button type="button" class="deleteBtn">삭제</button>
@@ -567,7 +573,7 @@
                        placeholder="대표이미지" name=""
                        accept="image/gif, image/jpeg, image/png" multiple="multiple">
                 <label class="input-file-button" for="modImg">
-                    이미지 등록<br><p class="modImgCount" >${imgcount.length}</p>
+                    이미지 등록<br><p class="modImgCount" >${imgcount}</p>
                 </label>
             </div>`;
                 let Imglistno = `<hr>
@@ -577,7 +583,7 @@
                        placeholder="대표이미지" name=""
                        accept="image/gif, image/jpeg, image/png" multiple="multiple">
                 <label class="input-file-button" for="modImg">
-                    이미지 등록<br><p class="modImgCount" >${imgcount.length}</p>
+                    이미지 등록<br><p class="modImgCount" >0</p>
                 </label>
             </div>
             </div>`;
