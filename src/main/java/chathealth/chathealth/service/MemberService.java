@@ -127,6 +127,7 @@ public class MemberService {
                         .memberId(myReview.getMember().getId())
                         .postId(myReview.getPost().getId())
                         .title(myReview.getPost().getTitle())
+                        .content(myReview.getContent())
                         .createdDate(myReview.getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
                         .build())
                 .toList();
