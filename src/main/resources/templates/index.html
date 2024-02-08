@@ -8,8 +8,8 @@
         <!-- Main content area with Swiper -->
         <main>
             <div class="intro-section">
-                <h2>환영합니다!</h2>
-                <p>여기에서는 최신 정보를 확인하고 커뮤니티와 소통할 수 있습니다. 다양한 기능을 탐색하고 최대한 활용해 보세요.</p>
+                <h2>Welcome!</h2>
+                <p>ChatHealth에서 건강 기능 식품 정보를 확인하고 커뮤니티와 소통할 수 있습니다. 다양한 기능을 탐색하고 최대한 활용해 보세요.</p>
             </div>
 
 
@@ -55,13 +55,19 @@
                                                 <div class="user-name-display">
                                                     <h2 th:if="${member.nickname != null}" th:text="${member.nickname}"></h2>
                                                     <h2 th:if="${member.nickname == null}" th:text="${member.name}"></h2>
+                                                    <ul class="user-details">
+                                                        <li>&nbsp;</li>
+                                                        <li><a sec:authorize="hasRole('ROLE_USER')" th:href="@{|/member/user/${#authentication.principal.loggedMember.id}|}" class="btn btn-primary" style="width:100%">내 정보 보기</a>
+                                                        <a sec:authorize="hasRole('ROLE_ADMIN')" th:href="@{/member/admin}" class="btn btn-primary" style="width:100%">관리 페이지</a></li>
+                                                    </ul>
                                                 </div>
                                             </th:block>
                                             <th:block sec:authorize="hasAnyRole('ROLE_WATING_ENT', 'ROLE_REJECTED_ENT', 'ROLE_PERMITTED_ENT')">
                                                 <div class="user-business-info">
+                                                        <h2><span th:text="${member.company}"></span></h2>
                                                     <ul class="user-details">
-                                                        <li><strong>회사:</strong> <span th:text="${member.company}"></span></li>
                                                         <li><strong>대표:</strong> <span th:text="${member.ceo}"></span></li>
+                                                        <li><a sec:authorize="hasAnyRole('ROLE_WAITING_ENT','ROLE_PERMITTED_ENT','ROLE_REJECTED_ENT')" th:href="@{|/member/ent/${#authentication.principal.loggedMember.id}|}" class="btn btn-primary" style="width:100%">내 정보 보기</a></li>
                                                     </ul>
                                                 </div>
                                             </th:block>
@@ -69,9 +75,7 @@
 
                                     </div>
                                 </div>
-                                <a sec:authorize="hasRole('ROLE_USER')" th:href="@{|/member/user/${#authentication.principal.loggedMember.id}|}" class="btn btn-primary" style="width:100%">내 정보 보기</a>
-                                <a sec:authorize="hasAnyRole('ROLE_WAITING_ENT','ROLE_PERMITTED_ENT','ROLE_REJECTED_ENT')" th:href="@{|/member/ent/${#authentication.principal.loggedMember.id}|}" class="btn btn-primary" style="width:100%">내 정보 보기</a>
-                                <a sec:authorize="hasRole('ROLE_ADMIN')" th:href="@{/member/admin}" class="btn btn-primary" style="width:100%">관리 페이지</a>
+
                             </div>
                         </div>
                     </th:block>

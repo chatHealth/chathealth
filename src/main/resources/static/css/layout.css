@@ -573,3 +573,28 @@ footer {
     padding-bottom: 10px;
 }
 
+.intro-section {
+    background-color: #dff3ec; /* 배경색 */
+    padding: 40px 20px; /* 패딩 */
+    border-radius: 8px; /* 모서리 둥글게 */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* 그림자 효과 */
+    margin: 20px 0; /* 위 아래 마진 */
+    text-align: center; /* 텍스트 중앙 정렬 */
+}
+
+.intro-section h2 {
+    color: #007bff; /* 제목 색상 */
+    margin-bottom: 20px; /* 제목 아래 마진 */
+    font-size: 28px; /* 글자 크기 */
+}
+
+.intro-section p {
+    font-size: 16px; /* 문단 글자 크기 */
+    line-height: 1.6; /* 줄 간격 */
+    color: #666; /* 문단 글자 색상 */
+}
+
+.user-details li{
+    list-style: none; /* 리스트 스타일 제거 */
+    margin-bottom: 10px; /* 리스트 아래 마진 */
+}
