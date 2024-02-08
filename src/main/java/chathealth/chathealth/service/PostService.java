@@ -326,6 +326,7 @@ public class PostService {
                             .helpful(helpfulRepository.countByReviewId(review.getId()))
                             .helpfulCheck(reviewLikeCheck(review.getId(), login))
                             .same(userCheck.sameclass(user.getId(), login))
+                            .reCommentCount(reCommentRepository.countByReviewAndDeletedDateIsNull(review))
                             .pictureReView(review.getPictureReList().stream().map(PictureReView::getPictureUrl).toList())
                             .createdDate(review.getCreatedDate())
                             .build();
@@ -478,7 +479,7 @@ public class PostService {
                 .build()).toList();
     }
 
-    public void createPost(PostWriteDto postWriteDto, CustomUserDetails ent) {
+    public Long createPost(PostWriteDto postWriteDto, CustomUserDetails ent) {
         Ent findEnt = (Ent) memberRepository.findByEmail(ent.getLoggedMember().getEmail()).orElseThrow(UserNotFound::new);
 
         Post postInfo = Post.builder()
@@ -512,6 +513,7 @@ public class PostService {
                 picturePostRepository.save(picturePost);
             }
         }
+       return savedpost.getId();
     }
 
     public List<MaterialSymptomDto> getMaterialBySymptomType(){

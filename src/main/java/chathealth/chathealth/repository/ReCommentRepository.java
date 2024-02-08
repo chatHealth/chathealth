@@ -12,4 +12,5 @@ import java.util.List;
 public interface ReCommentRepository extends JpaRepository<ReComment,Long> {
     @Query("SELECT r FROM ReComment r LEFT JOIN FETCH r.member WHERE r.review = :review")
     List<ReComment> findAllByReview(Review review);
+    Long countByReviewAndDeletedDateIsNull(Review review);
 }

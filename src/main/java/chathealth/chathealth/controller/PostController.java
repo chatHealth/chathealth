@@ -54,8 +54,8 @@ public class PostController {
     @Secured({"ROLE_ADMIN","ROLE_PERMITTED_ENT"})
     @PostMapping("/write")
     @ResponseBody
-    public void postWriteProcess(@RequestBody PostWriteDto postWriteDto,@AuthenticationPrincipal CustomUserDetails ent){
-        postService.createPost(postWriteDto,ent);
+    public Long postWriteProcess(@RequestBody PostWriteDto postWriteDto,@AuthenticationPrincipal CustomUserDetails ent){
+        return postService.createPost(postWriteDto,ent);
     }
 
 
@@ -71,9 +71,9 @@ public class PostController {
 
     @PostMapping("/modWrite")
     @ResponseBody
-    public String postModifyWrite(@RequestBody PostWriteDto postWriteDto){
+    public Long postModifyWrite(@RequestBody PostWriteDto postWriteDto){
         postService.modifyPost(postWriteDto);
-        return "post";
+        return postWriteDto.getId();
     }
 
     @DeleteMapping("/delete/{postId}")

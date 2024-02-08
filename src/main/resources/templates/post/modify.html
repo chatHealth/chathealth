@@ -40,7 +40,7 @@
                         data-placeholder="증상"
                         class="form-select form-select-sm selectpicker"
                         aria-label="Small select example" data-style="btn-primary">
-                    <option value="0">증상 선택</option>
+                    <option value="0" >증상 선택</option>
                     <th:block th:each="item,status:${symptom}">
                         <option th:value="${item.id}" th:text="${item.symptomName}"></option>
                     </th:block>
@@ -100,7 +100,8 @@
         $('#symptom').change(function () {
             let symdate = $("#symptom").val();
             let material = $("#material")
-            if (symdate == 0) {
+
+            if (symdate === 0) {
                 material.empty()
             } else {
                 $.ajax({
@@ -309,6 +310,7 @@
             }
             // 3. API 호출
             let titleStr = params.title.replace(/ /g, "");
+            console.log(params.symptom)
 
             if (titleStr === "") {
                 alert("제목을입력해주세요.");
@@ -319,26 +321,18 @@
             } else if (params.postImgList.length === 0) {
                 alert("대표이미지를 선택해주세요")
             } else {
-                try {
-                    const response = await fetch(url, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify(params),
-                    });
+                $.ajax({
+                    url:url,
+                    method: "POST",
+                    contentType: 'application/json',  // 올바른 Content-Type 설정
+                    data: JSON.stringify(params),
+                    success:function (response){
+                        location.href=`/view/${response}`;
+                    },
+                    error:function (){
 
-                    if (!response.ok) {
-                        throw new Error('서버에 문제가 있습니다. 잠시 후 다시 시도해 주세요.');
                     }
-
-                    alert('게시글이 저장되었습니다');
-                    location.href = '/post';
-
-                } catch (error) {
-                    alert(error.message);
-                    console.error('저장 실패 : ', error);
-                }
+                })
             }
         }
 

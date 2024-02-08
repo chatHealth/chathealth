@@ -261,33 +261,25 @@
 
                 if (titleStr === "") {
                     alert("제목을입력해주세요.");
-                } else if (params.symptom === 0) {
+                } else if (params.symptom == 0) {
                     alert("증상을 선택해주세요")
-                } else if (params.materialList.length === 0) {
+                } else if (params.materialList==null) {
                     alert("성분을 선택해주세요")
                 } else if (params.postImgList.length === 0) {
                     alert("대표이미지를 선택해주세요")
                 } else {
-                    try {
-                        const response = await fetch(url, {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                            },
-                            body: JSON.stringify(params),
-                        });
+                    $.ajax({
+                        url:url,
+                        method: "POST",
+                        contentType: 'application/json',  // 올바른 Content-Type 설정
+                        data: JSON.stringify(params),
+                        success:function (response){
+                            location.href=`/view/${response}`;
+                        },
+                        error:function (){
 
-                        if (!response.ok) {
-                            throw new Error('서버에 문제가 있습니다. 잠시 후 다시 시도해 주세요.');
                         }
-
-                        alert('게시글이 저장되었습니다');
-                        location.href = '/post';
-
-                    } catch (error) {
-                        alert(error.message);
-                        console.error('저장 실패 : ', error);
-                    }
+                    })
                 }
             }
 

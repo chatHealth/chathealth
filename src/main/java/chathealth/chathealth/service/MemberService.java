@@ -200,4 +200,32 @@ public class MemberService {
         }
         return (Ent) member;
     }
+
+    public UserIndexDto getUserInfoForIndex(Long id) {
+        Member findMember = memberRepository.findById(id).orElseThrow(UserNotFound::new);
+
+        if(findMember instanceof Users user){
+            return UserIndexDto.builder()
+                    .id(user.getId())
+                    .name(user.getName())
+                    .nickname(user.getNickname())
+                    .profile(user.getProfile())
+                    .build();
+        }
+
+        throw new UserNotFound();
+    }
+
+    public EntIndexDto getEntForIndex(Long id) {
+        Member findMember = memberRepository.findById(id).orElseThrow(UserNotFound::new);
+        if (findMember instanceof Ent ent) {
+            return EntIndexDto.builder()
+                    .id(ent.getId())
+                    .ceo(ent.getCeo())
+                    .company(ent.getCompany())
+                    .profile(ent.getProfile())
+                    .build();
+        }
+        throw new UserNotFound();
+    }
 }

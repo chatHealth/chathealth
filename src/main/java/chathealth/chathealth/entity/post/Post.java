@@ -1,8 +1,6 @@
 package chathealth.chathealth.entity.post;
 
 import chathealth.chathealth.dto.request.PostWriteDto;
-import chathealth.chathealth.dto.request.ReviewModDto;
-import chathealth.chathealth.dto.response.PostModResponseDto;
 import chathealth.chathealth.entity.BaseEntity;
 import chathealth.chathealth.entity.Review;
 import chathealth.chathealth.entity.member.Ent;
@@ -28,7 +26,6 @@ import static lombok.AccessLevel.PROTECTED;
 @NoArgsConstructor(access = PROTECTED)
 @DynamicUpdate
 @SQLDelete(sql = "UPDATE post SET deleted_date = CURRENT_TIMESTAMP where post_id = ?")
-@Table(name = "Post")
 public class Post extends BaseEntity {
 
     @Id
