@@ -198,7 +198,7 @@
                 }
             }
 
-            / submit 버튼 클릭 이벤트
+            // submit 버튼 클릭 이벤트
             $("#submitBtn").on('click', function (event) {
                 const regex = /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,15}$/;
                 if(regex.test($('#inputPw').val())){
