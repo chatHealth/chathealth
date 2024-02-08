@@ -15,7 +15,7 @@
 
 
 > ## 💻 기술 스택
-> ![Tech Stack](https://github.com/chatHealth/chathealth/assets/140994218/3dd24754-181c-419b-a26c-6841128fa614)
+> <img width="1968" alt="Tech Stack" src="https://github.com/chatHealth/chathealth/assets/140994218/ce303a9b-d3ca-44ab-8805-32cae7b9cae6">
 <br>
 
 > ### 🛠️ 협업 툴
@@ -23,7 +23,7 @@
 
 
 
-> ### 🌵 Git Branch 관리
+> ### 🌵 Git Flow
 <pre><code>master
 ├── develop
 │___│___│___feature-main</code></pre>
