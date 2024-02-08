@@ -54,7 +54,6 @@
             </div>
         </div>
         <table class="table">
-            <th:block th:if="${boards.size() ne 0}">
                 <thead id="list">
                 <tr>
                     <th scope="col">분류</th>
@@ -65,6 +64,7 @@
                 </tr>
                 </thead>
                 <tbody>
+            <th:block th:if="${boards.size() ne 0}">
                 <tr th:each="item : ${boards}">
                     <td>
                         <a th:href="@{/board(category=${item.category?.name()},page=0)}">
@@ -118,11 +118,7 @@
                 </tr>
                 </tbody>
             </th:block>
-            <th:block th:if="${boards.size() eq 0}">
-                <div class="col-4">
-                    <p class="card-text">게시글이 없습니다.</p>
-                </div>
-            </th:block>
+
         </table>
         <nav th:if="${boards.size() ne 0}" aria-label="Page navigation example" class="justify-content-center">
             <ul class="pagination">
@@ -166,6 +162,11 @@
              sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_USER')">
             <a href="/board/write" class="btn btn-primary me-md-2" type="button">글쓰기</a>
         </div>
+        <th:block th:if="${boards.size() eq 0}">
+            <div class="col-4">
+                <p class="card-text align-items-center">조건에 일치하는 게시글이 없습니다.</p>
+            </div>
+        </th:block>
     </div>
     <script th:inline="javascript">
         $(document).ready(function () {

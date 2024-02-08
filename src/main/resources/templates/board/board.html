@@ -43,10 +43,10 @@
                     <div>
                         <!--                        <span th:text="${board.nickname != null ? board.nickname : board.name}">작성자</span>-->
 
-                        <span onclick="toggleContextMenu(event)" style="cursor: pointer">
+                        <span onclick="toggleContextMenu(event)" style="cursor: pointer ">
                             <img th:src="@{|/profile/${board.profile}|}" alt="프로필 이미지" class="profile-image-sm"
                                  onerror="this.src='/img/basic_user.png'">
-                        <span th:text="${board.nickname != null ? board.nickname : board.name}">작성자</span>
+                        <span class="ms-1" th:text="${board.nickname != null ? board.nickname : board.name}">작성자</span>
                         <span th:switch="${board.grade?.name()}">
                             <i th:case="'BRONZE'" class="fa fa-medal text-bronze"></i>
                             <i th:case="'BLACK'" class="fa fa-medal text-black"></i>
@@ -272,7 +272,7 @@
                         html += "<div class='card mb-3'>";
                         html += "<div class='card-header d-flex justify-content-between'>";
                         html += "<strong><img src='/profile/" + item.profile + "' alt='프로필 이미지' class='profile-image-sm' onError='this.src=\"/img/basic_user.png\"'>";
-                        html += "<span onClick='toggleContextMenu(event)' style='cursor: pointer'>"
+                        html += "<span class=\"ms-1\" onClick='toggleContextMenu(event)' style='cursor: pointer'>"
                         html += item.memberNickname;
                         html += "</span>";
                         html += "<div class='context-menu'>";

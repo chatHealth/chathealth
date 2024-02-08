@@ -431,9 +431,13 @@
                 $("#deleteModal").modal("show");
                 //취소 버튼 누르면 모달 닫기
                 $("#btn-delete-cancel").on("click", function () {
+                    num = null;
                     $("#deleteModal").modal("hide");
                 });
                 $("#btn-delete-confirm").on("click", function () {
+                    if(num === null){
+                        return;
+                    }
                     $.ajax({
                         url: `/comment/delete/${num}`,
                         method: "DELETE",
@@ -692,9 +696,13 @@
                 $("#deleteModal").modal("show");
                 //취소 버튼 누르면 모달 닫기
                 $("#btn-delete-cancel").on("click", function () {
+                    num = null;
                     $("#deleteModal").modal("hide");
                 });
                 $("#btn-delete-confirm").on("click", function () {
+                    if(num === null){
+                        return;
+                    }
                     $.ajax({
                         url: `/review/delete/${num}`,
                         method: "DELETE",

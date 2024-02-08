@@ -22,8 +22,7 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom {
     public List<Board> getBoards(BoardSearchDto boardSearchDto){
         return queryFactory.selectFrom(board)
                 .where(categoryEq(boardSearchDto.getCategory()),
-                        titleContains(boardSearchDto.getTitle()),
-                        contentContains(boardSearchDto.getContent()),
+                        titleOrContentContains(boardSearchDto.getTitle(), boardSearchDto.getContent()),
                         writerContains(boardSearchDto.getWriter()),
                         board.deletedDate.isNull())
                 .leftJoin(board.user, users)
@@ -39,8 +38,7 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom {
         return queryFactory.select(board.count())
                 .from(board)
                 .where(categoryEq(boardSearchDto.getCategory()),
-                        titleContains(boardSearchDto.getTitle()),
-                        contentContains(boardSearchDto.getContent()),
+                        titleOrContentContains(boardSearchDto.getTitle(), boardSearchDto.getContent()),
                         writerContains(boardSearchDto.getWriter()),
                         board.deletedDate.isNull())
                 .fetchOne();
@@ -62,13 +60,19 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom {
         return category == null ? board.category.in(Category.getUserCategories()) : board.category.eq(category);
     }
 
-    private static BooleanExpression contentContains(String content) {
-        return hasText(content) ? board.content.contains(content) : null;
-    }
     private static BooleanExpression writerContains(String writer) {
         return hasText(writer) ? board.user.nickname.contains(writer) : null;
     }
-    private static BooleanExpression titleContains(String title) {
-        return hasText(title) ? board.title.contains(title) : null;
+    
+    private BooleanExpression titleOrContentContains(String title, String content) {
+        if (hasText(title) && hasText(content)) {
+            return board.title.contains(title).or(board.content.contains(content));
+        } else if (hasText(title)) {
+            return board.title.contains(title);
+        } else if (hasText(content)) {
+            return board.content.contains(content);
+        } else {
+            return null;
+        }
     }
 }
