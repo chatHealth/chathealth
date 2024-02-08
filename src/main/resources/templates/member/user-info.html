@@ -227,12 +227,12 @@
                             let i = 1;
                             html = `<div class="user-info-container">
                               <h2 class="mb-3" style="color:#198754;"><b>내 리뷰</b></h2>
-                              <table class='table table-hover'>
+                              <table class='table table-hover d-inline-block text-truncate'>
                                 <thead>
                                   <tr>
                                     <td> </td>
-                                    <td style='color:#198754;'> <b>상품</b> </td>
-                                    <td style='color:#198754;'> <b>리뷰</b> </td>
+                                    <td style='color:#198754; max-width: 100px;'> <b>상품</b> </td>
+                                    <td style='color:#198754; max-width: 100px;'> <b>리뷰</b> </td>
                                     <td style='color:#198754;'> <b>작성일</b> </td>
                                   </tr>
                                 </thead>
@@ -242,7 +242,7 @@
                                 html += `<tr>
                                             <th style="color:#198754;"> ${i}</th>
                                             <td><a href="/view/${item.postId}">${item.title}</a></td>
-                                            <td class="d-inline-block text-truncate">${item.content}</td>
+                                            <td>${item.content}</td>
                                             <td>${item.createdDate}</td>
                                          </tr>`
                                 i++;
@@ -264,21 +264,23 @@
                 } else{
                     $('#mp-content').empty();
                     mailVerifyingLayout();
-                    //이메일 인증메일 보내기
-                    $.ajax({
-                        url: `/member/emails/verification-request`,
-                        type: "POST",
-                        async: false,
-                        data:{email:email},
-                        success: function (response) {
-                            responseCode = response;
-                        },
-                        error: function (error) {
-                            alert(JSON.stringify(error));
-                        },
-                        complete: function () {
-                        }
-                    });
+                    $('body').on("click","#sendEmail",function (){
+                        $.ajax({
+                            url: `/member/emails/verification-request`,
+                            type: "POST",
+                            async: false,
+                            data:{email:email},
+                            success: function (response) {
+                                responseCode = response;
+                            },
+                            error: function (error) {
+                                alert(JSON.stringify(error));
+                            },
+                            complete: function () {
+                            }
+                        });
+                    })
+
                 }
 
 
@@ -292,7 +294,7 @@
                         table.append(`<tr><th> </th><td><span style="color: #999999;">비밀번호는 8~15자리이고 영문, 숫자, 특수문자([!@#$%^*+=-)를 포함해야 합니다.</span></td></tr>`);
                         table.append(`<tr><th style="color:#198754;">비밀번호 확인</th><td><input type="password" class="form-control new" id="checkNewPw"></td></tr>`);
                         table.append(`<tr><td><span id="confirmPw"></span></td></tr>`);
-                        table.append(`<td><button class="btn btn-success" id="changePwSubmitBtn" style="width:100%;">비밀번호 변경</button></td><td><button class="btn btn-secondary" id="cancelBtn">취소</button></td>`);
+                        table.append(`<td><button class="btn btn-success" id="changePwSubmitBtn" style="width:100%;">저장</button></td><td><button class="btn btn-secondary" id="cancelBtn">취소</button></td>`);
 
                         container.append('<h2 class="mb-4" style="color:#198754;"><b>비밀번호 변경</b></h2>');
                         container.append(table);
@@ -351,21 +353,22 @@
 
                 $('#mp-content').empty();
                 mailVerifyingLayout();
-                $.ajax({
-                    url: `/member/emails/verification-request`,
-                    type: "POST",
-                    async: false,
-                    data: {email: email},
-                    success: function (response) {
-                        responseCode = response;
-                        mailVerifyingLayout();
-                    },
-                    error: function (error) {
-                        alert(JSON.stringify(error));
-                    },
-                    complete: function () {
-                    }
-                });
+                $('body').on("click","#sendEmail",function (){
+                    $.ajax({
+                        url: `/member/emails/verification-request`,
+                        type: "POST",
+                        async: false,
+                        data:{email:email},
+                        success: function (response) {
+                            responseCode = response;
+                        },
+                        error: function (error) {
+                            alert(JSON.stringify(error));
+                        },
+                        complete: function () {
+                        }
+                    });
+                })
 
                 $('body').on("click", "#checkAuthcodeBtn", function () {
                     if (responseCode === $('#authcode').val()) {
@@ -399,9 +402,10 @@
             function mailVerifyingLayout() {
                 const container = $('<div>').addClass('email-verifying-container');
                 container.append('<h2 class="mb-4" style="color:#198754;"><b>이메일 인증</b></h2>');
-                container.append('<p class="mb-1">회원님의 이메일로 인증코드 6자리를 보내드렸습니다.</p>');
+                container.append('<p class="mb-1">회원님의 본인인증을 위해 이메일 인증을 진행합니다.</p>');
                 container.append('<p class="mb-5">인증코드를 확인하시고 10분 이내에 입력해주시기 바랍니다.</p>');
-                container.append('<input type="text" class="form-control mb-1" style="width: 203px;" id="authcode">');
+                container.append('<div class="d-inline-block"><input type="text" class="form-control mb-1" style="width: 203px;" id="authcode">');
+                container.append('<button class="btn btn-sm btn-primary mb-1 mx-3" id="sendEmail">인증코드 발송하기</button></div>');
                 container.append('<span style="width: 203px;" id="confirmAuthcode"></span>');
                 container.append('<p class="mb-5">메일 발송까지 약간의 시간이 소요될 수 있습니다.</p>');
                 container.append('<button class="btn btn-success m-1" id="checkAuthcodeBtn">인증하기</button>');
