@@ -2,6 +2,8 @@ package chathealth.chathealth.controller;
 
 import chathealth.chathealth.constants.Role;
 import chathealth.chathealth.dto.response.member.CustomUserDetails;
+import chathealth.chathealth.dto.response.member.EntIndexDto;
+import chathealth.chathealth.dto.response.member.UserIndexDto;
 import chathealth.chathealth.entity.member.Member;
 import chathealth.chathealth.service.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -26,10 +28,11 @@ public class IndexController {
             Role role = loggedMember.getRole();
 
             if (Role.getEntRoles().contains(role)) {
-                model.addAttribute("member", memberService.getEntInfo(id));
+                EntIndexDto entForIndex = memberService.getEntForIndex(id);
+                model.addAttribute("member", entForIndex);
             } else {
-                memberService.getUserInfo(id);
-                model.addAttribute("member", memberService.getUserInfo(id));
+                UserIndexDto userInfoForIndex = memberService.getUserInfoForIndex(id);
+                model.addAttribute("member", userInfoForIndex);
             }
         }
         return "index";

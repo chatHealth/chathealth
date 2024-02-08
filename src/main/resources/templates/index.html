@@ -7,13 +7,34 @@
     <div class="container">
         <!-- Main content area with Swiper -->
         <main>
+            <div class="intro-section">
+                <h2>환영합니다!</h2>
+                <p>여기에서는 최신 정보를 확인하고 커뮤니티와 소통할 수 있습니다. 다양한 기능을 탐색하고 최대한 활용해 보세요.</p>
+            </div>
+
+
             <div class="justify-content-center row">
                 <!-- 로고 이미지 -->
-                <div class="col-md-6 text-center">
-                    <img src="/img/logo.png" alt="logo" style="max-height: 150px;"> <!-- 높이 제한 수정 -->
-                    <p>SLOGAN</p>
+                <div class="col-md-8 ">
+                    <div id="best-per-day">
+                        <div class="d-flex top-product">
+                            <h4>Daily Top</h4>
+                            <a href="/post" class="btn btn-sm more-button">더보기</a> <!-- "더보기" 버튼 -->
+                        </div>
+                        <!-- 게시물 리스트 -->
+                        <div class="contents"></div>
+                    </div>
+                    <div id="best-per-week">
+                        <div class="d-flex top-product">
+                            <h4>Weekly Top</h4>
+                            <a href="/post" class="btn btn-sm more-button">더보기</a> <!-- "더보기" 버튼 -->
+                        </div>
+                        <!-- 게시물 리스트 -->
+                        <div class="contents"></div>
+                    </div>
                 </div>
-                <div class="col-md-6" id="login-status">
+                <div class="col-md-4" id="login-status">
+                    <div class="w-100">
                     <th:block class="bg-ygr" sec:authorize="!isAuthenticated()">
                         <a href="/auth/login" class="text-ygr btn">
                             <img src="/img/logo.png" alt="logo" style="max-height: 150px;"> <!-- 높이 제한 수정 -->
@@ -29,101 +50,52 @@
                                              onerror="this.src='/img/basic_user.png'">
                                     </div>
                                     <div class="col-auto">
-                                        <h2 th:text="${member.role}"></h2>
-                                        <th:block sec:authorize="hasAnyRole('ROLE_USER', 'ROLE_ADMIN')">
-                                            <ul class="user-details">
-                                                <li><strong>권한:</strong> <span th:text="${member.role.role}"></span>
-                                                </li>
-                                                <li th:if="${member.nickname != null}"><strong>nickname:</strong>
-                                                    <span th:text="${member.nickname}"></span></li>
-                                                <!--                                                <li><strong>등급:</strong> <span th:text="${member.grade}"></span></li>-->
-                                                <li th:if="${member.grade.name() == 'BRONZE'}">
-                                                    <i class="fa fa-medal text-bronze"></i>
-                                                </li>
-                                                <li th:if="${member.grade.name() == 'BLCAK'}">
-                                                    <i class="fa fa-medal text-black"></i>
-                                                </li>
-                                                <li th:if="${member.grade.name() == 'SILVER'}">
-                                                    <i class="fa fa-medal text-silver"></i>
-                                                </li>
-                                                <li th:if="${member.grade.name() == 'GOLD'}">
-                                                    <i class="fa fa-medal text-gold"></i>
-                                                </li>
-                                                <li th:if="${member.grade.name() == 'PLATINUM'}">
-                                                    <i class="fa fa-medal text-platinum"></i>
-                                                </li>
-                                                <li th:if="${member.grade.name() == 'DIAMOND'}">
-                                                    <i class="fa fa-medal text-diamond"></i>
-                                                </li>
-                                                <!-- 기타 정보 -->
-                                            </ul>
-                                        </th:block>
-                                        <th:block
-                                                sec:authorize="hasAnyRole('ROLE_WATING_ENT', 'ROLE_REJECTED_ENT', 'ROLE_PERMITTED_ENT')">
-                                            <ul class="user-details">
-                                                <li><strong>상태:</strong> <span th:text="${member.role.role}">사업자</span>
-                                                </li>
-                                                <li><strong>company:</strong> <span th:text="${member.company}"></span>
-                                                </li>
-                                                <li><strong>ceo:</strong> <span th:text="${member.ceo}"></span></li>
-                                                <!-- 기타 정보 -->
-                                            </ul>
-                                        </th:block>
+                                        <div class="user-info-section">
+                                            <th:block sec:authorize="hasAnyRole('ROLE_USER', 'ROLE_ADMIN')">
+                                                <div class="user-name-display">
+                                                    <h2 th:if="${member.nickname != null}" th:text="${member.nickname}"></h2>
+                                                    <h2 th:if="${member.nickname == null}" th:text="${member.name}"></h2>
+                                                </div>
+                                            </th:block>
+                                            <th:block sec:authorize="hasAnyRole('ROLE_WATING_ENT', 'ROLE_REJECTED_ENT', 'ROLE_PERMITTED_ENT')">
+                                                <div class="user-business-info">
+                                                    <ul class="user-details">
+                                                        <li><strong>회사:</strong> <span th:text="${member.company}"></span></li>
+                                                        <li><strong>대표:</strong> <span th:text="${member.ceo}"></span></li>
+                                                    </ul>
+                                                </div>
+                                            </th:block>
+                                        </div>
+
                                     </div>
                                 </div>
-                                <a sec:authorize="hasRole('ROLE_USER')" th:href="@{|/member/user/${#authentication.principal.loggedMember.id}|}" class="btn btn-primary" style="width:100%">내정보 보기</a>
-                                <a sec:authorize="hasAnyRole('ROLE_WAITING_ENT','ROLE_PERMITTED_ENT','ROLE_REJECTED_ENT')" th:href="@{|/member/ent/${#authentication.principal.loggedMember.id}|}" class="btn btn-primary" style="width:100%">내정보 보기</a>
+                                <a sec:authorize="hasRole('ROLE_USER')" th:href="@{|/member/user/${#authentication.principal.loggedMember.id}|}" class="btn btn-primary" style="width:100%">내 정보 보기</a>
+                                <a sec:authorize="hasAnyRole('ROLE_WAITING_ENT','ROLE_PERMITTED_ENT','ROLE_REJECTED_ENT')" th:href="@{|/member/ent/${#authentication.principal.loggedMember.id}|}" class="btn btn-primary" style="width:100%">내 정보 보기</a>
                                 <a sec:authorize="hasRole('ROLE_ADMIN')" th:href="@{/member/admin}" class="btn btn-primary" style="width:100%">관리 페이지</a>
                             </div>
                         </div>
                     </th:block>
-                </div>
-            </div>
-            <div class="row justify-content-center">
-                <div class="col-md-6">
-                    <div id="best-per-day">
-                        <div class="d-flex">
-                            <h4>일간 최다 조회 상품</h4>
-                            <a href="/post" class="btn btn-sm more-button">더보기</a> <!-- "더보기" 버튼 -->
-                        </div>
-                        <!-- 게시물 리스트 -->
-                        <div class="contents"></div>
                     </div>
-                </div>
-                <div class="col-md-6">
-                    <div id="best-per-week">
-                        <div class="d-flex">
-                            <h4>주간 최다 조회 상품</h4>
-                            <a href="/post" class="btn btn-sm more-button">더보기</a> <!-- "더보기" 버튼 -->
-                        </div>
-                        <!-- 게시물 리스트 -->
-                        <div class="contents"></div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="row justify-content-center">
-                <div class="col-md-6">
-                    <div id="free-board">
-                        <div class="d-flex">
-                            <h4>최신글</h4>
+                    <div id="free-board" class="w-100">
+                        <div class="d-flex free-board">
+                            <h4>커뮤니티 최신글</h4>
                             <a href="/board" class="btn btn-sm more-button">더보기</a> <!-- "더보기" 버튼 -->
                         </div>
                         <!-- 게시물 리스트 -->
                         <div class="contents"></div>
                     </div>
                 </div>
-                <div class="col-md-6">
-                    <div id="notice-board">
-                        <div class="d-flex">
-                            <h4>공지사항</h4>
-                            <a href="/board?category=NOTICE" class="btn btn-sm more-button">더보기</a> <!-- "더보기" 버튼 -->
-                        </div>
-                        <!-- 게시물 리스트 -->
-                        <div class="contents"></div>
-                    </div>
-                </div>
             </div>
+<!--                <div class="col-md-6">-->
+<!--                    <div id="notice-board">-->
+<!--                        <div class="d-flex">-->
+<!--                            <h4>공지사항</h4>-->
+<!--                            <a href="/board?category=NOTICE" class="btn btn-sm more-button">더보기</a> &lt;!&ndash; "더보기" 버튼 &ndash;&gt;-->
+<!--                        </div>-->
+<!--                        &lt;!&ndash; 게시물 리스트 &ndash;&gt;-->
+<!--                        <div class="contents"></div>-->
+<!--                    </div>-->
+<!--                </div>-->
         </main>
     </div>
 
@@ -138,21 +110,40 @@
                     if (response.length === 0) {
                         html += "<h2>일간 조회 게시물이 없습니다.</h2>";
                     }
-                    let i = 1;
-                    html += "<table class=\"table table-hover\">";
+                    html = "<div class=\"swiper\">";
+                    html += "<div class=\"swiper-wrapper\">";
+
                     $.each(response, function (index, item) {
-                        html += "<tr>";
-                        html += '<th>' + i + '</th>';
-                        html += '<td><img src="/profile/' + item.representativeImg + '" class="card-img-top rounded" alt="Image of ' + item.title + '" onError="this.onerror=null; this.src=\'/img/basic_post.svg\'" style="height: 50px; width: 50px; object-fit: cover;"></th>';
-                        html += '<td>' + "<a href='/view/" + item.id + "' style='text-decoration: none; color: inherit'>" + item.title + '</a></td>';
-                        //조회수 이모티콘 + 조회수
-                        html += '<td><i class=\"fa fa-eye text-secondary\"></i>' + item.hitCount + '</td>';
-                        // 행 종료: 현재 인덱스가 4의 배수이고 마지막 요소가 아닐 때
-                        html += "</tr>";
-                        i++;
+                        html += "<div class=\"swiper-slide swiper-post \">";
+                        html += "<a href='/view/" + item.id + "' style='text-decoration: none; color: inherit'>";
+                        html += "<img src='/profile/" + item.representativeImg + "' class='card-img-top rounded' alt='Image of " + item.title + "' onError=\"this.onerror=null; this.src='/img/basic_post.svg'\" style='height: 200px; width: 200px; object-fit: cover; display: block; margin: auto;'>";
+                        html += "<div style='display: flex; align-items: center; justify-content: center; margin-top: 10px;'>";
+                        html += "<span style='margin-right: 15px;'><b>" + (index + 1) + ". </b>" + item.title + "</span>";
+                        html += "<span><i class='fa fa-eye text-secondary'></i> " + item.hitCount + "</span></div>";
+                        html += "</a></div>";
                     });
-                    html += "</table>";
+
+
+                    html += "</div></div>";
                     $('#best-per-day .contents').html(html);
+                    const swiper = new Swiper('.swiper', {
+                        loop: true,
+                        slidesPerView: 1,
+                        spaceBetween: 10,
+                        breakpoints:{
+                            400:
+                                {
+                                    slidesPerView: 2,
+                                    spaceBetween: 30
+                                },
+                            1200:
+                                {
+                                    slidesPerView: 3,
+                                    spaceBetween: 50
+                                },
+                        },
+
+                    });
                 },
                 error: function (error) {
                     alert(JSON.stringify(error));
@@ -169,21 +160,39 @@
                     if (response.length === 0) {
                         html += "<h2>주간 조회 게시물이 없습니다.</h2>";
                     }
-                    let i = 1;
-                    html += "<table class=\"table table-hover\">";
-                    $.each(response, function (index, item) {
-                        html += "<tr>";
-                        html += '<th>' + i + '</th>'; // "
-                        html += `<td><img src='/profile/${item.representativeImg}' class="card-img-top rounded" alt="Image of ${item.title}" onError="this.onerror=null; this.src='/img/basic_post.svg'" style="height: 50px; width: 50px; object-fit: cover;"></td>`;
+                    html = "<div class=\"swiper\">";
+                    html += "<div class=\"swiper-wrapper\">";
 
-                        html += '<td>' + "<a href='/view/" + item.id + "' style='text-decoration: none; color: inherit'>" + item.title + '</a></td>';
-                        //조회수 이모티콘 + 조회수
-                        html += '<td><i class=\"fa fa-eye text-secondary\"></i>' + item.hitCount + '</td>';
-                        html += "</tr>";
-                        i++;
+                    $.each(response, function (index, item) {
+                        html += "<div class=\"swiper-slide swiper-post\">";
+                        html += "<a href='/view/" + item.id + "' style='text-decoration: none; color: inherit'>";
+                        html += "<img src='/profile/" + item.representativeImg + "' class='card-img-top rounded' alt='Image of " + item.title + "' onError=\"this.onerror=null; this.src='/img/basic_post.svg'\" style='height: 200px; width: 200px; object-fit: cover; display: block; margin: auto;'>";
+                        html += "<div style='display: flex; align-items: center; justify-content: center; margin-top: 10px;'>";
+                        html += "<span style='margin-right: 15px;'><b>" + (index + 1) + ". </b>" + item.title + "</span>";
+                        html += "<span><i class='fa fa-eye text-secondary'></i> " + item.hitCount + "</span></div>";
+                        html += "</a></div>";
                     });
-                    html += "</table>";
+
+
+                    html += "</div></div>";
                     $('#best-per-week .contents').html(html);
+                    const swiper = new Swiper('.swiper', {
+                        loop: true,
+                        slidesPerView: 1,
+                        spaceBetween: 10,
+                        breakpoints:{
+                            400:
+                                {
+                                    slidesPerView: 2,
+                                    spaceBetween: 30
+                                },
+                            1200:
+                                {
+                                    slidesPerView: 3,
+                                    spaceBetween: 50
+                                },
+                        }
+                    });
                 },
                 error: function (error) {
                     alert(JSON.stringify(error));

@@ -535,3 +535,41 @@ footer {
     text-align: center;
     font-size: 12px;
 }
+
+.swiper-post img {
+    width: 100%;
+    height: auto;
+    transition: transform 0.5s ease;
+    filter: grayscale(50%);
+}
+
+.swiper-post:hover img {
+    transform: scale(1.1);
+    filter: grayscale(0%);
+}
+
+#best-per-day, #best-per-week, #free-board, .user-info-card {
+    margin: 20px 0;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    background-color: #fff;
+}
+
+.top-product, .free-board h4 {
+    margin: 0;
+    color: #76a263; /* 제목 색상 변경 */
+    font-size: 20px; /* 제목 크기 조정 */
+    font-weight: 600; /* 폰트 가중치 변경 */
+    text-transform: uppercase; /* 모든 글자를 대문자로 */
+    letter-spacing: 1px; /* 글자 간격 조정 */
+}
+
+.top-product, .free-board{
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #eee; /* 하단 경계선 추가 */
+    padding-bottom: 10px;
+}
+
