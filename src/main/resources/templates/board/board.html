@@ -2,6 +2,7 @@
 <html lang="en"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout/layout}"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
 >
 
 <div layout:fragment="content" class="main">
@@ -43,9 +44,15 @@
                     <div>
                         <!--                        <span th:text="${board.nickname != null ? board.nickname : board.name}">작성자</span>-->
 
-                        <span onclick="toggleContextMenu(event)" style="cursor: pointer ">
-                            <img th:src="@{|/profile/${board.profile}|}" alt="프로필 이미지" class="profile-image-sm"
-                                 onerror="this.src='/img/basic_user.png'">
+                        <th:block sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_USER')">
+                            <span onclick="toggleContextMenu(event)" style="cursor: pointer ">
+                        </th:block>
+                        <th:block sec:authorize="hasAnyRole('ANONYMOUS', 'ROLE_WAITING_ENT', 'ROLE_PERMITTED_ENT', 'ROLE_REJECTED_ENT')">
+                            <span>
+                        </th:block>
+                        <img th:if="${board.profile != null}" th:src="@{|/profile/${board.profile}|}" alt="프로필 이미지" class="profile-image-sm"
+                             onerror="this.src='/img/basic_user.png'">
+                        <img th:if="${board.profile == null}" src="/img/basic_user.png" alt="프로필 이미지" class="profile-image-sm">
                         <span class="ms-1" th:text="${board.nickname != null ? board.nickname : board.name}">작성자</span>
                         <span th:switch="${board.grade?.name()}">
                             <i th:case="'BRONZE'" class="fa fa-medal text-bronze"></i>
@@ -182,6 +189,8 @@
         // 댓글 리스트
         const boardId = [[${board.boardId}]];
         const memberId = [[${board.memberId}]];
+        const messageRole = [[${#authorization.expression('hasAnyRole(''ROLE_USER'', ''ROLE_ADMIN'')')}]];
+
         let page;
         //마지막 페이지로 로딩하기
 
@@ -271,8 +280,16 @@
 
                         html += "<div class='card mb-3'>";
                         html += "<div class='card-header d-flex justify-content-between'>";
-                        html += "<strong><img src='/profile/" + item.profile + "' alt='프로필 이미지' class='profile-image-sm' onError='this.src=\"/img/basic_user.png\"'>";
-                        html += "<span class=\"ms-1\" onClick='toggleContextMenu(event)' style='cursor: pointer'>"
+                        if(item.profile != null) {
+                            html += "<strong><img src='/profile/" + item.profile + "' alt='프로필 이미지' class='profile-image-sm' onError='this.src=\"/img/basic_user.png\"'>";
+                        } else {
+                            html += "<strong><img src='/img/basic_user.png' alt='프로필 이미지' class='profile-image-sm'>";
+                        }
+                        if(messageRole) {
+                            html += "<span class=\"ms-1\" onClick='toggleContextMenu(event)' style='cursor: pointer'>"
+                        } else {
+                            html += "<span class=\"ms-1\">"
+                        }
                         html += item.memberNickname;
                         html += "</span>";
                         html += "<div class='context-menu'>";
