@@ -11,6 +11,5 @@ public interface MaterialPostRepository extends JpaRepository<MaterialPost, Long
     List<MaterialPost> findAllByPost(Post id);
     List<MaterialPost> deleteAllByPost(Post id);
     List<Material> findAllMaterialByPost(Post post);
-//    List<Material> findMaterialByPost(Post post);
-
+    List<Material> findMaterialIdByPost(Post post);
 }

@@ -10,5 +10,6 @@ import java.util.List;
 // @repository
 public interface PostRepository extends JpaRepository<Post, Long>, PostRepositoryCustom {
     List<Post> findByMemberId(Long id);
+    List<Post> findByMaterialListMaterialIdIn(List<Long> materialIds);
 }
 

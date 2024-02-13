@@ -81,6 +81,25 @@
 
         </div>
 
+<!--        지금보는 상품과 관련있는 상품-->
+        <div>
+            <div style="justify-content: center"><h2>이 제품과 비슷한 상품</h2></div>
+            <div style="display: flex">
+                <th:block th:each="item : ${related}">
+                    <div class="card" style="width: 14rem;margin-right: 15px">
+                            <img th:src="@{|/profile/${item.getPostImg()}|}" class="card-img-top" alt="..." >
+                        <div class="card-body" style="display: flex;justify-content: space-between">
+                            <p class="card-text" th:text="${item.title}"></p>
+                            <div style="display: flex;">
+                                <img src="/img/빨간하트png.png" style="width: 19px;height: 19px;">
+                                <span th:text="${item.postLike}"></span>
+                            </div>
+                        </div>
+                    </div>
+                </th:block>
+            </div>
+        </div>
+
 
         <!--리뷰-->
         <div>
