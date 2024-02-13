@@ -88,7 +88,7 @@
                 <th:block th:each="item : ${related}">
                     <button class="relatedBtn" style="border-style: none;background: white">
                         <div class="card" style="width: 14rem;margin-right: 15px" th:attr="data-id=${item.postId}">
-                            <img th:src="@{|/profile/${item.getPostImg()}|}" class="card-img-top" alt="..." >
+                            <img th:src="@{|/profile/${item.getPostImg()}|}" class="card-img-top" alt="..." style="width: 230px;height: 200px" >
                             <div class="card-body" style="display: flex;justify-content: space-between">
                                 <p class="card-text" th:text="${item.title}"></p>
                                 <div style="display: flex;">

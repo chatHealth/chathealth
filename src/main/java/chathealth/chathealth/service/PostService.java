@@ -422,7 +422,7 @@ public class PostService {
             materialId.add(materialRepository.findById(materialIdList.get(i).getMaterial().getId()).orElseThrow());
         }
         List<Post> findPost=postRepository.findByMaterialListMaterialIdIn(materialId.stream().map(Material::getId).toList()); //메테리얼값리스트의 값들을 가지는 post들 찾기
-        return findPost.stream()
+        List<RelatedProductDto> dto= findPost.stream()
                 .filter(find -> !find.getId().equals(id))
                 .map(find->RelatedProductDto.builder()
                 .postId(find.getId())
@@ -430,6 +430,8 @@ public class PostService {
                 .postLike(find.getPostLikeCount())
                 .postImg(find.getPostImgList().get(0).getPictureUrl())
                 .build()).toList();
+        dto.stream().skip(4).collect(Collectors.toList());
+        return dto;
     }
 
     // 포스트 목록 조회
