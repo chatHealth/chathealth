@@ -46,8 +46,9 @@
                             <div class="card-body">
                                 <div class="user-profile row">
                                     <div class="col-auto">
-                                        <img th:src="@{|/profile/${member.profile}|}" alt="프로필 이미지" class="profile-image"
-                                             onerror="this.src='/img/basic_user.png'">
+                                        <img th:if="${member.profile == null}" src="/img/basic_user.png" alt="프로필 이미지" class="profile-image">
+                                        <img th:if="${member.profile != null}" th:src="@{|/profile/${member.profile}|}" alt="프로필 이미지" class="profile-image"
+                                        onerror="this.src='/img/basic_user.png'">
                                     </div>
                                     <div class="col-auto">
                                         <div class="user-info-section">
@@ -62,7 +63,7 @@
                                                     </ul>
                                                 </div>
                                             </th:block>
-                                            <th:block sec:authorize="hasAnyRole('ROLE_WATING_ENT', 'ROLE_REJECTED_ENT', 'ROLE_PERMITTED_ENT')">
+                                            <th:block sec:authorize="hasAnyRole('ROLE_WAITING_ENT', 'ROLE_REJECTED_ENT', 'ROLE_PERMITTED_ENT')">
                                                 <div class="user-business-info">
                                                         <h2><span th:text="${member.company}"></span></h2>
                                                     <ul class="user-details">

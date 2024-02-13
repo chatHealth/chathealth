@@ -107,7 +107,9 @@
                             <i th:case="'DIAMOND'" class="fa fa-medal text-diamond"></i>
                             <i th:case="null" class="fa fa-medal text-black"></i> <!-- null 처리 -->
                         </span>
-                            <span onclick="toggleContextMenu(event)" style="cursor: pointer"
+                            <span sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_USER')" onclick="toggleContextMenu(event)" style="cursor: pointer"
+                                  th:text="${item.nickname != null ? item.nickname : item.name}">사용자 이름</span>
+                            <span sec:authorize="hasAnyRole('ANONYMOUS', 'ROLE_WAITING_ENT', 'ROLE_PERMITTED_ENT', 'ROLE_REJECTED_ENT')"
                                   th:text="${item.nickname != null ? item.nickname : item.name}">사용자 이름</span>
                             <div class="context-menu">
                                 <a href="#" class="send-message-link" th:data-member-id="${item.memberId}" th:data-member-name="${item.nickname != null ? item.nickname : item.name}">쪽지 보내기</a>
