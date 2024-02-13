@@ -168,18 +168,26 @@ public class PostService {
 
                     if (member instanceof Users) {
                         Users user = (Users) member;
-                        profiles = "/profile/" + user.getProfile();
+                        if (user.getProfile()== null) {
+                            profiles = "/img/basic_user.png";
+                        }else {
+                            profiles = "/profile/" + user.getProfile();
+                        }
                         nickName = user.getNickname();
                         name = user.getName();
                     } else if (member instanceof Ent) {
                         Ent ent = (Ent) member;
-                        profiles = "/profile/" + ent.getProfile();
+                        if (ent.getProfile() == null) {
+                            profiles = "/img/basic_user.png";
+                        }else {
+                            profiles = "/profile/" + ent.getProfile();
+                        }
                         nickName = null;
                         name = null;
                         company = ent.getCompany();
                     }
 
-                    if (profiles != null && profiles.endsWith("_")) {
+                    if (profiles == null) {
                         profiles = "/img/basic_user.png";
                     }
 
@@ -312,7 +320,7 @@ public class PostService {
                 .map(review -> {
                     Users user = (Users) review.getMember();
                     String profiles = "/profile/" + user.getProfile();
-                    if (user.getProfile().endsWith("_")) {
+                    if (user.getProfile()==null) {
                         profiles = "/img/basic_user.png";
                     }
                     return ReViewSelectDto.builder()
