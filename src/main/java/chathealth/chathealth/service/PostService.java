@@ -425,7 +425,7 @@ public class PostService {
         return findPost.stream()
                 .filter(find -> !find.getId().equals(id))
                 .map(find->RelatedProductDto.builder()
-                .postId(id)
+                .postId(find.getId())
                 .title(find.getTitle())
                 .postLike(find.getPostLikeCount())
                 .postImg(find.getPostImgList().get(0).getPictureUrl())

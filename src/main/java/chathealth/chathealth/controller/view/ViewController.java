@@ -40,7 +40,6 @@ public class ViewController {
         model.addAttribute("postUserLike",postService.postLikeCheck(id,userid));
         model.addAttribute("postList",post);
         model.addAttribute("related",postService.relatedProduct(id));
-        log.info("contrlllllllllllllllllllllll=={}",postService.relatedProduct(id));
         return "view/view";
     }
     @PostMapping("/like/{postId}")

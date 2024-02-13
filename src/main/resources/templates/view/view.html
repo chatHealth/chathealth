@@ -86,16 +86,18 @@
             <div style="justify-content: center"><h2>이 제품과 비슷한 상품</h2></div>
             <div style="display: flex">
                 <th:block th:each="item : ${related}">
-                    <div class="card" style="width: 14rem;margin-right: 15px">
+                    <button class="relatedBtn" style="border-style: none;background: white">
+                        <div class="card" style="width: 14rem;margin-right: 15px" th:attr="data-id=${item.postId}">
                             <img th:src="@{|/profile/${item.getPostImg()}|}" class="card-img-top" alt="..." >
-                        <div class="card-body" style="display: flex;justify-content: space-between">
-                            <p class="card-text" th:text="${item.title}"></p>
-                            <div style="display: flex;">
-                                <img src="/img/빨간하트png.png" style="width: 19px;height: 19px;">
-                                <span th:text="${item.postLike}"></span>
+                            <div class="card-body" style="display: flex;justify-content: space-between">
+                                <p class="card-text" th:text="${item.title}"></p>
+                                <div style="display: flex;">
+                                    <img src="/img/빨간하트png.png" style="width: 19px;height: 19px;">
+                                    <span th:text="${item.postLike}"></span>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    </button>
                 </th:block>
             </div>
         </div>
@@ -188,6 +190,17 @@
                     $("#postlikeimg").attr("src", "/img/빨간하트png.png");
                 }
             }
+
+            //관련상품 클릭이벤트
+
+                // 버튼 클릭을 처리하는 함수
+            $("body").on("click", ".relatedBtn", function () {
+                let id=$(this).find(".card").data("id")
+                window.location.href = '/view/'+id;
+            })
+
+
+
             //리뷰 포커스
             $(document).ready(function () {
                 // focusReview 클래스를 가진 엘리먼트 클릭 시 reviewHeader로 포커스 이동
