@@ -50,7 +50,10 @@
                         <li class="list-group-item"><span><i class="fas fa-star"
                                                              style="color: #FFD43B;"></i></span><span
                                 th:text="${postList.score}">2.1</span></li>
-                        <li class="list-group-item" th:text="@{| 리뷰  (${postList.reviewCount})|}"></li>
+                        <li class="list-group-item" ><div>
+                            <a href="#" class="focusReview">리뷰</a>
+                            <span th:text="@{|(${postList.reviewCount})|}"></span>
+                        </div></li>
                         <li class="list-group-item" th:text="@{|사업자 : ${postList.company}|}"></li>
                     </ul>
                 </div>
@@ -168,7 +171,19 @@
             }
 
 
+            //리뷰버튼 클릭시 리뷰이동
+            // $(".focusReview").on("click",function (){
+            //     $(".reviewHeader").focus();
+            // })
 
+            $(document).ready(function () {
+                // focusReview 클래스를 가진 엘리먼트 클릭 시 reviewHeader로 포커스 이동
+                $('.focusReview').click(function () {
+                    $('html, body').animate({
+                        scrollTop: $('.reviewHeader').offset().top
+                    }, 500);
+                });
+            });
 
             // 리뷰목록조회
             function reViewList(num) {
