@@ -79,11 +79,6 @@ public class Post extends BaseEntity {
         return postLikeList.size();
     }
 
-    public Integer getReviewCount() {
-        if(reviewList == null) return 0;
-        return reviewList.size();
-    }
-
     public void update(PostWriteDto postWriteDto,Symptom symptom) {
         this.content = postWriteDto.getContent();
         this.title = postWriteDto.getTitle();

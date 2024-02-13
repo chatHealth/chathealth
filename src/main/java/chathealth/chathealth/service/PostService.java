@@ -453,6 +453,9 @@ public class PostService {
                                 .map(PicturePost::getPictureUrl)
                                 .orElse(null);
                     }
+                    int reviews = post.getReviewList().stream()
+                            .filter(review -> review.getDeletedDate() == null)
+                            .toList().size();
 
                     return PostResponse.builder()
                             .id(post.getId())
@@ -463,7 +466,7 @@ public class PostService {
                             .createdAt(post.getCreatedDate())
                             .hitCount(post.getPostHitCount())
                             .likeCount(post.getPostLikeCount())
-                            .reviewCount(post.getReviewCount())
+                            .reviewCount(reviews)
                             .build();
                 })
                 .toList();
