@@ -303,6 +303,13 @@ footer {
     transition: color 0.3s ease; /* 부드러운 색상 전환 효과 */
 }
 
+.text-mp-review {
+    font-size: 15px;
+    text-decoration: none;
+    color: #3cb371;
+    transition: color 0.3s ease;
+}
+
 .btn-primary {
     background-color: #32cd32; /* 진한 연두색 버튼 배경 */
     color: white;

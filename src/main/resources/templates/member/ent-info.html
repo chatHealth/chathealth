@@ -10,7 +10,7 @@
             <ul class="list-group list-group-flush">
                 <li class="list-group-item text-center">
                     <button id="editbtn" class="btn edit-profile">
-                        <img th:src="@{|/profile/${entInfo.profile}|}" alt="프로필사진" id="profile" style="width: 100px; height: 100px; border-radius: 50%; overflow: hidden; object-fit: cover;"></br>
+                        <img th:src="@{|/profile/${entInfo.profile}|}" alt="프로필사진" id="profile" style="width: 100px; height: 100px; border-radius: 50%; overflow: hidden; object-fit: cover; onerror="this.src='/img/basic_user.png'"></br>
                         <p>프로필 수정</p>
                     </button>
                 </li>
