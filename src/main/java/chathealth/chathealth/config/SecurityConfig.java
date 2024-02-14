@@ -9,7 +9,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
@@ -36,7 +35,7 @@ public class SecurityConfig {
                                  "/board-image/print","/post-img/**","/profile/**"
                                     ,"/view/**", "/review/**","/comment/**",
                                 "/auth/login-check", "/auth/is-user", "/auth/is-ent",
-                                "/noty/subscribe")
+                                "/noty/subscribe", "/api/post/recent-view")
                         .permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN") // admin role 가지고 있는 사람만 허용
                         .anyRequest()
