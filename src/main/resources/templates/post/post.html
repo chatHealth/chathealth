@@ -97,13 +97,6 @@
 
                 </div>
             </div>
-            <div sec:authorize="isAuthenticated()" class="right-box" style="top:500px" id="view-recent">
-                <h4>최근 조회</h4>
-                <!--    로그인 했을 때만 나타남           게시물 리스트-->
-                <div>
-
-                </div>
-            </div>
         </div>
     </div>
 
@@ -148,35 +141,6 @@
                 }
             });
 
-            // 최근 조회 로그인 했을 때만 실행
-            const isAuth = [[${isAuth}]];
-            if(isAuth) {
-                $.ajax({
-                    url: "/api/post/recent",
-                    type: "GET",
-                    success: function (response) {
-                        let html = "";
-                        if (response.length === 0) {
-                            html += "<h2>아직 조회한 글이 없습니다.</h2>";
-                        }
-                        let i = 1;
-                        html += "<table class=\"table table-hover\">";
-                        $.each(response, function (index, item) {
-                            html += "<tr>";
-                            html += '<th>' + (index + 1) + '</th>'; // "
-                            html += '<td>' + "<a target=\"_blank\" rel=\"noopener noreferrer\" href='/view/" + item.id + "' style='text-decoration: none; color: inherit'>" + item.title + '</a></td>';
-                            html += "</tr>";
-                        });
-                        html += "</table>";
-                        $('#view-recent div').html(html);
-                    },
-                    error: function (error) {
-                        alert(JSON.stringify(error));
-                    },
-                    complete: function () {
-                    }
-                });
-            }
         });
 
         document.querySelectorAll('.btn-symptom').forEach(function (button) {

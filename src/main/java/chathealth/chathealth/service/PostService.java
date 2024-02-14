@@ -18,6 +18,9 @@ import chathealth.chathealth.exception.UserNotFound;
 import chathealth.chathealth.repository.*;
 import chathealth.chathealth.repository.post.PostRepository;
 import jakarta.persistence.EntityManager;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,10 +31,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -93,8 +93,6 @@ public class PostService {
             long minutes = ChronoUnit.MINUTES.between(recentHit.getCreatedDate(), nowTime);
             if (minutes > 720) {
                 postHitRepository.save(postHit);
-            }else {
-                recentHit.update();
             }
         }
     }
@@ -481,15 +479,6 @@ public class PostService {
                 .toList();
     }
 
-    public List<PostResponse> getRecentPosts(Member member) {
-        return postRepository.getRecentPosts(member).stream()
-                .map(post -> PostResponse.builder()
-                        .id(post.getId())
-                        .title(post.getTitle())
-                        .build())
-                .toList();
-    }
-
     public List<SymptomDto> getSymptomList() {
         List<Symptom> symptoms = symptomRepository.findAll();
         return symptoms.stream().map(symptom -> SymptomDto.builder()
@@ -577,5 +566,87 @@ public class PostService {
                 .hitCount(post.getPostHitCount())
                 .representativeImg(representativeImg)
                 .build();
+    }
+
+    public void postRecentView(Long postId, HttpServletRequest request, HttpServletResponse response) {
+
+        Cookie[] cookies = request.getCookies();
+        String recentViewCookie = "recentView";
+        LinkedList<String> recentViews = new LinkedList<>();
+
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals(recentViewCookie)) {
+                    recentViews = new LinkedList<>(Arrays.asList(cookie.getValue().split("\\^")));
+                    recentViews.removeIf(recentView -> recentView.equals(String.valueOf(postId)));
+                    break;
+                }
+            }
+        }
+
+        recentViews.addFirst(postId.toString());
+
+        if(recentViews.size() > 5) {
+            recentViews.removeLast();
+        }
+
+        String value = String.join("^", recentViews);
+
+        Cookie cookie = new Cookie(recentViewCookie, value);
+        cookie.setMaxAge(60 * 60 * 24 * 7);
+        cookie.setPath("/");
+        cookie.setHttpOnly(false);
+
+        response.addCookie(cookie);
+    }
+
+    public List<RecentViewPost> getRecentViewPosts(HttpServletRequest request) {
+
+        Cookie[] cookies = request.getCookies();
+        String recentViewCookie = "recentView";
+        ArrayList<String> recentViews = new ArrayList<>();
+
+
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals(recentViewCookie)) {
+                    recentViews = new ArrayList<>(Arrays.asList(cookie.getValue().split("\\^")));
+                    break;
+                }
+            }
+        }
+
+        if (recentViews.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        List<Post> recentPosts = postRepository.findAllByIdIn(recentViews.stream().map(
+                id -> {
+                    try {
+                        return Long.parseLong(id);
+                    } catch (NumberFormatException e) {
+                        return null;
+                    }
+                }).toList());
+        ArrayList<String> finalRecentViews = recentViews;
+        recentPosts.sort(Comparator.comparing(post -> finalRecentViews.indexOf(post.getId().toString())));
+
+
+        return recentPosts.stream().map(
+                post ->
+                {
+                    String representativeImg = post.getPostImgList().stream()
+                            .filter(img -> img.getOrders() == 1)
+                            .findFirst()
+                            .map(PicturePost::getPictureUrl)
+                            .orElse(null);
+
+                    return RecentViewPost.builder()
+                            .id(post.getId())
+                            .title(post.getTitle())
+                            .representativeImg("/profile/" + representativeImg)
+                            .build();
+                }
+        ).toList();
     }
 }

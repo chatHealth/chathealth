@@ -1,7 +1,6 @@
 package chathealth.chathealth.repository.post;
 
 import chathealth.chathealth.dto.request.PostSearch;
-import chathealth.chathealth.entity.member.Member;
 import chathealth.chathealth.entity.post.Post;
 import chathealth.chathealth.entity.post.SymptomType;
 import com.querydsl.core.types.OrderSpecifier;
@@ -83,17 +82,6 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
                 .leftJoin(postHit).on(postHit.post.eq(post))
                 .orderBy(postHit.count().desc())
                 .groupBy(post)
-                .limit(5)
-                .fetch();
-    }
-
-    @Override
-    public List<Post> getRecentPosts(Member member) {
-        return queryFactory.selectFrom(post)
-                .where(post.deletedDate.isNull(),
-                        postHit.member.eq(member))
-                .leftJoin(postHit).on(postHit.post.eq(post))
-                .orderBy(postHit.modifiedDate.desc())
                 .limit(5)
                 .fetch();
     }
