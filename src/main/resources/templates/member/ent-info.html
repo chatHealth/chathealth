@@ -10,7 +10,7 @@
             <ul class="list-group list-group-flush">
                 <li class="list-group-item text-center">
                     <button id="editbtn" class="btn edit-profile">
-                        <img th:src="@{|/profile/${entInfo.profile}|}" alt="프로필사진" id="profile" style="width: 100px; height: 100px; border-radius: 50%; overflow: hidden; object-fit: cover; onerror="this.src='/img/basic_user.png'"></br>
+                        <img th:src="@{|/profile/${entInfo.profile}|}" alt="프로필사진" id="profile" style="width: 100px; height: 100px; border-radius: 50%; overflow: hidden; object-fit: cover;" onerror="this.src='/img/basic_user.png'"></br>
                         <p>프로필 수정</p>
                     </button>
                 </li>
@@ -77,18 +77,18 @@
             function displayEntInfo(entInfo) {
                 let role;
                 if(entInfo.role === "ROLE_WAITING_ENT"){
-                    role = "<td><span style=\"color:white; border-style: double; font-size: 11px;border-color: #137AE8;background: #137AE8\">승인 대기중</span></td>"
+                    role = "<span style=\"color:white; border-style: double; font-size: 11px;border-color: #137AE8;background: #137AE8\">승인 대기중</span>"
                 }else if(entInfo.role === "ROLE_PERMITTED_ENT"){
-                    role = "<td><span style=\"color:white; border-style: double; font-size: 11px;border-color: #65EA4A;background: #65EA4A\">승인 완료</span></td>"
+                    role = "<span style=\"color:white; border-style: double; font-size: 11px;border-color: #65EA4A;background: #65EA4A\">승인 완료</span>"
                 }else if(entInfo.role === "ROLE_REJECTED_ENT"){
-                    role = "<td><span style=\"color:white; border-style: double; font-size: 11px;border-color: #EA564E;background: #EA564E\">승인 거절</span></td>"
+                    role = "<span style=\"color:white; border-style: double; font-size: 11px;border-color: #EA564E;background: #EA564E\">승인 거절</span>"
                 }
                 let container = $('<div>').addClass('ent-info-container');
                 container.append('<h2 class="mb-4" style="color:#198754;"><b>내 정보</b></h2>');
 
                 const table = $('<table>').addClass('table');
 
-                table.append('<tr><th style="color:#198754;">법인명</th><td>' + entInfo.company + '</td>'+role+'</tr>');
+                table.append('<tr><th style="color:#198754;">법인명</th><td>' + entInfo.company + role+'</td>'+'</tr>');
                 table.append('<tr><th style="color:#198754;">대표자</th><td>' + entInfo.ceo + '</td></tr>');
                 table.append('<tr><th style="color:#198754;">이메일(아이디)</th><td>' + entInfo.email + '</td></tr>');
                 table.append('<tr><th style="color:#198754;">주소</th><td>' + entInfo.address.address + '</td></tr>');
