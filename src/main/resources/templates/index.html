@@ -123,7 +123,7 @@
                         html += "<a href='/view/" + item.id + "' style='text-decoration: none; color: inherit'>";
                         html += "<img src='/profile/" + item.representativeImg + "' class='card-img-top rounded' alt='Image of " + item.title + "' onError=\"this.onerror=null; this.src='/img/basic_post.svg'\" style='height: 200px; width: 200px; object-fit: cover; display: block; margin: auto;'>";
                         html += "<div style='display: flex; align-items: center; justify-content: center; margin-top: 10px;'>";
-                        html += "<span style='margin-right: 15px;'><b>" + (index + 1) + ". </b>" + item.title + "</span>";
+                        html += "<span class='text-truncate d-inline-block' style='max-width: 150px; margin-right: 15px;'><b>" + (index + 1) + ". </b>" + item.title + "</span>";
                         html += "<span><i class='fa fa-eye text-secondary'></i> " + item.hitCount + "</span></div>";
                         html += "</a></div>";
                     });
@@ -173,7 +173,7 @@
                         html += "<a href='/view/" + item.id + "' style='text-decoration: none; color: inherit'>";
                         html += "<img src='/profile/" + item.representativeImg + "' class='card-img-top rounded' alt='Image of " + item.title + "' onError=\"this.onerror=null; this.src='/img/basic_post.svg'\" style='height: 200px; width: 200px; object-fit: cover; display: block; margin: auto;'>";
                         html += "<div style='display: flex; align-items: center; justify-content: center; margin-top: 10px;'>";
-                        html += "<span style='margin-right: 15px;'><b>" + (index + 1) + ". </b>" + item.title + "</span>";
+                        html += "<span class='text-truncate d-inline-block' style='max-width: 150px; margin-right: 15px;'><b>" + (index + 1) + ". </b>" + item.title + "</span>";
                         html += "<span><i class='fa fa-eye text-secondary'></i> " + item.hitCount + "</span></div>";
                         html += "</a></div>";
                     });
@@ -220,7 +220,7 @@
                     html += "<table class=\"table table-hover\">";
                     $.each(response, function (index, item) {
                         html += "<tr>";
-                        html += '<th>' + i + '</th><td>';
+                        html += '<th>' + i + '</th><td class="text-start text-truncate" style="max-width: 70px;">';
                         switch (item.category) {
                             case "FREE":
                                 html += '<span class="badge bg-danger">자유</span>';
@@ -238,7 +238,7 @@
                                 html += '<span class="badge">기타</span>';
                                 break;
                         }
-                        html += "<a href='/board/" + item.boardId + "' style='text-decoration: none; color: inherit'>" + item.title + "</a></td>";
+                        html += "<span class='m-1'><a href='/board/" + item.boardId + "' style='text-decoration: none; color: inherit'>" + item.title + "</a></span></td>";
 
                         html += "</tr>";
                         i++;
