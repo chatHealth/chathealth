@@ -58,8 +58,8 @@
                                                     <h2 th:if="${member.nickname == null}" th:text="${member.name}"></h2>
                                                     <ul class="user-details">
                                                         <li>&nbsp;</li>
-                                                        <li><a sec:authorize="hasRole('ROLE_USER')" th:href="@{|/member/user/${#authentication.principal.loggedMember.id}|}" class="btn btn-primary" style="width:100%">내 정보 보기</a>
-                                                        <a sec:authorize="hasRole('ROLE_ADMIN')" th:href="@{/member/admin}" class="btn btn-primary" style="width:100%">관리 페이지</a></li>
+                                                        <li><a sec:authorize="hasRole('ROLE_USER')" th:href="@{|/member/user/${#authentication.principal.loggedMember.id}|}" class="btn btn-success" style="width:100%">내 정보 보기</a>
+                                                        <a sec:authorize="hasRole('ROLE_ADMIN')" th:href="@{/member/admin}" class="btn btn-success" style="width:100%">관리 페이지</a></li>
                                                     </ul>
                                                 </div>
                                             </th:block>
@@ -68,7 +68,7 @@
                                                         <h2><span th:text="${member.company}"></span></h2>
                                                     <ul class="user-details">
                                                         <li><strong>대표:</strong> <span th:text="${member.ceo}"></span></li>
-                                                        <li><a sec:authorize="hasAnyRole('ROLE_WAITING_ENT','ROLE_PERMITTED_ENT','ROLE_REJECTED_ENT')" th:href="@{|/member/ent/${#authentication.principal.loggedMember.id}|}" class="btn btn-primary" style="width:100%">내 정보 보기</a></li>
+                                                        <li><a sec:authorize="hasAnyRole('ROLE_WAITING_ENT','ROLE_PERMITTED_ENT','ROLE_REJECTED_ENT')" th:href="@{|/member/ent/${#authentication.principal.loggedMember.id}|}" class="btn btn-success" style="width:100%">내 정보 보기</a></li>
                                                     </ul>
                                                 </div>
                                             </th:block>
