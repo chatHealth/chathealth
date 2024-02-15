@@ -227,19 +227,19 @@
                             let i = 1;
                             html = `<div class="user-info-container">
                               <h2 class="mb-3" style="color:#198754;"><b>내 리뷰</b></h2>
-                              <table class='table table-hover d-inline-block'>
+                              <table class='table table-hover'>
                               <colgroup>
-                              <col style="width:50px">
-                              <col style="width:105px">
+                              <col style="width:25px">
+                              <col style="width:100px">
                               <col>
-                              <col style="width:90px">
+                              <col style="width:100px">
 
 </colgroup>
                                 <thead>
                                   <tr>
                                     <td> </td>
                                     <td style='color:#198754; max-width: 100px;'> <b>상품</b> </td>
-                                    <td class=' text-truncate' style='color:#198754; max-width: 50px;'> <b>리뷰</b> </td>
+                                    <td style='color:#198754; max-width: 50px;'> <b>리뷰</b> </td>
                                     <td style='color:#198754;'> <b>작성일</b> </td>
                                   </tr>
                                 </thead>
@@ -248,8 +248,8 @@
                             $.each(response, function (index, item) {
                                 html += `<tr>
                                             <th style="color:#198754;"> ${i}</th>
-                                            <td><a href="/view/${item.postId}" class="text-mp-review">${item.title}</a></td>
-                                            <td>${item.content}</td>
+                                            <td><span class="d-inline-block text-truncate" style="max-width: 97px;"><a href="/view/${item.postId}" class="text-mp-review">${item.title}</a></span></td>
+                                            <td><span class="d-inline-block text-truncate" style="max-width: 400px;">${item.content}</span></td>
                                             <td>${item.createdDate}</td>
                                          </tr>`
                                 i++;
