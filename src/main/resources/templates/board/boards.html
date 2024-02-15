@@ -49,7 +49,7 @@
                         <li><a class="dropdown-item" href="#" data-search-type="content">내용</a></li>
                         <li><a class="dropdown-item" href="#" data-search-type="author">작성자</a></li>
                     </ul>
-                    <button class="btn btn-outline-primary" type="submit">검색</button>
+                    <button class="btn btn-outline-success" type="submit">검색</button>
                 </form>
             </div>
         </div>
@@ -162,7 +162,7 @@
         </nav>
         <div class="d-grid gap-2 d-md-flex justify-content-md-end"
              sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_USER')">
-            <a href="/board/write" class="btn btn-primary me-md-2" type="button">글쓰기</a>
+            <a href="/board/write" class="btn btn-success me-md-2" type="button">글쓰기</a>
         </div>
         <th:block th:if="${boards.size() eq 0}">
             <div class="col-4">

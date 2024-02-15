@@ -8,7 +8,7 @@
         <h2>채팅방 리스트</h2>
         <p>로그인한 사용자는 누구나 채팅방을 개설할 수 있으며 각 채팅방에서 다른 닉네임(익명)으로 참여 가능합니다.</p>
         <p>채팅방을 개설한 방장은 채팅방을 삭제할 수 있습니다.</p>
-        <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#chatRoomModal">채팅방
+        <button type="button" class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#chatRoomModal">채팅방
             개설
         </button>
 <!--        전체 채팅방 or 내가 참여중인 채팅방-->
@@ -42,7 +42,7 @@
                     <a th:if="${chatRoom.isJoined}" href="#" th:href="@{|/chat/${chatRoom.id}|}"
                        class="btn btn-success">참여중</a>
                     <button type="button" th:unless="${chatRoom.isJoined()}" th:data-chat-room-id="${chatRoom.id}"
-                            class="btn btn-primary mb-3 join-button" data-bs-toggle="modal"
+                            class="btn btn-success mb-3 join-button" data-bs-toggle="modal"
                             data-bs-target="#chatJoinModal">Join
                     </button>
                 </div>
@@ -111,7 +111,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
-                        <button id="createChatRoom" class="btn btn-primary">개설하기</button>
+                        <button id="createChatRoom" class="btn btn-success">개설하기</button>
                     </div>
                 </form>
             </div>
@@ -135,7 +135,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
-                        <button id="joinChatRoom" class="btn btn-primary">입장하기</button>
+                        <button id="joinChatRoom" class="btn btn-success">입장하기</button>
                     </div>
                 </form>
             </div>

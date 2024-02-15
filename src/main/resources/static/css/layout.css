@@ -229,11 +229,11 @@ body {
 
 /* 연두색 및 초록색에 해당하는 색상 코드 사용 */
 .nav-item .nav-link {
-    color: #90ee90; /* 연두색 */
+    color: #198754;
 }
 
 .nav-item .nav-link:hover {
-    color: #008000; /* 초록색 */
+    color: #37A331;
 }
 
 .right-box {
@@ -308,21 +308,6 @@ footer {
     text-decoration: none;
     color: #3cb371;
     transition: color 0.3s ease;
-}
-
-.btn-primary {
-    background-color: #32cd32; /* 진한 연두색 버튼 배경 */
-    color: white;
-    padding: 10px 20px;
-    text-decoration: none;
-    border: none;
-    border-radius: 5px;
-    font-size: 16px;
-    transition: background-color 0.3s;
-}
-
-.btn-primary:hover {
-    background-color: #2e8b57; /* 버튼 호버 시 색상 변경 */
 }
 
 #login-status {
@@ -565,7 +550,7 @@ footer {
 
 .top-product, .free-board h4 {
     margin: 0;
-    color: #76a263; /* 제목 색상 변경 */
+    color: #198754; /* 제목 색상 변경 */
     font-size: 20px; /* 제목 크기 조정 */
     font-weight: 600; /* 폰트 가중치 변경 */
     text-transform: uppercase; /* 모든 글자를 대문자로 */

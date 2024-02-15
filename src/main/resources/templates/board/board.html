@@ -121,7 +121,7 @@
                               th:placeholder="${#authorization.expression('hasAnyRole(''ROLE_USER'', ''ROLE_ADMIN'')') ? '여기에 댓글을 작성하세요' : '댓글 작성 권한이 없습니다'}"
                               th:readonly="${!#authorization.expression('hasAnyRole(''ROLE_USER'', ''ROLE_ADMIN'')')}"></textarea>
                 </div>
-                <button type="submit" class="btn btn-primary" id="btn-comment"
+                <button type="submit" class="btn btn-success" id="btn-comment"
                         th:disabled="${!#authorization.expression('hasAnyRole(''ROLE_USER'', ''ROLE_ADMIN'')')}">댓글 작성
                 </button>
             </div>
