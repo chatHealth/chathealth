@@ -21,7 +21,7 @@
                 <li class="list-group-item list-group-item-action"><button class="btn" id="myinfoBtn">내 정보</button></li>
                 <li class="list-group-item list-group-item-action"><button class="btn" id="mypostBtn">내 상품</button></li>
                 <li class="list-group-item list-group-item-action"><button class="btn" id="changepwBtn">비밀번호 변경</button></li>
-                <li class="list-group-item list-group-item-action"><button class="btn" id="deleteaccountBtn">회원 탈퇴</button></li>
+                <li class="list-group-item list-group-item-action"><button class="btn" id="withdrawBtn">회원 탈퇴</button></li>
             </ul>
             <!-- 프로필사진 변경 모달 -->
             <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -77,11 +77,11 @@
             function displayEntInfo(entInfo) {
                 let role;
                 if(entInfo.role === "ROLE_WAITING_ENT"){
-                    role = "<span style=\"color:white; border-style: double; font-size: 11px;border-color: #137AE8;background: #137AE8\">승인 대기중</span>"
+                    role = "<span class='mx-5' style=\"color:white; border-style: double; font-size: 11px;border-color: #137AE8;background: #137AE8\">승인 대기중</span>"
                 }else if(entInfo.role === "ROLE_PERMITTED_ENT"){
-                    role = "<span style=\"color:white; border-style: double; font-size: 11px;border-color: #65EA4A;background: #65EA4A\">승인 완료</span>"
+                    role = "<span class='mx-5' style=\"color:white; border-style: double; font-size: 11px;border-color: #65EA4A;background: #65EA4A\">승인 완료</span>"
                 }else if(entInfo.role === "ROLE_REJECTED_ENT"){
-                    role = "<span style=\"color:white; border-style: double; font-size: 11px;border-color: #EA564E;background: #EA564E\">승인 거절</span>"
+                    role = "<span class='mx-5' style=\"color:white; border-style: double; font-size: 11px;border-color: #EA564E;background: #EA564E\">승인 거절</span>"
                 }
                 let container = $('<div>').addClass('ent-info-container');
                 container.append('<h2 class="mb-4" style="color:#198754;"><b>내 정보</b></h2>');
@@ -233,16 +233,16 @@
                         $('#mp-content').html(container);
 
                         //비밀번호 변경 ajax 통신
-                        $('#changePwSubmitBtn').on("click",function (){
+                        $('#changePwSubmitBtn').on("click", function () {
                             const pw = $('#newPw').val();
                             const regex = /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,15}$/;
                             if (regex.test(pw)) {
                                 $.ajax({
                                     url: `/member/update-pw/${id}`,
                                     method: "PATCH",
-                                    data:{pw:pw,email:email},
-                                    success:function(response){
-                                        if(response.isUpdated === "isUpdated"){
+                                    data: {pw: pw,email:email},
+                                    success: function (response) {
+                                        if (response.isUpdated === "isUpdated") {
                                             alert("비밀번호 변경이 완료되었습니다.")
                                             location.reload();
                                         }
@@ -255,6 +255,7 @@
                                 });
                             } else {
                                 $('#confirmPw').text('비밀번호는 8~15자리이고 영문, 숫자, 특수문자를 포함해야 합니다.').removeClass('text-success').addClass('text-danger');
+                                $('#newPw').focus();
                             }
 
                         });
@@ -329,14 +330,16 @@
 
             $('#myinfoBtn').trigger("click");
 
-            function mailVerifyingLayout(){
+            function mailVerifyingLayout() {
                 const container = $('<div>').addClass('email-verifying-container');
                 container.append('<h2 class="mb-4" style="color:#198754;"><b>이메일 인증</b></h2>');
-                container.append('<p class="mb-1">회원님의 이메일로 인증코드 6자리를 보내드렸습니다.</p>');
+                container.append('<p class="mb-1">회원님의 본인인증을 위해 이메일 인증을 진행합니다.</p>');
                 container.append('<p class="mb-5">인증코드를 확인하시고 10분 이내에 입력해주시기 바랍니다.</p>');
-                container.append('<input type="text" class="form-control mb-1" style="width: 203px;" id="authcode">');
+                container.append('<div class="d-inline-block"><input type="text" class="form-control mb-1" style="width: 203px;" id="authcode">');
+                container.append('<button class="btn btn-sm btn-primary mb-1 mx-3" id="sendEmail">인증코드 발송하기</button></div>');
+                container.append('<span style="width: 203px;" id="confirmAuthcode"></span>');
                 container.append('<p class="mb-5">메일 발송까지 약간의 시간이 소요될 수 있습니다.</p>');
-                container.append('<button class="btn btn-success" id="checkAuthcodeBtn">인증하기</button>');
+                container.append('<button class="btn btn-success m-1" id="checkAuthcodeBtn">인증하기</button>');
                 container.append('<button class="btn btn-secondary" id="cancelBtn">취소</button>');
                 $('#mp-content').html(container);
             }
