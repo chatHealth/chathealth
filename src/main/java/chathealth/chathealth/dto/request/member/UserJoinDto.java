@@ -4,6 +4,7 @@ import chathealth.chathealth.entity.member.Address;
 import chathealth.chathealth.constants.Grade;
 import chathealth.chathealth.constants.Role;
 import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -28,6 +29,8 @@ public class UserJoinDto {
     private String frontAddress;
     private String addressDetail;
     private String name;
+
+    @Size(max=10, message = "별명은 10자 이내로 작성해주세요.")
     private String nickname;
     private LocalDate birth;
     private MultipartFile profile;
