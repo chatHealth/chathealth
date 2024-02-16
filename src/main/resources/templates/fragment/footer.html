@@ -2,12 +2,118 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <div class="container" th:fragment="footerFragment" >
-        <!-- 페이지 콘텐츠 -->
+    <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 mb-4 border-top">
+        <p class="col-md-4 mb-0 text-body-secondary">© 2024 Chat Health, Inc</p>
 
-    <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
-            <h2>Footer</h2>
-        </footer>
+        <a href="/" class="col-md-4 d-flex align-items-center justify-content-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none">
+            <img src="/img/logo.png" alt="logo image" style="width: 80px;">
+        </a>
+
+        <ul class="nav col-md-4 justify-content-end">
+            <li class="nav-item"><a href="/" class="nav-link px-2 text-body-secondary">Home</a></li>
+            <li class="nav-item"><a href="#" class="nav-link px-2 text-body-secondary">Features</a></li>
+            <li class="nav-item"><a href="#" class="nav-link px-2 text-body-secondary">Pricing</a></li>
+            <li class="nav-item"><a href="#" class="nav-link px-2 text-body-secondary">FAQs</a></li>
+            <li class="nav-item"><a href="#" class="nav-link px-2 text-body-secondary">About</a></li>
+        </ul>
+    </footer>
+
+    <!-- 메시지 보내기 모달 -->
+    <div class="modal fade" id="sendMessageModal" tabindex="-1" role="dialog" aria-labelledby="sendMessageModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="sendMessageModalLabel">쪽지 보내기</h5>
+                </div>
+                <div class="modal-body">
+                    <!-- 메시지 폼 -->
+                    <form>
+                        <div class="form-group">
+                            <label for="recipient-name" class="col-form-label">수신자:</label>
+                            <input type="text" class="form-control" id="recipient-name" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="message-subject" class="col-form-label">제목:</label>
+                            <input type="text" class="form-control" id="message-subject">
+                        </div>
+                        <div class="form-group">
+                            <label for="message-text" class="col-form-label">메시지:</label>
+                            <textarea class="form-control input-scroll" id="message-text"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                    <button type="button" class="btn btn-success" id="btn-send-message">보내기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+
+        let receiverId;
+
+        $(document).ready(function () {
+            // 이벤트 위임을 사용하여 동적으로 생성된 요소들에 대한 이벤트 핸들링
+            $('body').on('click', '.send-message-link', function (event) {
+                event.preventDefault();
+                receiverId = $(this).data('member-id');
+                // 수신자 ID와 이름을 모달의 입력 필드에 설정
+                $('#recipient-name').val($(this).data('member-name'));
+                // 모달 표시
+                $('#sendMessageModal').modal('show');
+            });
+        });
 
 
+        // 쪽지 닫기
+        $('#sendMessageModal').on()
+
+        $('#btn-send-message').on('click', function () {
+            sendMessage();
+        });
+        function sendMessage() {
+            const data = {
+                title: document.getElementById('message-subject').value,
+                content: document.getElementById('message-text').value,
+            };
+
+            $.ajax({
+                url: '/api/message/' + receiverId,
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(data),
+                success: function (response) {
+                    toastr.success('쪽지를 보냈습니다.');
+                    $('#sendMessageModal').modal('hide');
+                    document.getElementById('message-subject').value = '';
+                    document.getElementById('message-text').value = '';
+                },
+                error: function (xhr) {
+                    let errorResult = JSON.parse(xhr.responseText);
+                    if (errorResult.code === "400") {
+                        if (errorResult.validation !== undefined) {
+                            if (errorResult.validation.title !== undefined) {
+                                document.getElementById('message-subject').placeholder = errorResult.validation.title;
+                                sendWarnMessage(errorResult.validation.title);
+                            }else if (errorResult.validation.content !== undefined) {
+                                document.getElementById('message-text').placeholder = errorResult.validation.content;
+                                sendWarnMessage(errorResult.validation.content);
+                            }
+                        } else {
+                            toastr.error(errorResult.message);
+                        }
+                    } else {
+                        toastr.error(errorResult.message);
+                    }
+                }
+            })
+        }
+
+        function sendWarnMessage(message) {
+            toastr.warning(message);
+        }
+
+    </script>
 </div>
 </html>

@@ -1,7 +1,6 @@
 package chathealth.chathealth.repository.post;
 
 import chathealth.chathealth.dto.request.PostSearch;
-import chathealth.chathealth.entity.member.Member;
 import chathealth.chathealth.entity.post.Post;
 import chathealth.chathealth.entity.post.SymptomType;
 import com.querydsl.core.types.OrderSpecifier;
@@ -51,7 +50,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
     @Override
     public Long getPostsCount(PostSearch postSearch) {
         return queryFactory
-                .select(post.count())
+                .select(post.countDistinct())
                 .from(post)
                 .where(post.deletedDate.isNull(),
                         titleContains(postSearch.getTitle()),
@@ -69,7 +68,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
                 .where(post.deletedDate.isNull(),
                         postHit.createdDate.between(LocalDateTime.now().minusDays(1), LocalDateTime.now()))
                 .leftJoin(postHit).on(postHit.post.eq(post))
-                .orderBy(postHit.createdDate.max().desc())
+                .orderBy(postHit.count().desc())
                 .groupBy(post)
                 .limit(5)
                 .fetch();
@@ -81,19 +80,8 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
                 .where(post.deletedDate.isNull(),
                         postHit.createdDate.between(LocalDateTime.now().minusWeeks(1), LocalDateTime.now()))
                 .leftJoin(postHit).on(postHit.post.eq(post))
-                .orderBy(postHit.createdDate.max().desc())
+                .orderBy(postHit.count().desc())
                 .groupBy(post)
-                .limit(5)
-                .fetch();
-    }
-
-    @Override
-    public List<Post> getRecentPosts(Member member) {
-        return queryFactory.selectFrom(post)
-                .where(post.deletedDate.isNull(),
-                        postHit.member.eq(member))
-                .rightJoin(postHit).on(postHit.post.eq(post))
-                .orderBy(postHit.createdDate.desc())
                 .limit(5)
                 .fetch();
     }
@@ -123,9 +111,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
         if(company == null || company.isEmpty()){
             return null;
         }
-        System.out.println("ent.company = " + post.member.company);
         return post.member.company.contains(company);
-//        return ent.company.contains(company);
     }
 
     private static OrderSpecifier<?> getOrderSpecifier(PostSearch postSearch) {

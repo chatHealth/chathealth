@@ -1,5 +1,6 @@
 package chathealth.chathealth.entity.post;
 
+import chathealth.chathealth.dto.request.PostWriteDto;
 import chathealth.chathealth.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -15,7 +16,7 @@ import static lombok.AccessLevel.PROTECTED;
 @SuperBuilder
 @NoArgsConstructor(access = PROTECTED)
 @Table(name = "Symptom")
-public class Symptom extends BaseEntity {
+public class Symptom{
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "symptom_id")
@@ -26,4 +27,10 @@ public class Symptom extends BaseEntity {
 
     @OneToMany(mappedBy = "symptom")
     private List<Post> postList;
+
+
+    @OneToMany(mappedBy = "symptom")
+    private List<Material> materialList;
+
+
 }

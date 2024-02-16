@@ -7,10 +7,11 @@ server:
 spring:
   profiles:
     include: oauth
-    active: prod # application-prod
+    active: dev # application-prod
   output:
     ansi:
       enabled: always
+  ##Mail Settings
 
   jpa:
     open-in-view: true

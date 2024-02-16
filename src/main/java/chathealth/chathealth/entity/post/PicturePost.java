@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
+import static jakarta.persistence.FetchType.LAZY;
 import static lombok.AccessLevel.PROTECTED;
 
 
@@ -20,13 +21,15 @@ public class PicturePost {
     @Column(name = "picture_id")
     private Long id;
 
-    @ManyToOne()
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "post_id")
     private Post post;
 
-    @Column(name = "picture_url")
+    @Column(name = "picture_url",length = 2000)
     private String pictureUrl;
 
     private Integer orders;
+
+
 
 }

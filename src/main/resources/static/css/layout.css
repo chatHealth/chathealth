@@ -1,3 +1,171 @@
+.postWriteContent{
+    width: 500px;
+    height: 600px;
+}
+
+.inpTitle{
+    height: 40px;
+    width: 100%;
+}
+.underBox{
+    display: flex;
+}
+.btnBox {
+    justify-content: right;
+}
+.WriteContent{
+    height: 800px;
+}
+.toastui-editor-contents{
+    height: 900px;
+}
+
+.postimg{
+    display: none;
+}
+
+
+/*뷰페이지*/
+.infoBox{
+    margin-left: 15px;
+}
+.productBox{
+    display: flex;
+}
+.carousel{
+    position: relative;
+    width: 500px;
+    height: 400px;
+}
+.carousel-item{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.mainpagebox{
+    margin-top: 200px;
+}
+.contentBox{
+    max-width: 800px;
+}
+.prrLike{
+    width: 40px;
+    height: 40px;
+    position: relative;
+
+}
+.prrLike > img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.prrlikebtn{
+    position: absolute;
+    width: 90%;
+    height: 90%;
+    margin-top: 4px;
+    margin-left: 4px;
+    background: none;
+    border: none;
+}
+.postlikecount{
+    position: absolute;
+    margin-top: 20%;
+    margin-left: 40%;
+
+}
+
+/*뷰 리뷰*/
+.reviewBox {
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.reviewPar {
+    padding: 15px;
+}
+
+.userinfo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.userinfo img {
+    border-radius: 50%;
+    margin-right: 10px;
+}
+.reviewImglistmg{
+    display: flex;
+}
+
+.reviewImglistmg img {
+    margin-right: 10px;
+    margin-bottom: 10px;
+}
+
+.recomment {
+    margin-top: 20px;
+    padding: 15px;
+    border-top: 1px solid #ccc;
+}
+
+.recomInfo, .recomCon {
+    margin-bottom: 10px;
+}
+.insertHeader{
+    display: flex;
+    justify-content: space-between;
+}
+.reWrite{
+    border-style: solid;
+    border-width: thin;
+    /*border-width: ;*/
+    border-radius: 3px;
+    border-color: #a4a0a0;
+    padding: 5px;
+}
+
+.reContent{
+    width: 90%;
+    height: 80px;
+}
+.starselect{
+    width: 30px;
+    float: right;
+}
+.materialBox{
+    padding: 10px;
+    margin: 10px;
+    border-style: solid;
+    border-width: thin;
+    border-color: rgb(87, 243, 9);
+}
+
+
+
+
+
+
+
+
+.input-file-button{
+    margin-top: 10px;
+    width: 150px;
+    height: 50px;
+    background: #198754;
+    color: white;
+    border: solid;
+    border-radius: 3%;
+    text-align: center;
+    justify-content: center;
+    cursor: pointer;
+    display: inline-block;
+}
+
+
+
 .btn-symptom {
     background-color: transparent; /* 배경색 투명 */
     border: none; /* 테두리 제거 */
@@ -16,7 +184,7 @@
 }
 
 .card-img-top:hover, .card-title:hover{
-        font-weight: bold;
+    font-weight: bold;
 }
 
 #card-container {
@@ -60,24 +228,24 @@ body {
 #ca{
     /*세로로 가운데 배치*/
     margin: 0 auto;
-    width: 1300px;
+    /*width: 1300px;*/
     position: relative;
     display: flex;
 }
 
 /* 연두색 및 초록색에 해당하는 색상 코드 사용 */
 .nav-item .nav-link {
-    color: #90ee90; /* 연두색 */
+    color: #198754;
 }
 
 .nav-item .nav-link:hover {
-    color: #008000; /* 초록색 */
+    color: #37A331;
 }
 
 .right-box {
     position: absolute; /* 고정 위치 */
     top: 180px; /* 상단에서 50px 아래에 위치 */
-    right: 20px; /* 우측에서 10px 떨어진 곳에 위치 */
+    right: 10px; /* 우측에서 10px 떨어진 곳에 위치 */
     width: 200px; /* 너비 */
     border: 1px solid #dee2e6; /* 경계선 */
     /*box-shadow: 0 4px 8px rgba(0,0,0,0.1); !* 그림자 효과 *!*/
@@ -89,7 +257,7 @@ body {
     }
 
 }
-@media screen and (max-width: 1200px) {
+@media screen and (max-width: 1290px) {
     .left-box {
         display: none;
     }
@@ -118,7 +286,7 @@ footer {
     bottom: 0;
     width: 100%;
     height: 150px; /* Footer 높이 설정 */
-    background-color: #f8f9fa;
+    background-color: #ffffff;
 }
 
 #main{
@@ -141,19 +309,11 @@ footer {
     transition: color 0.3s ease; /* 부드러운 색상 전환 효과 */
 }
 
-.btn-primary {
-    background-color: #32cd32; /* 진한 연두색 버튼 배경 */
-    color: white;
-    padding: 10px 20px;
+.text-mp-review {
+    font-size: 15px;
     text-decoration: none;
-    border: none;
-    border-radius: 5px;
-    font-size: 16px;
-    transition: background-color 0.3s;
-}
-
-.btn-primary:hover {
-    background-color: #2e8b57; /* 버튼 호버 시 색상 변경 */
+    color: #3cb371;
+    transition: color 0.3s ease;
 }
 
 #login-status {
@@ -197,10 +357,6 @@ footer {
     text-align: right; /* 버튼을 우측 정렬 */
 }
 
-.more-button {
-    /* 여기에 버튼 스타일을 추가하세요 (예: 패딩, 배경색, 글꼴 등) */
-}
-
 .profile-image {
     height: 150px;
     width: 150px;
@@ -241,4 +397,202 @@ footer {
 
 .context-menu a:hover {
     background-color: #f1f1f1;
+}
+
+#commentInput {
+    max-height: 150px; /* 최대 높이 설정 */
+    overflow-y: auto; /* 내용이 최대 높이를 초과할 경우 스크롤바 표시 */
+    resize: none;
+}
+
+.modal-size-400 {
+    max-height: 400px; /* 최대 높이 설정 */
+    overflow-y: auto; /* 세로 스크롤 설정 */
+    scroll-behavior: smooth;
+}
+
+.is-read td{
+    color: #b7bdc3;
+}
+.was-read{
+    color: #a49292;
+}
+
+.input-scroll{
+    max-height: 150px; /* 최대 높이 설정 */
+    resize: none;
+}
+/* 내가 보낸 메시지에 대한 스타일 */
+.my-message-box {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    margin-bottom: 10px;
+}
+
+.my-message-box .message-content {
+    background-color: #DCF8C6;
+    padding: 10px;
+    border-radius: 10px;
+    max-width: 60%;
+    word-break: break-word;
+}
+
+.my-message-box .nickname {
+    font-size: 0.8em;
+    color: #888;
+    margin-bottom: 3px;
+}
+
+.my-message-box .timestamp {
+    font-size: 0.8em;
+    color: #888;
+    margin-top: 3px;
+}
+
+/* 다른 사람이 보낸 메시지에 대한 스타일 */
+.other-message-box {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 10px;
+}
+
+.other-message-box .message-content {
+    background-color: #ECECEC;
+    padding: 10px;
+    border-radius: 10px;
+    max-width: 60%;
+    word-break: break-word;
+}
+
+.other-message-box .nickname {
+    font-size: 0.8em;
+    color: #888;
+    margin-bottom: 3px;
+}
+
+.other-message-box .timestamp {
+    font-size: 0.8em;
+    color: #888;
+    margin-top: 3px;
+}
+.message-input-container {
+    display: flex;
+    margin-top: 10px;
+}
+
+#messageInput {
+    flex-grow: 1; /* 입력창이 가용 공간을 채움 */
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.send-message-btn {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+.board-contents{
+    max-width: 800px;
+    margin: auto;
+}
+
+.board-contents span p img {
+    max-width: 100%;
+}
+
+.postListImg {
+    width: 200px; /* 원하는 너비로 설정 */
+    height: 200px; /* 원하는 높이로 설정 */
+    object-fit: cover; /* 이미지를 비율을 유지하면서 크롭 */
+}
+
+.enter-message{
+    color: #7863d7;
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.quit-message{
+    color: #d03c3c;
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.timestamp-enter{
+    color: #be8181;
+    text-align: center;
+    font-size: 12px;
+}
+
+.timestamp-quit{
+    color: #be8181;
+    text-align: center;
+    font-size: 12px;
+}
+
+.swiper-post img {
+    width: 100%;
+    height: auto;
+    transition: transform 0.5s ease;
+    filter: grayscale(50%);
+}
+
+.swiper-post:hover img {
+    transform: scale(1.1);
+    filter: grayscale(0%);
+}
+
+#best-per-day, #best-per-week, #free-board, .user-info-card {
+    margin: 20px 0;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    background-color: #fff;
+}
+
+.top-product, .free-board h4 {
+    margin: 0;
+    color: #198754; /* 제목 색상 변경 */
+    font-size: 20px; /* 제목 크기 조정 */
+    font-weight: 600; /* 폰트 가중치 변경 */
+    text-transform: uppercase; /* 모든 글자를 대문자로 */
+    letter-spacing: 1px; /* 글자 간격 조정 */
+}
+
+.top-product, .free-board{
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #eee; /* 하단 경계선 추가 */
+    padding-bottom: 10px;
+}
+
+.intro-section {
+    background-color: #dff3ec; /* 배경색 */
+    padding: 40px 20px; /* 패딩 */
+    border-radius: 8px; /* 모서리 둥글게 */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* 그림자 효과 */
+    margin: 20px 0; /* 위 아래 마진 */
+    text-align: center; /* 텍스트 중앙 정렬 */
+}
+
+.intro-section h2 {
+    color: #007bff; /* 제목 색상 */
+    margin-bottom: 20px; /* 제목 아래 마진 */
+    font-size: 28px; /* 글자 크기 */
+}
+
+.intro-section p {
+    font-size: 16px; /* 문단 글자 크기 */
+    line-height: 1.6; /* 줄 간격 */
+    color: #666; /* 문단 글자 색상 */
+}
+
+.user-details li{
+    list-style: none; /* 리스트 스타일 제거 */
+    margin-bottom: 10px; /* 리스트 아래 마진 */
 }

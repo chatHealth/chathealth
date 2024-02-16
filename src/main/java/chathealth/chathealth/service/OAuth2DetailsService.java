@@ -1,9 +1,8 @@
 package chathealth.chathealth.service;
 
 
-import chathealth.chathealth.dto.response.CustomUserDetails;
+import chathealth.chathealth.dto.response.member.CustomUserDetails;
 import chathealth.chathealth.entity.member.Member;
-import chathealth.chathealth.constants.Role;
 import chathealth.chathealth.entity.member.Users;
 import chathealth.chathealth.repository.MemberRepository;
 import chathealth.chathealth.social.KakaoUserInfo;
@@ -48,23 +47,21 @@ public class OAuth2DetailsService extends DefaultOAuth2UserService{
         }
 
         assert socialUserInfo != null : "이메일 없음";
-        String email = socialUserInfo.getEmail();
         String name = socialUserInfo.getName();
-        String userId = socialUserInfo.getProviderId();
-        log.info(userId);
-        Role role = ROLE_USER;
+        String email = socialUserInfo.getProviderId();
         String password = bCryptPasswordEncoder.encode(UUID.randomUUID().toString());
         Users returnMember = null;
 
-        Optional<Member> foundMember =  memberRepository.findByEmail(userId);
+        Optional<Member> foundMember =  memberRepository.findByEmail(email);
         if(foundMember.isPresent()) {
             returnMember = (Users) foundMember.get();
         } else {
             returnMember = Users.builder()
                     .pw(password)
-                    .role(role)
+                    .role(ROLE_USER)
                     .name(name)
-                    .email(userId)
+                    .nickname(name)
+                    .email(email)
                     .grade(BRONZE)
                     .build();
             memberRepository.save(returnMember);

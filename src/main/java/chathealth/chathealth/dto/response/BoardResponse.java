@@ -5,6 +5,8 @@ import chathealth.chathealth.entity.board.Category;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Builder
 public class BoardResponse {
@@ -14,8 +16,8 @@ public class BoardResponse {
     private String title;
     private String content;
     private Category category;
-    private String createdDate;
-    private String modifiedDate;
+    private LocalDateTime createdDate;
+    private LocalDateTime modifiedDate;
 
     //작성자
     private String name;

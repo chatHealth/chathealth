@@ -1,5 +1,6 @@
 package chathealth.chathealth.entity.post;
 
+import chathealth.chathealth.dto.request.PostWriteDto;
 import chathealth.chathealth.entity.BaseEntity;
 import chathealth.chathealth.entity.Review;
 import chathealth.chathealth.entity.member.Ent;
@@ -9,6 +10,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.SQLDelete;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -23,8 +25,7 @@ import static lombok.AccessLevel.PROTECTED;
 
 @NoArgsConstructor(access = PROTECTED)
 @DynamicUpdate
-
-@Table(name = "Post")
+@SQLDelete(sql = "UPDATE post SET deleted_date = CURRENT_TIMESTAMP where post_id = ?")
 public class Post extends BaseEntity {
 
     @Id
@@ -78,8 +79,9 @@ public class Post extends BaseEntity {
         return postLikeList.size();
     }
 
-    public Integer getReviewCount() {
-        if(reviewList == null) return 0;
-        return reviewList.size();
+    public void update(PostWriteDto postWriteDto,Symptom symptom) {
+        this.content = postWriteDto.getContent();
+        this.title = postWriteDto.getTitle();
+        this.symptom=symptom;
     }
 }
