@@ -13,13 +13,14 @@
                             <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
                                 <input type="radio" class="btn-check" name="symptomType" id="symptomType1"
                                        autocomplete="off" checked>
-                                <label class="btn btn-symptom" for="symptomType1">전체</label>
-                                <div th:each="type : ${T(chathealth.chathealth.entity.post.SymptomType).values()}">
+                                <label class="btn btn-symptom text-nowrap" for="symptomType1">전체</label>
+                                <div class="d-flex flex-wrap">
+                                <div th:each="type : ${T(chathealth.chathealth.entity.post.SymptomType).values()}" class="text-nowrap">
                                     <input type="radio" class="btn-check" th:name="'symptomType'" th:id="${'symptomType' + (type.ordinal() + 2)}"
                                            autocomplete="off" th:value="${type.name()}" />
                                     <label class="btn btn-symptom" th:for="${'symptomType' + (type.ordinal() + 2)}" th:text="${type.symptomName}">Label</label>
                                 </div>
-
+                                </div>
                             </div>
                         </div>
                         <!-- 선택 가능한 요소들 (초기에 숨김) -->
