@@ -41,9 +41,9 @@
                     </button>
                 </div>
             </div>
-            <div class="infoBox">
-                <div>
-                    <h2 th:text="${postList.title}"></h2>
+            <div class="infoBox" style="width: 48%">
+                <div  style="font-size: 116px;max-width: 100%;word-wrap: break-word;">
+                    <h3 th:text="${postList.title}"></h3>
                 </div>
                 <div>
                     <ul class="list-group list-group-flush">
@@ -90,7 +90,7 @@
                         <div class="card" style="width: 14rem;margin-right: 15px" th:attr="data-id=${item.postId}">
                             <img th:src="@{|/profile/${item.getPostImg()}|}" class="card-img-top" alt="..." style="width: 230px;height: 200px" >
                             <div class="card-body" style="display: flex;justify-content: space-between">
-                                <p class="card-text" th:text="${item.title}"></p>
+                                <p class="card-text text-truncate" th:text="${item.title}"></p>
                                 <div style="display: flex;">
                                     <img src="/img/빨간하트png.png" style="width: 19px;height: 19px;">
                                     <span th:text="${item.postLike}"></span>
