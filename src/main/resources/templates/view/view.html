@@ -126,11 +126,11 @@
                             <p class="reImgCount">0</p>
                         </label>
                     </div>
-                    <div class="col-3 mt-3" style="float: right">
+                    <div class="col-3 mt-3" style="float: right;width: 150px;margin-right: 10%">
                         <select id="star" name=""
                                 data-placeholder="별점"
-                                class="starselect"
-                                aria-label="Small select example" data-style="btn-primary">
+                                class="form-select"
+                                aria-label="Default select example" data-style="btn-primary">
                             <option th:value="5.0"><span>★★★★★</span></option>
                             <option th:value="4.0"><span>★★★★☆</span></option>
                             <option th:value="3.0"><span>★★★☆☆</span></option>
@@ -139,9 +139,11 @@
                         </select>
                     </div>
                 </div>
-                <div class="reContentbox">
+                <div class="reContentbox" style="display:flex;">
                     <textarea class="reContent"></textarea>
-                    <button class="reviewbtn" type="submit" onclick=insertRe()>리뷰등록</button>
+                    <div style="display:flex;align-items: center;margin-left: 3px">
+                        <button type="button" class="btn btn-success" onclick=insertRe()>리뷰등록</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -174,11 +176,20 @@
             reViewList()
             addClassName()
             toggleRecomment()
+            Viewreview()
 
 
             const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
             const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
 
+
+            //로그인한 유저에게만 댓글작성란 표시
+            function Viewreview(){
+                if(!(userCheck == 1)){
+                    ht="<div>로그인 후 리뷰를 작성 할 수 있습니다.</div>";
+                    $(".reWrite").html(ht);
+                }
+            }
             function addClassName() {
                 let imgbox = $(".carousel-inner > div:first-child");
                 imgbox.remove("carousel-item").addClass("carousel-item active");
