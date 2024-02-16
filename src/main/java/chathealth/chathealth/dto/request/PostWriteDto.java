@@ -3,7 +3,9 @@ package chathealth.chathealth.dto.request;
 
 import chathealth.chathealth.entity.member.Ent;
 import chathealth.chathealth.entity.post.*;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -18,6 +20,7 @@ import java.util.List;
 public class PostWriteDto {
     private Long id;
     //private Ent member;
+    @Size(max=30, message = "내용은 30자 이내로 작성해주세요.")
     @NotBlank(message = "title입력")
     private String title;
     @NotBlank(message = "content입력")

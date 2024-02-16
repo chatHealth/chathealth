@@ -13,13 +13,14 @@
                             <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
                                 <input type="radio" class="btn-check" name="symptomType" id="symptomType1"
                                        autocomplete="off" checked>
-                                <label class="btn btn-symptom" for="symptomType1">전체</label>
-                                <div th:each="type : ${T(chathealth.chathealth.entity.post.SymptomType).values()}">
+                                <label class="btn btn-symptom text-nowrap" for="symptomType1">전체</label>
+                                <div class="d-flex flex-wrap">
+                                <div th:each="type : ${T(chathealth.chathealth.entity.post.SymptomType).values()}" class="text-nowrap">
                                     <input type="radio" class="btn-check" th:name="'symptomType'" th:id="${'symptomType' + (type.ordinal() + 2)}"
                                            autocomplete="off" th:value="${type.name()}" />
                                     <label class="btn btn-symptom" th:for="${'symptomType' + (type.ordinal() + 2)}" th:text="${type.symptomName}">Label</label>
                                 </div>
-
+                                </div>
                             </div>
                         </div>
                         <!-- 선택 가능한 요소들 (초기에 숨김) -->
@@ -125,7 +126,7 @@
                     $.each(response, function (index, item) {
                         html += "<tr>";
                         html += '<th>' + (index + 1) + '</th>'; // "
-                        html += '<td>' + "<a target=\"_blank\" rel=\"noopener noreferrer\" href='/view/" + item.id + "' style='text-decoration: none; color: inherit'>" + item.title + '</a></td>';
+                        html += '<td class="text-truncate" style="max-width: 80px;">' + "<a target=\"_blank\" rel=\"noopener noreferrer\" href='/view/" + item.id + "' style='text-decoration: none; color: inherit'>" + item.title + '</a></td>';
                         //조회수 이모티콘 + 조회수
                         html += '<td><i class=\"fa fa-eye text-secondary\"></i>' + item.hitCount + '</td>';
                         // 행 종료: 현재 인덱스가 4의 배수이고 마지막 요소가 아닐 때
@@ -218,14 +219,14 @@
                         html += '    <div class="card h-100 shadow-sm bg-light"> <!-- Original background color -->';
                         html += '        <a target="_blank" rel="noopener noreferrer" href="'+ "view/" + item.id + '" style="text-decoration: none; color: inherit;">';
                         html += '            <img src="/profile/' + item.representativeImg + '" class="card-img-top rounded" alt="Image of ' + item.title + '" onError="this.onerror=null; this.src=\'/img/basic_post.svg\'" style="height: 193px; object-fit: cover;">';
-                        html += '            <h5 class="card-title font-weight-bold text-center" style="margin-top: 10px;">' + item.title + '</h5>';
+                        html += '            <h5 class="card-title font-weight-bold text-center text-truncate" style="margin-top: 10px; max-width: 200px">' + item.title + '</h5>';
                         html += '        </a>';
                         html += '        <div class="card-body">';
                         html += '            <div class="d-flex justify-content-between align-items-center mb-2">';
                         html += '                <span><i class="fa fa-eye text-secondary"></i> ' + item.hitCount + '</span>';
                         html += '                <span><i class="fa fa-heart text-danger"></i> ' + item.likeCount + '</span>';
                         html += '            </div>';
-                        html += '            <p class="card-text"><span class="text-secondary">' + item.company + '</span></p>';
+                        html += '            <p class="card-text"><span class="text-secondary text-truncate d-inline-block" style="max-width: 200px;">' + item.company + '</span></p>';
                         html += '        </div>';
                         html += '        <div class="card-footer bg-white">';
                         html += '           <span><i class="fas fa-pen"></i> ' + item.reviewCount + '</span>';
