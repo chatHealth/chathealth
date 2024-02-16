@@ -3,6 +3,7 @@ package chathealth.chathealth.dto.request.member;
 import chathealth.chathealth.entity.member.Address;
 import chathealth.chathealth.constants.Role;
 import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -26,6 +27,8 @@ public class EntJoinDto {
     private String postcode;
     private String frontAddress;
     private String addressDetail;
+
+    @Size(max=50, message = "상호명은 50자 이내로 작성해주세요.")
     private String company;
     private String ceo;
     private String entNo;
