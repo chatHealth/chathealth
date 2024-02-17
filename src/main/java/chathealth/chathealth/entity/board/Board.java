@@ -17,28 +17,28 @@ import java.util.List;
 
 import static jakarta.persistence.EnumType.STRING;
 import static jakarta.persistence.FetchType.LAZY;
-import static jakarta.persistence.GenerationType.SEQUENCE;
 import static lombok.AccessLevel.PROTECTED;
 
 @Entity
 @NoArgsConstructor(access = PROTECTED)
 @Getter
 @SuperBuilder
-@SQLDelete(sql = "UPDATE board SET deleted_date = CURRENT_TIMESTAMP where board_id = ?")
+@SQLDelete(sql = "UPDATE board SET deleted_date = CURRENT_TIMESTAMP where board_id = ?") // h2
+//@SQLDelete(sql = "UPDATE board SET deleted_date = SYSDATE where board_id = ?") // oracle
 public class Board extends BaseEntity {
-
     @Id
-    @GeneratedValue(strategy = SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "board_id")
     private Long id;
 
     @Column(length = 2000)
     private String title;
+
     @Lob
     private String content;
 
-    //    private Integer report;   //고민 좀 해보고..
     private LocalDateTime deletedDate;
+
     @Enumerated(STRING)
     private Category category;
 

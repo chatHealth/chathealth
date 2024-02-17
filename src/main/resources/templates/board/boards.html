@@ -49,12 +49,11 @@
                         <li><a class="dropdown-item" href="#" data-search-type="content">내용</a></li>
                         <li><a class="dropdown-item" href="#" data-search-type="author">작성자</a></li>
                     </ul>
-                    <button class="btn btn-outline-primary" type="submit">검색</button>
+                    <button class="btn btn-outline-success" type="submit">검색</button>
                 </form>
             </div>
         </div>
         <table class="table">
-            <th:block th:if="${boards.size() ne 0}">
                 <thead id="list">
                 <tr>
                     <th scope="col">분류</th>
@@ -65,6 +64,7 @@
                 </tr>
                 </thead>
                 <tbody>
+            <th:block th:if="${boards.size() ne 0}">
                 <tr th:each="item : ${boards}">
                     <td>
                         <a th:href="@{/board(category=${item.category?.name()},page=0)}">
@@ -93,9 +93,11 @@
                         </span>
                         </a>
                     </td>
-                    <td><a th:href="@{/board/{id}(id=${item.boardId})}" th:text="|${item.title}(${item.commentCount})|"
-                           style="text-decoration: none; color: inherit">제목</a></td>
-                    <td th:text="${item.createdDate}">작성일</td>
+                    <td><a th:href="@{/board/{id}(id=${item.boardId})}" style="text-decoration: none; color: inherit">
+                        <span class="d-inline-block text-truncate " style="vertical-align: middle; max-width: 200px" th:text="${item.title}">제목</span>
+                        <span class="d-inline-block" style="color:grey; vertical-align: middle;" th:text="|[${item.commentCount}]|">댓글</span>
+                    </a></td>
+                    <td th:text="${item.createdDate}" class="format-date"></td>
                     <td>
                         <div class="user-name">
                         <span th:switch="${item.grade?.name()}">
@@ -107,11 +109,12 @@
                             <i th:case="'DIAMOND'" class="fa fa-medal text-diamond"></i>
                             <i th:case="null" class="fa fa-medal text-black"></i> <!-- null 처리 -->
                         </span>
-                            <span onclick="toggleContextMenu(event)" style="cursor: pointer"
+                            <span sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_USER')" onclick="toggleContextMenu(event)" style="cursor: pointer"
+                                  th:text="${item.nickname != null ? item.nickname : item.name}">사용자 이름</span>
+                            <span sec:authorize="hasAnyRole('ANONYMOUS', 'ROLE_WAITING_ENT', 'ROLE_PERMITTED_ENT', 'ROLE_REJECTED_ENT')"
                                   th:text="${item.nickname != null ? item.nickname : item.name}">사용자 이름</span>
                             <div class="context-menu">
-                                <a th:href="@{/sendMessage(memberId=${item.memberId})}">쪽지 보내기</a>
-                                <a th:href="@{/userInfo(memberId=${item.memberId})}">유저 정보 보기</a>
+                                <a href="#" class="send-message-link" th:data-member-id="${item.memberId}" th:data-member-name="${item.nickname != null ? item.nickname : item.name}">쪽지 보내기</a>
                             </div>
                         </div>
                     </td>
@@ -119,11 +122,7 @@
                 </tr>
                 </tbody>
             </th:block>
-            <th:block th:if="${boards.size() eq 0}">
-                <div class="col-4">
-                    <p class="card-text">게시글이 없습니다.</p>
-                </div>
-            </th:block>
+
         </table>
         <nav th:if="${boards.size() ne 0}" aria-label="Page navigation example" class="justify-content-center">
             <ul class="pagination">
@@ -165,8 +164,13 @@
         </nav>
         <div class="d-grid gap-2 d-md-flex justify-content-md-end"
              sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_USER')">
-            <a href="/board/write" class="btn btn-primary me-md-2" type="button">글쓰기</a>
+            <a href="/board/write" class="btn btn-success me-md-2" type="button">글쓰기</a>
         </div>
+        <th:block th:if="${boards.size() eq 0}">
+            <div class="col-4">
+                <p class="card-text align-items-center">조건에 일치하는 게시글이 없습니다.</p>
+            </div>
+        </th:block>
     </div>
     <script th:inline="javascript">
         $(document).ready(function () {
@@ -188,15 +192,16 @@
 
                             <span>${item.title}</span>
                         </a></td>`;
-                        html += '<td>' + item.createdDate + '</td>';
+                        html += '<td class="format-date">' + item.createdDate + '</td>';
                         html += '<td>관리자</td>';
                         html += '<td>' + item.hit + '</td>';
                         html += '</tr>'
                     });
                     $("#list").append(html);
+                    setTimeZoneAndFormat();
                 },
                 error: function (response) {
-                    console.log(response);
+                    toastr.error('공지사항을 불러오는데 실패했습니다.');
                 }
             });
             $.ajax({
@@ -217,15 +222,16 @@
 
                             <span>${item.title}</span>
                         </a></td>`;
-                        html += '<td>' + item.createdDate + '</td>';
+                        html += '<td class="format-date">' + item.createdDate + '</td>';
                         html += '<td>관리자</td>';
                         html += '<td>' + item.hit + '</td>';
                         html += '</tr>'
                     });
                     $("#list").append(html);
+                    setTimeZoneAndFormat();
                 },
                 error: function (response) {
-                    console.log(response);
+                    toastr.error('뉴스를 불러오는데 실패했습니다.');
                 }
             });
         })
@@ -286,7 +292,7 @@
                 window.location.href = '/board' + query ;
             }
             else {
-                alert('검색어를 입력하세요.');
+                sendWarnMessage('검색어를 입력해 주세요.');
             }
         });
     </script>

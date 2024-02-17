@@ -1,21 +1,25 @@
 package chathealth.chathealth.controller;
 
-import chathealth.chathealth.dto.request.EntJoinDto;
-import chathealth.chathealth.dto.request.UserJoinDto;
+import chathealth.chathealth.constants.Role;
+import chathealth.chathealth.dto.request.member.EntJoinDto;
+import chathealth.chathealth.dto.request.member.UserJoinDto;
+import chathealth.chathealth.dto.response.member.CustomUserDetails;
 import chathealth.chathealth.entity.member.Address;
-
-
 import chathealth.chathealth.service.AuthService;
+import chathealth.chathealth.service.MailService;
+import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import static chathealth.chathealth.constants.Role.ROLE_USER;
 
 @Controller
 @RequestMapping("/auth")
@@ -24,6 +28,7 @@ import java.util.Map;
 public class AuthController {
 
     private final AuthService authService;
+    private final MailService mailService;
 
     //로그인
     @GetMapping("/login")
@@ -36,14 +41,15 @@ public class AuthController {
         return "auth/login";
     }
 
+    //@Secured("hasAnyRole('ROLE_USER','ROLE_WAITING_ENT','ROLE_PERMITTED_ENT','ROLE_REJECTED_ENT','ROLE_ADMIN')")
     @PostMapping("/login")
-    public String loginProcess(){
+    public String loginProcess() {
         return "redirect:/";
     }
 
     //로그아웃
     @PostMapping("/logout")
-    public String logout(){
+    public String logout() {
         return "auth/logout";
     }
 
@@ -66,13 +72,11 @@ public class AuthController {
                 .address(userJoinDto.getFrontAddress())
                 .addressDetail(userJoinDto.getAddressDetail())
                 .build();
-        log.info(userJoinDto.getPostcode());
-
         //service에 던질 DTO 빌드
         userJoinDto.setAddress(addressEntity);
         authService.userJoin(userJoinDto);
 
-        return "redirect:/auth/user-join";
+        return "redirect:/auth/login";
     }
 
     @GetMapping("/entjoin") //사업자회원가입창 진입
@@ -96,18 +100,19 @@ public class AuthController {
         return "redirect:/auth/ent-join";
     }
 
-
-    //관리자페이지
-    @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping("/admin")
-    public String adminMain(Model model) {
-        return "auth/admin-manage-user";
-    }
-
-    @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("/admin")
-    public String admin(Model model) {
-        return "auth/";
+    @Transactional
+    @ResponseBody
+    @DeleteMapping("/withdraw/{id}")  //탈퇴
+    public Map<String,Integer> memberWithdraw(@PathVariable Long id,String email){
+        Integer result = authService.memberWithdraw(id);
+        Map<String,Integer> resultmap = new HashMap<>();
+        resultmap.put("isDone",result);
+        try {
+            mailService.sendWithdraw(email);
+        } catch (MessagingException e) {
+            throw new RuntimeException(e);
+        }
+        return resultmap;
     }
 
     @PostMapping("/confirmEmail") //아이디 중복체크
@@ -119,4 +124,42 @@ public class AuthController {
         return resultMap;
 
     }
+
+    // 로그인 상태 확인 api
+    @ResponseBody
+    @GetMapping("/login-check")
+    public Boolean loginCheck(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        return customUserDetails != null;
+    }
+
+    // 로그인한게 유저인지 확인 api
+    @ResponseBody
+    @GetMapping("/is-user")
+    public Boolean isUser(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        if(customUserDetails == null) {
+            return false;
+        }
+        return customUserDetails.getLoggedMember().getRole().equals(ROLE_USER);
+    }
+
+    // 로그인한게 ent인지 확인 api
+    @ResponseBody
+    @GetMapping("/is-ent")
+    public Boolean isEnt(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        if(customUserDetails == null) {
+            return false;
+        }
+        return Role.getEntRoles().contains(customUserDetails.getLoggedMember().getRole());
+    }
+
+    // 로그인한 유저 email 식별자
+    @ResponseBody
+    @GetMapping("/email")
+    public String email(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        if(customUserDetails == null || Role.getEntRoles().contains(customUserDetails.getLoggedMember().getRole())){
+            return null;
+        }
+        return customUserDetails.getLoggedMember().getEmail();
+    }
+
 }

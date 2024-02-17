@@ -1,0 +1,213 @@
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security" xmlns="http://www.w3.org/1999/html">
+
+<div layout:fragment="content" class="main mp-main d-flex justify-content-center">
+  <div class="container d-flex justify-content-center row mt-5">
+    <!--  사이드 바 -->
+    <div class="mp-sidebar col-md-3 ms-md-auto">
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item text-center">
+            <img th:src="@{/img/crown.png}" alt="프로필사진" id="profile" style="width: 100px; height: 100px; border-radius: 50%; overflow: hidden; object-fit: cover;"></br>
+        </li>
+        <li class="list-group-item text-center">안녕하세요, 관리자님</li>
+      </ul>
+      <span style="border-top: 1px solid #ccc; display: block; margin: 10px 13px;"></span>
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item list-group-item-action"><button class="btn" id="userManageBtn">개인유저 관리</button></li>
+        <li class="list-group-item list-group-item-action"><button class="btn" id="entManageBtn">사업자 유저 관리</button></li>
+      </ul>
+    </div>
+    <!--  컨텐츠 -->
+    <div class="mp-content col-md-8 ms-md-auto" id="mp-content">
+
+    </div>
+  </div>
+
+  <script>
+    $(document).ready(function () {
+
+      //개인유저 관리
+      $('#userManageBtn').on("click",function (){
+        $.ajax({
+          url: `/member/admin/getUserList`,
+          type: "GET",
+          success: function (response) {
+            let container = "";
+
+            if(response.length === 0){
+              container = `<div class="user-info-container"><h3 style='color:#198754;'>활동중인 개인 회원이 없습니다.</h3></div>`
+            } else {
+              let i=1;
+              container = `<div class="user-info-container">
+                          <table class='table table-hover'>
+                            <thead>
+                              <tr>
+                                <td> </td>
+                                <td style='color:#198754;'>이메일</td>
+                                <td style='color:#198754;'>별명</td>
+                                <td style='color:#198754;'>등급</td>
+                                <td style='color:#198754;'>&nbsp</td>
+                              </tr>
+                            </thead>
+                            <tbody>
+                            `
+              $.each(response,function (index,item){
+                container += `<tr>
+                <th style="color:#198754;"> ${i}</th>
+                <td class="email" data-id="${item.id}">${item.email}</td>
+                <td>${item.nickname}</td>
+                <td>${item.grade}</td>
+                <td><button class='btn btn-danger btn-sm' id='withdrawUserBtn'>강제 탈퇴</button></td>
+                </tr>`
+                i++
+              });
+              container += "</tbody></table></div>"
+              $('#mp-content').html("");
+              $('#mp-content').html(container);
+            }
+          },
+          error: function (error) {
+            alert(JSON.stringify(error));
+          },
+          complete: function () {
+          }
+        });
+
+        $('body').on("click","#withdrawUserBtn",function (){
+          const id= $(this).parent().parent().find(".email").data("id");
+          const email= $(this).parent().parent().find(".email").data("email");
+          confirm("탈퇴 후 계정을 원복할 수 없습니다. 진짜 탈퇴시키시겠습니까?")
+          $.ajax({
+            url: `/auth/withdraw/${id}`,
+            method: "DELETE",
+            data: {id:id,email:email},
+            success:function(){
+              alert("탈퇴 완료되었습니다.")
+            },
+            error: function (){
+              alert(JSON.stringify(error));
+            }
+          })
+        })
+      });
+
+      //사업자 관리
+      $('#entManageBtn').click(function (){
+
+        $.ajax({
+          url: `/member/admin/getEntList`,
+          type: "GET",
+          success: function (response) {
+            let container = "";
+
+            if(response.length === 0){
+              container = `<div class="user-info-container"><h3 style='color:#198754;'>활동중인 사업자 회원이 없습니다.</h3></div>`
+            } else {
+              let i=1;
+              container = `<div class="ent-info-container">
+                          <table class='table table-hover'>
+                            <thead>
+                              <tr style='color:#198754;'>
+                                <th style='color:#198754;'> </th>
+                                <th style='color:#198754;'>이메일</th>
+                                <th style='color:#198754;'>업체명</th>
+                                <th style='color:#198754;'>대표자명</th>
+                                <th style='color:#198754;'>사업자 번호</th>
+                                <th style='color:#198754;'>상태</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                            `
+              const roleArray = [
+                { name: "승인", role: "ROLE_PERMITTED_ENT" },
+                { name: "거절", role: "ROLE_REJECTED_ENT" },
+                { name: "대기", role: "ROLE_WAITING_ENT" },
+                { name: "탈퇴", role: "ROLE_WITHDRAW_MEMBER" },
+              ];
+              let optionValue="";
+              roleArray.forEach(function(item,idx) {
+                optionValue+=`<option value=${item.role}>${item.name}</option>`;
+              })
+
+              $.each(response,function (index,item){
+                let optionValue;
+
+                const filteredOptionList = roleArray.filter(function (filterItem) {
+                  return filterItem.role !== item.role;
+                });
+                $.each(filteredOptionList, function (index, item) {
+                  optionValue += `<option value=${item.role}>${item.role}</option>`;
+                });
+
+                container += `<tr>
+                <th style="color:#198754;"> ${i}</th>
+                <td class="email" data-id="${item.id}" data-email="${item.email}">${item.email}</td>
+                <td>${item.company}</td>
+                <td>${item.ceo}</td>
+                <td>${item.entNo}</td>
+                <td><select class='form-select ' id='changeEntRoleSelect' name="selectBox"">
+                        <option value=${item.role}>${item.role}</option>
+                      ${optionValue}
+                    </select></td>
+                </tr>`
+                i++
+              });
+              container += "</tbody></table></div>"
+            }
+            $('#mp-content').html("");
+            $('#mp-content').html(container);
+          },
+          error: function (error) {
+            alert(JSON.stringify(error));
+          },
+          complete: function () {
+          }
+        });
+
+        $('body').on("change","#changeEntRoleSelect",changeSelect)
+      });
+      $('#userManageBtn').trigger("click");
+      function changeSelect(){
+        const id= $(this).parent().parent().find(".email").data("id");
+        const email= $(this).parent().parent().find(".email").data("email");
+
+        let changeRole = $(this).val();
+        if(changeRole !== "ROLE_WITHDRAW_MEMBER"){
+          $.ajax({
+            url:`/member/admin/changeEntRoles/${id}`,
+            method: "PATCH",
+            data: {id:id, role:changeRole,email:email},
+            success: function(){
+
+            },
+            error: function(){
+              alert(JSON.stringify(error));
+            },
+            complete: function () {
+            }
+          })
+        } else if (changeRole === "ROLE_WITHDRAW_MEMBER"){
+          confirm("한번 강제탈퇴 시키면 동일 메일주소로 다시 가입할수 없게 됩니다. 정말 강제탈퇴를 진행하시겠습니까?")
+          $.ajax({
+            url: `/auth/withdraw/${id}`,
+            method: "DELETE",
+            data: {id:id,email:email},
+            success:function(){
+              alert("강제탈퇴 완료되었습니다.")
+            },
+            error: function (){
+              alert(JSON.stringify(error));
+            }
+          })
+        }
+      }
+    });
+    $("body").on("change",function(){
+
+    })
+
+
+  </script>
+</div>

@@ -21,5 +21,5 @@ public class BaseEntity {
     @CreatedDate
     private LocalDateTime createdDate;
     @LastModifiedDate
-    private LocalDateTime modifiedDate;
+    protected LocalDateTime modifiedDate;
 }

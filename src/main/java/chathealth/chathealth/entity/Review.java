@@ -1,9 +1,14 @@
 package chathealth.chathealth.entity;
 
+import chathealth.chathealth.dto.request.ReviewModDto;
 import chathealth.chathealth.entity.member.Member;
 import chathealth.chathealth.entity.post.Post;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.SQLDelete;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -11,9 +16,13 @@ import java.util.List;
 
 import static jakarta.persistence.FetchType.LAZY;
 import static jakarta.persistence.GenerationType.SEQUENCE;
+import static lombok.AccessLevel.PROTECTED;
 
 @Entity
 @Getter
+@SuperBuilder
+@NoArgsConstructor(access = PROTECTED)
+@SQLDelete(sql = "UPDATE review SET deleted_date = CURRENT_TIMESTAMP where review_id = ?")
 public class Review extends BaseEntity {
 
     @Id
@@ -41,4 +50,18 @@ public class Review extends BaseEntity {
 
     @OneToMany(mappedBy = "review")
     private List<Helpful> helpfulList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "review")
+    private List<PictureReView> pictureReList=new ArrayList<>();
+
+
+    public void update(ReviewModDto reviewModDto) {
+        this.content = reviewModDto.getContent();
+        this.score = reviewModDto.getScore();
+    }
+    public void updateDelete(){
+
+            this.deletedDate = LocalDateTime.now();
+
+    }
 }

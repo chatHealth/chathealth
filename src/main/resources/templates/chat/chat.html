@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}">
+
+<div layout:fragment="content" class="main">
+    <div class="container mt-4">
+        <h2>채팅방 리스트</h2>
+        <p>로그인한 사용자는 누구나 채팅방을 개설할 수 있으며 각 채팅방에서 다른 닉네임(익명)으로 참여 가능합니다.</p>
+        <p>채팅방을 개설한 방장은 채팅방을 삭제할 수 있습니다.</p>
+        <button type="button" class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#chatRoomModal">채팅방
+            개설
+        </button>
+<!--        전체 채팅방 or 내가 참여중인 채팅방-->
+        <ul class="nav nav-tabs mb-3">
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{|/chat?condition=ALL|}"
+                   th:classappend="${condition == null || condition.toString() == 'ALL'} ? 'active' : ''">
+                    <i class="fas fa-comments"></i> 전체 채팅방
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{|/chat?condition=JOINED|}"
+                   th:classappend="${condition != null && condition.toString() == 'JOINED'} ? 'active' : ''">
+                    <i class="fas fa-user-friends"></i> 참여중인 채팅방
+                </a>
+            </li>
+        </ul>
+        <ul class="list-group">
+            <li th:each="chatRoom : ${chatRooms}"
+                class="list-group-item d-flex align-items-center justify-content-between">
+                <div class="d-flex align-items-center">
+                    <img th:src="${chatRoom.image} != null ? @{|/chat/${chatRoom.image}|} : @{/img/logo.png}" class="img-fluid rounded-circle mr-3"
+                         style="width: 60px; height: 60px;" alt="Room Image"/>
+                    <div>
+                        <h5 class="mb-0" th:text="${chatRoom.name}">Chat Room Name</h5>
+                        <small th:text="${chatRoom.description}">Description</small>
+                        <span class="badge bg-secondary" th:text="${chatRoom.userCount} + ' members'"></span>
+                    </div>
+                </div>
+                <div>
+                    <a th:if="${chatRoom.isJoined}" href="#" th:href="@{|/chat/${chatRoom.id}|}"
+                       class="btn btn-success">참여중</a>
+                    <button type="button" th:unless="${chatRoom.isJoined()}" th:data-chat-room-id="${chatRoom.id}"
+                            class="btn btn-success mb-3 join-button" data-bs-toggle="modal"
+                            data-bs-target="#chatJoinModal">Join
+                    </button>
+                </div>
+            </li>
+        </ul>
+
+<!--        페이지네이션 -->
+        <div class='d-flex justify-content-center'>
+            <ul class='pagination'>
+                <li class="page-item" th:class="${chatRooms.pageable.pageNumber < 10} ? 'disabled' : ''">
+                    <a class="page-link"
+                       th:href="@{|/chat?condition=${condition}&page=${(chatRooms.pageable.pageNumber/10 - 1)*10}|}" aria-label="Previous">
+                        &lsaquo;
+                    </a>
+                </li>
+
+                <!-- 페이지 번호 -->
+                <th:block th:if="${chatRooms.totalPages > 0}">
+                    <li th:each="page : ${#numbers.sequence(chatRooms.pageable.pageNumber/10 * 10 ,
+                        ((chatRooms.totalPages - 1) < (chatRooms.pageable.pageNumber/10 * 10 + 9 ) ?
+                        chatRooms.totalPages -1 : chatRooms.pageable.pageNumber/10 * 10 + 9 ) )}"
+                        th:class="${page  == chatRooms.pageable.pageNumber} ? 'page-item active' : 'page-item'">
+                    <a class="page-link" th:href="@{|/chat?condition=${condition}&page=${page}|}" th:text="${page + 1}"></a>
+                    </li>
+                </th:block>
+                <!-- 다음 페이지 버튼 -->
+                <li class="page-item" th:class="${chatRooms.pageable.pageNumber/10 * 10 + 9 >= chatRooms.totalPages} ? 'disabled' : ''">
+                    <a class="page-link"
+                       th:href="@{|/chat?condition=${condition}&page=${chatRooms.pageable.pageNumber/10 * 10 + 10}|}"
+                       aria-label="Next">
+                        &rsaquo;
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+    </div>
+
+
+    <!-- 채팅방 개설 모달 -->
+    <div class="modal fade" id="chatRoomModal" tabindex="-1" aria-labelledby="chatRoomModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="chatRoomModalLabel">채팅방 개설</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="chatRoomForm">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="chatRoomName" class="form-label">채팅방 이름</label>
+                            <input type="text" class="form-control" id="chatRoomName" >
+                        </div>
+                        <div class="mb-3">
+                            <label for="chatRoomNickName" class="form-label">채팅에서 쓸 닉네임</label>
+                            <input type="text" class="form-control" id="chatRoomNickName" >
+                        </div>
+                        <div class="mb-3">
+                            <label for="chatRoomDescription" class="form-label">설명</label>
+                            <textarea class="form-control" id="chatRoomDescription" ></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="chatRoomImage" class="form-label">대표 사진</label>
+                            <input type="file" class="form-control" id="chatRoomImage" accept="image/*">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+                        <button id="createChatRoom" class="btn btn-success">개설하기</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!--    채팅방 입장 모달, 닉네임 설정 -->
+    <div class="modal fade" id="chatJoinModal" tabindex="-1" aria-labelledby="chatJoinModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="chatJoinModalLabel">채팅방 입장하기</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="chatJoinForm">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="chatNickName" class="form-label">채팅에서 쓸 닉네임</label>
+                            <input type="text" class="form-control" id="chatNickName">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+                        <button id="joinChatRoom" class="btn btn-success">입장하기</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+
+
+        $(document).ready(function () {
+
+                $("#createChatRoom").on("click", function (e) {
+                    e.preventDefault();
+                    createChatRoom();
+                });
+
+                let roomId;
+                const userEmail = [[${#authentication.principal.username}]];
+
+                $(".join-button").on("click", function (e) {
+                    roomId = $(this).data('chat-room-id');
+                });
+
+                $("#joinChatRoom").on("click", function (e) {
+                    e.preventDefault();
+                    joinChatRoom(roomId);
+                });
+
+
+                function joinChatRoom(roomId) {
+                    let nickname = $("#chatNickName").val();
+
+                    const data = JSON.stringify({
+                        nickname: nickname,
+                        roomId: roomId
+                    });
+
+
+                    $.ajax({
+                        url: "/chat/room/enter",
+                        type: "POST",
+                        data: data,
+                        processData: false,
+                        contentType: "application/json",
+                        success: function (data) {
+                            toastr.info("채팅방 입장");
+                            $("#chatJoinModal").modal("hide");
+                            $("#chatJoinForm")[0].reset();
+
+                            // 웹소켓 연결
+                            let socket = new SockJS('/chatting');
+                            let stompClient = Stomp.over(socket);
+
+                            stompClient.connect({}, function (frame) {
+                                // 연결이 성립되면 메시지 전송
+                                let chatMessage = {
+                                    roomId: roomId,
+                                    type: 'ENTER',
+                                    senderEmail: userEmail,
+                                    senderId: data,
+                                    nickname: nickname
+                                };
+                                stompClient.send("/pub/chat/message", {}, JSON.stringify(chatMessage));
+
+                                // 연결이 성립된 후에 페이지 이동
+                                window.location.href = "/chat/" + roomId;
+                            });
+                        },
+                        error:
+                            function (e) {
+                                e = JSON.parse(e.responseText);
+                                if(e.code == "400"){
+                                    if(e.validation.nickname != null){
+                                        toastr.error(e.validation.nickname);
+                                        $("#chatNickName").attr("placeholder", e.validation.nickname);
+                                        $("#chatNickName").focus();
+                                    }
+                                    return;
+                                }
+                                toastr.error("채팅방 입장 실패");
+                            }
+                    });
+                }
+            }
+        );
+
+        function createChatRoom() {
+            let formData = new FormData();
+            formData.append("createChatRoom",
+                new Blob([JSON.stringify({
+                        name: $("#chatRoomName").val(),
+                        description: $("#chatRoomDescription").val(),
+                        nickname: $("#chatRoomNickName").val()
+                    })],
+                    {type: "application/json"}));
+            formData.append("image", $("#chatRoomImage")[0].files[0]);
+
+            $.ajax({
+                url: "/chat/room",
+                type: "POST",
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (data) {
+                    toastr.info("채팅방을 개설하였습니다.");
+                    $("#chatRoomModal").modal("hide");
+                    $("#chatRoomForm")[0].reset();
+
+                    location.href = "/chat/" + data;
+                },
+                error: function (e) {
+                    e = JSON.parse(e.responseText);
+                    // validation 오류
+                    if (e.code == "400") {
+                        if(e.validation.name != null){
+                            toastr.error(e.validation.name);
+                            $("#chatRoomName").attr("placeholder", e.validation.name);
+                            $("#chatRoomName").focus();
+                        }else if(e.validation.nickname != null){
+                            toastr.error(e.validation.nickname);
+                            $("#chatRoomNickName").attr("placeholder", e.validation.nickname);
+                            $("#chatRoomNickName").focus();
+                        } else if(e.validation.description != null) {
+                            toastr.error(e.validation.description);
+                            $("#chatRoomDescription").attr("placeholder", e.validation.description);
+                            $("#chatRoomDescription").focus();
+                        }
+                        return;
+                    }
+                    toastr.error("채팅방 개설에 실패하였습니다.");
+                }
+            });
+        }
+
+
+    </script>
+</div>
+
+</html>

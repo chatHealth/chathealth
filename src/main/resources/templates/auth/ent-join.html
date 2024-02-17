@@ -4,109 +4,109 @@
       layout:decorate="~{layout/layout}">
 
 <div layout:fragment="content" class="main">
-<div class="container scroll-container" style="width: 760px;">
-    <h1>사업자 회원가입</h1>
-    <form method="post" action="/auth/ent-join" th:action="@{/auth/entjoin}" id="registrationForm" enctype="multipart/form-data">
-        <!-- 이메일 -->
-        <div class="mb-3">
-            <div class="d-flex flex-row">
-                <label for="inputEmail" class="form-label">이메일</label><p style="color: red;">*</p>
-                <button type="button" id="confirmEmail" class="btn btn-outline-primary btn-sm">이메일 중복확인</button>
+    <div class="container scroll-container" style="width: 760px;">
+        <h1>사업자 회원가입</h1>
+        <form method="post" action="/auth/ent-join" th:action="@{/auth/entjoin}" id="registrationForm" enctype="multipart/form-data">
+            <!-- 이메일 -->
+            <div class="mb-3">
+                <div class="d-flex flex-row">
+                    <label for="inputEmail" class="form-label">이메일</label><p style="color: red;">*</p>
+                    <button type="button" id="confirmEmail" class="btn btn-outline-primary btn-sm">이메일 중복확인</button>
+                </div>
+                <input type="email" id="inputEmail" class="form-control" name="email" required>
+                <span id="isConfirmed"></span>
             </div>
-            <input type="email" id="inputEmail" class="form-control" name="email" required>
-            <span id="isConfirmed"></span>
-        </div>
 
-        <!-- 비밀번호 -->
-        <div class="mb-5">
-            <div class="d-flex flex-row">
-                <label for="inputPw" class="form-label">비밀번호</label><p style="color: red;">*</p></div>
-            <input type="password" id="inputPw" class="form-control" aria-describedby="passwordHelp" name="pw" required>
-            <div id="passwordHelp" class="form-text">
-                비밀번호는 8~15자리이고 영문, 숫자, 특수문자([!@#$%^*+=-)를 포함해야 합니다.
+            <!-- 비밀번호 -->
+            <div class="mb-5">
+                <div class="d-flex flex-row">
+                    <label for="inputPw" class="form-label">비밀번호</label><p style="color: red;">*</p></div>
+                <input type="password" id="inputPw" class="form-control" aria-describedby="passwordHelp" name="pw" required>
+                <div id="passwordHelp" class="form-text">
+                    비밀번호는 8~15자리이고 영문, 숫자, 특수문자([!@#$%^*+=-)를 포함해야 합니다.
+                </div>
             </div>
-        </div>
 
-        <div class="mb-3">
-            <div class="d-flex flex-row">
-                <label for="checkPw" class="form-label">비밀번호 확인</label><p style="color: red;">*</p></div>
-            <input type="password" id="checkPw" class="form-control" required>
-            <span id="confirmPw"></span>
-        </div>
-
-        <!-- 상호명 -->
-        <div class="mb-3">
-            <div class="d-flex flex-row">
-                <label for="inputCompany" class="form-label">상호명</label><p style="color: red;">*</p></div>
-            <input type="text" id="inputCompany" class="form-control" name="company" required>
-        </div>
-
-        <!-- 사업자등록번호 -->
-        <div class="mb-3">
-            <div class="d-flex flex-row">
-                <label for="inputEntNo" class="form-label">사업자등록번호</label><p style="color: red;">*</p></div>
-            <input type="text" id="inputEntNo" class="form-control" name="entNo" required>
-        </div>
-
-        <!-- 대표자명 -->
-        <div class="mb-3">
-            <div class="d-flex flex-row">
-                <label for="inputCeo" class="form-label">대표자명</label><p style="color: red;">*</p>
+            <div class="mb-3">
+                <div class="d-flex flex-row">
+                    <label for="checkPw" class="form-label">비밀번호 확인</label><p style="color: red;">*</p></div>
+                <input type="password" id="checkPw" class="form-control" required>
+                <span id="confirmPw"></span>
             </div>
-            <input type="text" id="inputCeo" class="form-control" name="ceo" required>
-            <span id="confirmCeo"></span>
-        </div>
 
-        <!-- 사업자 등록일 -->
-        <div class="mb-5">
-            <div class="d-flex flex-row">
-                <label for="birth" class="form-label">개업 연월일</label><p style="color: red;">*</p></div>
-            <input type="text" id="birth" class="form-control" placeholder="2010-06-17" name="birth" required>
-        </div>
+            <!-- 상호명 -->
+            <div class="mb-3">
+                <div class="d-flex flex-row">
+                    <label for="inputCompany" class="form-label">상호명</label><p style="color: red;">*</p></div>
+                <input type="text" id="inputCompany" class="form-control" name="company" required>
+            </div>
 
-        <!-- 주소 -->
-        <div class="mb-3">
-            <div class="d-flex flex-row">
-                <label class="form-label">주소</label></br><p style="color: red;">*</p></div>
-            <input type="text" id="sample4_postcode" placeholder="우편번호" name="postcode">
-            <input type="button" class=" btn btn-sm btn-outline-primary" onclick="sample4_execDaumPostcode()"
-                   value="우편번호 찾기"><br>
-            <input type="text" id="sample4_roadAddress" placeholder="도로명주소" name="frontAddress" required>
-            <input type="text" id="sample4_jibunAddress" placeholder="지번주소">
-            <span id="guide" style="color: #999;" type="hidden"></span></br>
-            <input type="text" id="sample4_detailAddress" placeholder="상세주소" name="addressDetail">
-            <input type="text" class="hidden" id="sample4_extraAddress" placeholder="참고항목">
-        </div>
-        <div class="mb-3">
-            <label for="formFile" class="form-label">프로필 사진</label>
-            <input class="form-control" type="file" id="formFile" placeholder="png,jpg" accept="image/gif, image/jpeg, image/png" name="profile">
-        </div>
-        <div class="preview-box">
-            <img src="" id="preview" style="max-width: 300px; max-height: 300px;">
-        </div>
+            <!-- 사업자등록번호 -->
+            <div class="mb-3">
+                <div class="d-flex flex-row">
+                    <label for="inputEntNo" class="form-label">사업자등록번호</label><p style="color: red;">*</p></div>
+                <input type="text" id="inputEntNo" class="form-control" name="entNo" required>
+            </div>
 
-        <button class="btn btn-outline-primary" id="submitBtn">join</button>
-    </form>
+            <!-- 대표자명 -->
+            <div class="mb-3">
+                <div class="d-flex flex-row">
+                    <label for="inputCeo" class="form-label">대표자명</label><p style="color: red;">*</p>
+                </div>
+                <input type="text" id="inputCeo" class="form-control" name="ceo" required>
+                <span id="confirmCeo"></span>
+            </div>
 
-</div>
+            <!-- 사업자 등록일 -->
+            <div class="mb-5">
+                <div class="d-flex flex-row">
+                    <label for="birth" class="form-label">개업 연월일</label><p style="color: red;">*</p></div>
+                <input type="text" id="birth" class="form-control" placeholder="2010-06-17" name="birth" required>
+            </div>
+
+            <!-- 주소 -->
+            <div class="mb-3">
+                <div class="d-flex flex-row">
+                    <label class="form-label">주소</label></br><p style="color: red;">*</p></div>
+                <input type="text" id="sample4_postcode" placeholder="우편번호" name="postcode">
+                <input type="button" class=" btn btn-sm btn-outline-primary" onclick="sample4_execDaumPostcode()"
+                       value="우편번호 찾기"><br>
+                <input type="text" id="sample4_roadAddress" placeholder="도로명주소" name="frontAddress" required>
+                <input type="text" id="sample4_jibunAddress" placeholder="지번주소">
+                <span id="guide" style="color: #999;" type="hidden"></span></br>
+                <input type="text" id="sample4_detailAddress" placeholder="상세주소" name="addressDetail">
+                <input type="text" class="hidden" id="sample4_extraAddress" placeholder="참고항목">
+            </div>
+            <div class="mb-3">
+                <label for="formFile" class="form-label">프로필 사진</label>
+                <input class="form-control" type="file" id="formFile" placeholder="png,jpg" accept="image/gif, image/jpeg, image/png" name="profile">
+            </div>
+            <div class="preview-box">
+                <img src="" id="preview" style="max-width: 300px; max-height: 300px;">
+            </div>
+
+            <button class="btn btn-outline-primary" id="submitBtn">join</button>
+        </form>
+
+    </div>
     <!-- email 중복확인 -->
     <script>
-        var emailRegex = /@.*(?:\.com|\.net|\.org|\.kr|\.)$/;
+        const regex = /@.*(?:\.com|\.net|\.org|\.kr|\.)$/;
 
         $('#confirmEmail').on('click', function(e) {
             e.preventDefault();
-          if ($("#inputEmail").val().trim() === "") {
-             alert("이메일은 반드시 입력해야합니다.");
-             $("#inputEmail").val('');
-             $("#inputEmail").focus();
-             return false;
-          }
-          if (!emailRegex.test($("#inputEmail").val())) {
-            alert("이메일 형식이 아닙니다.");
-             $("#inputEmail").val('');
-             $("#inputEmail").focus();
-             return false;
-          }
+            if ($("#inputEmail").val().trim() === "") {
+                alert("이메일은 반드시 입력해야합니다.");
+                $("#inputEmail").val('');
+                $("#inputEmail").focus();
+                return false;
+            }
+            if (!regex.test($("#inputEmail").val())) {
+                alert("이메일 형식이 아닙니다.");
+                $("#inputEmail").val('');
+                $("#inputEmail").focus();
+                return false;
+            }
             $.ajax({
                 url:'/auth/confirmEmail', //Controller에서 요청 받을 주소
                 method:"POST", //POST 방식으로 전달
@@ -116,9 +116,9 @@
                         $("#isConfirmed").text("사용 가능한 이메일입니다.").css('color', 'green')
                         $("#isConfirmed").addClass("yes");
                         $("#inputEmail").on('input', function () {
-                        $("#isConfirmed").removeClass("yes");
-                        $("#isConfirmed").text("중복확인을 다시 진행해주세요.").css('color', 'blue')
-                    });
+                            $("#isConfirmed").removeClass("yes");
+                            $("#isConfirmed").text("중복확인을 다시 진행해주세요.").css('color', 'blue')
+                        });
 
                     } else { // true인 경우 -> 이미 존재하는 아이디
                         $("#isConfirmed").text("이미 사용중인 이메일입니다. 다시 입력해주세요.").css('color', 'red')
@@ -130,7 +130,7 @@
                     alert("알수 없는 오류가 발생했습니다. 관리자에게 문의해주시기 바랍니다.");
                 }
             });
-            });
+        });
     </script>
     <!-- 비밀번호 영문 숫자 특수문자 검증-->
     <script>
@@ -145,8 +145,8 @@
             });
 
             function validatePassword() {
-                var password = passwordInput.val();
-                var regex = /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,15}$/;
+                const password = passwordInput.val();
+                const regex = /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,15}$/;
 
                 if (regex.test(password)) {
                     passwordHelp.text('사용가능한 비밀번호입니다.').removeClass('text-danger').addClass('text-success');
@@ -160,46 +160,54 @@
     <!-- 비밀번호 일치여부 확인 및 폼 전송 제어 -->
     <script>
         $(document).ready(function () {
-        var inputPw = $('#inputPw');
-        var checkPw = $('#checkPw');
-        var confirmPw = $('#confirmPw');
-        var validationInterval;
+            var inputPw = $('#inputPw');
+            var checkPw = $('#checkPw');
+            var confirmPw = $('#confirmPw');
+            var validationInterval;
 
-        // 초기화
-        checkPasswordMatch();
+            // 초기화
+            checkPasswordMatch();
 
-        inputPw.on('keyup', function () {
-            clearInterval(validationInterval);
-            validationInterval = setInterval(checkPasswordMatch, 1000);
-        });
+            inputPw.on('keyup', function () {
+                clearInterval(validationInterval);
+                validationInterval = setInterval(checkPasswordMatch, 1000);
+            });
 
-        checkPw.on('keyup', function () {
-            clearInterval(validationInterval);
-            validationInterval = setInterval(checkPasswordMatch, 1000);
-        });
+            checkPw.on('keyup', function () {
+                clearInterval(validationInterval);
+                validationInterval = setInterval(checkPasswordMatch, 1000);
+            });
 
-        function checkPasswordMatch() {
-            var checkPwValue = checkPw.val();
+            function checkPasswordMatch() {
+                var checkPwValue = checkPw.val();
 
-            if (!checkPwValue) {
-                // #checkPw 입력란이 비어있을 때
-                confirmPw.text(""); // 빈 문자열로 설정
-                return;
+                if (!checkPwValue) {
+                    // #checkPw 입력란이 비어있을 때
+                    confirmPw.text(""); // 빈 문자열로 설정
+                    return;
+                }
+
+                if (inputPw.val() === checkPwValue) {
+                    // 비밀번호 일치
+                    confirmPw.text("비밀번호가 일치합니다.").css('color', 'green');
+                    confirmPw.addClass("yes");
+                } else {
+                    // 비밀번호 불일치 시 사용자 정의 유효성 메시지 설정
+                    confirmPw.text("비밀번호가 일치하지 않습니다.").css('color', 'red');
+                    confirmPw.removeClass("yes");
+                }
             }
-
-            if (inputPw.val() === checkPwValue) {
-                // 비밀번호 일치
-                confirmPw.text("비밀번호가 일치합니다.").css('color', 'green');
-                confirmPw.addClass("yes");
-            } else {
-                // 비밀번호 불일치 시 사용자 정의 유효성 메시지 설정
-                confirmPw.text("비밀번호가 일치하지 않습니다.").css('color', 'red');
-                confirmPw.removeClass("yes");
-            }
-        }
 
             // submit 버튼 클릭 이벤트
             $("#submitBtn").on('click', function (event) {
+                const regex = /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,15}$/;
+                if(regex.test($('#inputPw').val())){
+
+                }else{
+                    $('#passwordHelp').text('비밀번호는 8~15자리이고 영문, 숫자, 특수문자를 포함해야 합니다.').removeClass('text-success').addClass('text-danger');
+                    $('#inputPw').focus();
+                    event.preventDefault();
+                }
                 if (!$("#isConfirmed").hasClass("yes")) {
                     // 이메일 중복확인을 진행하지 않은 경우
                     event.preventDefault();
@@ -209,8 +217,7 @@
                     event.preventDefault();
                     alert("비밀번호가 일치하지 않습니다.");
                 }
-                // 이메일 중복확인을 완료하고 비밀번호가 일치하는 경우, 폼을 전송
-                // (위의 두 경우가 모두 아닌 경우에만 폼이 전송됨)
+                // 이메일 중복확인을 완료하고 비밀번호가 일치하며 정규식 조건에 맞을때 폼 전송
             });
         });
     </script>
@@ -276,7 +283,7 @@
                     }
                     // 건물명이 있고, 공동주택일 경우 추가한다.
                     if(data.buildingName !== '' && data.apartment === 'Y'){
-                       extraRoadAddr += (extraRoadAddr !== '' ? ', ' + data.buildingName : data.buildingName);
+                        extraRoadAddr += (extraRoadAddr !== '' ? ', ' + data.buildingName : data.buildingName);
                     }
                     // 표시할 참고항목이 있을 경우, 괄호까지 추가한 최종 문자열을 만든다.
                     if(extraRoadAddr !== ''){

@@ -1,11 +1,289 @@
-<!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org"
+<html lang="en"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layout/layout}">
-
+      layout:decorate="~{layout/layout}"
+>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
+      integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm"
+        crossorigin="anonymous"></script>
 <div layout:fragment="content" class="main">
-    <div class="container justify-content-center d-flex">
-        <h2> post write</h2>
+    <div class="container">
+        <!--<form action="/post/write" method="post">-->
+        <div>
+            <div>
+                <input type="text" placeholder="제목" class="inpTitle" id="title">
+            </div>
+            <div style="height: 500px">
+                <div id="content"></div>
+                <!--        <textarea class="postWriteContent" id="editor" name="content"></textarea>-->
+            </div>
+        </div>
+        <div class="underBox">
+            <div class="filebox">
+                <input type="file" id="mainImg" class="postimg">
+                <label class="input-file-button" for="mainImg">
+                    대표이미지 등록<br>
+                    <p class="mainImgCount">0</p>
+                </label>
+
+                <input type="file" class="postimg" id="serveImg"
+                       placeholder="대표이미지" name=""
+                       accept="image/gif, image/jpeg, image/png" multiple="multiple">
+                <label class="input-file-button" for="serveImg">
+                    서브이미지 등록<br>
+                    <p class="serveImgCount">0</p>
+                </label>
+            </div>
+            <div class="col-3 mt-3">
+                <select id="symptom" name="symptom"
+                        data-placeholder="증상"
+                        class="form-select form-select-sm selectpicker"
+                        aria-label="Small select example" data-style="btn-primary">
+                    <option value="0">증상 선택</option>
+                    <th:block th:each="item,status:${symptom}">
+                        <option th:value="${item.id}" th:text="${item.symptomName}"></option>
+                    </th:block>
+                </select>
+            </div>
+
+            <div class="col-3 mt-3">
+                <select id="material" name="material"
+                        multiple="multiple" data-placeholder="원재료"
+                        class="form-select form-select-sm selectpicker"
+                        aria-label="Small select example" data-style="btn-primary">
+                </select>
+            </div>
+        </div>
+        <div class="btnBox">
+            <button class="postInsert" onclick="savePost()">등록</button>
+            <button class="postCansel"><a>취소</a></button>
+        </div>
+
+        <!--</form>-->
+        </body>
+        <script>
+            let mainImgName = "";
+            let serveImgName = [];
+
+            //증상 선택시 성분 출력
+            $('#symptom').change(function () {
+                let symdate = $("#symptom").val();
+                let material = $("#material")
+                if (symdate == 0) {
+                    material.empty()
+                } else {
+                    $.ajax({
+                        url: `/post/symptom/${symdate}`,
+                        success: function (response) {
+                            let newOptions = [];
+                            $.each(response, function (key, val) {
+                                newOptions.push(new Option(val.materialName, val.id));
+                            })
+                            material.empty().append(newOptions);
+                            material.trigger('change');
+                        },
+                        error: function () {
+                            console.log("성분선택실패")
+                        }
+
+                    })
+                }
+            })
+
+
+            //multi
+            $('#symptom').select2({
+                theme: "bootstrap-5",
+                width: $(this).data('width') ? $(this).data('width') : $(this).hasClass('w-100') ? '100%' : 'style',
+                placeholder: $(this).data('placeholder'),
+                closeOnSelect: false,
+            });
+            $('#material').select2({
+                theme: "bootstrap-5",
+                width: $(this).data('width') ? $(this).data('width') : $(this).hasClass('w-100') ? '100%' : 'style',
+                placeholder: $(this).data('placeholder'),
+                closeOnSelect: false,
+            });
+
+            //프로필사진
+            let countMain = 0
+            $(document).ready(function () {
+                $('#mainImg').change(function () {
+                    let fileInput = document.getElementById("mainImg");
+                    let file = fileInput.files[0];
+
+                    if (file) {
+                        let formData = new FormData();
+                        formData.append('mainImg', file);
+
+                        $.ajax({
+                            url: '/post-img/uploadMain',
+                            type: 'POST',
+                            data: formData,
+                            processData: false,
+                            contentType: false,
+                            success: function (response) {
+                                // 파일 업로드가 성공한 경우의 처리
+                                mainImgName = response;
+                                countMain = 1;
+                                $(".mainImgCount").text(countMain);
+                            },
+                            error: function (error) {
+                                console.log('Error:', error);
+                            }
+                        });
+                    } else {
+                        alert('파일을 선택하세요.');
+                    }
+                });
+            });
+            //서브 사진
+            let countSer = 0;
+            $(document).ready(function () {
+                $('#serveImg').change(function () {
+                    let fileInput = document.getElementById("serveImg");
+                    let file = fileInput.files[0];
+
+                    if (fileInput.files.length > 3) {
+                        alert("서브이미지는 3개까지 등록할 수 있습니다");
+                        fileInput.files = [];
+                        $(".serveImgCount").text(0);
+                    } else {
+                        if (file) {
+                            let formData = new FormData();
+                            for (let i = 0; i < fileInput.files.length; i++) {
+                                formData.append('serveImg', fileInput.files[i]);
+                            }
+
+
+                            $.ajax({
+                                url: '/post-img/uploadServe',
+                                type: 'POST',
+                                data: formData,
+                                processData: false,
+                                contentType: false,
+                                success: function (response) {
+                                    // 파일 업로드가 성공한 경우의 처리
+                                    for (let i = 0; i < response.length; i++) {
+                                        serveImgName.push(response[i])
+
+                                    }
+                                    countSer = response.length;
+                                    $(".serveImgCount").text(countSer);
+                                },
+                                error: function (error) {
+                                    console.log('Error:', error);
+                                }
+                            });
+                        } else {
+                            alert('파일을 선택하세요.');
+                        }
+                    }
+                });
+            });
+
+            //toast
+
+            const editor = new toastui.Editor({
+                el: document.querySelector('#content'), // 에디터를 적용할 요소 (컨테이너)
+                height: '500px',                        // 에디터 영역의 높이 값 (OOOpx || auto)
+                initialEditType: 'wysiwyg',            // 최초로 보여줄 에디터 타입 (markdown || wysiwyg)
+                initialValue: '',                       // 내용의 초기 값으로, 반드시 마크다운 문자열 형태여야 함
+                previewStyle: 'vertical',               // 마크다운 프리뷰 스타일 (tab || vertical)
+                /* start of hooks */
+                hooks: {
+                    async addImageBlobHook(blob, callback) { // 이미지 업로드 로직 커스텀
+                        try {
+                            /*
+                             * 1. 에디터에 업로드한 이미지를 FormData 객체에 저장
+                             *    (이때, 컨트롤러 uploadEditorImage 메서드의 파라미터인 'image'와 formData에 append 하는 key('image')값은 동일해야 함)
+                             */
+                            const formData = new FormData();
+                            formData.append('image', blob);
+
+                            // 2. FileApiController - uploadEditorImage 메서드 호출
+                            const response = await fetch('/post-img/upload', {
+                                method: 'POST',
+                                body: formData,
+                            });
+
+                            if (!response.ok) {
+                                throw new Error('서버에 문제가 있습니다. 잠시 후 다시 시도해 주세요.');
+                            }
+
+                            // 3. 컨트롤러에서 전달받은 디스크에 저장된 파일명
+                            const filename = await response.text();
+                            console.log('서버에 저장된 파일명 : ', filename);
+
+                            // 4. addImageBlobHook의 callback 함수를 통해, 디스크에 저장된 이미지를 에디터에 렌더링
+                            const imageUrl = `/post-img/print?filename=${filename}`;
+                            callback(imageUrl, 'image alt attribute');
+
+                        } catch (error) {
+                            alert(error.message);
+                            console.error('업로드 실패 : ', error);
+                        }
+                    }
+                }
+            });
+
+            //data 전송해보자자자
+            async function savePost() {
+                // title 입력 필수
+
+                if (editor.getMarkdown().length < 1) {
+                    alert('내용을 입력해 주세요.');
+                    throw new Error('content content is required!');
+                }
+
+                // 2. url, parameter 세팅
+                const url = '/post/write';
+                let imgArr = [];
+                if (!(mainImgName === "")) {
+                    imgArr.push(mainImgName)
+                }
+                for (let i = 0; i < serveImgName.length; i++) {
+                    imgArr.push(serveImgName[i]);
+                }
+
+
+                const params = {
+                    title: $("#title").val(),
+                    symptom: $("#symptom").val(),
+                    content: editor.getHTML(),
+                    materialList: $("#material").val(),
+                    postImgList: imgArr
+                }
+
+                // 3. API 호출
+                let titleStr = params.title.replace(/ /g, "");
+
+                if (titleStr === "") {
+                    alert("제목을입력해주세요.");
+                } else if (params.symptom == 0) {
+                    alert("증상을 선택해주세요")
+                } else if (params.materialList==null) {
+                    alert("성분을 선택해주세요")
+                } else if (params.postImgList.length === 0) {
+                    alert("대표이미지를 선택해주세요")
+                } else {
+                    $.ajax({
+                        url:url,
+                        method: "POST",
+                        contentType: 'application/json',  // 올바른 Content-Type 설정
+                        data: JSON.stringify(params),
+                        success:function (response){
+                            location.href=`/view/${response}`;
+                        },
+                        error:function (){
+
+                        }
+                    })
+                }
+            }
+
+        </script>
     </div>
 </div>
 </html>

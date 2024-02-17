@@ -4,10 +4,12 @@ import chathealth.chathealth.entity.BaseEntity;
 import chathealth.chathealth.entity.member.Member;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 @Entity
+@Getter
 @Table(name = "PostHit")
 @SuperBuilder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -24,4 +26,5 @@ public class PostHit extends BaseEntity {
     @ManyToOne()
     @JoinColumn(name = "member_id")
     private Member member;
+
 }

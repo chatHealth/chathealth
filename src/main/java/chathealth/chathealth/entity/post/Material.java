@@ -15,9 +15,8 @@ import static lombok.AccessLevel.PROTECTED;
 @Getter
 @SuperBuilder
 @NoArgsConstructor(access = PROTECTED)
-@DynamicUpdate
 @Table(name = "Material")
-public class Material extends BaseEntity {
+public class Material{
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "material_id")
@@ -29,4 +28,8 @@ public class Material extends BaseEntity {
     // N:M conenct
     @OneToMany(mappedBy = "material")
     private List<MaterialPost> materialList;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "symptom_id")
+    private Symptom symptom;
 }

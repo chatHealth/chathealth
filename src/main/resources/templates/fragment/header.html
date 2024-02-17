@@ -1,7 +1,6 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
->
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <div class="container" th:fragment="headerFragment">
     <header>
@@ -16,36 +15,646 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNavDropdown">
-                    <ul class="navbar-nav ms-auto">
-                        <li class="nav-item"><a href="#" th:href="@{/post}" class="nav-link">건강기능식품</a></li>
-                        <li class="nav-item"><a href="#" th:href="@{/board}" class="nav-link">커뮤니티</a></li>
-                        <th:block sec:authorize="!isAuthenticated()">
-                            <li class="nav-item"><a href="#" th:href="@{/auth/join}" class="nav-link">join</a></li>
-                            <li class="nav-item"><a href="#" th:href="@{/auth/login}" class="nav-link">login</a></li>
-                            <li class="nav-item"><a href="#" th:href="@{/auth/logout}" class="nav-link">logout</a></li>
-                        </th:block>
-                        <th:block sec:authorize="isAuthenticated()">
-                            <li class="nav-item"><a href="" th:href="@{/post}" class="nav-link">post</a></li>
-                            <li class="nav-item" sec:authorize="hasRole('ROLE_USER')"><a href=""
-                                                                                         th:href="@{|/member/user/${#authentication.principal.loggedMember.id}|}"
-                                                                                         class="nav-link">my page</a>
-                            </li>
-                            <li class="nav-item" sec:authorize="hasRole('ROLE_PERMITTED_ENT')"><a href=""
-                                                                                                  th:href="@{|/member/ent/${#authentication.principal.loggedMember.id}|}"
-                                                                                                  class="nav-link">my
-                                page</a></li>
-                            <li class="nav-item" sec:authorize="hasRole('ROLE_WAITING_ENT')"><a href=""
-                                                                                                th:href="@{|/member/ent/${#authentication.principal.loggedMember.id}|}"
-                                                                                                class="nav-link">my
-                                page</a></li>
-                            <li class="nav-item"><a href="" th:href="@{/auth/logout}" class="nav-link">log out</a></li>
-
-                        </th:block>
-                    </ul>
+                        <ul class="navbar-nav ms-auto">
+                    <th:block sec:authorize="!isAuthenticated()">
+                            <li class="nav-item"><a href="#" th:href="@{/post}" class="nav-link">건강기능식품</a></li>
+                            <li class="nav-item"><a href="#" th:href="@{/board}" class="nav-link">커뮤니티</a></li>
+                            <li class="nav-item"><a href="#" th:href="@{/auth/selection}" class="nav-link">회원가입</a></li>
+                            <li class="nav-item"><a href="#" th:href="@{/auth/login}" class="nav-link">로그인</a></li>
+                    </th:block>
+                    <th:block sec:authorize="isAuthenticated()">
+                            <th:block sec:authorize="hasAnyRole('ROLE_USER','ROLE_ADMIN')">
+                                <li class="nav-item">
+                                    <button id="messageButton" class="nav-link position-relative">
+                                        <i class="fas fa-envelope"></i>
+                                        <span id="messageCount"
+                                              class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                            <span class="visually-hidden">unread messages</span>
+                                        </span>
+                                    </button>
+                                </li>
+                            </th:block>
+                            <li class="nav-item"><a href="#" th:href="@{/chat}" class="nav-link">채팅</a></li>
+                            <li class="nav-item"><a href="#" th:href="@{/post}" class="nav-link">건강기능식품</a></li>
+                            <li class="nav-item"><a href="#" th:href="@{/board}" class="nav-link">커뮤니티</a></li>
+                            <li class="nav-item" sec:authorize="hasRole('ROLE_USER')"><a href="" th:href="@{|/member/user/${#authentication.principal.loggedMember.id}|}" class="nav-link">마이 페이지</a></li>
+                            <li class="nav-item" sec:authorize="hasRole('ROLE_PERMITTED_ENT')"><a href="" th:href="@{|/member/ent/${#authentication.principal.loggedMember.id}|}" class="nav-link">마이 페이지</a></li>
+                            <li class="nav-item" sec:authorize="hasRole('ROLE_WAITING_ENT')"><a href="" th:href="@{|/member/ent/${#authentication.principal.loggedMember.id}|}" class="nav-link">마이 페이지</a></li>
+                            <li class="nav-item" sec:authorize="hasRole('ROLE_REJECTED_ENT')"><a href="" th:href="@{|/member/ent/${#authentication.principal.loggedMember.id}|}" class="nav-link">마이 페이지</a></li>
+                            <li class="nav-item" sec:authorize="hasRole('ROLE_ADMIN')"><a href="" th:href="@{/member/admin}" class="nav-link">관리자페이지</a></li>
+                            <li class="nav-item"><a href="" th:href="@{/auth/logout}" class="nav-link">로그아웃</a></li>
+                    </th:block>
+                            <li class="nav-item"><a href="#" class="nav-link" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight"><i class="fas fa-sticky-note" style="color: #bfa95a;"></i></a></li>
+                        </ul>
 
                 </div>
             </div>
         </nav>
+
+
+        <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
+            <div class="offcanvas-header">
+                <h5 class="offcanvas-title" id="offcanvasRightLabel">최근 조회 상품</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            </div>
+            <div class="offcanvas-body">
+                <ul id = "recent-posts" class="list-group">
+                    <!-- 여기에 최근 조회 상품을 동적으로 로드 -->
+                </ul>
+            </div>
+        </div>
+
+        <!-- 쪽지함 모달 -->
+        <div class="modal fade" id="messageModal" tabindex="-1" aria-labelledby="messageModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="messageModalLabel">쪽지함</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-size-400">
+                        <div class="modal-body" id="message-types"></div>
+                        <div class="modal-body" id="message-detail" tabindex="0"></div>
+                        <!--단건 쪽지 내용을 동적으로 로드 -->
+                        <div class="modal-body" id="message-body">
+                        <!-- 여기에 쪽지 내용을 동적으로 로드 -->
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </header>
+
+    <script>
+
+
+        $(document).ready(function () {
+
+            // 로그인을 했는지 or 로그인한게 유저인지 확인하고 읽지 않은 쪽지 개수 확인
+            checkUser();
+
+            function noty(response) {
+                const eventSource = new EventSource(`/noty/subscribe?id=${response}`);
+                eventSource.onmessage = function (event) {
+                    try {
+                        const message = JSON.parse(event.data);
+                        checkUnreadMessages();
+                        toastr.info(message.message);
+                    } catch (e) {
+                        toastr.error(e);
+                    }
+                };
+
+                eventSource.onerror = function (event) {
+                    eventSource.close();
+                };
+            }
+
+
+            function checkUser() {
+                $.ajax({
+                    url: "/auth/is-user",
+                    type: "GET",
+                    success: function (isUser) {
+                        if (isUser) {
+                            checkUnreadMessages(); // 최초 실행
+                            checkUserEmail();
+                        } else {
+                            $("#messageCount").hide();
+                        }
+                    }, error: function (response) {
+                        toastr.error("로그인 상태 확인 중 에러 발생");
+                    }
+                })
+            }
+
+            // 로그인한 유저의 이메일 확인
+            function checkUserEmail() {
+                $.ajax({
+                    url: "/auth/email",
+                    type: "GET",
+                    success: function (response) {
+                        if(response !== null){
+                            noty(response);
+                        }
+                    }, error: function (response) {
+                        toastr.error("이메일 상태 확인 중 에러 발생");
+                    }
+                })
+            }
+
+            // 읽지 않은 쪽지 개수 확인
+            function checkUnreadMessages() {
+                $.ajax({
+                    url: "/api/message/unread",
+                    type: "GET",
+                    success: function (response) {
+                            $("#messageCount").text(response).show();
+
+                        if (response === 0) {
+                            $("#messageCount").hide();
+                        }
+                    },
+                    error: function (response) {
+                        if (response.status === 401) {
+                            clearInterval(checkMessagesInterval);
+                            alert("로그인 세션이 만료되었습니다. 다시 로그인해주세요.");
+                            window.location.href = "/auth/login";
+                        }
+                        else{
+                            toastr.error(response.message);
+                        }
+                    }
+                });
+            }
+
+
+            $("#offcanvasRight").on('show.bs.offcanvas', function () {
+                getRecentPosts();
+            });
+
+        });
+
+            function getRecentPosts(){
+                $.ajax({
+                    url: "/api/post/recent-view",
+                    type: "GET",
+                    success: function (response) {
+                        let recentPosts = $("#recent-posts");
+                        recentPosts.empty();
+                        let html = "";
+                        console.log(response);
+
+                        $.each(response, function (index, post) {
+                            html += `<li class="list-group-item">
+                                        <a target="_blank"  href="/view/${post.id}" style="text-decoration: none; color:inherit">`
+                            if(post.representativeImg != null){
+                                html +=  `<div><img src="${post.representativeImg}" alt="상품 이미지" style="width: 200px; height: 200px; object-fit: cover"></div>`
+                            }else {
+                                html += `<div><img src="/img/basic_post.svg" alt="상품 이미지" style="width: 200px; height: 200px; object-fit: cover"></div>`
+                            }
+                             html += `<div class='text-truncate' style="max-width: 200px;">${post.title}</div>
+                                        </a>
+                                    </li>`;
+                        })
+
+                        recentPosts.append(html);
+                    },
+                    error: function (response) {
+                        toastr.error(response.message);
+                    }
+                })
+            }
+
+
+
+        //알림// 쪽지함 모달 열기(확인 안한 쪽지 페이지 로드)
+        $("#messageButton").click(function () {
+            unreadMessagePage(0)
+        });
+
+        // 확인 안한 쪽지 페이지 로드
+        function unreadMessagePage(page) {
+            $.ajax({
+                url: "/api/message/received/unread?page=" + page, // 쪽지 데이터를 불러올 서버의 API URL
+                type: "GET",
+                success: function (response) {
+                    $("#message-body").empty(); // 기존 내용 제거
+                    $("#message-detail").empty(); // 기존 내용 제거
+                    let modalBody = $("#messageModal #message-body");
+                    modalBody.empty(); // 기존 내용 제거
+
+                    let messageType = $("#message-types");
+                    messageType.empty();
+                    let type = "<div class='nav nav-tabs' id='messageTab' role='tablist'>";
+                    type += "<a class='nav-link active' id='unread-tab' data-toggle='tab' href='#' role='tab' aria-controls='unread' aria-selected='true' onclick='unreadMessagePage(0)'>확인 안한 쪽지</a>";
+                    type += "<a class='nav-link' id='sent-tab' data-toggle='tab' href='#' role='tab' aria-controls='sent' aria-selected='false' onclick='sendMessagePage(0)'>보낸 쪽지함</a>";
+                    type += "<a class='nav-link' id='received-tab' data-toggle='tab' href='#' role='tab' aria-controls='received' aria-selected='false' onclick='receiveMessagePage(0)'>받은 쪽지함</a>";
+                    type += "</div>";
+                    messageType.append(type);
+
+                    let html = "<table class='table table-hover'><thead><tr><th scope='col'>From</th><th scope='col'>제목</th><th scope='col'>보낸 날짜</th></tr></thead><tbody>";
+                    // 쪽지 데이터를 모달에 로드하는 로직
+                    let idx = 1;
+                    $.each(response.content, function (index, message) {
+                        html += "<tr><td>" + message.senderNickname + "</td><td><a href='#' style='color: inherit' onclick='readReceivedMessage(" + message.id + "); isRead(\"" + idx + "\")'>" + message.title + "</a></td><td class='format-date'>" + message.sendDate + "</td></tr>";
+
+                        idx++;
+                    });
+                    html += "</table>";
+
+                    html += createUnreadPagination(html, response);
+                    modalBody.append(html);
+                    setTimeZoneAndFormat();
+
+                    // 모달 표시
+                    $("#messageModal").modal('show');
+                },
+                error: function (error) {
+                    toastr.error(error);
+                }
+            });
+        }
+
+        // 확인 안한 쪽지 페이지네이션
+        function createUnreadPagination(html, response) {
+            html = "<div class='d-flex justify-content-center'>";
+            html += "<ul class='pagination'>";
+
+            const currentUnreadPage = response.pageable.pageNumber;
+            const TotalUnreadPage = response.totalPages;
+            const unreadPageGroupSize = 5; // 한 번에 보여줄 페이지 수
+            const unreadCurrentPageGroup = Math.floor(currentUnreadPage / unreadPageGroupSize); // 현재 페이지 그룹
+
+            // "Previous" 버튼
+            if (unreadCurrentPageGroup > 0) {
+                html += "<li class='page-item'>";
+                html += "<a class='page-link' href='#' onclick='unreadMessagePage(" + ((unreadCurrentPageGroup - 1) * unreadPageGroupSize) + ")'>Previous</a>";
+                html += "</li>";
+            }
+
+            // 페이지 번호
+            for (let i = unreadCurrentPageGroup * unreadPageGroupSize; i < Math.min((unreadCurrentPageGroup + 1) * unreadPageGroupSize, TotalUnreadPage); i++) {
+                html += "<li class='page-item" + (currentUnreadPage === i ? " active" : "") + "'>";
+                html += "<a class='page-link' href='#' onclick='unreadMessagePage(" + i + ")'>" + (i + 1) + "</a>";
+                html += "</li>";
+            }
+
+            // "Next" 버튼
+            if (unreadCurrentPageGroup < Math.ceil(TotalUnreadPage / unreadPageGroupSize) - 1) {
+                html += "<li class='page-item'>";
+                html += "<a class='page-link' href='#' onclick='unreadMessagePage(" + ((unreadCurrentPageGroup + 1) * unreadPageGroupSize) + ")'>Next</a>";
+                html += "</li>";
+            }
+
+            html += "</ul>";
+            html += "</div>";
+            return html;
+        }
+
+        // 보낸 쪽지함 페이지 로드
+        function sendMessagePage(page) {
+            $.ajax({
+                url: "/api/message/send?page=" + page, // 쪽지 데이터를 불러올 서버의 API URL
+                type: "GET",
+                success: function (response) {
+                    $("#message-detail").empty(); // 기존 내용 제거
+                    let modalBody = $("#messageModal #message-body");
+                    modalBody.empty(); // 기존 내용 제거
+
+                    let messageType = $("#message-types");
+                    messageType.empty();
+                    let type = "<div class='nav nav-tabs' id='messageTab' role='tablist'>";
+                    type += "<a class='nav-link' id='unread-tab' data-toggle='tab' href='#' role='tab' aria-controls='unread' aria-selected='false' onclick='unreadMessagePage(0)'>확인 안한 쪽지</a>";
+                    type += "<a class='nav-link active' id='sent-tab' data-toggle='tab' href='#' role='tab' aria-controls='sent' aria-selected='true' onclick='sendMessagePage(0)'>보낸 쪽지함</a>";
+                    type += "<a class='nav-link' id='received-tab' data-toggle='tab' href='#' role='tab' aria-controls='received' aria-selected='false' onclick='receiveMessagePage(0)'>받은 쪽지함</a>";
+                    type += "</div>";
+                    messageType.append(type);
+
+
+
+                    let html = "<table class='table table-hover'><thead><tr><th scope='col'>To</th><th scope='col'>제목</th><th scope='col'>보낸 날짜</th></tr></thead><tbody>";
+                    // 쪽지 데이터를 모달에 로드하는 로직
+                    $.each(response.content, function (index, message) {
+                        if(message.read){
+                            html += "<tr class='is-read'><td>" + message.receiverNickname + "</td><td><a href='#' style='color: inherit' onclick='readSendMessage(" + message.id + ")'>" + message.title + "</a></td><td class='format-date'>" + message.sendDate + "</td></tr></tr></tbody>";
+                        }else {
+                            html += "<tr><td>" + message.receiverNickname + "</td><td><a href='#' style='color: inherit' onclick='readSendMessage(" + message.id + ")'>" + message.title + "</a></td><td class='format-date'>" + message.sendDate + "</td></tr></tr></tbody>";
+                        }
+                    });
+                    html += "</table>";
+
+                    html += createSendPagination(html, response);
+                    modalBody.append(html);
+                    setTimeZoneAndFormat();
+
+                    // 모달 표시
+                    $("#messageModal").modal('show');
+                },
+                error: function (error) {
+                    toastr.error(error);
+                }
+            });
+        }
+
+        // 보낸 쪽지 페이지네이션
+        function createSendPagination(html, response) {
+            html = "<div class='d-flex justify-content-center'>";
+            html += "<ul class='pagination'>";
+
+            const currentSendPage = response.pageable.pageNumber;
+            const TotalSendPage = response.totalPages;
+            const sendPageGroupSize = 5; // 한 번에 보여줄 페이지 수
+            const sendCurrentPageGroup = Math.floor(currentSendPage / sendPageGroupSize); // 현재 페이지 그룹
+
+            // "Previous" 버튼
+            if (sendCurrentPageGroup > 0) {
+                html += "<li class='page-item'>";
+                html += "<a class='page-link' href='#' onclick='sendMessagePage(" + ((sendCurrentPageGroup - 1) * sendPageGroupSize) + ")'>Previous</a>";
+                html += "</li>";
+            }
+
+            // 페이지 번호
+            for (let i = sendCurrentPageGroup * sendPageGroupSize; i < Math.min((sendCurrentPageGroup + 1) * sendPageGroupSize, TotalSendPage); i++) {
+                html += "<li class='page-item" + (currentSendPage === i ? " active" : "") + "'>";
+                html += "<a class='page-link' href='#' onclick='sendMessagePage(" + i + ")'>" + (i + 1) + "</a>";
+                html += "</li>";
+            }
+
+            // "Next" 버튼
+            if (sendCurrentPageGroup < Math.ceil(TotalSendPage / sendPageGroupSize) - 1) {
+                html += "<li class='page-item'>";
+                html += "<a class='page-link' href='#' onclick='sendMessagePage(" + ((sendCurrentPageGroup + 1) * sendPageGroupSize) + ")'>Next</a>";
+                html += "</li>";
+            }
+
+            html += "</ul>";
+            html += "</div>";
+            return html;
+        }
+
+        // 받은 쪽지함 페이지 로드
+        function receiveMessagePage(page) {
+            $.ajax({
+                url: "/api/message/received?page=" + page, // 쪽지 데이터를 불러올 서버의 API URL
+                type: "GET",
+                success: function (response) {
+                    $("#message-detail").empty(); // 기존 내용 제거
+                    let modalBody = $("#messageModal #message-body");
+                    modalBody.empty(); // 기존 내용 제거
+
+                    let messageType = $("#message-types");
+                    messageType.empty();
+                    let type = "<div class='nav nav-tabs' id='messageTab' role='tablist'>";
+                    type += "<a class='nav-link' id='unread-tab' data-toggle='tab' href='#' role='tab' aria-controls='unread' aria-selected='false' onclick='unreadMessagePage(0)'>확인 안한 쪽지</a>";
+                    type += "<a class='nav-link' id='sent-tab' data-toggle='tab' href='#' role='tab' aria-controls='sent' aria-selected='false' onclick='sendMessagePage(0)'>보낸 쪽지함</a>";
+                    type += "<a class='nav-link active' id='received-tab' data-toggle='tab' href='#' role='tab' aria-controls='received' aria-selected='true' onclick='receiveMessagePage(0)'>받은 쪽지함</a>";
+                    type += "</div>";
+                    messageType.append(type);
+
+                    let html = "<table class='table table-hover'><thead><tr><th scope='col'>From</th><th scope='col'>제목</th><th scope='col'>보낸 날짜</th></tr></thead><tbody>";
+                    // 쪽지 데이터를 모달에 로드하는 로직
+                    let idx = 1;
+                    $.each(response.content, function (index, message) {
+                        if (message.read) {
+                            html += "<tr class='is-read'><td>" + message.senderNickname + "</td><td><a href='#' onclick='readReceivedMessage(" + message.id + ")' style='color: inherit'>" + message.title + "</a></td><td class='format-date'>" + message.sendDate + "</td></tr></tr></tbody>";
+                        } else {
+                            html += "<tr><td>" + message.senderNickname + "</td><td><a href='#' style='color: inherit' onclick='readReceivedMessage(" + message.id + "); isRead(" + idx + ")'>" + message.title + "</a></td><td class='format-date'>" + message.sendDate + "</td></tr></tr></tbody>";
+                        }
+                        idx++;
+                    });
+                    html += "</table>";
+
+                    html += createReceivePagination(html, response);
+                    modalBody.append(html);
+                    setTimeZoneAndFormat();
+
+                    // 모달 표시
+                    $("#messageModal").modal('show');
+                },
+                error: function (error) {
+                    toastr.error(error);
+                }
+            });
+        }
+
+        // 받은 쪽지 페이지네이션
+        function createReceivePagination(html, response) {
+            html = "<div class='d-flex justify-content-center'>";
+            html += "<ul class='pagination'>";
+
+            const currentReceivePage = response.pageable.pageNumber;
+            const TotalReceivePage = response.totalPages;
+            const receivePageGroupSize = 5; // 한 번에 보여줄 페이지 수
+            const receiveCurrentPageGroup = Math.floor(currentReceivePage / receivePageGroupSize); // 현재 페이지 그룹
+
+            // "Previous" 버튼
+            if (receiveCurrentPageGroup > 0) {
+                html += "<li class='page-item'>";
+                html += "<a class='page-link' href='#' onclick='receiveMessagePage(" + ((receiveCurrentPageGroup - 1) * receivePageGroupSize) + ")'>Previous</a>";
+                html += "</li>";
+            }
+
+            // 페이지 번호
+            for (let i = receiveCurrentPageGroup * receivePageGroupSize; i < Math.min((receiveCurrentPageGroup + 1) * receivePageGroupSize, TotalReceivePage); i++) {
+                html += "<li class='page-item" + (currentReceivePage === i ? " active" : "") + "'>";
+                html += "<a class='page-link' href='#' onclick='receiveMessagePage(" + i + ")'>" + (i + 1) + "</a>";
+                html += "</li>";
+            }
+
+            // "Next" 버튼
+            if (receiveCurrentPageGroup < Math.ceil(TotalReceivePage / receivePageGroupSize) - 1) {
+                html += "<li class='page-item'>";
+                html += "<a class='page-link' href='#' onclick='receiveMessagePage(" + ((receiveCurrentPageGroup + 1) * receivePageGroupSize) + ")'>Next</a>";
+                html += "</li>";
+            }
+
+            html += "</ul>";
+            html += "</div>";
+            return html;
+        }
+
+        // 받은 쪽지 읽기
+        function readReceivedMessage(messageId) {
+            $.ajax({
+                url: "/api/message/received/" + messageId,
+                type: "GET",
+                success: function(response){
+                    let messageDetail = $("#messageModal #message-detail");
+                    messageDetail.empty(); // 기존 내용 제거
+
+                    let html = "";
+                    // 쪽지 데이터를 모달에 로드하는 로직
+                    // 삭제 버튼
+                    html += "<div class='d-flex justify-content-end'><button type='button' class='btn btn-danger' "
+                        + "onclick='deleteReceivedMessage(" + messageId + ")'>" +
+                        "삭제</button></div>";
+                    html += "<p>From." + response.senderNickname + "</p>"
+                    html += "<div class='card'><div class='card-header'><h5 class='card-title'>" + response.title + "</h5></div>";
+                    html += "<div class='card-body'><p class='card-text'>" + response.content + "</p></div>";
+                    html += "<div class='card-footer'><small class='text-muted  format-date'>" + response.sendDate + "</small></div></div>";
+                    //답장 버튼
+                    html += "<div class='d-flex justify-content-end'><button type='button' class='btn btn-primary' "
+                        + "onclick='replyMessage(" + response.senderId + ", \""
+                        + response.senderNickname + "\",\""
+                        + response.title + "\")'>" +
+                        "답장</button></div>";
+
+                    messageDetail.append(html);
+                    setTimeZoneAndFormat();
+
+                    // 포커스 변경
+                    $("#message-detail").focus();
+                }
+                });
+            }
+
+            // 보낸 쪽지 읽기
+            function readSendMessage(messageId) {
+            $.ajax({
+                url: "/api/message/send/" + messageId,
+                type: "GET",
+                success: function(response){
+                    let messageDetail = $("#messageModal #message-detail");
+                    messageDetail.empty(); // 기존 내용 제거
+                    let html = "";
+                    // 쪽지 데이터를 모달에 로드하는 로직
+                    // 삭제 버튼
+                    html += "<div class='d-flex justify-content-end'><button type='button' class='btn btn-danger' "
+                        + "onclick='deleteMessage(" + messageId + ")'>" +
+                        "삭제</button></div>";
+                    html += "<p>To." + response.receiverNickname + "</p>"
+                    html += "<div class='card'><div class='card-header'><h5 class='card-title'>" + response.title;
+                    if(response.read){
+                        html += "<span class='was-read'>(읽음)</span>"}
+                    else{
+                        html += "<span class='was-read'>(안읽음)</span>"
+                    }
+                    html+= "</h5></div>";
+                    html += "<div class='card-body'><p class='card-text'>" + response.content + "</p></div>";
+                    html += "<div class='card-footer'><small class='text-muted format-date'>" + response.sendDate + "</small></div></div>";
+                    messageDetail.append(html);
+                    setTimeZoneAndFormat();
+
+                    //포커스 변경
+                    $("#message-detail").focus();
+                },
+                error: function (response) {
+                    response = JSON.parse(response.responseText);
+                    toastr.error(response.message);
+                }
+                });
+            }
+
+        // 쪽지 읽음 표시
+        function isRead(idx) {
+            let $tr = $("tr").eq(idx);
+            $tr.addClass("is-read");
+        }
+
+        // 쪽지 답장 보내기
+        function replyMessage(replyReceiverId, replyReceiverNickname, title){
+            let messageDetail = $("#messageModal #message-detail");
+            messageDetail.empty(); // 기존 내용 제거
+            let html = "";
+            // to nickname
+            html += "<p>To." + replyReceiverNickname + "</p>"
+            // title
+            html += "<div class='mb-3'><label for='title' class='form-label'>제목</label><input type='text' class='form-control' id='message-title' name='title' placeholder='제목을 입력하세요.'></div>";
+            // content
+            let initialContent = "Re:" + title + "\n"; // "Re:title"을 포함한 초기 내용
+            html += "<div class='mb-3'><label for='content' class='form-label'>내용</label>"
+                + "<textarea class='form-control input-scroll' id='message-text' name='content' rows='5' placeholder='내용을 입력하세요.'>"
+                + initialContent + "</textarea></div>";
+            // button
+            html += "<div class='d-flex justify-content-end'><button type='button' class='btn btn-primary' " +
+                "onclick='replyMessageProcess(" + replyReceiverId + ")'>보내기</button></div>";
+
+            messageDetail.append(html);
+            setTimeZoneAndFormat();
+        }
+
+        function replyMessageProcess(replyReceiverId){
+            const data = {
+                title: $('#message-title').val(),
+                content: $('#message-text').val(),
+            };
+            $.ajax({
+                url: "/api/message/" + replyReceiverId,
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify(data),
+                success: function (response) {
+                    toastr.success("쪽지를 보냈습니다.");
+                    sendMessagePage(0);
+                },
+                error: function (xhr) {
+                    let errorResult = JSON.parse(xhr.responseText);
+                    toastr.error(errorResult);
+                    if (errorResult.code === "400") {
+                        if (errorResult.validation !== undefined) {
+                            if (errorResult.validation.title !== undefined) {
+                                sendWarnMessage(errorResult.validation.title);
+                            }
+                            if (errorResult.validation.content !== undefined) {
+                                toastr.error(errorResult.validation.content);
+                                sendWarnMessage(errorResult.validation.content);
+                            }
+                        }else{
+                            toastr.error(errorResult.message);
+                        }
+                    }else {
+                        toastr.error(errorResult.message);
+                    }
+                }
+            });
+        }
+
+        // 쪽지 삭제
+        function deleteMessage(messageId){
+            $.ajax({
+                url: "/api/message/" + messageId,
+                type: "DELETE",
+                success: function (response) {
+                    toastr.success("쪽지를 삭제했습니다.");
+                    sendMessagePage(0);
+                },
+                error: function (response) {
+                    response = JSON.parse(response.responseText);
+                    toastr.error(response.message);
+                }
+            });
+        }
+
+        // 쪽지 삭제(받은 쪽지함)
+        function deleteReceivedMessage(messageId){
+            $.ajax({
+                url: "/api/message/delete/" + messageId,
+                type: "POST",
+                success: function (response) {
+                    sendInfoMessage("쪽지를 삭제했습니다.");
+                    receiveMessagePage(0);
+                },
+                error: function (response) {
+                    response = JSON.parse(response.responseText);
+                    toastr.error(response.message);
+                }
+            });
+        }
+
+        function sendInfoMessage(message) {
+            toastr.info(message);
+        }
+
+        function sendErrorMessage(message) {
+            toastr.error(message);
+        }
+    </script>
+
+
+    <script th:inline="javascript">
+    //타임존 설정(브라우저 기준)
+    function setTimeZone(utcTime) {
+        utcTime = utcTime + "Z";
+        let date = new Date(utcTime);
+        return date.getFullYear() + '-' +
+            String(date.getMonth() + 1).padStart(2, '0') + '-' +
+            String(date.getDate()).padStart(2, '0') + ' ' +
+            String(date.getHours()).padStart(2, '0') + ':' +
+            String(date.getMinutes()).padStart(2, '0');
+    }
+
+    function setTimeZoneAndFormat() {
+        const createdDateElements = $(".format-date:not([data-is-converted='true'])");
+        createdDateElements.each(function () {
+            const createdDateText = $(this).text();
+            $(this).text(setTimeZone(createdDateText)).attr('data-is-converted', 'true');
+        });
+    }
+
+    window.onload = setTimeZoneAndFormat;
+
+    </script>
+
 </div>
 </html>

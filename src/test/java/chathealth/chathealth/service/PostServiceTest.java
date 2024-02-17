@@ -2,11 +2,13 @@ package chathealth.chathealth.service;
 
 import chathealth.chathealth.controller.PostRestController;
 import chathealth.chathealth.dto.request.PostSearch;
+import chathealth.chathealth.dto.response.MaterialSymptomDto;
 import chathealth.chathealth.dto.response.PostResponse;
 import chathealth.chathealth.entity.member.Ent;
 import chathealth.chathealth.entity.member.Users;
 import chathealth.chathealth.entity.post.*;
 import chathealth.chathealth.repository.*;
+import chathealth.chathealth.repository.MemberRepository;
 import chathealth.chathealth.repository.post.PostRepository;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.DisplayName;
@@ -127,13 +129,13 @@ class PostServiceTest {
             PicturePost picture4 = picturePostRepository.save(PicturePost.builder()
                     .pictureUrl("이미지3")
                     .post(savedPost1)
-                    .orders(0)
+                    .orders(1)
                     .build());
 
             PicturePost picture3 = picturePostRepository.save(PicturePost.builder()
                     .pictureUrl("이미지 유알엘2")
                     .post(savedPost1)
-                    .orders(1)
+                    .orders(2)
                     .build());
             List<PicturePost> pictures1 = new ArrayList<>();
             pictures1.add(picture3);
@@ -152,9 +154,6 @@ class PostServiceTest {
 
         //when
         List<PostResponse> posts = postService.getPosts(postSearch);
-        for (PostResponse postResponse : posts) {
-            System.out.println("postResponsezzz = " + postResponse);
-        }
 
         //then
         assertThat(posts.size()).isEqualTo(20);
@@ -263,5 +262,14 @@ class PostServiceTest {
         }
         List<PostResponse> bestPostsPerDay = postHitService.getBestPostsPerDay();
         assertThat(bestPostsPerDay.size()).isEqualTo(5);
+    }
+
+    @DisplayName("MaterialSymptomDto 테스트")
+    @Test
+    public void test1() throws Exception{
+        //when
+        List<MaterialSymptomDto> materialBySymptomType = postService.getMaterialBySymptomType();
+        //then
+        assertThat(materialBySymptomType.size()).isEqualTo(10);
     }
 }

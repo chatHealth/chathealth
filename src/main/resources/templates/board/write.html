@@ -55,9 +55,10 @@
                          */
                         const formData = new FormData();
                         formData.append('image', blob);
+                        formData.append('board', 'board');
 
                         // 2. FileApiController - uploadEditorImage 메서드 호출
-                        const response = await fetch('/board-image/upload', {
+                        const response = await fetch('/board/upload', {
                             method: 'POST',
                             body: formData,
                         });
@@ -70,12 +71,11 @@
                         const filename = await response.text();
 
                         // 4. addImageBlobHook의 callback 함수를 통해, 디스크에 저장된 이미지를 에디터에 렌더링
-                        const imageUrl = `/board-image/print?filename=/${filename}`;
+                        const imageUrl = `/board/print?filename=/${filename}`;
                         callback(imageUrl, 'image alt attribute');
 
                     } catch (error) {
-                        alert(error.message);
-                        console.error('업로드 실패 : ', error);
+                        toastr.error(error.message);
                     }
                 }
             }
@@ -86,12 +86,12 @@
         async function savePost() {
             // title 입력 필수
             if (document.querySelector('input[name="title"]').value.length < 1) {
-                alert('제목을 입력해 주세요.');
+                toastr.error('제목을 입력해 주세요.');
                 throw new Error('title content is required!');
             }
 
             if (editor.getMarkdown().length < 1) {
-                alert('내용을 입력해 주세요.');
+                toastr.error('내용을 입력해 주세요.');
                 throw new Error('content content is required!');
             }
 
@@ -104,26 +104,38 @@
             }
 
             // 3. API 호출
-            try {
-                const response = await fetch(url, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(params),
-                });
+            $.ajax({
+                url: url,
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(params),
+                success: function(response) {
+                    // 성공 시 처리
+                    toastr.success('게시글이 작성되었습니다. 게시글 제목: ' + params.title);
+                    location.href = '/board/' + response;
+                },
+                error: function(error) {
+                    // 에러 처리
+                    let e = error.responseJSON;
 
-                if(!response.ok){
-                    throw new Error('서버에 문제가 있습니다. 잠시 후 다시 시도해 주세요.');
+                    if (e.code === "400") {
+                        if(e.validation.title != null) {
+                            toastr.error(e.validation.title);
+                            $('input[name="title"]').focus();
+                        } else if(e.validation.content != null) {
+                            toastr.error(e.validation.content);
+                            editor.focus();
+                        }else if(e.validation.category != null) {
+                            toastr.error(e.validation.category);
+                            $('select[name="category"]').focus();
+                        } else {
+                            toastr.error(e.message);
+                        }
+                        return;
+                    }
+                    toastr.error(e.message);
                 }
-
-                alert('게시글이 저장되었습니다. 게시글 제목: ' + params.title);
-                location.href = '/board';
-
-            } catch (error) {
-                alert(error.message);
-                console.error('저장 실패 : ', error);
-            }
+            });
         }
 
         function goBack() {
