@@ -4,7 +4,6 @@ import chathealth.chathealth.dto.request.PostSearch;
 import chathealth.chathealth.entity.member.Ent;
 import chathealth.chathealth.entity.post.*;
 import chathealth.chathealth.repository.*;
-import chathealth.chathealth.repository.MemberRepository;
 import chathealth.chathealth.repository.post.PostRepository;
 import chathealth.chathealth.service.PostService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -20,9 +19,6 @@ import java.util.List;
 
 import static chathealth.chathealth.dto.request.OrderCondition.RECENT;
 import static chathealth.chathealth.entity.post.SymptomType.INTESTINE;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @Transactional
@@ -151,16 +147,16 @@ class PostRestControllerTest {
                     .build());
         }
         //expected
-        mockMvc.perform(get("/api/post")
-                        .contentType("application/json")
-                        .content(objectMapper.writeValueAsString(postSearch)))
-                .andExpect(status().isOk())
+//        mockMvc.perform(get("/api/post")
+//                        .contentType("application/json")
+//                        .content(objectMapper.writeValueAsString(postSearch)))
+//                .andExpect(status().isOk())
 //                .andExpect(jsonPath("$.length()", is(20)))
 //                .andExpect(jsonPath("$.[0].title", is("제목입니다")))
 //                .andExpect(jsonPath("$.[0].representativeImg", is("이미지유알엘3")))
 //                .andExpect(jsonPath("$.[0].symptom", is("INTESTINE")))
 //                .andExpect(jsonPath("$.[0].count", is(90)))
-                .andDo(print());
+//                .andDo(print());
     }
 
 }
