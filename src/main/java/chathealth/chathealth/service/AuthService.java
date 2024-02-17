@@ -110,6 +110,7 @@ public class AuthService implements UserDetailsService {
         }
     }
 
+    //탈퇴
     @PreAuthorize("hasAnyRole('ROLE_WAITING_ENT','ROLE_PERMITTED_ENT','ROLE_REJECTED_ENT','ROLE_USER','ROLE_ADMIN')")
     @Transactional
     public Integer memberWithdraw(Long id) {
@@ -118,7 +119,6 @@ public class AuthService implements UserDetailsService {
             Member findMember = optionalMember.get();
             findMember.withdraw(LocalDateTime.now());
             findMember.changeRole(ROLE_WITHDRAW_MEMBER);
-            // SecurityContextHolder.clearContext();   세션 죽이는 앤데 작동 안함. 사유 확인 필요
             return 1;
         }
         return 0;
