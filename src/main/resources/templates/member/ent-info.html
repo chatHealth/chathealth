@@ -142,7 +142,7 @@
                                 location.reload();
                             }
                         }, error:function(){
-                            alert("실패~");
+                            alert("알 수 없는 오류가 발생했습니다. 서비스 관리자에게 문의하시기 바랍니다.");
                         }
                     })
                 });
@@ -180,7 +180,7 @@
                             $.each(response, function (index, item) {
                                 html += `<tr>
                                             <th style="color:#198754;"> ${i}</th>
-                                            <td><a href="/view/${item.postId}">${item.title}</a></td>
+                                            <td><a href="/view/${item.postId}" class="link-success">${item.title}</a></td>
                                             <td>${item.createdDate}</td>
                                          </tr>`
                                 i++;
@@ -387,11 +387,11 @@
                     if (response.isUpdated === "isUpdated") { // 1 이면 -> 성공
                         $('#editModal').modal("hide");
                     } else { // 0이면 -> 실패
-                        alert("프로필 변경 실패~~");
+                        alert("알 수 없는 오류가 발생했습니다. 서비스 관리자에게 문의하시기 바랍니다.");
                     }
                 },
                 error: function () {
-                    alert("프로필 변경 실패~~");
+                    alert("알 수 없는 오류가 발생했습니다. 서비스 관리자에게 문의하시기 바랍니다.");
                 }
             });
         });
