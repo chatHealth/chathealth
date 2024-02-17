@@ -56,7 +56,7 @@
               $.each(response,function (index,item){
                 container += `<tr>
                 <th style="color:#198754;"> ${i}</th>
-                <td class="email" data-id="${item.id}">${item.email}</td>
+                <td class="email" data-id="${item.id}" data-email="${item.email}">${item.email}</td>
                 <td>${item.nickname}</td>
                 <td>${item.grade}</td>
                 <td><button class='btn btn-danger btn-sm' id='withdrawUserBtn'>강제 탈퇴</button></td>
@@ -76,8 +76,10 @@
         });
 
         $('body').on("click","#withdrawUserBtn",function (){
-          const id= $(this).parent().parent().find(".email").data("id");
           const email= $(this).parent().parent().find(".email").data("email");
+          const id= $(this).parent().parent().find(".email").data("id");
+          console.log(email)
+          console.log(id)
           confirm("탈퇴 후 계정을 원복할 수 없습니다. 진짜 탈퇴시키시겠습니까?")
           $.ajax({
             url: `/auth/withdraw/${id}`,
@@ -87,7 +89,7 @@
               alert("탈퇴 완료되었습니다.")
             },
             error: function (){
-              alert(JSON.stringify(error));
+              alert("알수 없는 오류가 발생했습니다. 서비스 관리자에게 문의해주시기 바랍니다.");
             }
           })
         })
