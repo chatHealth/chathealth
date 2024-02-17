@@ -194,7 +194,7 @@
                         $.each(response, function (index, item) {
                             html += "<tr>";
                             html += '<th>' + i + '</th>'; // "
-                            html += `<td><a href="/view/`+item.postId+`">`+item.title+`</a></td>`;
+                            html += `<td><a href="/view/`+item.postId+`" class="link-success">`+item.title+`</a></td>`;
                             html += "</tr></div>";
                             i++;
                         });
@@ -248,7 +248,7 @@
                             $.each(response, function (index, item) {
                                 html += `<tr>
                                             <th style="color:#198754;"> ${i}</th>
-                                            <td><span class="d-inline-block text-truncate" style="max-width: 97px;"><a href="/view/${item.postId}" class="text-mp-review">${item.title}</a></span></td>
+                                            <td><span class="d-inline-block text-truncate" style="max-width: 97px;"><a href="/view/${item.postId}" class="link-success">${item.title}</a></span></td>
                                             <td><span class="d-inline-block text-truncate" style="max-width: 400px;">${item.content}</span></td>
                                             <td>${item.createdDate}</td>
                                          </tr>`
