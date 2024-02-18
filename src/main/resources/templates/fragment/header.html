@@ -474,7 +474,7 @@
                     html += "<div class='card-body'><p class='card-text'>" + response.content + "</p></div>";
                     html += "<div class='card-footer'><small class='text-muted  format-date'>" + response.sendDate + "</small></div></div>";
                     //답장 버튼
-                    html += "<div class='d-flex justify-content-end'><button type='button' class='btn btn-primary' "
+                    html += "<div class='d-flex justify-content-end'><button type='button' class='btn btn-success' "
                         + "onclick='replyMessage(" + response.senderId + ", \""
                         + response.senderNickname + "\",\""
                         + response.title + "\")'>" +
@@ -547,7 +547,7 @@
                 + "<textarea class='form-control input-scroll' id='message-text' name='content' rows='5' placeholder='내용을 입력하세요.'>"
                 + initialContent + "</textarea></div>";
             // button
-            html += "<div class='d-flex justify-content-end'><button type='button' class='btn btn-primary' " +
+            html += "<div class='d-flex justify-content-end'><button type='button' class='btn btn-successs' " +
                 "onclick='replyMessageProcess(" + replyReceiverId + ")'>보내기</button></div>";
 
             messageDetail.append(html);
