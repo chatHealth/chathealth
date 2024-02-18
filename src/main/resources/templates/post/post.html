@@ -204,7 +204,7 @@
                         html += "<h2>검색 결과가 없습니다.</h2>";
                     } else {
                         html += "<h2>검색 결과 : " + response[0].count + "건</h2>";
-                        totalPage = Math.floor(response[0].count / size + 1);
+                        totalPage = Math.ceil(response[0].count / size);
                     }
                     $.each(response, function (index, item) {
                         if (item.representativeImg === null) {
