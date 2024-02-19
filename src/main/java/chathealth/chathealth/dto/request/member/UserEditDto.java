@@ -21,7 +21,6 @@ public class UserEditDto {
     @NotBlank(message = "주소는 필수입력사항입니다.")
     private String frontAddress;
     private String addressDetail;
-    @NotBlank(message = "우편번호는 필수입력사항입니다.")
     private String postcode;
     private Address address;
 }
