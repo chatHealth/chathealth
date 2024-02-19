@@ -18,7 +18,6 @@ public class UserEditDto {
     @NotBlank(message = "닉네임은 필수입니다.")
     @Size(max=10, message = "별명은 10자 이내로 작성해주세요.")
     private String nickname;
-    @NotBlank(message = "주소는 필수입력사항입니다.")
     private String frontAddress;
     private String addressDetail;
     private String postcode;
