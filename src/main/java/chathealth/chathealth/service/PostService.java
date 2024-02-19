@@ -1,6 +1,7 @@
 package chathealth.chathealth.service;
 
 
+import chathealth.chathealth.constants.HitPeriod;
 import chathealth.chathealth.dto.request.*;
 import chathealth.chathealth.dto.response.*;
 import chathealth.chathealth.dto.response.member.CustomUserDetails;
@@ -472,13 +473,13 @@ public class PostService {
 
     public List<PostResponse> getBestPostsPerDay() {
         return postRepository.getBestPostsPerDay().stream()
-                .map(this::createRecentPostResponse)
+                .map(post -> createRecentPostResponse(post, HitPeriod.DAY))
                 .toList();
     }
 
     public List<PostResponse> getBestPostsPerWeek() {
         return postRepository.getBestPostsPerWeek().stream()
-                .map(this::createRecentPostResponse)
+                .map(post -> createRecentPostResponse(post, HitPeriod.WEEK))
                 .toList();
     }
 
@@ -554,7 +555,7 @@ public class PostService {
 
     }
 
-    private PostResponse createRecentPostResponse(Post post) {
+    private PostResponse createRecentPostResponse(Post post, HitPeriod period) {
         String representativeImg = null;
         if (post.getPostImgList() != null && !post.getPostImgList().isEmpty()) {
             representativeImg = post.getPostImgList().stream()
@@ -563,10 +564,18 @@ public class PostService {
                     .map(PicturePost::getPictureUrl)
                     .orElse(null);
         }
+
+        int size = 0;
+
+        if(period == HitPeriod.DAY){
+            size = post.getPostHitList().stream().filter(postHit -> postHit.getCreatedDate().isAfter(LocalDateTime.now().minusDays(1))).toList().size();
+        }else if(period == HitPeriod.WEEK){
+            size = post.getPostHitList().stream().filter(postHit -> postHit.getCreatedDate().isAfter(LocalDateTime.now().minusWeeks(1))).toList().size();
+        }
         return PostResponse.builder()
                 .id(post.getId())
                 .title(post.getTitle())
-                .hitCount(post.getPostHitCount())
+                .hitCount(size)
                 .representativeImg(representativeImg)
                 .build();
     }

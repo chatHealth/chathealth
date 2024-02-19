@@ -17,8 +17,8 @@
                 </div>
             </div>
         </div>
-    <div class="postinfo">
-        <div class="productBox">
+    <div class="postinfo" >
+        <div class="container productBox">
             <div class="imgBox">
                 <div id="carouselExampleAutoplaying" class="carousel slide" data-bs-ride="carousel">
                     <div class="carousel-inner">
@@ -68,7 +68,7 @@
                 </div>
                 <div class="prr">
                     <div class="prrLike">
-                        <button class="prrlikebtn"></button>
+                        <button class="prrlikebtn" ></button>
                         <span class="postlikecount" th:text="${postList.likeCount}"></span>
                         <img src="/img/빈하트.png" id="postlikeimg">
                     </div>
@@ -76,13 +76,13 @@
             </div>
         </div>
         <hr>
-        <div class="mainpagebox">
+        <div class="mainpagebox" style="justify-content: center;display: flex">
             <div th:utext="${postList.content}" class="contentBox"></div>
 
         </div>
 
 <!--        지금보는 상품과 관련있는 상품-->
-        <div>
+        <div style="margin-left: 5%">
             <div style="justify-content: center"><h2>이 제품과 비슷한 상품</h2></div>
             <div style="display: flex">
                 <th:block th:each="item : ${related}">
@@ -104,7 +104,7 @@
 
 
         <!--리뷰-->
-        <div>
+        <div style="margin-left: 5%;margin-right: 5%">
             <div class="reviewHeader" style="">
                 <h2 style="text-align: center">상품리뷰</h2>
             </div>

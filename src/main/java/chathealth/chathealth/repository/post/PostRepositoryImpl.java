@@ -55,7 +55,9 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
                 .where(post.deletedDate.isNull(),
                         titleContains(postSearch.getTitle()),
                         symptomTypeEq(postSearch.getSymptomType()),
-                        materialIn(postSearch.getMaterialName())
+                        materialIn(postSearch.getMaterialName()),
+                        companyContains(postSearch.getCompany())
+
                 )
                 .leftJoin(post.symptom, symptom)
                 .leftJoin(post.materialList)

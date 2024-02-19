@@ -67,12 +67,13 @@
     margin-left: 4px;
     background: none;
     border: none;
+    z-index: 2;
 }
 .postlikecount{
     position: absolute;
     margin-top: 20%;
     margin-left: 40%;
-
+    z-index: 1;
 }
 
 /*뷰 리뷰*/
